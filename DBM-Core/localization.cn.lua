@@ -90,9 +90,11 @@ DBM_CORE_YOUR_VERSION_OUTDATED		= "你的Deadly Boss Mods已经过期。请访�
 --DBM_BIG_WIGS_ALPHA (Same as English locales)
 
 DBM_CORE_UPDATEREMINDER_HEADER		= "你的Deadly Boss Mods版本已过期。\n你可以在如下地址下载到新版本%s（r%d）："
+DBM_CORE_UPDATEREMINDER_HEADER_ALPHA	= "你的Deadly Boss Mods版本已过期至少 %d 个版本。"
 DBM_CORE_UPDATEREMINDER_FOOTER		= (IsMacClient() and "Cmd-C" or "Ctrl-C")  ..  "复制地址到剪切板。"
 DBM_CORE_UPDATEREMINDER_FOOTER_GENERIC	= (IsMacClient() and "Cmd-C" or "Ctrl-C")  ..  "复制地址到剪切板。"
 DBM_CORE_UPDATEREMINDER_NOTAGAIN	= "检测到新版本后弹出提示框"
+DBM_CORE_UPDATEREMINDER_DISABLE		= "警告：你的DBM已经过时相当多的版本（%d个版本），它已被禁用，直到你更新。这是為了确保它不会导致你或其他团队成员出错。"
 
 DBM_CORE_MOVABLE_BAR				= "拖动我！"
 

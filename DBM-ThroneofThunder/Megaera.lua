@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 local sndXL	= mod:NewSound(nil, "SoundXL", true)
 
-mod:SetRevision(("$Revision: 9699 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9721 $"):sub(12, -3))
 mod:SetCreatureID(68065, 70212, 70235, 70247)--flaming 70212. Frozen 70235, Venomous 70247
 mod:SetMainBossID(68065)
 mod:SetQuestID(32748)
@@ -67,7 +67,7 @@ local timerBreathsCD			= mod:NewTimer(16, "timerBreathsCD", 137731, nil, false)-
 
 --TODO, maybe monitor length since last cast and if it's 28 instead of 25, make next timer also 28 for remainder of that head phase (then return to 25 after rampage unless we detect another 28)
 --TODO, Verify timers on normal. WoL bugs out and combines GUIDs making it hard to determine actual CDs in my logs.
-local timerCinderCD				= mod:NewCDTimer(25, 139822, nil, not mod:IsTank())--The cd is either 25 or 28 (either or apparently, no in between). it can even swap between teh two in SAME pull
+local timerCinderCD				= mod:NewCDTimer(25, 139822, nil, not mod:IsTank())--The cd is either 25 or 28 (either or apparently, no in between). it can even swap between the two in SAME pull
 local timerTorrentofIce			= mod:NewBuffFadesTimer(11, 139866)
 local timerTorrentofIceCD		= mod:NewCDTimer(25, 139866, nil, not mod:IsTank())--Same as bove, either 25 or 28
 local timerNetherTearCD			= mod:NewCDTimer(25, 140138)--Heroic. Also either 25 or 28. On by default since these require more pre planning than fire and ice.
@@ -128,6 +128,8 @@ local activeHeadGUIDS = {}
 local iceTorrent = GetSpellInfo(139857)
 local torrentExpires = {}
 local arcaneRecent = false
+local UnitExists = UnitExists
+local UnitDetailedThreatSituation = UnitDetailedThreatSituation
 
 local function isTank(unit)
 	-- 1. check blizzard tanks first
@@ -139,20 +141,10 @@ local function isTank(unit)
 	if UnitGroupRolesAssigned(unit) == "TANK" then
 		return true
 	end
-	if UnitExists("boss1target") and UnitDetailedThreatSituation(unit, "boss1") then
-		return true
-	end
-	if UnitExists("boss2target") and UnitDetailedThreatSituation(unit, "boss2") then
-		return true
-	end
-	if UnitExists("boss3target") and UnitDetailedThreatSituation(unit, "boss3") then
-		return true
-	end
-	if UnitExists("boss4target") and UnitDetailedThreatSituation(unit, "boss4") then
-		return true
-	end
-	if UnitExists("boss5target") and UnitDetailedThreatSituation(unit, "boss5") then
-		return true
+	for i = 1, 5 do
+		if UnitExists("boss"..i.."target") and UnitDetailedThreatSituation(unit, "boss"..i) then
+			return true
+		end
 	end
 	return false
 end
@@ -331,7 +323,7 @@ end
 function mod:SPELL_DAMAGE(sourceGUID, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 139836 and destGUID == UnitGUID("player") and self:AntiSpam(2, 4) then
 		specWarnCindersMove:Show()
-		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\runaway.mp3") --快躲�?
 	end
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE
@@ -339,7 +331,7 @@ mod.SPELL_MISSED = mod.SPELL_DAMAGE
 function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 139909 and destGUID == UnitGUID("player") and self:AntiSpam(2, 2) then
 		specWarnTorrentofIce:Show()
-		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\runaway.mp3") --快躲�?
 	end
 end
 mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
@@ -442,7 +434,7 @@ end
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 70628 then--Permanent Feign Death
 		local cid = self:GetCIDFromGUID(UnitGUID(uId))
-		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\gather.mp3")--快集合
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\gather.mp3")--快集�?
 		if cid == 70235 then--Frozen
 			iceInFront = iceInFront - 1
 			iceBehind = iceBehind + 2

@@ -377,6 +377,7 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	warnDeadZone	= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.spell:format(137229),
+	SetIconOnLightningStorm	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(136192),
 	SoundWOP		= "Voice Warning: Important Skills",
 	SoundARAT		= "Voice Warning: Call out $spell:137231 direction",
 	ReapetAP		= "Special Function: If you got $spell:136192 call for help continuously",

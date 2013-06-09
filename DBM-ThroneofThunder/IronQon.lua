@@ -3,12 +3,12 @@ local L		= mod:GetLocalizedStrings()
 --BH ADD
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 9678 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9705 $"):sub(12, -3))
 mod:SetCreatureID(68078, 68079, 68080, 68081)--Ro'shak 68079, Quet'zal 68080, Dam'ren 68081, Iron Qon 68078
 mod:SetMainBossID(68078)
 mod:SetQuestID(32754)
 mod:SetZone()
-mod:SetBossHPInfoToHighest()
+mod:SetUsedIcons(8)
 
 mod:RegisterCombat("combat")
 
@@ -81,6 +81,8 @@ local timerWhirlingWindsCD				= mod:NewCDTimer(30, 139167)--Heroic Phase 1
 local timerFrostSpikeCD					= mod:NewCDTimer(11, 139180)--Heroic Phase 2
 
 local berserkTimer						= mod:NewBerserkTimer(720)
+
+mod:AddBoolOption("SetIconOnLightningStorm")
 
 -- BH ADD
 local Warned = false
@@ -358,6 +360,9 @@ function mod:SPELL_AURA_APPLIED(args)
 		else--Heroic phase 1 or 4
 			timerLightningStormCD:Start(37.5)
 		end
+		if self.Options.SetIconOnLightningStorm and not self:IsDifficulty("lfr25") then
+			self:SetIcon(args.destName, 8)
+		end
 		--BH ADD
 		if args:IsPlayer() then
 			specWarnLightningStorm:Show()
@@ -414,6 +419,9 @@ function mod:SPELL_AURA_REMOVED(args)
 		end
 		if (args.destName == mod.Options.dispsetLight1) or (args.destName == mod.Options.dispsetLight2) then
 			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\thanks.mp3")
+		end
+		if self.Options.SetIconOnLightningStorm and not self:IsDifficulty("lfr25") then
+			self:SetIcon(args.destName, 0)
 		end
 	--BH ADD END
 	elseif args.spellId == 136193 then

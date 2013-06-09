@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 -- BH ADD
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 9675 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9726 $"):sub(12, -3))
 mod:SetCreatureID(68397)--Diffusion Chain Conduit 68696, Static Shock Conduit 68398, Bouncing Bolt conduit 68698, Overcharge conduit 68697
 mod:SetQuestID(32756)
 mod:SetZone()
@@ -229,7 +229,7 @@ function mod:SPELL_CAST_START(args)
 			timerLightningWhipCD:Start(30)
 		end
 		DBM.Flash:Show(1, 0, 0)
-		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_tt_sdb.mp3") --閃電鞭
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_tt_sdb.mp3") --閃電�?
 	elseif args.spellId == 136478 then
 		warnFusionSlash:Show()
 		specWarnFusionSlash:Show()
@@ -238,7 +238,7 @@ function mod:SPELL_CAST_START(args)
 			DBM.Flash:Show(1, 0, 0)
 			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_tt_xxjf.mp3") --小心擊飛
 		elseif mod:IsTank() or mod:IsHealer() then
-			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_tt_jlz.mp3") --巨雷斬
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_tt_jlz.mp3") --巨雷�?
 		end
 	end
 end
@@ -377,7 +377,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if phase > 1 then
 			if self:AntiSpam(10, 20) then
 				specWarnDiffusionChainSoon:Show()
-				sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_tt_sdls.mp3")--閃電鏈準備
+				sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_tt_sdls.mp3")--閃電鏈準�?
 			end
 		end
 	elseif args.spellId == 137176 and self:AntiSpam(3, 5) and args:IsPlayer() then
@@ -474,7 +474,7 @@ function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 135150 and self:AntiSpam(10, 4) then
 		if destGUID == UnitGUID("player") then
 			specWarnCrashingThunder:Show()
-			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\runaway.mp3") --快躲�?
 		end
 		timerCrashingThunder:Start()
 	end
@@ -484,7 +484,7 @@ mod.SPELL_MISSED = mod.SPELL_DAMAGE
 function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 135153 and destGUID == UnitGUID("player") and self:AntiSpam(3, 4) then
 		specWarnCrashingThunder:Show()
-		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\runaway.mp3") --快躲�?
 	end
 end
 mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
@@ -552,9 +552,13 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, target)
 			sndWOP:Schedule(31, "Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_tt_wmlj.mp3") --5秒後雷擊
 			timerSummonBallLightningCD:Start(41.5)
 			sndWOP:Schedule(36, "Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_tt_wmdq.mp3") --5秒後電球
-			if self.Options.RangeFrame and self:IsRanged() then
-				if self:IsDifficulty("heroic10", "heroic25") then 
-					DBM.RangeCheck:Show(8)
+			if self.Options.RangeFrame then
+				if self:IsDifficulty("heroic10", "heroic25") then
+					if self:IsRanged() then
+						DBM.RangeCheck:Show(8)
+					else
+						DBM.RangeCheck:Show(6)
+					end
 				else
 					DBM.RangeCheck:Show(6)
 				end

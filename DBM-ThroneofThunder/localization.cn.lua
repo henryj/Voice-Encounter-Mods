@@ -393,6 +393,7 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	warnDeadZone	= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.spell:format(137229),
+	SetIconOnLightningStorm	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(136192),
 	SoundWOP		= "语音警告：重要技能",
 	SoundARAT		= "语音警告：报出$spell:137231的攻击方位",
 	SpecWarnJSA		= "特殊警告：注意减伤",

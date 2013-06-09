@@ -44,9 +44,9 @@
 --  Globals/Default Options  --
 -------------------------------
 DBM = {
-	Revision = tonumber(("$Revision: 9700 $"):sub(12, -3)),
+	Revision = tonumber(("$Revision: 9735 $"):sub(12, -3)),
 	DisplayVersion = "5.3 Voice Enhanced", -- the string that is shown as version
-	ReleaseRevision = 9689 -- the revision of the latest stable version that is available
+	ReleaseRevision = 9727 -- the revision of the latest stable version that is available
 }
 
 -- Legacy crap; that stupid "Version" field was never a good idea.
@@ -75,6 +75,7 @@ DBM.DefaultOptions = {
 	ModelSoundValue = "Short",
 	ChallengeBest = "Realm",
 	CountdownVoice = "sst",
+	CountdownVoice2 = "sst",
 	ShowCountdownText = false,
 	RaidWarningPosition = {
 		Point = "TOP",
@@ -167,7 +168,6 @@ DBM.DefaultOptions = {
 	LastRevision = 0,
 	FilterSayAndYell = false,
 	ChatFrame = "DEFAULT_CHAT_FRAME",
-	barrensSounds = true,
 }
 
 DBM.Bars = DBT:New()
@@ -183,6 +183,7 @@ DBM_OPTION_SPACER = newproxy(false)
 --  Locals  --
 --------------
 local enabled = true
+local blockEnable = false
 local lastCombatStarted = GetTime()
 local inCombat = {}
 local combatInfo = {}
@@ -211,7 +212,6 @@ local queuedBattlefield = {}
 local loadDelay = nil
 local loadDelay2 = nil
 local stopDelay = nil
-local myRealRevision = DBM.Revision or DBM.ReleaseRevision
 local watchFrameRestore = false
 local currentSizes = nil
 
@@ -2340,6 +2340,7 @@ do
 			if version > tonumber(DBM.Version) and version ~= 99999 then -- Update reminder
 				if not showedUpdateReminder then
 					local found = false
+					local revDifference = revision - tonumber(DBM.Revision)
 					for i, v in pairs(raid) do
 						if v.version == version and v ~= raid[sender] then
 							found = true
@@ -2354,6 +2355,19 @@ do
 							DBM:AddMsg(DBM_CORE_UPDATEREMINDER_HEADER:match("([^\n]*)"))
 							DBM:AddMsg(DBM_CORE_UPDATEREMINDER_HEADER:match("\n(.*)"):format(displayVersion, version))
 							DBM:AddMsg(("|HDBM:update:%s:%s|h|cff3588ff[http://bbs.ngacn.cc/read.php?tid=5397726&page=1]"):format(displayVersion, version))
+						end
+						if revDifference > 400 then--WTF? Sorry but your DBM is being turned off until you update. Grossly out of date mods cause fps loss, freezes, lua error spam, or just very bad information, if mod is not up to date with latest changes. All around undesirable experience to put yourself or other raid mates through
+							DBM:AddMsg(DBM_CORE_UPDATEREMINDER_DISABLE:format(revDifference))
+							DBM:Disable(true)
+						end
+					else--You're using at least a revision that matches latest release, but now lets check your alpha
+						if revDifference > 20 then--Running alpha version that's out of date
+							showedUpdateReminder = true
+							DBM:AddMsg(DBM_CORE_UPDATEREMINDER_HEADER_ALPHA:format(revDifference))
+							if revDifference > 400 then--WTF? Sorry but your DBM is being turned off until you update. Grossly out of date mods cause fps loss, freezes, lua error spam, or just very bad information, if mod is not up to date with latest changes. All around undesirable experience to put yourself or other raid mates through
+								DBM:AddMsg(DBM_CORE_UPDATEREMINDER_DISABLE:format(revDifference))
+								DBM:Disable(true)
+							end
 						end
 					end
 				end
@@ -3034,13 +3048,6 @@ do
 	end
 
 	function DBM:CHAT_MSG_MONSTER_EMOTE(msg)
-		if DBM.Options.barrensSounds and LastZoneMapID == 11 then--Northern barrens caravan messages
-			if DBM.Options.UseMasterVolume then
-				PlaySoundFile("Sound\\interface\\UI_RaidBossWhisperWarning.ogg", "Master")
-			else
-				PlaySoundFile("Sound\\interface\\UI_RaidBossWhisperWarning.ogg")
-			end
-		end
 		return onMonsterMessage("emote", msg)
 	end
 
@@ -3989,15 +3996,21 @@ end
 --------------------------
 --  Enable/Disable DBM  --
 --------------------------
-function DBM:Disable()
+function DBM:Disable(forced)
 	unschedule()
 	enabled = false
-	self.Options.Enabled = false
+	if not forced then
+		self.Options.Enabled = false
+	else
+		blockEnable = true
+	end
 end
 
 function DBM:Enable()
-	enabled = true
-	self.Options.Enabled = true
+	if not blockEnable then
+		enabled = true
+		self.Options.Enabled = true
+	end
 end
 
 function DBM:IsEnabled()
@@ -4119,7 +4132,7 @@ function DBM:FindDungeonIDs()
 	for i=1, 1000 do
 		local dungeon = GetDungeonInfo(i)
 		if dungeon then
-			print(i..": "..dungeon)
+			self:AddMsg(i..": "..dungeon)
 		end
 	end
 end
@@ -5001,7 +5014,7 @@ end
 do
 	local countdownProtoType = {}
 	local mt = {__index = countdownProtoType}
-	
+
 	local function showCountdown(timer)
 		TimerTracker_OnEvent(TimerTracker, "START_TIMER", 2, timer, timer)
 	end
@@ -5023,20 +5036,38 @@ do
 					DBM:Schedule(timer%1, showCountdown, floor(timer))
 				end
 			end
-			if DBM.Options.CountdownVoice == "None" then return end
-			if DBM.Options.CountdownVoice == "Mosh" then
+--[[		local voice = DBM.Options.CountdownVoice
+			local voice2 = DBM.Options.CountdownVoice2
+			if voice == "None" then return end
+			if self.alternateVoice then--We already have an active countdown using primary voice, so fall back to secondary voice
+				voice = voice2
+			end
+			if voice == "Mosh" then--Voice only goes to 5
 				for i = count, 1, -1 do
 					if i <= 5 then
-						self.sound5:Schedule(timer-i, "Interface\\AddOns\\DBM-Core\\Sounds\\Mosh\\"..i..".mp3")
+						self.sound5:Schedule(timer-i, "Interface\\AddOns\\DBM-Core\\Sounds\\Mosh\\"..i..".ogg")
 					end
 				end
-			elseif DBM.Options.CountdownVoice == "sst" then
+			else--Voice that goes to 10
 				for i = count, 1, -1 do
-					self.sound5:Schedule(timer-i, "Interface\\AddOns\\DBM-Core\\Sounds\\sst\\"..i..".mp3")
+					self.sound5:Schedule(timer-i, "Interface\\AddOns\\DBM-Core\\Sounds\\"..voice.."\\"..i..".ogg")
 				end
-			else--When/if more voices get added we can tweak it to use elseif rules, but for now else works smarter cause then ANY value will return to a default voice.
-				for i = count, 1, -1 do
-					self.sound5:Schedule(timer-i, "Interface\\AddOns\\DBM-Core\\Sounds\\Corsica_S\\"..i..".mp3")
+			end]]
+			for i = count, 1, -1 do
+				local countvaluei
+				if i == 1 then countvaluei = "countone"
+				elseif i == 2 then countvaluei = "counttwo"
+				elseif i == 3 then countvaluei = "countthree"
+				elseif i == 4 then countvaluei = "countfour"
+				elseif i == 5 then countvaluei = "countfive"
+				elseif i == 6 then countvaluei = "countsix"
+				elseif i == 7 then countvaluei = "countseven"
+				elseif i == 8 then countvaluei = "counteight"
+				elseif i == 9 then countvaluei = "countnine"
+				elseif i == 10 then countvaluei = "countten"
+				elseif i == 11 then countvaluei = "counteleven" end
+				if i <= 11 then
+					self.sound5:Schedule(timer-i, "Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\"..countvaluei..".mp3")
 				end
 			end
 		end
@@ -5061,7 +5092,7 @@ do
 	end
 	countdownProtoType.Stop = countdownProtoType.Cancel
 
-	function bossModPrototype:NewCountdown(timer, spellId, optionDefault, optionName, count, textDisabled)
+	function bossModPrototype:NewCountdown(timer, spellId, optionDefault, optionName, count, textDisabled, altVoice)
 		if not spellId and not optionName then
 			error("NewCountdown: you must provide either spellId or optionName", 2)
 			return
@@ -5085,6 +5116,7 @@ do
 				timer = timer,
 				count = count,
 				textDisabled = textDisabled,
+				alternateVoice = altVoice,
 				mod = self
 			},
 			mt
@@ -5101,7 +5133,7 @@ do
 		return obj
 	end
 
-	function bossModPrototype:NewCountdownFades(timer, spellId, optionDefault, optionName, count, textDisabled)
+	function bossModPrototype:NewCountdownFades(timer, spellId, optionDefault, optionName, count, textDisabled, altVoice)
 		if not spellId and not optionName then
 			error("NewCountdownFades: you must provide either spellId or optionName", 2)
 			return
@@ -5125,6 +5157,7 @@ do
 				timer = timer,
 				count = count,
 				textDisabled = textDisabled,
+				alternateVoice = altVoice,
 				mod = self
 			},
 			mt
@@ -5153,19 +5186,32 @@ do
 		if not self.option or self.mod.Options[self.option] then
 			timer = timer or self.timer or 10
 			timer = timer <= 5 and self.timer or timer
-			if DBM.Options.CountdownVoice == "None" then return end
-			if DBM.Options.CountdownVoice == "Mosh" and timer == 5 then--Don't have 6-10 for him yet.
+--[[		local voice = DBM.Options.CountdownVoice
+			if voice == "None" then return end
+			if voice == "Mosh" and timer <= 5 then--Don't have 6-10 for him yet.
 				for i = 1, timer do
-					self.sound5:Schedule(i, "Interface\\AddOns\\DBM-Core\\Sounds\\Mosh\\"..i..".mp3")
+					self.sound5:Schedule(i, "Interface\\AddOns\\DBM-Core\\Sounds\\Mosh\\"..i..".ogg")
 				end
-			elseif DBM.Options.CountdownVoice == "sst" then
-				for i = count, 1, -1 do
-					self.sound5:Schedule(timer-i, "Interface\\AddOns\\DBM-Core\\Sounds\\sst\\"..i..".mp3")
-				end
-			else--When/if more voices get added we can tweak it to use elseif rules, but for now else works smarter cause then ANY value will return to a default voice.
-				--Ugly as hel way to do it but i coudln't think of a different way to do it accurately
+			else--Voices that go to 10
 				for i = 1, timer do
-					self.sound5:Schedule(i, "Interface\\AddOns\\DBM-Core\\Sounds\\Corsica_S\\"..i..".mp3")
+					self.sound5:Schedule(i, "Interface\\AddOns\\DBM-Core\\Sounds\\"..voice.."\\"..i..".ogg")
+				end
+			end]]
+			for i = 1, timer do
+				local countvaluei
+				if i == 1 then countvaluei = "countone"
+				elseif i == 2 then countvaluei = "counttwo"
+				elseif i == 3 then countvaluei = "countthree"
+				elseif i == 4 then countvaluei = "countfour"
+				elseif i == 5 then countvaluei = "countfive"
+				elseif i == 6 then countvaluei = "countsix"
+				elseif i == 7 then countvaluei = "countseven"
+				elseif i == 8 then countvaluei = "counteight"
+				elseif i == 9 then countvaluei = "countnine"
+				elseif i == 10 then countvaluei = "countten"
+				elseif i == 11 then countvaluei = "counteleven" end
+				if i <= 11 then
+					self.sound5:Schedule(timer-i, "Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\"..countvaluei..".mp3")
 				end
 			end
 		end
@@ -5506,6 +5552,41 @@ do
 
 	function bossModPrototype:NewSpecialWarningPreWarn(text, optionDefault, time, ...)
 		return newSpecialWarning(self, "prewarn", text, time, optionDefault, ...)
+	end
+	
+	function DBM:PlayCountSound(number, forceVoice)
+		if number > 10 or number < 1 then return end
+--[[	local voice, voice2
+		if forceVoice then--Primarlly for options
+			voice = forceVoice
+		else
+			voice = DBM.Options.CountdownVoice
+			voice2 = DBM.Options.CountdownVoice2
+		end
+		if number > 5 and (voice == "Mosh") then--Can't count past 5
+			if voice ~= voice2 then
+				voice = voice2--Fall back to secondary voice option if primary is mosh
+			else--Voice 1 and voice 2 were both set to "Mosh", they must really like mosh. At this point we must ignore their preference
+				voice = "Corsica"
+			end
+		end--If number is higher than 5 and users primary voice setting ismosh, fallback to secondary voice setting]]
+		local voice = DBM.Options.CountdownVoice
+		local countvaluenumber
+		if number == 1 then countvaluenumber = "countone"				
+		elseif number == 2 then countvaluenumber = "counttwo"					
+		elseif number == 3 then countvaluenumber = "countthree"
+		elseif number == 4 then countvaluenumber = "countfour"
+		elseif number == 5 then countvaluenumber = "countfive"
+		elseif number == 6 then countvaluenumber = "countsix"
+		elseif number == 7 then countvaluenumber = "countseven"
+		elseif number == 8 then countvaluenumber = "counteight"
+		elseif number == 9 then countvaluenumber = "countnine"
+		elseif number == 10 then countvaluenumber = "countten" end
+		if DBM.Options.UseMasterVolume then
+			PlaySoundFile("Interface\\AddOns\\DBM-Core\\extrasounds\\"..voice.."\\"..countvaluenumber..".mp3", "Master")
+		else
+			PlaySoundFile("Interface\\AddOns\\DBM-Core\\extrasounds\\"..voice.."\\"..countvaluenumber..".mp3")
+		end
 	end
 	
 	function DBM:PlaySpecialWarningSound(soundId)
