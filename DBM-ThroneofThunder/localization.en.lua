@@ -388,7 +388,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Helpme			= "Help me! ~~~"
+	Helpme			= "Help! Help! CLICK ME ~~~"
 })
 
 -------------------
