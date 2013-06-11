@@ -313,7 +313,7 @@ L:SetMiscLocalization({
 	Eye		= "Eye",
 	xx1noset = "11111111 Life Drain on me!!!",
 	xx2noset = "22222 Life Drain Help!!! Help!!!",
-	xx3noset = "I'm gonna be sucked to death---------"
+	xx3noset = "I'm gonna be sucked to death---------",
 	dx		= "HELP LIFE DRAIN HERE!!"
 })
 
@@ -523,7 +523,7 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	SoundWOP		= Voice Warning: Important Skill",
+	SoundWOP		= "Voice Warning: Important Skill",
 	SoundStrike		= "3 Seconds count down for $spell:138295",
 	specWarnVitarun	= "Special Warning: Vitarun",
 	optDD			= "生命跑位策略",
