@@ -1,4 +1,8 @@
-﻿local L
+﻿-- English by Iceoven(iceoven@jjw.in)
+-- Last update: 11/6/2013
+
+
+local L
 
 --------------------------
 -- Jin'rokh the Breaker --
@@ -19,6 +23,7 @@ L:SetOptionLocalization({
 	dr4					= "Defensive Warning: $spell:137313 2/4-2",
 	RangeFrame			= "Range Frame"
 })
+
 
 --------------
 -- Horridon --
@@ -57,13 +62,13 @@ L:SetOptionLocalization({
 	QS1					= "No.1",
 	QS2					= "No.2",
 	QS3					= "No.3",
-	allQS				= "Always warning",
+	allQS				= "Always warn",
 	RangeFrame			= "Range Frame: Bear door 5 yards",
 	SoundWSP			= "Voice Warning: $journal:7866 within 20 yards (Please set focus on your soul)",
 	dispsetHex			= "Warn you to dispel people you set when they got Hex of Confusion",
 	timerDoor			= "Timer: Next door open",
 	timerAdds			= "Timer: Next adds",
-	SetIconOnCharge			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(136769)
+
 })
 
 L:SetMiscLocalization({
@@ -146,12 +151,9 @@ L:SetMiscLocalization({
 -- Megaera --
 -------------
 L= DBM:GetModLocalization(821)
+
 L:SetTimerLocalization({
 	timerBreathsCD			= "Next Breath"
-})
-
-L:SetWarningLocalization({
-	SpecWarnJSA			= ">>> Defensive on poison tank <<<"
 })
 
 L:SetOptionLocalization({
@@ -194,11 +196,11 @@ L:SetTimerLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP		= "Voice Warning: Important Skills",
+	HudMAP			= "HUD MAP: Mark possible drop point for $spell:138923(exclude yours)",
+	HudMAPMe		= "ALso mark $spell:138923 targets you(Not recommended)",
 	warnFlock		= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.count:format("ej7348"),
 	specWarnFlock	= DBM_CORE_AUTO_SPEC_WARN_OPTIONS.switch:format("ej7348"),
 	timerFlockCD	= DBM_CORE_AUTO_TIMER_OPTIONS.nextcount:format("ej7348"),
-	HudMAP			= "HUD MAP: Mark possible drop point for $spell:138923(exclude yours)",
-	HudMAPMe		= "ALso mark $spell:138923 targets you(Not recommended)",
 	add1			= "1st $journal:7348(down)",
 	add2			= "2nd $journal:7348(down)",
 	add3			= "3rd $journal:7348(down)",
@@ -263,17 +265,17 @@ L= DBM:GetModLocalization(818)
 L:SetWarningLocalization({
 	warnBeamNormal				= "Beam - |cffff0000Red|r : >%s<, |cff0000ffBlue|r : >%s<",
 	warnBeamHeroic				= "Beam - |cffff0000Red|r : >%s<, |cff0000ffBlue|r : >%s<, |cffffff00Yellow|r : >%s<",
-	warnAddsLeft				= "Adds left: %d",
+	specWarnBlueBeam			= "BLUE beam on you - DO NOT MOVE!!!!",
+	warnAddsLeft				= "Fogs left: %d",
 	specWarnFogRevealed			= "%s revealed!",
 	specWarnHold				= "Dark Parasite(%d sec)--Self Defensive",
-	specWarnBlueBeam			= "BLUE beam on you - DO NOT MOVE!!!!",
 	specWarnDisintegrationBeam	= "%s (%s)"
 })
 
 L:SetOptionLocalization({
 	SoundWOP					= "Voice Warning: Important Skills",
-	warnBeam					= "Warn beam target",
 	specWarnBlueBeam			= DBM_CORE_AUTO_SPEC_WARN_OPTIONS.spell:format(139202),
+	warnBeam					= "Warn beam target",
 	optDD						= "Auto assign beam team",
 	DXsound						= "HUD MAP: $spell:133795",
 	InfoFrame					= "Info Frame: $spell:133597 (If also monitor $spell:133795 then show $spell:133795 stacks first)",
@@ -283,20 +285,28 @@ L:SetOptionLocalization({
 	DD1							= "A:Red-Yellow-Blue",
 	DD2							= "B:Yellow-Blue-Red",
 	DD3							= "C:Blue-Red-Yellow",
+	HDD1						= "H-A:Red Red Red",
+	HDD2						= "H-B:Blue Blue Yellow",
+	HDD3						= "H-C:Yellow Yellow Blue",
 	HudMAP						= "HUD MAP: Beam Assignment",
 	warnAddsLeft				= "Warning: Adds left",
 	specWarnFogRevealed			= "Special Warning: Fog Revealed",
 	specWarnDisintegrationBeam	= DBM_CORE_AUTO_SPEC_WARN_OPTIONS.spell:format("ej6882"),
 	ArrowOnBeam					= "DBM Arrow: $journal:6882 moving direction",
-	soundhold					= "How many seconds do you want to be warned after got Dark Parasite(30 - dispel cd - self defensive duration)",
+	soundhold					= "How many seconds after you got Dark Parasite do you want to be warned(30 - dispel cd - self defensive duration)",
+	sounddisp					= "How many seconds before Dark Parasite ends do you want to be warned to help dispel(Healer)",
 	specWarnHold				= "Special Warning: Dark Parasite Self Defensive",
 	xx1							= "Message for Life Drain stack 1",
 	xx2							= "Message for Life Drain stack 2",
-	xx3							= "Message for Life Drain stack 2(DBM show stacks after this message)",
+	xx3							= "Message for Life Drain stack 3(DBM will show stack numbers afterwards)",
+	lifeA						= "Wisper this player to help life drain when you got 2 stacks",
+	lifeB						= "Wisper this player to help life drain when you got 2 stacks",
 	SetIconRays					= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format("ej6891"),
 	SetIconLifeDrain			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(133795),
 	SetIconOnParasite			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(133597),
 	SetParticle					= "Automatically set particle density to low on pull\n(Restores previous setting on combat end)"
+
+
 })
 
 L:SetMiscLocalization({
@@ -304,6 +314,7 @@ L:SetMiscLocalization({
 	xx1noset = "11111111 Life Drain on me!!!",
 	xx2noset = "22222 Life Drain Help!!! Help!!!",
 	xx3noset = "I'm gonna be sucked to death---------"
+	dx		= "HELP LIFE DRAIN HERE!!"
 })
 
 ----------------
@@ -317,6 +328,7 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP		= "Voice Warning: Important Skills",
+	HudMAPF			= "HUD MAP：$spell:136248",
 	warnDebuffCount		= "Warning: when you got debuff",
 	InfoFrame		= "Info Frame: Boss current $journal:6949 skill",
 	RangeFrame		= "Show Range Frame(2 yards / 5 yards)",
@@ -326,7 +338,7 @@ L:SetOptionLocalization({
 L:SetMiscLocalization({
 	BossSpellInfo 	= "Boss Spell Info",
 	AE1				= "Continuous AE",
-	AE2				= "Periodical AE (15s)",
+	AE2				= "Stack Share Damage (15s)",
 	tar5			= "5 yards range (3s)",
 	tar1			= "Pathogen Glands (30s)",
 	speed			= "Speed up 50%",
@@ -346,6 +358,8 @@ L:SetWarningLocalization({
 L:SetOptionLocalization({
 	SoundWOP			= "Voice Warning: Important Skills",
 	SoundCQ				= "Voice Warning: Warn you to help $spell:136954",
+	Mob					= "----Tactical Warning:Kill Adds----",
+	dr					= "----Defensive Warning:$spell:139867----",
 	dr1					= "Defensive Warning: $spell:139867 1",
 	dr2					= "Defensive Warning: $spell:139867 2",
 	dr3					= "Defensive Warning: $spell:139867 3",
@@ -356,13 +370,16 @@ L:SetOptionLocalization({
 	dr8					= "Defensive Warning: $spell:139867 8",
 	dr9					= "Defensive Warning: $spell:139867 9",
 	dr10				= "Defensive Warning: $spell:139867 10",
+	MobA				= "1st Wave Adds",
+	MobB				= "2nd Wave Adds",
+	MobC				= "3rd Wave Adds",
 	SpecWarnJSA			= "Special Warning: Defensive",
 	RangeFrame			= "Show Range Frame(8 yards)",
 	warnMatterSwapped	= "Warning: $spell:138618 target"
 })
 
 L:SetMiscLocalization({
-	Pull		= "The orb explodes!"
+	Pull		= "The orb exploded!"
 })
 
 --------------
@@ -380,9 +397,20 @@ L:SetOptionLocalization({
 	SetIconOnLightningStorm	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(136192),
 	SoundWOP		= "Voice Warning: Important Skills",
 	SoundARAT		= "Voice Warning: Call out $spell:137231 direction",
+	SpecWarnJSA		= "Special Warning: Defensive",
 	ReapetAP		= "Special Function: If you got $spell:136192 call for help continuously",
 	HudMAP			= "HUD MAP: $spell:136192",
 	HudLight		= "HUD MAP: Mark $spell:136193 carrier after lightning phase",
+	dr1			= "Defensive Warning: $spell:136146 1",
+	dr2			= "Defensive Warning: $spell:136146 2",
+	dr3			= "Defensive Warning: $spell:136146 3",
+	dr4			= "Defensive Warning: $spell:136146 4",
+	dr5			= "Defensive Warning: $spell:136146 5",
+	dr6			= "Defensive Warning: $spell:136146 6",
+	dr7			= "Defensive Warning: $spell:136146 7",
+	dispsetLight		= "Warn you if the following players get Arcing Lightning[If set warnings for other players will be ignored]",
+	dispsetLight1		= "Player A",
+	dispsetLight2		= "Player B",		
 	RangeFrame		= "Show Range Frame( will show automatically when too many people around)",
 	InfoFrame		= "Info Frame: $spell:136193"
 })
@@ -446,7 +474,6 @@ L:SetOptionLocalization({
 	timerDayCD			= "Timer: Day Phase",
 	timerDuskCD			= "Timer: Dusk Phase",
 	RangeFrame			= "Range Frame(8 yards)"
-
 })
 
 L:SetMiscLocalization({
@@ -474,9 +501,10 @@ L:SetWarningLocalization({
 L:SetOptionLocalization({
 	SoundWOP		= "Voice Warning: Important Skills",
 	specWarnIntermissionSoon	= "Special Warning: Transition Phase Coming",
+	RangeFrameLB	= "Range Frame: When lightning ball exists switch to 3 yards(H Mode)",
+	cancelhud		= "Cancel HUD when players call out(/say) to not share the damage with them(Input keywords, for example: taking by myself)",
 	HudMAP			= "HUD MAP: $spell:135695",
 	HudMAP2			= "HUD MAP: $spell:136295",
-	cancelhud		= "Cancel HUD when players call out(/say) to not share the damage with them(Input keywords, for example: taking by myself)",
 	RangeFrame		= "Range Frame",--For two different spells
 	StaticShockArrow	= "DBM Arrow: $spell:135695",
 	OverchargeArrow		= "DBM Arrow: $spell:136295",
@@ -489,13 +517,38 @@ L:SetOptionLocalization({
 ------------
 L= DBM:GetModLocalization(831)
 
+L:SetTimerLocalization({
+	timerAnima		= "Next Anima",
+	specWarnVitarun	= "Vitarun Coming"
+})
+
+L:SetOptionLocalization({
+	SoundWOP		= Voice Warning: Important Skill",
+	SoundStrike		= "3 Seconds count down for $spell:138295",
+	specWarnVitarun	= "Special Warning: Vitarun",
+	optDD			= "生命跑位策略",
+	nodd			= "正常循环成员(下方设定编号)",
+	DD1			= "替补1",
+	DD2			= "替补2",
+	DD3			= "替补3",
+	DD4			= "替补4",
+	DD5			= "替补5",
+	lightnumber		= "正常循环成员编号(不会分配编号为0的团员)",
+	lastnumber		= "总共安排了多少正常循环成员[必须填写 非常重要]",
+	HudMAPAnima		= "高级定位监视(HUD)：$spell:138295爆炸",
+	HudMAP			= "高級定位監視(HUD)：$spell:138297",
+	timerAnima		= "计时器：下一次$spell:138295爆炸",
+	SetIconOnUnstableVita	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(138297),
+	SetIconOnUnstableAnima	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(138288)
+})
+
 -------------
 --  Trash  --
 -------------
 L = DBM:GetModLocalization("ToTTrash")
 
 L:SetGeneralLocalization({
-	name =	"Adds"
+	name =	"TOT Adds"
 })
 
 L:SetOptionLocalization({
@@ -503,3 +556,4 @@ L:SetOptionLocalization({
 	HudMAP			= "HUD MAP: $spell:139322/$spell:139900",
 	RangeFrame		= "Range Frame(10 yards)"--For 3 different spells
 })
+
