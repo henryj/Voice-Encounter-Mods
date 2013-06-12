@@ -337,5 +337,5 @@ DBM_CORE_SOUNDGRIL_TEXT_YIKE		= "    夏一可，又名可可超人，女，真�
 DBM_CORE_SOUNDGRIL_NAME_YUN			= "芷小芸"
 DBM_CORE_SOUNDGRIL_TEXT_YUN			= "    芷小芸，来自中国台湾省的魔兽世界美女玩家，现为台服世界之树《黑手之乡》公会人类死亡骑士。"
 
-DBM_CORE_SOUNDGRIL_NAME_SST			= "SST"
-DBM_CORE_SOUNDGRIL_TEXT_SST			= "Alenorosa, Worgen Hunter from Ancient Ones @ US-Dath'Remar"
+DBM_CORE_SOUNDGRIL_NAME_SST			= "Iceoven"
+DBM_CORE_SOUNDGRIL_TEXT_SST			= "All Voice generated via VoiceRss TTS(Text To Speech) API by Iceoven(Worgen Mage from Ancient Ones @ US-Dath'Remar)."

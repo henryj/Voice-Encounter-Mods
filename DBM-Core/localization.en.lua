@@ -315,5 +315,5 @@ DBM_CORE_SOUNDGRIL_TEXT_YIKE		= ""
 DBM_CORE_SOUNDGRIL_NAME_YUN			= "ZHi Xiaoyun"
 DBM_CORE_SOUNDGRIL_TEXT_YUN			= ""
 
-DBM_CORE_SOUNDGRIL_NAME_SST			= "SST"
-DBM_CORE_SOUNDGRIL_TEXT_SST			= "Alenorosa, Worgen Hunter from Ancient Ones @ US-Dath'Remar"
+DBM_CORE_SOUNDGRIL_NAME_SST			= "Iceoven"
+DBM_CORE_SOUNDGRIL_TEXT_SST			= "All Voice generated via VoiceRss TTS(Text To Speech) API by Iceoven(Worgen Mage from Ancient Ones @ US-Dath'Remar)."
