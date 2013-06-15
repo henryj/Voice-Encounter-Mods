@@ -9,6 +9,7 @@ At this moment only the ToT part is here.
 
 All English voice is generated via VoiceRss.org TTS(Text-to-Speech) api.
 
+If you feel uncomfortable with the robot accent and want to contribute as our voice actress/actor. Please contact me. Thanks.
 
 How To Use
 =================
