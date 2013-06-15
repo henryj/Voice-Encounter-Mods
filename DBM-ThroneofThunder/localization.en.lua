@@ -328,7 +328,7 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP		= "Voice Warning: Important Skills",
-	HudMAPF			= "HUD MAP：$spell:136248",
+	HudMAPF			= "HUD MAP: $spell:136248",
 	warnDebuffCount		= "Warning: when you got debuff",
 	InfoFrame		= "Info Frame: Boss current $journal:6949 skill",
 	RangeFrame		= "Show Range Frame(2 yards / 5 yards)",
@@ -503,6 +503,30 @@ L:SetOptionLocalization({
 	specWarnIntermissionSoon	= "Special Warning: Transition Phase Coming",
 	RangeFrameLB	= "Range Frame: When lightning ball exists switch to 3 yards(H Mode)",
 	cancelhud		= "Cancel HUD when players call out(/say) to not share the damage with them(Input keywords, for example: taking by myself)",
+	drpendp2		= "----Defensive: Phase 2----",
+	drpend1			= "$spell:135695 1",
+	drpend2			= "$spell:135695 2",
+	drpend3			= "$spell:135695 3",
+	drpend4			= "$spell:135695 4",
+	drpend5			= "$spell:135695 5",
+	drpendp3		= "----Defensive: Phase 3 Wind----",
+	drend1			= "$spell:136869 1",
+	drend2			= "$spell:136869 2",
+	drend3			= "$spell:136869 3",
+	drend4			= "$spell:136869 4",
+	drend5			= "$spell:136869 5",
+	drend6			= "$spell:136869 6",
+	drpendp3b		= "----Defensive: Phase 3 Thunder----",
+	drendb1			= "$spell:135095 1",
+	drendb2			= "$spell:135095 2",
+	drendb3			= "$spell:135095 3",
+	drendb4			= "$spell:135095 4",
+	drendb5			= "$spell:135095 5",
+	drendb6			= "$spell:135095 6",
+	optDD			= "Reflection shield warning[ignore p1 and transition phase]",
+	nodd			= "I don't use",
+	DD1			= "Reflection shield A (odd)",
+	DD2			= "Reflection shield B (even)",
 	HudMAP			= "HUD MAP: $spell:135695",
 	HudMAP2			= "HUD MAP: $spell:136295",
 	RangeFrame		= "Range Frame",--For two different spells
@@ -537,7 +561,7 @@ L:SetOptionLocalization({
 	lastnumber		= "How many normal rotation players was assigned?[Required!Very Important!!]",
 	HudMAPAnima		= "HUD MAP: $spell:138295",
 	HudMAP			= "HUD MAP: $spell:138297",
-	timerAnima		= "Timer：Next $spell:138295",
+	timerAnima		= "Timer: Next $spell:138295",
 	SetIconOnUnstableVita	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(138297),
 	SetIconOnUnstableAnima	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(138288)
 })
@@ -556,4 +580,3 @@ L:SetOptionLocalization({
 	HudMAP			= "HUD MAP: $spell:139322/$spell:139900",
 	RangeFrame		= "Range Frame(10 yards)"--For 3 different spells
 })
-

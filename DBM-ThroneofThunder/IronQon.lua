@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 --BH ADD
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 9705 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9745 $"):sub(12, -3))
 mod:SetCreatureID(68078, 68079, 68080, 68081)--Ro'shak 68079, Quet'zal 68080, Dam'ren 68081, Iron Qon 68078
 mod:SetMainBossID(68078)
 mod:SetQuestID(32754)
@@ -133,6 +133,7 @@ local function updateHealthFrame()
 	end
 end
 
+--Custom, don't use IsTanking prototype here
 local function notEligable(unit)
 	-- 1. check blizzard tanks first
 	-- 2. check blizzard roles second
@@ -322,9 +323,10 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 	elseif args.spellId == 134647 then
 		if args:IsPlayer() then
+			local amount = args.amount or 1
 			timerScorched:Start()
-			if (args.amount or 1) > 2 then
-				specWarnScorched:Show(args.amount or 1)
+			if amount > 2 then
+				specWarnScorched:Show(amount)
 			end
 		end
 		--[[

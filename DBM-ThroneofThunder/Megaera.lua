@@ -3,8 +3,8 @@ local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 local sndXL	= mod:NewSound(nil, "SoundXL", true)
 
-mod:SetRevision(("$Revision: 9721 $"):sub(12, -3))
-mod:SetCreatureID(68065, 70212, 70235, 70247)--flaming 70212. Frozen 70235, Venomous 70247
+mod:SetRevision(("$Revision: 9808 $"):sub(12, -3))
+mod:SetCreatureID(68065, 70235, 70247)--Frozen 70235, Venomous 70247 (only 2 heads that ever start in front, so no need to look for combat with arcane or fire for combat detection)
 mod:SetMainBossID(68065)
 mod:SetQuestID(32748)
 mod:SetZone()
@@ -13,6 +13,7 @@ mod:SetUsedIcons(7, 6, 4, 2)
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
+	"RAID_BOSS_WHISPER",
 	"SPELL_CAST_SUCCESS",
 	"SPELL_AURA_APPLIED",
 	"SPELL_AURA_APPLIED_DOSE",
@@ -22,7 +23,6 @@ mod:RegisterEventsInCombat(
 	"SPELL_PERIODIC_DAMAGE",
 	"SPELL_PERIODIC_MISSED",
 	"CHAT_MSG_RAID_BOSS_EMOTE",
-	"RAID_BOSS_WHISPER",
 	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3 boss4 boss5",
 	"UNIT_DIED"
 )
@@ -78,13 +78,7 @@ local timerNetherTearCD			= mod:NewCDTimer(25, 140138)--Heroic. Also either 25 o
 mod:AddBoolOption("SetIconOnCinders", true)
 mod:AddBoolOption("SetIconOnTorrentofIce", true)
 
---count will go to hell fast on a DC though. Need to figure out some kind of head status recovery to get active/inactive head counts.
---Maybe add an info frame that shows head status too would be cool such as
----------------------------
---Flaming head: A: 0 I: 2 -
---Frozen head: A: 1 I: 1  -
---Venomous head: A: 1 I: 1-
----------------------------
+
 mod:AddBoolOption("InfoFrame", true, "sound")
 
 mod:AddBoolOption("HudMAP", true, "sound")
@@ -121,33 +115,12 @@ local fireBehind = 0
 local venomBehind = 0
 local iceBehind = 0
 local arcaneBehind = 0
-local rampageCast = 0
 local cinderIcon = 7
 local iceIcon = 6
 local activeHeadGUIDS = {}
 local iceTorrent = GetSpellInfo(139857)
 local torrentExpires = {}
 local arcaneRecent = false
-local UnitExists = UnitExists
-local UnitDetailedThreatSituation = UnitDetailedThreatSituation
-
-local function isTank(unit)
-	-- 1. check blizzard tanks first
-	-- 2. check blizzard roles second
-	-- 3. check boss' highest threat target
-	if GetPartyAssignment("MAINTANK", unit, 1) then
-		return true
-	end
-	if UnitGroupRolesAssigned(unit) == "TANK" then
-		return true
-	end
-	for i = 1, 5 do
-		if UnitExists("boss"..i.."target") and UnitDetailedThreatSituation(unit, "boss"..i) then
-			return true
-		end
-	end
-	return false
-end
 
 local function showheadinfo()
 	if not combat then return end
@@ -161,20 +134,104 @@ local function showheadinfo()
 		local venomBehindcolor = "|cFF088A08"..venomBehind.."|r"
 		local arcaneBehindcolor = "|cFFB91FC7"..arcaneBehind.."|r"
 		if mod:IsDifficulty("heroic10", "heroic25") then
-			DBM.InfoFrame:SetHeader(L.Behind.." ("..(rampageCast + 1).."/7)")
+			DBM.InfoFrame:SetHeader(L.Behind.." ("..(Ramcount + 1).."/7)")
 			DBM.InfoFrame:Show(4, "other", iceBehindcolor, iceinfob, venomBehindcolor, venominfob, fireBehindcolor, fireinfob, arcaneBehindcolor, arcaneinfob)
 		else
-			DBM.InfoFrame:SetHeader(L.Behind.." ("..(rampageCast + 1).."/7)")
+			DBM.InfoFrame:SetHeader(L.Behind.." ("..(Ramcount + 1).."/7)")
 			DBM.InfoFrame:Show(3, "other", iceBehindcolor, iceinfob, venomBehindcolor, venominfob, fireBehindcolor, fireinfob)
 		end
 	end
+end
+
+local function warnTorrent(name)
+	if not name then return end
+	warnTorrentofIce:Show(name)
+	if name == UnitName("player") then
+		if mod:AntiSpam(2, 6) then
+			specWarnTorrentofIceYou:Show()
+			timerTorrentofIce:Start()
+			yellTorrentofIce:Yell()
+			DBM.Flash:Show(0, 0, 1)
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\justrun.mp3") --快跑
+		end
+	else
+		local uId = DBM:GetRaidUnitId(name)
+			if uId then
+				local x, y = GetPlayerMapPosition(uId)
+				if x == 0 and y == 0 then
+				SetMapToCurrentZone()
+				x, y = GetPlayerMapPosition(uId)
+			end
+			local inRange = DBM.RangeCheck:GetDistance("player", x, y)
+			if inRange and inRange < 6 then
+				specWarnTorrentofIceNear:Show(name)
+			end
+		end
+	end
+end
+
+local function findTorrent()
+	for uId in DBM:GetGroupMembers() do
+		local name = DBM:GetUnitFullName(uId)
+		if not name then break end
+		local expires = select(7, UnitDebuff(uId, iceTorrent)) or 0
+		local spellId = select(11, UnitDebuff(uId, iceTorrent)) or 0
+		if spellId == 139857 and expires > 0 and not torrentExpires[expires] then
+			torrentExpires[expires] = true
+			warnTorrent(name)
+			if mod.Options.SetIconOnTorrentofIce then
+				mod:SetIcon(uId, iceIcon, 11)
+				if iceIcon == 6 then
+					iceIcon = 4
+				else
+					iceIcon = 6
+				end
+			end
+			return--Stop loop once found
+		end
+	end
+	mod:Schedule(0.1, findTorrent)
+end
+
+local function CheckHeads(GUID)
+	for i = 1, 5 do
+		if UnitExists("boss"..i) and not activeHeadGUIDS[UnitGUID("boss"..i)] then--Check if new units exist we haven't detected and added yet.
+			activeHeadGUIDS[UnitGUID("boss"..i)] = true
+			local cid = mod:GetCIDFromGUID(UnitGUID("boss"..i))
+			if cid == 70235 then--Frozen
+				iceInFront = iceInFront + 1
+				if iceBehind > 0 then
+					iceBehind = iceBehind - 1
+				end
+			elseif cid == 70212 then--Flaming
+				fireInFront = fireInFront + 1
+				if fireBehind > 0 then
+					fireBehind = fireBehind - 1
+				end
+			elseif cid == 70247 then--Venomous
+				venomInFront = venomInFront + 1
+				if venomBehind > 0 then
+					venomBehind = venomBehind - 1
+				end
+			elseif cid == 70248 then--Arcane
+				arcaneInFront = arcaneInFront + 1
+				if arcaneBehind > 0 then
+					arcaneBehind = arcaneBehind - 1
+				end
+			end
+		end
+	end
+	showheadinfo()
+end
+
+local function clearHeadGUID(GUID)
+	activeHeadGUIDS[GUID] = nil
 end
 
 function mod:OnCombatStart(delay)
 	table.wipe(activeHeadGUIDS)
 	table.wipe(FireMarkers)
 	table.wipe(IceMarkers)
-	rampageCast = 0
 	fireInFront = 0
 	venomInFront = 0
 	iceInFront = 0
@@ -214,6 +271,17 @@ function mod:OnCombatEnd()
 	end
 end
 
+function mod:RAID_BOSS_WHISPER(msg)
+	if msg:find("spell:139866") and self:AntiSpam(2, 6) then
+		specWarnTorrentofIceYou:Show()
+		timerTorrentofIce:Start()
+		yellTorrentofIce:Yell()
+		DBM.Flash:Show(0, 0, 1)
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\justrun.mp3") --快跑
+	end
+end
+
+
 function mod:SPELL_CAST_SUCCESS(args)
 	if args.spellId == 140138 then
 		warnNetherTear:Show()
@@ -224,20 +292,21 @@ function mod:SPELL_CAST_SUCCESS(args)
 		end
 	elseif args.spellId == 139866 then
 		timerTorrentofIceCD:Start(args.sourceGUID)
+		findTorrent()
 	end
 end
 
 function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 139843 then
 		local uId = DBM:GetRaidUnitId(args.destName)
-		if isTank(uId) then
+		if self:IsTanking(uId) then
 			local amount = args.amount or 1
 			warnArcticFreeze:Show(args.destName, amount)
 			if args:IsPlayer() and amount >= 2 then
 				specWarnArcticFreeze:Show(amount)
 			end
 			if not self.Options.timerBreaths then return end
-			if rampageCast == 0 then--In first phase, the breaths aren't at same time because the cds don't start until the specific head is engaged, thus, they can be desynced 1-3 seconds, so we want each breath to use it's own timer until after first rampage
+			if Ramcount == 0 then--In first phase, the breaths aren't at same time because the cds don't start until the specific head is engaged, thus, they can be desynced 1-3 seconds, so we want each breath to use it's own timer until after first rampage
 				timerArcticFreezeCD:Start()
 			else
 				timerBreathsCD:Start()
@@ -245,7 +314,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 	elseif args.spellId == 137731 then
 		local uId = DBM:GetRaidUnitId(args.destName)
-		if isTank(uId) then
+		if self:IsTanking(uId) then
 			local amount = args.amount or 1
 			warnIgniteFlesh:Show(args.destName, amount)
 			if args:IsPlayer() and amount >= 2 then
@@ -256,14 +325,14 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 	elseif args.spellId == 139840 then
 		local uId = DBM:GetRaidUnitId(args.destName)
-		if isTank(uId) then
+		if self:IsTanking(uId) then
 			local amount = args.amount or 1
 			warnRotArmor:Show(args.destName, amount)
 			if args:IsPlayer() and amount >= 2 then
 				specWarnRotArmor:Show(amount)
 			end
 			if not self.Options.timerBreaths then return end
-			if rampageCast == 0 then--In first phase, the breaths aren't at same time because the cds don't start until the specific head is engaged, thus, they can be desynced 1-3 seconds, so we want each breath to use it's own timer until after first rampage
+			if Ramcount == 0 then--In first phase, the breaths aren't at same time because the cds don't start until the specific head is engaged, thus, they can be desynced 1-3 seconds, so we want each breath to use it's own timer until after first rampage
 				timerRotArmorCD:Start()
 			else
 				timerBreathsCD:Start()
@@ -271,7 +340,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 	elseif args.spellId == 139993 then
 		local uId = DBM:GetRaidUnitId(args.destName)
-		if isTank(uId) then
+		if self:IsTanking(uId) then
 			local amount = args.amount or 1
 			warnArcaneDiffusion:Show(args.destName, amount)
 			if args:IsPlayer() and amount >= 2 then
@@ -323,7 +392,7 @@ end
 function mod:SPELL_DAMAGE(sourceGUID, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 139836 and destGUID == UnitGUID("player") and self:AntiSpam(2, 4) then
 		specWarnCindersMove:Show()
-		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\runaway.mp3") --快躲�?
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
 	end
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE
@@ -331,31 +400,27 @@ mod.SPELL_MISSED = mod.SPELL_DAMAGE
 function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 139909 and destGUID == UnitGUID("player") and self:AntiSpam(2, 2) then
 		specWarnTorrentofIce:Show()
-		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\runaway.mp3") --快躲�?
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
 	end
 end
 mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 
 function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 	if msg:find("spell:139458") then
-		self:UnregisterShortTermEvents()--Wipe short term events
-		self:RegisterShortTermEvents(--Re-register without UNIT_AURA. UNIT_AURA during rampage is ridiculous. This saves some CPU
-			"INSTANCE_ENCOUNTER_ENGAGE_UNIT"
-		)
-		rampageCast = rampageCast + 1
-		warnRampage:Show(rampageCast)
-		specWarnRampage:Show(rampageCast)
+		Ramcount = Ramcount + 1
+		warnRampage:Show(Ramcount)
+		specWarnRampage:Show(Ramcount)
 		timerArcticFreezeCD:Cancel()
 		timerRotArmorCD:Cancel()
 		timerBreathsCD:Cancel()
 		timerCinderCD:Cancel()
 		timerTorrentofIceCD:Cancel()
---		timerAcidRainCD:Cancel()
 		timerNetherTearCD:Cancel()
-		timerRampage:Start()
-		Ramcount = Ramcount + 1		
+		timerRampage:Start()	
 		if MyJS() then
 			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_mop_zyjs.mp3") --注意減傷
+		else
+			DBM:PlayCountSound(Ramcount)
 		end		
 	elseif msg == L.rampageEnds or msg:find(L.rampageEnds) then
 		arcaneRecent = false
@@ -383,45 +448,10 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 		if arcaneBehind > 0 then
 			timerNetherTearCD:Start(15)--15-18 seconds after rampages end
 		end
-	end
-end
-
-local function CheckHeads(GUID)
-	for i = 1, 5 do
-		if UnitExists("boss"..i) and not activeHeadGUIDS[UnitGUID("boss"..i)] then--Check if new units exist we haven't detected and added yet.
-			activeHeadGUIDS[UnitGUID("boss"..i)] = true
-			local cid = mod:GetCIDFromGUID(UnitGUID("boss"..i))
-			if cid == 70235 then--Frozen
-				iceInFront = iceInFront + 1
-				if iceBehind > 0 then
-					iceBehind = iceBehind - 1
-				end
-			elseif cid == 70212 then--Flaming
-				fireInFront = fireInFront + 1
-				if fireBehind > 0 then
-					fireBehind = fireBehind - 1
-				end
-			elseif cid == 70247 then--Venomous
-				venomInFront = venomInFront + 1
-				if venomBehind > 0 then
-					venomBehind = venomBehind - 1
-				end
-			elseif cid == 70248 then--Arcane
-				arcaneInFront = arcaneInFront + 1
-				if arcaneBehind > 0 then
-					arcaneBehind = arcaneBehind - 1
-				end
-			end
+		if Ramcount == 6 then
+			MyJSDT()
 		end
 	end
-	if iceBehind > 0 then--We only need UNIT_AURA if there is actually an ice head in back, so this is only time we register it
-		mod:UnregisterShortTermEvents()--Wipe old short term events
-		mod:RegisterShortTermEvents(--Update them with both IEEU and UNIT_AURA
-			"INSTANCE_ENCOUNTER_ENGAGE_UNIT",
-			"UNIT_AURA_UNFILTERED"
-		)
-	end
-	showheadinfo()
 end
 
 --Only real way to detect heads moving from back to front.
@@ -434,7 +464,7 @@ end
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 70628 then--Permanent Feign Death
 		local cid = self:GetCIDFromGUID(UnitGUID(uId))
-		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\gather.mp3")--快集�?
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\gather.mp3")--快集合
 		if cid == 70235 then--Frozen
 			iceInFront = iceInFront - 1
 			iceBehind = iceBehind + 2
@@ -453,10 +483,6 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	end
 end
 
-local function clearHeadGUID(GUID)
-	activeHeadGUIDS[GUID] = nil
-end
-
 --Nil out front boss GUIDs and cancel timers for correct died unit so those units can activate again later
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
@@ -468,64 +494,5 @@ function mod:UNIT_DIED(args)
 		self:Schedule(5, clearHeadGUID, args.destGUID)
 	elseif cid == 70248 then--Arcane
 		self:Schedule(5, clearHeadGUID, args.destGUID)
-	end
-end
-
-function mod:RAID_BOSS_WHISPER(msg)
-	if msg:find("spell:139866") then
-		if self:AntiSpam(2, 6) then
-			specWarnTorrentofIceYou:Show()
-			timerTorrentofIce:Start()
-			yellTorrentofIce:Yell()
-			DBM.Flash:Show(0, 0, 1)
-			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\justrun.mp3") --快跑
-		end
-	end
-end
-
-local function warnTorrent(name)
-	if not name then return end
-	warnTorrentofIce:Show(name)
-	if name == UnitName("player") then
-		if mod:AntiSpam(2, 6) then
-			specWarnTorrentofIceYou:Show()
-			timerTorrentofIce:Start()
-			yellTorrentofIce:Yell()
-			DBM.Flash:Show(0, 0, 1)
-			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\justrun.mp3") --快跑
-		end
-	else
-		local uId = DBM:GetRaidUnitId(name)
-			if uId then
-				local x, y = GetPlayerMapPosition(uId)
-				if x == 0 and y == 0 then
-				SetMapToCurrentZone()
-				x, y = GetPlayerMapPosition(uId)
-			end
-			local inRange = DBM.RangeCheck:GetDistance("player", x, y)
-			if inRange and inRange < 3 then
-				specWarnTorrentofIceNear:Show(name)
-			end
-		end
-	end
-end
-
---Combat log bugged, UNIT_AURA only good way to work around.
-function mod:UNIT_AURA_UNFILTERED(uId)
-	local name = DBM:GetUnitFullName(uId)
-	if not name then return end
-	local expires = select(7, UnitDebuff(uId, iceTorrent)) or 0
-	local spellId = select(11, UnitDebuff(uId, iceTorrent)) or 0
-	if spellId == 139857 and expires > 0 and not torrentExpires[expires] then
-		torrentExpires[expires] = true
-		warnTorrent(name)
-		if self.Options.SetIconOnTorrentofIce then
-			self:SetIcon(uId, iceIcon, 11)
-			if iceIcon == 6 then
-				iceIcon = 4
-			else
-				iceIcon = 6
-			end
-		end
 	end
 end

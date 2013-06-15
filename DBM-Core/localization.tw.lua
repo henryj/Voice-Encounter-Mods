@@ -6,12 +6,11 @@ DBM_HOW_TO_USE_MOD					= "歡迎使用黑手之鄉DBM-語音版。在聊天頻�
 DBM_FORUMS_MESSAGE					= "發現BUG或錯誤? 希望有新的警告，計時器或是特別功能? \n |HDBM:論壇|h|cff3588ffhttp://bbs.ngacn.cc/read.php?tid=5397726&page=1|r (你可以點擊複製網址)"
 DBM_FORUMS_COPY_URL_DIALOG			= "拜訪我們的討論與支援論壇\r"
 
-
 DBM_CORE_LOAD_MOD_ERROR				= "載入%s模組時發生錯誤：%s"
 DBM_CORE_LOAD_MOD_SUCCESS			= "成功載入%s模組。輸入/dbm或/dbm help有更多選項。"
+DBM_CORE_LOAD_MOD_COMBAT			= "延遲載入'%s'直到離開戰鬥"
 DBM_CORE_LOAD_GUI_ERROR				= "無法載入圖形介面：%s"
 DBM_CORE_LOAD_GUI_COMBAT			= "圖形介面不能在戰鬥中初始化。圖形介面將在戰鬥後自動讀取，這樣就能夠在戰鬥中使用。"
-DBM_CORE_LOAD_MOD_COMBAT			= "延遲讀取模塊 '%s' 直到你脫離戰鬥"
 DBM_CORE_BAD_LOAD					= "DBM偵測到你的此副本的模組在戰鬥中讀取失敗。一旦脫離戰鬥，請立即輸入/consoel reloadui重新載入。"
 
 DBM_CORE_LOOT_SPEC_REMINDER			= "你目前的專精為:%s。而你目前的拾取選擇為:%s。"
@@ -40,12 +39,10 @@ DBM_CORE_TIMER_FORMAT_SECS			= "%d秒"
 DBM_CORE_TIMER_FORMAT_MINS			= "%d分鐘"
 DBM_CORE_TIMER_FORMAT				= "%d分%d秒"
 
-DBM_CORE_MIN					= "分"
-DBM_CORE_MIN_FMT				= "%d分"
-DBM_CORE_SEC					= "秒"
-DBM_CORE_SEC_FMT				= "%d秒"
-DBM_CORE_DEAD					= "死亡"
-DBM_CORE_OK						= "確定"
+DBM_CORE_MIN						= "分"
+DBM_CORE_MIN_FMT					= "%d分"
+DBM_CORE_SEC						= "秒"
+DBM_CORE_SEC_FMT					= "%d秒"
 
 DBM_CORE_GENERIC_WARNING_DUPLICATE		= "%s之一"
 DBM_CORE_GENERIC_WARNING_BERSERK		= "%s%s後狂暴"
@@ -85,12 +82,12 @@ DBM_CORE_YOUR_VERSION_OUTDATED			= "你的 Deadly Boss Mod 已經過期。請到
 --DBM_BIG_WIGS (Same as English locales)
 --DBM_BIG_WIGS_ALPHA (Same as English locales)
 
-DBM_CORE_UPDATEREMINDER_HEADER			= "你的 Deadly Boss Mod 已經過期。\n你可以在此網址下載到新版本%s(r%d)："
-DBM_CORE_UPDATEREMINDER_HEADER_ALPHA		= "你的 Deadly Boss Mod 已經過期至少 %d 個版本。"
+DBM_CORE_UPDATEREMINDER_HEADER			= "你的Deadly Boss Mod已經過期。\n你可以在此網址下載到新版本%s(r%d)："
+DBM_CORE_UPDATEREMINDER_HEADER_ALPHA	= "你的alpha版本Deadly Boss Mods已經過期。\n 你至少落後%d個測試版本。建議DBM使用者使用最新的alpha或最新的穩定版本。過期的alpha版本可能會有低落或未完成的功能。"
 DBM_CORE_UPDATEREMINDER_FOOTER			= "按下" .. (IsMacClient() and "Cmd-C" or "Ctrl-C")  ..  "：複製下載網址到剪貼簿。"
 DBM_CORE_UPDATEREMINDER_FOOTER_GENERIC	= "按下" .. (IsMacClient() and "Cmd-C" or "Ctrl-C")  ..  "：複製網址到剪貼簿。"
 DBM_CORE_UPDATEREMINDER_NOTAGAIN		= "當有新版本時顯示彈出提示"
-DBM_CORE_UPDATEREMINDER_DISABLE			= "警告：你的DBM已經過時相當多的版本（%d個版本），它已被禁用直到你更新。這是為了確保它不會導致你或其他團隊成員出錯。"
+DBM_CORE_UPDATEREMINDER_DISABLE			= "警告: 你的DBM版本已大幅度的過期(%d修訂版)，已禁用除非更新。這是為了確保舊而不相容的程式碼不會對你而團隊夥伴造成低落的遊戲體驗。"
 
 DBM_CORE_MOVABLE_BAR				= "拖動我!"
 
@@ -109,9 +106,7 @@ DBM_CORE_RANGECHECK_SOUND_OPTION_2	= "當多於一位玩家在範圍內時播放
 DBM_CORE_RANGECHECK_SOUND_0			= "沒有音效"
 DBM_CORE_RANGECHECK_SOUND_1			= "預設音效"
 DBM_CORE_RANGECHECK_SOUND_2			= "蜂鳴聲"
-DBM_CORE_RANGECHECK_HIDE			= "隱藏"
 DBM_CORE_RANGECHECK_SETRANGE_TO		= "%d碼"
-DBM_CORE_RANGECHECK_LOCK			= "鎖定框架"
 DBM_CORE_RANGECHECK_OPTION_FRAMES	= "框架"
 DBM_CORE_RANGECHECK_OPTION_RADAR	= "顯示雷達框架"
 DBM_CORE_RANGECHECK_OPTION_TEXT		= "顯示文字框"
@@ -119,8 +114,6 @@ DBM_CORE_RANGECHECK_OPTION_BOTH		= "兩者都顯示"
 DBM_CORE_RANGERADAR_HEADER			= "距離雷達(%d碼)"
 DBM_CORE_RANGERADAR_IN_RANGE_TEXT	= "%d玩家在範圍內"
 
-DBM_CORE_INFOFRAME_LOCK				= "鎖定框架"
-DBM_CORE_INFOFRAME_HIDE				= "隱藏"
 DBM_CORE_INFOFRAME_SHOW_SELF		= "總是顯示你的能量"
 
 DBM_LFG_INVITE						= "地城準備確認"
@@ -142,9 +135,6 @@ DBM_CORE_SLASHCMD_HELP				= {
 DBM_ERROR_NO_PERMISSION				= "無權進行此操作。"
 
 DBM_CORE_BOSSHEALTH_HIDE_FRAME		= "關閉血量框架"
-
-DBM_CORE_ALLIANCE				= "聯盟"
-DBM_CORE_HORDE					= "部落"
 
 DBM_CORE_WORLD_BOSS					= "世界首領"
 DBM_CORE_UNKNOWN					= "未知"
@@ -276,8 +266,8 @@ DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT2		= "倒計時：$spell:%s的消散時間"
 DBM_CORE_AUTO_COUNTOUT_OPTION_TEXT		= "正計時：$spell:%s的持續時間"
 DBM_CORE_AUTO_YELL_OPTION_TEXT			= "自動喊話：當你中了$spell:%s時"
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT		= "" .. UnitName("player") .. "中了%s!"
-DBM_CORE_AUTO_RANGE_OPTION_TEXT			= "距離監視(%s)：$spell:%s"--string used for range so we can use things like "5/2" as a value for that field
-DBM_CORE_AUTO_RANGE_OPTION_TEXT_SHORT		= "距離監視(%s)"--For when a range frame is just used for more than one thing
+DBM_CORE_AUTO_RANGE_OPTION_TEXT			= "距離監視(%s)：$spell:%s"
+DBM_CORE_AUTO_RANGE_OPTION_TEXT_SHORT		= "距離監視(%s)"
 
 
 -- New special warnings
@@ -322,8 +312,8 @@ DBM_CORE_LAG_ENTRY					= "%s：世界延時[%d毫秒] / 本地延時[%d毫秒]"
 DBM_CORE_LAG_FOOTER					= "未反饋此次檢測的團員:%s"
 
 DBM_CORE_GUILDAD_HEADER_GENERIC		= "黑手之鄉簡介"
-DBM_CORE_GUILDAD_GENERIC			= "        黑手之鄉成立于2007年10月17日，前身是國服三區雷斧堡壘的聯盟公會盟誓的二團。團長一直是阿爾貝裏希（在台服改名爲Alberich）。\n\n        2010年1月，黑手的骨幹十多名玩家一起轉戰台服pve服務器眾星之子，看重的就是這個服務器良好的pve氛圍，希望能在台服繼續我們的夢想。4.2國服同步後，由于團隊已經一部分本土化，亦對台服良好的玩家素質，服務器良好的raid氛圍表示滿意，團隊留在了台服並准備一直留下去。\n\n        建會以來，團隊一直保持了比較強的開荒強度，鍛煉了團隊，也收集了很多優秀的宅男。公會現有25人團隊一支，從3.3至今所有版本25人H模式當前版本皆全通。5.1版本25人團排名臺服第八，並轉服至世界之樹，5.2版本25人團隊進度服務器領先！\n\n        公會活動時間：開荒期間周四五六 周一二三(也就是除了周日都有活動)，farm期間周五周六周一周二(或者更少)，晚上7:40開組，8:00開打，12:00左右結束(平時有的時候早點，不到12點就結束，周五周六到12：00左右)。"
-DBM_CORE_GUILDAD_FOOTER_GENERIC		= "|h|cff3588ff重點招募\n術士       元素薩       奶僧       奶薩\n要求:加QQ談   聯系QQ:313082736 注明wow和自己的職業|r|h"
+DBM_CORE_GUILDAD_GENERIC			= "        黑手之鄉成立于2007年10月17日，前身是國服三區雷斧堡壘的聯盟公會盟誓的二團。團長一直是阿爾貝裏希（在台服改名爲Aberich）。\n\n        2010年1月，黑手的骨幹十多名玩家一起轉戰台服pve服務器眾星之子，看重的就是這個服務器良好的pve氛圍，希望能在台服繼續我們的夢想。4.2國服同步後，由于團隊已經一部分本土化，亦對台服良好的玩家素質，服務器良好的raid氛圍表示滿意，團隊留在了台服並准備一直留下去。\n\n        建會以來，團隊一直保持了比較強的開荒強度，鍛煉了團隊，也收集了很多優秀的宅男。公會現有25人團隊一支，從3.3至今所有版本25人H模式當前版本皆全通。5.1版本25人團排名臺服第八，並轉服至世界之樹，5.3版本用25人模式拿下萊公首殺！\n\n        公會活動時間：開荒期間周四五六 周一二三(也就是除了周日都有活動)，farm期間周五周六周一周二(或者更少)，晚上7:40開組，8:00開打，12:00左右結束(平時有的時候早點，不到12點就結束，周五周六到12：00左右)。"
+DBM_CORE_GUILDAD_FOOTER_GENERIC		= "|h|cff3588ff重點招募\n術士             鳥德             奶僧\n具體要求加QQ談   聯系QQ:313082736 注明wow和自己的職業|r|h"
 
 DBM_CORE_SOUNDGRIL_NAME_YIKE		= "夏一可"
 DBM_CORE_SOUNDGRIL_TEXT_YIKE		= "    夏一可，又名可可超人，女，真名不詳，《我叫MT》中法師和美屢的配音，魔獸世界知名解說，部落控。2009年進入西南科技大學。高三時因參加唱響艾澤拉斯而成名。"

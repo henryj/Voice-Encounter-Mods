@@ -4,7 +4,7 @@ local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 local sndXG		= mod:NewSound(nil, "SoundXG", true)
 local sndAE		= mod:NewSound(nil, "SoundAE", true)
 
-mod:SetRevision(("$Revision: 9709 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9795 $"):sub(12, -3))
 mod:SetCreatureID(67977)
 mod:SetQuestID(32747)
 mod:SetZone()
@@ -221,6 +221,7 @@ local function resetaddstate()
 end
 
 mod:RegisterOnUpdateHandler(function(self)
+	if DBM:GetLowestBossHealth() * 100 < 10 then return end
 	if hasHighestVersion and not (iconsSet == 3) then
 		for uId in DBM:GetGroupMembers() do
 			local unitid = uId.."target"
@@ -318,8 +319,6 @@ function mod:SPELL_CAST_SUCCESS(args)
 end
 
 --Does not show in combat log, so UNIT_AURA must be used instead
---This needs to be switched to RegisterUnitEvent once tandanu is done wit that code.
---that way dbm isn't checking if it's boss1 325635325 times a fight.
 function mod:UNIT_AURA(uId)
 	local _, _, _, _, _, duration, expires = UnitDebuff(uId, shellConcussion)
 	if expires and lastConcussion ~= expires then

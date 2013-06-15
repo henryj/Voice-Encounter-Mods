@@ -117,6 +117,7 @@ L.ShowWarningsInChat 		= "在聊天窗口中显示警报"
 L.ShowFakedRaidWarnings 	= "以伪装团队警报信息的方式显示警报内容"
 L.WarningIconLeft 			= "左侧显示图标"
 L.WarningIconRight 			= "右侧显示图标"
+L.WarningIconChat 			= "在聊天框显示图标"
 L.ShowCountdownText			= "显示倒数文字"
 L.RaidWarnMessage 			= "感谢您使用Deadly Boss Mods"
 L.BarWhileMove 				= "可移动团队警报"
@@ -208,11 +209,12 @@ L.Area_PullTimer				= "开怪倒计时过滤设置"
 L.DontShowPT					= "不显示开怪倒计时条"
 L.DontShowPTCountdownText		= "不显示开怪倒计时动画"
 L.DontPlayPTCountdown			= "不播放开怪倒计时语音"
+L.DontShowPTText				= "不显示开怪倒计时文字"
 
 -- Misc
 L.FontHeight	= 20
 
-L.sst = "SST(EN)"
+L.sst = "Iceoven(EN)"
 L.yike = "夏一可(CN)"
 L.yun =  "芷小芸(TW)"
 L.other =  "自定义"

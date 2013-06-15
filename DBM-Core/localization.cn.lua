@@ -10,7 +10,6 @@ DBM_HOW_TO_USE_MOD					= "欢迎使用DBM。在聊天框输入 /dbm help 以获�
 DBM_FORUMS_MESSAGE					= "发现BUG或错误的计时器?你希望要让某些模组有新的警告，计时器或是特别功能?\n拜访新的Deadly Boss Mods讨论，臭虫回报与功能要求论坛 |HDBM:论坛|h|cff3588ffhttp://bbs.ngacn.cc/read.php?tid=5397726&page=1|r (你可以点击链接复制网址)"
 DBM_FORUMS_COPY_URL_DIALOG			= "拜访我们的讨论与支持论坛\r"
 
-
 DBM_CORE_LOAD_MOD_ERROR				= "读取%s模块时发生错误：%s"
 DBM_CORE_LOAD_MOD_SUCCESS			= "成功读取%s模块。在聊天框输入 /dbm 或 /dbm help 可进行更多设置。"
 DBM_CORE_LOAD_GUI_ERROR				= "无法读取图形界面：%s"

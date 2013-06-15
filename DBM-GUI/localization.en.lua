@@ -5,7 +5,7 @@ local L = DBM_GUI_Translations
 L.MainFrame = "Deadly Boss Mods"
 
 L.TranslationByPrefix		= "Translated by "
-L.TranslationBy 			= "Iceoven" -- your name here, localizers!
+L.TranslationBy 			= "Iceoven"
 L.Website					= "Visit our new discussion and support forums at |cFF73C2FBwww.deadlybossmods.com|r (hosted by Elitist Jerks!)"
 L.WebsiteButton				= "Forums"
 L.SoundMM					= "Voice Actor"
@@ -112,6 +112,7 @@ L.ShowWarningsInChat 		= "Show warnings in chat frame"
 L.ShowFakedRaidWarnings 	= "Show warnings as faked raid warning messages"
 L.WarningIconLeft 			= "Show icon on left side"
 L.WarningIconRight 			= "Show icon on right side"
+L.WarningIconChat 			= "Show icons in chat frame"
 L.ShowCountdownText			= "Show countdown text"
 L.RaidWarnMessage 			= "Thanks for using Deadly Boss Mods"
 L.BarWhileMove 				= "Raid warning movable"
@@ -203,11 +204,12 @@ L.Area_PullTimer				= "Pull Timer Filter Options"
 L.DontShowPT					= "Do not show Pull Timer bar"
 L.DontShowPTCountdownText		= "Do not show Pull Timer countdown text"
 L.DontPlayPTCountdown			= "Do not play Pull Timer countdown audio"
+L.DontShowPTText				= "Do not show announce text for Pull Timer"
 
 -- Misc
 L.FontHeight	= 16
 
-L.sst = "SST(EN)"
+L.sst = "Iceoven(EN)"
 L.yike = "Xia Yike(CN)"
 L.yun =  "Xiao Yun(TW)"
 L.other =  "Custom"

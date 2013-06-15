@@ -335,8 +335,6 @@ function mod:OnEnable()
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA",	"UpdateZoneData")
 	self:RegisterEvent("ZONE_CHANGED_INDOORS", 	"UpdateZoneData")
 	self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-	self:RegisterEvent("LFG_PROPOSAL_SHOW", 	"Readysound")
-	self:RegisterEvent("READY_CHECK", 	"Readysound")
 	self:RegisterEvent("ADDON_LOADED")
 	updateFrame:SetScript("OnUpdate", onUpdate)
 	self.canvas:SetAlpha(db.alpha)
@@ -1300,12 +1298,6 @@ function mod:CoordsToPosition(x, y)
 		return x * 1500, (1 - y) * 1000
 	end
 	return x * zoneScale[1], (1 - y) * zoneScale[2]
-end
-
-function mod:Readysound()
-	if DBM.Options.EnableReadyCheckSound then
-		PlaySoundFile("Sound\\Interface\\levelup2.wav", "Master")
-	end
 end
 
 function mod:UpdateZoneData()

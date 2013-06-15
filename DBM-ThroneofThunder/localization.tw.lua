@@ -501,6 +501,30 @@ L:SetOptionLocalization({
 	HudMAP			= "高級定位監視(HUD)：$spell:135695",
 	HudMAP2			= "高級定位監視(HUD)：$spell:136295",
 	cancelhud		= "當玩家白字說不需要分擔時變換HUD標誌(輸入監視關鍵字 例如:單吃)",
+	drpendp2		= "----減傷提示：第二階段----",
+	drpend1			= "$spell:135695 1",
+	drpend2			= "$spell:135695 2",
+	drpend3			= "$spell:135695 3",
+	drpend4			= "$spell:135695 4",
+	drpend5			= "$spell:135695 5",
+	drpendp3		= "----減傷提示：第三階段強風----",
+	drend1			= "$spell:136869 1",
+	drend2			= "$spell:136869 2",
+	drend3			= "$spell:136869 3",
+	drend4			= "$spell:136869 4",
+	drend5			= "$spell:136869 5",
+	drend6			= "$spell:136869 6",
+	drpendp3b		= "----減傷提示：第三階段雷擊----",
+	drendb1			= "$spell:135095 1",
+	drendb2			= "$spell:135095 2",
+	drendb3			= "$spell:135095 3",
+	drendb4			= "$spell:135095 4",
+	drendb5			= "$spell:135095 5",
+	drendb6			= "$spell:135095 6",
+	optDD			= "盾反提示[不計算P1和轉階段]",
+	nodd			= "我不開",
+	DD1				= "單數盾反A",
+	DD2				= "雙數盾反B",
 	RangeFrame		= "距離監視",--For two different spells
 	RangeFrameLB	= "距離監視：當閃電球存在時切換到3碼(英雄模式)",
 	StaticShockArrow	= "DBM箭頭：$spell:135695",
@@ -514,9 +538,12 @@ L:SetOptionLocalization({
 ------------
 L= DBM:GetModLocalization(831)
 
-L:SetTimerLocalization({
-	timerAnima		= "下一次血靈爆炸",
+L:SetWarningLocalization({
 	specWarnVitarun	= "準備生命傳遞! 快就位!"
+})
+
+L:SetTimerLocalization({
+	timerAnima		= "下一次血靈爆炸"
 })
 
 L:SetOptionLocalization({

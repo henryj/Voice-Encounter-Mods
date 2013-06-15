@@ -40,7 +40,7 @@
 
 
 
-local revision =("$Revision: 9731 $"):sub(12, -3)
+local revision =("$Revision: 9796 $"):sub(12, -3)
 local FrameTitle = "DBM_GUI_Option_"	-- all GUI frames get automatically a name FrameTitle..ID
 local fixeditframe = false
 
@@ -1549,6 +1549,7 @@ local function CreateOptionsMenu()
 		local ShowFakedRaidWarnings = raidwarnoptions:CreateCheckButton(L.ShowFakedRaidWarnings,  true, nil, "ShowFakedRaidWarnings")
 		local WarningIconLeft		= raidwarnoptions:CreateCheckButton(L.WarningIconLeft,  true, nil, "WarningIconLeft")
 		local WarningIconRight 		= raidwarnoptions:CreateCheckButton(L.WarningIconRight,  true, nil, "WarningIconRight")
+		local WarningIconChat 		= raidwarnoptions:CreateCheckButton(L.WarningIconChat,  true, nil, "WarningIconChat")
 		local ShowCountdownText 	= raidwarnoptions:CreateCheckButton(L.ShowCountdownText,  true, nil, "ShowCountdownText")
 
 		-- RaidWarn Sound
@@ -1708,6 +1709,7 @@ local function CreateOptionsMenu()
 				end
 			end)
 		end
+		RaidWarningPanel:SetMyOwnHeight()
 	end
 
 	do
@@ -2132,10 +2134,11 @@ local function CreateOptionsMenu()
 			spamArea:CreateCheckButton(L.ShowBigBrotherOnCombatStart, true, nil, "ShowBigBrotherOnCombatStart")
 			spamArea:CreateCheckButton(L.BigBrotherAnnounceToRaid, true, nil, "BigBrotherAnnounceToRaid")
 		end
-		local spamPTArea = spamPanel:CreateArea(L.Area_PullTimer, nil, 115, true)
+		local spamPTArea = spamPanel:CreateArea(L.Area_PullTimer, nil, 135, true)
 		spamPTArea:CreateCheckButton(L.DontShowPT, true, nil, "DontShowPT")
 		spamPTArea:CreateCheckButton(L.DontShowPTCountdownText, true, nil, "DontShowPTCountdownText")
 		spamPTArea:CreateCheckButton(L.DontPlayPTCountdown, true, nil, "DontPlayPTCountdown")
+		spamPTArea:CreateCheckButton(L.DontShowPTText, true, nil, "DontShowPTText")
 		spamPTArea:AutoSetDimension()
 		spamArea:AutoSetDimension()
 		spamOutArea:AutoSetDimension()
@@ -2218,6 +2221,8 @@ do
 				stats.heroicPulls = stats.heroicPulls or 0
 				stats.challengeKills = stats.challengeKills or 0
 				stats.challengePulls = stats.challengePulls or 0
+				stats.flexKills = stats.flexKills or 0
+				stats.flexPulls = stats.flexPulls or 0
 				stats.normal25Kills = stats.normal25Kills or 0
 				stats.normal25Pulls = stats.normal25Pulls or 0
 				stats.heroic25Kills = stats.heroic25Kills or 0
