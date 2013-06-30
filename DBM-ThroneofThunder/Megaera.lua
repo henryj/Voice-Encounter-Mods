@@ -58,6 +58,7 @@ local yellTorrentofIce			= mod:NewYell(139857)
 local specWarnTorrentofIceNear	= mod:NewSpecialWarningClose(139889)
 local specWarnTorrentofIce		= mod:NewSpecialWarningMove(139909)--Ice left on ground by the beam
 local specWarnNetherTear		= mod:NewSpecialWarningSwitch("ej7816", mod:IsDps())
+local SpecWarnJSA				= mod:NewSpecialWarning("SpecWarnJSA")
 
 local timerRampage				= mod:NewBuffActiveTimer(21, 139458)
 mod:AddBoolOption("timerBreaths", mod:IsTank() or mod:IsHealer(), "timer")--Better to have one option for breaths than 4
@@ -106,6 +107,7 @@ local function MyJS()
 	end
 	return false
 end
+
 
 local fireInFront = 0
 local venomInFront = 0
@@ -357,7 +359,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			yellCinders:Yell()
 --			soundCinders:Play()
 			DBM.Flash:Show(1, 0, 0)
-			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_mop_hydn.mp3")  --快跑 火焰點你
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\firerun.mp3")  --快跑 火焰點你
 		end
 		if self.Options.HudMAP then
 			local spelltext = GetSpellInfo(139822)
@@ -418,7 +420,8 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 		timerNetherTearCD:Cancel()
 		timerRampage:Start()	
 		if MyJS() then
-			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_mop_zyjs.mp3") --注意減傷
+			SpecWarnJSA:Show()
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
 		else
 			DBM:PlayCountSound(Ramcount)
 		end		
@@ -447,9 +450,6 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 		end
 		if arcaneBehind > 0 then
 			timerNetherTearCD:Start(15)--15-18 seconds after rampages end
-		end
-		if Ramcount == 6 then
-			MyJSDT()
 		end
 	end
 end

@@ -67,7 +67,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Tuzi				= "Hoptallus calling bunnies!!"
+	Tuzi				= "Hoptallus lets out a loud screech! The virmen are coming!"
 })
 
 -----------------------
@@ -260,8 +260,8 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	WaveStart	= "Fools! Attacking the might of the mantid head on?  Your deaths will be swift."
-	Mob			= "Joint the battle"
+	WaveStart	= "Fools! Attacking the might of the mantid head on?  Your deaths will be swift.",
+	Mob			= "joins the battle"
 })
 
 -----------------------

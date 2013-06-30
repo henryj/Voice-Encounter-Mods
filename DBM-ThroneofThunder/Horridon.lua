@@ -100,7 +100,6 @@ local berserkTimer				= mod:NewBerserkTimer(720)
 
 -- BH DELETE local soundDireFixate			= mod:NewSound(140946)
 
--- BH ADD
 local nhcount = 1
 local qscount = 0
 local pxcount = 0
@@ -146,7 +145,7 @@ local function checksprange()
 	end
 	mod:Schedule(0.2, checksprange)
 end
--- BH ADD END
+
 local doorNumber = 0
 local direNumber = 0
 local shamandead = 0
@@ -199,11 +198,9 @@ end
 
 function mod:OnCombatEnd()
 	self:UnregisterShortTermEvents()
-	--BH ADD
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Hide()
 	end
-	--BH ADD END
 end
 
 --[[
@@ -236,7 +233,6 @@ function mod:SPELL_CAST_START(args)
 		warnDireCall:Show(direNumber)
 		specWarnDireCall:Show(direNumber)
 		timerDireCallCD:Start(nil, direNumber+1)--CD still reset when he breaks a door?
-		--BH ADD
 		if mod:IsHealer() then
 			if select(2, UnitClass("player")) == "PRIEST" then
 				sndWOP:Schedule(42, "Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_tt_esnh.mp3")
@@ -263,7 +259,6 @@ function mod:SPELL_CAST_START(args)
 		if args.sourceGUID == UnitGUID("target") or args.sourceGUID == UnitGUID("focus") then
 			specWarnFireball:Show(args.sourceName)
 		end
-		--BH ADD END
 	end
 end
 
@@ -330,7 +325,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		pxcount = pxcount + 1
 		if MyJS() then
 			specWarnJSA:Schedule(6)
-			sndWOP:Schedule(6, "Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_mop_zyjs.mp3") --注意減傷
+			sndWOP:Schedule(6, "Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
 		else
 			sndWOP:Schedule(6, "Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\aesoon.mp3") --準備AE
 		end
@@ -455,7 +450,7 @@ function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT(event)
 		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_tt_zscz.mp3") --戰神參戰
 		if MyJS() then
 			specWarnJSA:Schedule(2)
-			sndWOP:Schedule(2, "Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_mop_zyjs.mp3") --注意減傷
+			sndWOP:Schedule(2, "Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
 		else
 			sndWOP:Schedule(2, "Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\aesoon.mp3") --準備AE
 		end
@@ -488,7 +483,7 @@ function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if cid == 69374 then
 		timerBestialCryCD:Cancel()
-		sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_mop_zyjs.mp3")
+		sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\defensive.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\aesoon.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\countthree.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\counttwo.mp3")

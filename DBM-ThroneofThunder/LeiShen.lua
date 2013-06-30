@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 -- BH ADD
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 9819 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9830 $"):sub(12, -3))
 mod:SetCreatureID(68397)--Diffusion Chain Conduit 68696, Static Shock Conduit 68398, Bouncing Bolt conduit 68698, Overcharge conduit 68697
 mod:SetQuestID(32756)
 mod:SetZone()
@@ -113,7 +113,7 @@ mod:AddBoolOption("OverchargeArrow")--On by default because the overcharge targe
 mod:AddBoolOption("StaticShockArrow", false)--Off by default as most static shock stack points are pre defined and not based on running to player, but rathor running to a raid flare on ground
 mod:AddBoolOption("SetIconOnOvercharge", true)
 mod:AddBoolOption("SetIconOnStaticShock", true)
---BH ADD
+
 mod:AddBoolOption("HudMAP", true, "sound")
 mod:AddBoolOption("HudMAP2", true, "sound")
 mod:AddBoolOption("drpendp2", true, "sound")
@@ -180,7 +180,6 @@ local function register(e)
 	DBMHudMap:RegisterEncounterMarker(e)
 	return e
 end
---BH ADD END
 
 local phase = 1
 local warnedCount = 0
@@ -283,7 +282,7 @@ function mod:SPELL_CAST_START(args)
 			thundercount = thundercount + 1
 			self:Schedule(1, function()
 				if MyJSP3B() then
-					sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_mop_zyjs.mp3") --注意減傷
+					sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
 				else
 					DBM:PlayCountSound(thundercount)
 				end
@@ -336,7 +335,11 @@ function mod:SPELL_AURA_APPLIED(args)
 			staticIcon = staticIcon - 1
 		end
 		if not intermissionActive then
-			timerStaticShockCD:Start()
+			if phase == 3 then--Perm abilities he retains in heroic final phase get a 5 second bump on CD
+				timerStaticShockCD:Start(45)
+			else
+				timerStaticShockCD:Start()
+			end
 		end
 		self:Unschedule(warnStaticShockTargets)
 		self:Schedule(0.3, warnStaticShockTargets)
@@ -389,7 +392,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if phase == 2 and self:AntiSpam(3, 12) then
 			lightp2count = lightp2count + 1
 			if MyJSP2() then
-				sndWOP:Schedule(1, "Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_mop_zyjs.mp3") --注意減傷
+				sndWOP:Schedule(1, "Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
 			end
 		end
 	elseif args.spellId == 136295 then
@@ -400,7 +403,11 @@ function mod:SPELL_AURA_APPLIED(args)
 			overchargeIcon = overchargeIcon + 1
 		end
 		if not intermissionActive then
-			timerOverchargeCD:Start()
+			if phase == 3 then--Perm abilities he retains in heroic final phase get a 5 second bump on CD
+				timerOverchargeCD:Start(45)
+			else
+				timerOverchargeCD:Start()
+			end
 		end
 		self:Unschedule(warnOverchargeTargets)
 		self:Schedule(0.3, warnOverchargeTargets)
@@ -822,7 +829,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		end)
 		windcount = windcount + 1
 		if MyJSP3() then
-			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_mop_zyjs.mp3") --注意減傷
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
 		end
 	end
 end

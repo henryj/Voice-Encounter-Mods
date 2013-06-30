@@ -44,15 +44,15 @@ DBM_CORE_MIN_FMT					= "%d分"
 DBM_CORE_SEC						= "秒"
 DBM_CORE_SEC_FMT					= "%d秒"
 
-DBM_CORE_GENERIC_WARNING_DUPLICATE		= "%s之一"
-DBM_CORE_GENERIC_WARNING_BERSERK		= "%s%s後狂暴"
-DBM_CORE_GENERIC_TIMER_BERSERK			= "狂暴"
+DBM_CORE_GENERIC_WARNING_DUPLICATE	= "%s之一"
+DBM_CORE_GENERIC_WARNING_BERSERK	= "%s%s後狂暴"
+DBM_CORE_GENERIC_TIMER_BERSERK		= "狂暴"
 DBM_CORE_OPTION_TIMER_BERSERK			= "計時器：$spell:26662"
-DBM_CORE_GENERIC_TIMER_COMBAT			= "戰鬥開始"
+DBM_CORE_GENERIC_TIMER_COMBAT		= "戰鬥開始"
 DBM_CORE_OPTION_TIMER_COMBAT			= "計時器：戰鬥開始"
-DBM_CORE_OPTION_HEALTH_FRAME			= "顯示首領血量框架"
+DBM_CORE_OPTION_HEALTH_FRAME		= "顯示首領血量框架"
 
-DBM_CORE_OPTION_CATEGORY_TIMERS			= "計時器"
+DBM_CORE_OPTION_CATEGORY_TIMERS		= "計時器"
 DBM_CORE_OPTION_CATEGORY_WARNINGS		= "警告"
 DBM_CORE_OPTION_CATEGORY_SPECWARNINGS	= "特別警告"
 DBM_CORE_OPTION_CATEGORY_SOUND			= "語音版額外選項"
@@ -73,10 +73,10 @@ DBM_CORE_WHISPER_SCENARIO_END_KILL_STATS	= "%s已經完成%s!他們總共有%d�
 DBM_CORE_WHISPER_SCENARIO_END_WIPE			= "%s未完成%s。"
 DBM_CORE_WHISPER_SCENARIO_END_WIPE_STATS	= "%s未完成%s。他們在這個難度總共未完成%d次。"
 
-DBM_CORE_VERSIONCHECK_HEADER			= "Deadly Boss Mods - 版本檢測"
-DBM_CORE_VERSIONCHECK_ENTRY				= "%s：%s(r%d)"
-DBM_CORE_VERSIONCHECK_ENTRY_TWO			= "%s: %s (r%d) & %s (r%d)"
-DBM_CORE_VERSIONCHECK_ENTRY_NO_DBM		= "%s：尚未安裝任何團隊首領模組"
+DBM_CORE_VERSIONCHECK_HEADER		= "Deadly Boss Mods - 版本檢測"
+DBM_CORE_VERSIONCHECK_ENTRY			= "%s：%s(r%d)"
+DBM_CORE_VERSIONCHECK_ENTRY_TWO		= "%s: %s (r%d) & %s (r%d)"
+DBM_CORE_VERSIONCHECK_ENTRY_NO_DBM	= "%s：尚未安裝任何團隊首領模組"
 DBM_CORE_VERSIONCHECK_FOOTER			= "團隊中有%d玩家正在使用DBM / %d玩家正在使用Bigwigs"
 DBM_CORE_YOUR_VERSION_OUTDATED			= "你的 Deadly Boss Mod 已經過期。請到 www.deadlybossmods.com 下載最新版本。"
 --DBM_BIG_WIGS (Same as English locales)
@@ -271,8 +271,8 @@ DBM_CORE_AUTO_RANGE_OPTION_TEXT_SHORT		= "距離監視(%s)"
 
 
 -- New special warnings
-DBM_CORE_MOVE_SPECIAL_WARNING_BAR		= "可拖動的特別警告"
-DBM_CORE_MOVE_SPECIAL_WARNING_TEXT		= "特別警告"
+DBM_CORE_MOVE_SPECIAL_WARNING_BAR	= "可拖動的特別警告"
+DBM_CORE_MOVE_SPECIAL_WARNING_TEXT	= "特別警告"
 
 
 DBM_CORE_RANGE_CHECK_ZONE_UNSUPPORTED	= "在此區域中不支援%d碼的距離檢查。\n已支援的距離有10，11，15及28碼。"
@@ -311,6 +311,8 @@ DBM_CORE_LAG_HEADER					= "Deadly Boss Mods - 延遲檢測"
 DBM_CORE_LAG_ENTRY					= "%s：世界延時[%d毫秒] / 本地延時[%d毫秒]"
 DBM_CORE_LAG_FOOTER					= "未反饋此次檢測的團員:%s"
 
+DBM_CORE_SOUNDVER					= "語音增強版"
+
 DBM_CORE_GUILDAD_HEADER_GENERIC		= "黑手之鄉簡介"
 DBM_CORE_GUILDAD_GENERIC			= "        黑手之鄉成立于2007年10月17日，前身是國服三區雷斧堡壘的聯盟公會盟誓的二團。團長一直是阿爾貝裏希（在台服改名爲Aberich）。\n\n        2010年1月，黑手的骨幹十多名玩家一起轉戰台服pve服務器眾星之子，看重的就是這個服務器良好的pve氛圍，希望能在台服繼續我們的夢想。4.2國服同步後，由于團隊已經一部分本土化，亦對台服良好的玩家素質，服務器良好的raid氛圍表示滿意，團隊留在了台服並准備一直留下去。\n\n        建會以來，團隊一直保持了比較強的開荒強度，鍛煉了團隊，也收集了很多優秀的宅男。公會現有25人團隊一支，從3.3至今所有版本25人H模式當前版本皆全通。5.1版本25人團排名臺服第八，並轉服至世界之樹，5.3版本用25人模式拿下萊公首殺！\n\n        公會活動時間：開荒期間周四五六 周一二三(也就是除了周日都有活動)，farm期間周五周六周一周二(或者更少)，晚上7:40開組，8:00開打，12:00左右結束(平時有的時候早點，不到12點就結束，周五周六到12：00左右)。"
 DBM_CORE_GUILDAD_FOOTER_GENERIC		= "|h|cff3588ff重點招募\n術士             鳥德             奶僧\n具體要求加QQ談   聯系QQ:313082736 注明wow和自己的職業|r|h"
@@ -322,4 +324,4 @@ DBM_CORE_SOUNDGRIL_NAME_YUN			= "芷小芸"
 DBM_CORE_SOUNDGRIL_TEXT_YUN			= "    芷小芸，來自中國台灣省的魔獸世界美女玩家，現為台服世界之樹《黑手之鄉》公會人類死亡騎士。"
 
 DBM_CORE_SOUNDGRIL_NAME_SST			= "Iceoven"
-DBM_CORE_SOUNDGRIL_TEXT_SST			= "All Voice generated via VoiceRss TTS(Text To Speech) API by Iceoven(Worgen Mage from Ancient Ones @ US-Dath'Remar)."
+DBM_CORE_SOUNDGRIL_TEXT_SST			= "    All Voice generated via VoiceRss TTS (Text To Speech), API by Iceoven (Worgen Mage from Ancient Ones @ US-Dath'Remar)."

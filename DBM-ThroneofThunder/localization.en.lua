@@ -1,4 +1,4 @@
-﻿-- English by Iceoven(iceoven@jjw.in)
+-- English by Iceoven(iceoven@jjw.in)
 -- Last update: 11/6/2013
 
 
@@ -156,6 +156,10 @@ L:SetTimerLocalization({
 	timerBreathsCD			= "Next Breath"
 })
 
+L:SetWarningLocalization({
+	SpecWarnJSA			= ">>> Defensive <<<"
+})
+
 L:SetOptionLocalization({
 	SoundWOP		= "Voice Warning: Important Skills",
 	timerBreaths			= "Timer: Next Breath",
@@ -171,6 +175,7 @@ L:SetOptionLocalization({
 	dr7				= "Defensive Warning: $spell:139458 7",
 	dr8				= "Defensive Warning: $spell:139458 8",
 	InfoFrame		= "Info Frame: $journal:7006",
+	SpecWarnJSA			= "Special Warning: Defensive",
 	SetIconOnCinders		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(139822),
 	SetIconOnTorrentofIce	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(139889)
 })
@@ -379,7 +384,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Pull		= "The orb exploded!"
+	Pull		= "The orb explodes!"
 })
 
 --------------

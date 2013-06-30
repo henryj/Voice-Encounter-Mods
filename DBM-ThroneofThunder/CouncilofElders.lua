@@ -263,7 +263,7 @@ function mod:SPELL_CAST_START(args)
 		end	
 		if ((mod.Options.optDD == "DD1") and (boltCasts == 3)) or ((mod.Options.optDD == "DD2") and (boltCasts == 1)) or ((mod.Options.optDD == "DD3") and (boltCasts == 2)) then
 			specWarnDDL:Schedule(2)
-			sndWOP:Schedule(2, "Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_mop_ddzb.mp3") --打斷準備
+			sndWOP:Schedule(2, "Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\interruptsoon.mp3") --打斷準備
 		end
 		--BH ADD END
 	elseif args.spellId == 136521 and args:GetSrcCreatureID() == 69078 then--Filter the ones cast by adds dying.
@@ -518,14 +518,14 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnMarkedSoul:Show()
 --BH DELETE		soundMarkedSoul:Play()
 			DBM.Flash:Show(1, 0, 0)
-			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_mop_aydn.mp3") --快跑 暗影點你
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\shadowrun.mp3") --快跑 暗影點你
 		end
 	elseif args.spellId == 137166 then
 		dischargeCount = dischargeCount + 1
 		warnDischarge:Show(dischargeCount)
 		specWarnDischarge:Show(dischargeCount)
 		if MyJS() then
-			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_mop_zyjs.mp3") --注意減傷
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
 		end
 	elseif args.spellId == 137641 and args:IsPlayer() then
 		specWarnSoulFragment:Show()

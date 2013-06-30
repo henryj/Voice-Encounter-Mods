@@ -660,7 +660,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		end		
 		if MyJS() then
 			specWarnJSA:Show()
-			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_mop_zyjs.mp3") --注意減傷
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
 		else
 			specWarnFistSmash:Show(fistSmashCount)
 			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\aesoon.mp3")
@@ -770,7 +770,7 @@ function mod:UNIT_POWER(uId)
 	if self:IsDifficulty("lfr25") then return end
 	if (self:GetUnitCreatureId(uId) == 68079) and UnitPower(uId) > 50 and not Warned then
 		Warned = true
-		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_mop_nlgg.mp3") --能量過高
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\energyhigh.mp3") --能量過高
 	elseif (self:GetUnitCreatureId(uId) == 68079) and UnitPower(uId) < 20 and Warned then
 		Warned = false
 	end

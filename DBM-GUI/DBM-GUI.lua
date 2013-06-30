@@ -1543,7 +1543,7 @@ local function CreateOptionsMenu()
 		--            Raid Warning Colors            --
 		-----------------------------------------------
 		local RaidWarningPanel = DBM_GUI_Frame:CreateNewPanel(L.Tab_RaidWarning, "option")
-		local raidwarnoptions = RaidWarningPanel:CreateArea(L.RaidWarning_Header, nil, 200, true)
+		local raidwarnoptions = RaidWarningPanel:CreateArea(L.RaidWarning_Header, nil, 250, true)
 
 		local ShowWarningsInChat 	= raidwarnoptions:CreateCheckButton(L.ShowWarningsInChat, true, nil, "ShowWarningsInChat")
 		local ShowFakedRaidWarnings = raidwarnoptions:CreateCheckButton(L.ShowFakedRaidWarnings,  true, nil, "ShowFakedRaidWarnings")

@@ -45,11 +45,11 @@ local timerUnstableAnima						= mod:NewTimer(15, "timerAnima", 138295)
 local specWarnUnstableAnima						= mod:NewSpecialWarningYou(138288)
 local specWarnUnstableAnimaOther				= mod:NewSpecialWarningTarget(138288)
 
-local warnPhase2				= mod:NewPhaseAnnounce(2, 2)
+local warnPhase2								= mod:NewPhaseAnnounce(2, 2)
 
-local warnCallEssence			= mod:NewSpellAnnounce(139040, 4, 139071)
-local specWarnCallEssence		= mod:NewSpecialWarningSpell(139040, mod:IsDps())
-local timerCallEssenceCD		= mod:NewNextTimer(15.5, 139040)
+local warnCallEssence							= mod:NewSpellAnnounce(139040, 4, 139071)
+local specWarnCallEssence						= mod:NewSpecialWarningSpell(139040, mod:IsDps())
+local timerCallEssenceCD						= mod:NewNextTimer(15.5, 139040)
 
 local warnRuinBolt								= mod:NewSpellAnnounce(139087)
 
@@ -277,7 +277,6 @@ function mod:SPELL_AURA_APPLIED(args)
 			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_tt_xndn.mp3") --心能點你
 		else
 			specWarnUnstableAnimaOther:Show(args.destName)
-			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_tt_bwxn.mp3") --不穩定心能
 		end
 		if self.Options.SetIconOnUnstableAnima then
 			self:SetIcon(args.destName, 2)
@@ -316,22 +315,12 @@ function mod:SPELL_AURA_APPLIED(args)
 end
 
 function mod:SPELL_AURA_REMOVED(args)
-	if args.spellId == 138297 then
+	if args:IsSpellID(138297, 138308) then
 		if self.Options.SetIconOnUnstableVita then
 			self:SetIcon(args.destName, 0)
 		end
 		if args:IsPlayer() then
 			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\runin.mp3") --快回人群
-		end
-		if FireMarkers[args.destName] then
-			FireMarkers[args.destName] = free(FireMarkers[args.destName])
-		end
-	elseif args.spellId == 138308 then
-		if self.Options.SetIconOnUnstableVita then
-			self:SetIcon(args.destName, 0)
-		end
-		if args:IsPlayer() then
-			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\runin.mp3")
 		end
 		if FireMarkers[args.destName] then
 			FireMarkers[args.destName] = free(FireMarkers[args.destName])

@@ -349,8 +349,6 @@ function mod:SPELL_CAST_START(args)
 		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_hong.mp3") --紅色快打
 	elseif args.spellId == 134587 and self:AntiSpam(3, 3) then
 		warnIceWall:Show()
-	elseif args.spellId == 137747 then
-		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\dead.mp3")
 	end
 end
 
@@ -538,8 +536,8 @@ function mod:SPELL_AURA_APPLIED(args)
 			DBM.Flash:Show(1, 0, 0)
 			specWarnLingeringGaze:Show()
 			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_tt_xxns.mp3")--小心凝視
-			sndWOP:Schedule(1, "Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_mop_lkzc.mp3")
-			sndWOP:Schedule(2, "Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_mop_lkzc.mp3")
+			sndWOP:Schedule(1, "Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\leavecenter.mp3")
+			sndWOP:Schedule(2, "Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\leavecenter.mp3")
 			yellLingeringGazeFix:Yell()
 --BH DELETE		soundLingeringGaze:Play()
 		end

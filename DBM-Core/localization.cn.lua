@@ -330,6 +330,8 @@ DBM_CORE_LAG_HEADER					= "Deadly Boss Mods - 延时检测"
 DBM_CORE_LAG_ENTRY					= "%s：世界延时[%d毫秒] / 本地延时[%d毫秒]"
 DBM_CORE_LAG_FOOTER					= "未反馈此次检测的团员:%s"
 
+DBM_CORE_SOUNDVER					= "语音增强版"
+
 DBM_CORE_SOUNDGRIL_NAME_YIKE		= "夏一可"
 DBM_CORE_SOUNDGRIL_TEXT_YIKE		= "    夏一可，又名可可超人，女，真名不详，《我叫MT》中法师和美屡的配音，魔兽世界知名解说，部落控。2009年进入西南科技大学。高三时因参加唱响艾泽拉斯而成名。"
 
@@ -337,4 +339,4 @@ DBM_CORE_SOUNDGRIL_NAME_YUN			= "芷小芸"
 DBM_CORE_SOUNDGRIL_TEXT_YUN			= "    芷小芸，来自中国台湾省的魔兽世界美女玩家，现为台服世界之树《黑手之乡》公会人类死亡骑士。"
 
 DBM_CORE_SOUNDGRIL_NAME_SST			= "Iceoven"
-DBM_CORE_SOUNDGRIL_TEXT_SST			= "All Voice generated via VoiceRss TTS(Text To Speech) API by Iceoven(Worgen Mage from Ancient Ones @ US-Dath'Remar)."
+DBM_CORE_SOUNDGRIL_TEXT_SST			= "    All Voice generated via VoiceRss TTS (Text To Speech), API by Iceoven (Worgen Mage from Ancient Ones @ US-Dath'Remar)."

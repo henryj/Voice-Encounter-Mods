@@ -166,48 +166,6 @@ mod.free = function(e, owner, id, noAnimate)
 	return nil
 end
 
-
-
-local defaults = {
-	profile = {
-		hudColor = {},
-		textColor = {r = 0.5, g = 1, b = 0.5, a = 1},
-		scale = 6,
-		alpha = 1,
-		maxSize = UIParent:GetHeight() * 0.48,
-		maxSizeSet = false,
-		interestRadius = 200,
-		minRadius = 30,
-		zoomLevel = 100,
-		enabled = true,
-		useAdaptiveZoom = true,
-		visibility = {
-			anywhere = true
-		},
-		rotateMap = true,
-		labels = {
-			enable = true,
-			size = 20,
-			outline = "THICKOUTLINE"
-		},
-		clipFar = true,
-		clipRadius = true,
-		frameSettings = {
-			inset = 3,
-			border = "Blizzard Tooltip",
-			background = "Blizzard Dialog Background",
-			borderColor = {1, 1, 1, 1},
-			backgroundColor = {0, 0, 0, 1},
-		},
-		autoHide = true,
-		minimapIcon = {},
-		modules = {},
-		mode = "hud"
-	}
-}
-
-
-
 local function groupIter(state, index)
 	if index < 0 then return end
 	local raid, party = GetNumGroupMembers(), GetNumSubgroupMembers()
@@ -248,21 +206,16 @@ do
 		local activeObjects = 0
 		for point, _ in pairs(activePointList) do
 			local d = point:Distance(px, py, true)
-			local maxSize
-			if not db.clipFar then
-				maxSize = UIParent:GetWidth()
-			else
-				maxSize = db.useAdaptiveZoom and db.interestRadius or db.zoomLevel
-			end
+			local maxSize = 200
 			if (d > 0 and d < maxSize and not point.persist) or point.alwaysShow then
 				activeObjects = activeObjects + 1				
 			end
 
-			if d > 0 and d < db.interestRadius and d > maxDistance then
+			if d > 0 and d < 200 and d > maxDistance then
 				maxDistance = d
 			end
 		end
-		if maxDistance < db.minRadius then maxDistance = db.minRadius end
+		if maxDistance < 30 then maxDistance = 30 end
 		return maxDistance, activeObjects
 	end
 	
@@ -283,17 +236,14 @@ do
 			
 			local zoom
 			zoom, mod.activeObjects = computeNewScale()
-			if db.useAdaptiveZoom then
-				targetZoomScale = zoom
-			end
-			
+			targetZoomScale = zoom
 			local currentAlpha = mod.canvas:GetAlpha()
 			if targetCanvasAlpha and currentAlpha ~= targetCanvasAlpha then
 				local newAlpha
 				if targetCanvasAlpha > currentAlpha then
-					newAlpha = min(targetCanvasAlpha, currentAlpha + db.alpha * elapsed / fadeInDelay)
+					newAlpha = min(targetCanvasAlpha, currentAlpha + 1 * elapsed / fadeInDelay)
 				else
-					newAlpha = max(targetCanvasAlpha, currentAlpha - db.alpha * elapsed / fadeOutDelay)
+					newAlpha = max(targetCanvasAlpha, currentAlpha - 1 * elapsed / fadeOutDelay)
 				end
 				if newAlpha == 0 and targetCanvasAlpha then
 					mod.canvas:Hide()
@@ -320,8 +270,6 @@ do
 end
 
 function mod:OnInitialize()
-	self.db = LibStub("AceDB-3.0"):New("DBMHudMapDB", defaults)
-	db = self.db.profile
 	self.canvas = CreateFrame("Frame", "DBMHudMapCanvas", UIParent)
 	self.canvas:SetSize(UIParent:GetWidth(), UIParent:GetHeight())
 	self.canvas:SetPoint("CENTER")
@@ -329,22 +277,20 @@ function mod:OnInitialize()
 end
 
 function mod:OnEnable()
-	db = self.db.profile
 	self:RegisterEvent("PLAYER_ENTERING_WORLD",	"UpdateZoneData")
 	self:RegisterEvent("ZONE_CHANGED", "UpdateZoneData")
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA",	"UpdateZoneData")
 	self:RegisterEvent("ZONE_CHANGED_INDOORS", 	"UpdateZoneData")
 	self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-	self:RegisterEvent("ADDON_LOADED")
 	updateFrame:SetScript("OnUpdate", onUpdate)
-	self.canvas:SetAlpha(db.alpha)
+	self.canvas:SetAlpha(1)
 	self:UpdateCanvasPosition()
 	
 	if not self.addedProfiles then
 		self.addedProfiles = true
 	end
 	
-	targetZoomScale = db.scale	
+	targetZoomScale = 6	
 	mod.pixelsPerYard = UIParent:GetHeight() / self:GetMinimapSize()	
 	self:SetZoom()
 	self:UpdateFrame()
@@ -374,12 +320,8 @@ end
 
 function mod:UpdateCanvasPosition()
 	self.canvas:ClearAllPoints()
-	if db.canvasX and db.canvasY then
-		self.canvas:SetPoint("CENTER", UIParent, "CENTER", db.canvasX, db.canvasY)
-	else
-		self.canvas:SetPoint("CENTER", UIParent, "CENTER")
-	end	
-	self.canvas:SetSize(db.maxSize * 2, db.maxSize * 2)
+	self.canvas:SetPoint("CENTER", UIParent, "CENTER")
+	self.canvas:SetSize((UIParent:GetHeight() * 0.48) * 2, (UIParent:GetHeight() * 0.48) * 2)
 end
 
 function mod:COMBAT_LOG_EVENT_UNFILTERED(ev, timestamp, event, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellID, ...)
@@ -392,11 +334,6 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(ev, timestamp, event, hideCaster, sourc
 	end
 end
 
-function mod:ADDON_LOADED(ev, name)
-	if name == "Blizzard_GlyphUI" or name == "Blizzard_TalentUI" then
-		TalentFrame_LoadUI()
-	end
-end
 -----------------------------------
 --- Points
 -----------------------------------
@@ -697,8 +634,8 @@ Edge = setmetatable({
 			local d2 = math_pow(px - dx, 2) + math_pow(py - dy, 2)
 			visible = d1 < radius or d2 < radius
 			
-			sx, sy = mod:LocationToMinimapOffset(sx, sy, db.clipFar, self.radiusClipOffset, self.fixedClipOffset)
-			dx, dy = mod:LocationToMinimapOffset(dx, dy, db.clipFar, self.radiusClipOffset, self.fixedClipOffset)
+			sx, sy = mod:LocationToMinimapOffset(sx, sy, true, self.radiusClipOffset, self.fixedClipOffset)
+			dx, dy = mod:LocationToMinimapOffset(dx, dy, true, self.radiusClipOffset, self.fixedClipOffset)
 		end
 		if visible then
 			local ox = mod.canvas:GetWidth() / 2
@@ -790,11 +727,11 @@ do
 			
 			self.callbacks:Fire("Update", self)
 			
-			if db.clipFar and not self.alwaysShow then
+			if not self.alwaysShow then
 				local distance
 				local px, py = mod:GetUnitPosition("player")
-				distance, x, y = self:Distance(px, py, db.clipRadius)
-				if distance > (db.useAdaptiveZoom and db.interestRadius or db.zoomLevel) then
+				distance, x, y = self:Distance(px, py, true)
+				if distance > 200 then
 					self:Hide()
 					return
 				end
@@ -1003,7 +940,7 @@ do
 			self.text.xOff = xOff or self.text.xOff or 0
 			self.text.yOff = yOff or self.text.yOff or 0
 			
-			if not text or text == "" or not db.labels.enable then
+			if not text or text == "" then
 				self.text:SetText(nil)
 				self.text:Hide()
 			else
@@ -1011,9 +948,9 @@ do
 				self.text:SetTextColor(self.text.r, self.text.g, self.text.b, self.text.a)
 				self.text:Show()
 				local f, s, m = self.text:GetFont()
-				local font = db.labels.font or f
-				local size = fontSize or db.labels.size or s
-				local outline = outline or db.labels.outline or m
+				local font = f
+				local size = fontSize or 20 or s
+				local outline = outline or "THICKOUTLINE" or m
 				self.text:SetFont(font, size, outline)
 				self.text:SetText(text)
 			end
@@ -1345,9 +1282,8 @@ function mod:SetZoom(zoom, zoomChange)
 	elseif zoomChange then
 		targetZoomScale = targetZoomScale + zoomChange
 	else
-		targetZoomScale = db.zoomLevel
+		targetZoomScale = 100
 	end
-	db.zoomLevel = targetZoomScale
 	if targetZoomScale < 20 then
 		targetZoomScale = 20
 	elseif targetZoomScale > 200 then
@@ -1374,8 +1310,8 @@ do
 		local distance = math_sqrt((e*e)+(f*f)) + offset
 		local scaleFactor
 		if distance ~= 0 then
-			scaleFactor = 1 - (db.maxSize / distance)
-			if distance > db.maxSize then
+			scaleFactor = 1 - ((UIParent:GetHeight() * 0.48) / distance)
+			if distance > (UIParent:GetHeight() * 0.48) then
 				dx = dx + (scaleFactor * e)
 				dy = dy + (scaleFactor * f)
 				clipped = true
@@ -1387,7 +1323,7 @@ do
 	local function ClipPointToEdges(dx, dy, offset)
 		local nx, ny
 		local px, py = 0, 0
-		local z2 = db.maxSize
+		local z2 = (UIParent:GetHeight() * 0.48)
 		dx, dy = ClipPointToRadius(dx, dy, offset)
 		nx = min(max(dx, px - z2 + offset), px + z2 - offset)
 		ny = min(max(dy, py - z2 + offset), py + z2 - offset)
@@ -1399,42 +1335,29 @@ do
 	end
 	
 	function mod:LocationToMinimapOffset(x, y, alwaysShow, radiusOffset, pixelOffset)
-		mod.pixelsPerYard = db.maxSize / zoomScale
+		mod.pixelsPerYard = (UIParent:GetHeight() * 0.48) / zoomScale
 		local px, py = self:GetUnitPosition("player")
 		local dx, dy
 		local nx, ny
-		if db.rotateMap then
-			dx = (px - x) * mod.pixelsPerYard
-			dy = (py - y) * mod.pixelsPerYard
-		else
-			dx = (x - px) * mod.pixelsPerYard
-			dy = (y - py) * mod.pixelsPerYard
-		end
+		dx = (px - x) * mod.pixelsPerYard
+		dy = (py - y) * mod.pixelsPerYard
 		
 		-- Now adjust for rotation
-		if db.rotateMap then
-			local bearing = GetPlayerFacing()
-			local angle = math_atan2(dx, dy)
-			local hyp = math.abs(math_sqrt((dx * dx) + (dy * dy)))
-			local x, y = math_sin(angle + bearing), math_cos(angle + bearing)
-			nx, ny = -x * hyp, -y * hyp
-		else
-			nx, ny = dx, dy
-		end
+		local bearing = GetPlayerFacing()
+		local angle = math_atan2(dx, dy)
+		local hyp = math.abs(math_sqrt((dx * dx) + (dy * dy)))
+		local x, y = math_sin(angle + bearing), math_cos(angle + bearing)
+		nx, ny = -x * hyp, -y * hyp
 		
 		if alwaysShow then
 			local offset = (radiusOffset and radiusOffset * mod.pixelsPerYard) or (pixelOffset and pixelOffset / 2) or 0
-			if db.mode == "hud" then
-				nx, ny = ClipPointToRadius(nx, ny, offset)
-			else	
-				nx, ny = ClipPointToEdges(nx, ny, offset)
-			end
+			nx, ny = ClipPointToRadius(nx, ny, offset)
 		end		
 		return nx, ny
 	end
 
 	function mod:RangeToPixels(range)
-		mod.pixelsPerYard = db.maxSize / zoomScale
+		mod.pixelsPerYard = (UIParent:GetHeight() * 0.48) / zoomScale
 		return mod.pixelsPerYard * range
 	end
 end
@@ -1470,7 +1393,7 @@ function mod:ShowCanvas()
 		self.canvas:SetAlpha(0)
 		self.canvas:Show()
 	end
-	targetCanvasAlpha = db.alpha
+	targetCanvasAlpha = 1
 end
 
 function mod:HideCanvas()

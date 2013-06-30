@@ -43,8 +43,8 @@
 --  Globals/Default Options  --
 -------------------------------
 DBM = {
-	Revision = tonumber(("$Revision: 9817 $"):sub(12, -3)),
-	DisplayVersion = "5.3 Voice Enhanced", -- the string that is shown as version
+	Revision = tonumber(("$Revision: 9830 $"):sub(12, -3)),
+	DisplayVersion = "5.3 "..DBM_CORE_SOUNDVER, -- the string that is shown as version
 	ReleaseRevision = 9810 -- the revision of the latest stable version that is available
 }
 
@@ -73,8 +73,8 @@ DBM.DefaultOptions = {
 	SpecialWarningSound3 = "Sound\\Spells\\PVPFlagTaken.ogg",
 	ModelSoundValue = "Short",
 	ChallengeBest = "Realm",
-	CountdownVoice = "sst",
-	CountdownVoice2 = "sst",
+	CountdownVoice = "Mosh",
+	CountdownVoice2 = "yun",
 	ShowCountdownText = false,
 	RaidWarningPosition = {
 		Point = "TOP",
@@ -699,8 +699,8 @@ do
 			if not DBM.Options.ShowMinimapButton then self:HideMinimapButton() end
 			self.AddOns = {}
 			for i = 1, GetNumAddOns() do
-				local name = GetAddOnInfo(i)
-				if GetAddOnMetadata(i, "X-DBM-Mod") and not checkEntry(bannedMods, name) then
+				local addonName = GetAddOnInfo(i)
+				if GetAddOnMetadata(i, "X-DBM-Mod") and not checkEntry(bannedMods, addonName) then
 					table.insert(self.AddOns, {
 						sort			= tonumber(GetAddOnMetadata(i, "X-DBM-Mod-Sort") or math.huge) or math.huge,
 						type			= GetAddOnMetadata(i, "X-DBM-Mod-Type") or "OTHER",
@@ -715,7 +715,7 @@ do
 						hasChallenge	= tonumber(GetAddOnMetadata(i, "X-DBM-Mod-Has-Challenge") or 0) == 1,
 						noHeroic		= tonumber(GetAddOnMetadata(i, "X-DBM-Mod-No-Heroic") or 0) == 1,
 						noStatistics	= tonumber(GetAddOnMetadata(i, "X-DBM-Mod-No-Statistics") or 0) == 1,
-						modId			= name,
+						modId			= addonName,
 					})
 					for i = #self.AddOns[#self.AddOns].zoneId, 1, -1 do
 						local id = tonumber(self.AddOns[#self.AddOns].zoneId[i])
@@ -1793,8 +1793,14 @@ do
 	end
 
 	local function fixsoundbug()
-		if DBM.Options.CountdownVoice ~= "Mosh" and DBM.Options.CountdownVoice ~= "sst" and DBM.Options.CountdownVoice ~= "yun" and DBM.Options.CountdownVoice ~= "other" then 
-			DBM.Options.CountdownVoice = "sst"
+		if DBM.Options.CountdownVoice ~= "Mosh" and DBM.Options.CountdownVoice ~= "sst" and DBM.Options.CountdownVoice ~= "yun" and DBM.Options.CountdownVoice ~= "other" then
+			if GetLocale() == "zhTW" then
+				DBM.Options.CountdownVoice = "yun"
+			elseif  GetLocale() == "zhCN" then
+				DBM.Options.CountdownVoice = "Mosh"
+			else
+				DBM.Options.CountdownVoice = "sst"
+			end
 		end
 	end
 	
@@ -2067,7 +2073,7 @@ do
 			local openMapID = GetCurrentMapAreaID()--Save current map settings.
 			SetMapToCurrentZone()--Force to right zone
 			local correctMapID = GetCurrentMapAreaID()--Get right info after we set map to right place.
-			LastZoneMapID = correctMapID or -1 --Set accurate zone area id into cache
+			LastZoneMapID = correctMapID --Set accurate zone area id into cache
 			if openMapID ~= correctMapID then
 				SetMapByID(openMapID)--Restore old map settings if they differed to what they were prior to forcing mapchange and user has map open.
 			end
@@ -2076,8 +2082,13 @@ do
 			LastZoneMapID = GetCurrentMapAreaID() --Set accurate zone area id into cache
 		end
 --		self:AddMsg(GetZoneText()..", "..LastZoneMapID)--Debug
-		self:LoadModsOnDemand("zoneId", LastZoneMapID)
-		DBM:UpdateMapSizes()
+		if LastZoneMapID then
+			self:LoadModsOnDemand("zoneId", LastZoneMapID)
+			DBM:UpdateMapSizes()
+		else--zone Id nil (should never happen but god knows with some of the computers people use to play wow and the obnoxious number of addons they loverload their ui with)
+			print("DBM Error: GetCurrentMapAreaID is nil, checking again in 3 seconds")
+			self:Schedule(3, DBM.ZONE_CHANGED_NEW_AREA, self)
+		end
 	end
 	
 	--Faster and more accurate loading for instances, but useless outside of them
@@ -2091,8 +2102,13 @@ do
 	end
 
 	function DBM:LoadModsOnDemand(checkTable, checkValue)
+		if not checkValue and not checkTable then
+			print("DBM Error: LoadModsOnDemand is missing valid args")
+			return
+		end
 		for i, v in ipairs(DBM.AddOns) do
-			if not IsAddOnLoaded(v.modId) and checkEntry(v[checkTable], checkValue) then
+			local modTable = v[checkTable]
+			if not IsAddOnLoaded(v.modId) and modTable and checkEntry(modTable, checkValue) then
 				if self:LoadMod(v) and v.type == "SCENARIO" then
 					DBM:InstanceCheck()
 				end
@@ -3131,6 +3147,7 @@ function DBM:StartCombat(mod, delay, synced, syncedStartHp, noKillRecord, trigge
 	if triggerEvent and not IsEncounterInProgress() and instanceType == "raid" then
 --		print("DBM Combat Debug: Combat started by "..triggerEvent..". Encounter in progress: "..tostring(IsEncounterInProgress()))
 	end
+	if synced and instanceType == "none" and not UnitAffectingCombat("player") then return end--Ignore world boss pulls if you aren't fighting them.
 	if not checkEntry(inCombat, mod) then
 		if not mod.Options.Enabled then return end
 		-- HACK: makes sure that we don't detect a false pull if the event fires again when the boss dies...
@@ -4519,6 +4536,13 @@ end
 
 function bossModPrototype:LatencyCheck()
 	return select(4, GetNetStats()) < DBM.Options.LatencyThreshold
+end
+
+function bossModPrototype:IsTrivial(level)
+	if UnitLevel("player") >= level then
+		return true
+	end
+	return false
 end
 
 -- An anti spam function to throttle spammy events (e.g. SPELL_AURA_APPLIED on all group members)

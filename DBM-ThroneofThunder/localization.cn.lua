@@ -154,6 +154,10 @@ L= DBM:GetModLocalization(821)
 L:SetTimerLocalization({
 	timerBreathsCD			= "下一次吐息"
 })
+
+L:SetWarningLocalization({
+	SpecWarnJSA			= ">>> 注意交减伤 <<<"
+})
 	
 L:SetOptionLocalization({
 	SoundWOP		= "语音警告：重要技能",
@@ -170,6 +174,7 @@ L:SetOptionLocalization({
 	dr7				= "减伤提示:$spell:139458 7",
 	dr8				= "减伤提示:$spell:139458 8",
 	InfoFrame		= "资讯框：$journal:7006",
+	SpecWarnJSA			= "特殊警告：注意减伤",
 	SetIconOnCinders		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(139822),
 	SetIconOnTorrentofIce	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(139889)
 })

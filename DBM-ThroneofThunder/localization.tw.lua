@@ -152,7 +152,7 @@ L:SetTimerLocalization({
 })
 	
 L:SetWarningLocalization({
-	SpecWarnJSA			= ">>> 給毒頭坦減傷 <<<"
+	SpecWarnJSA			= ">>> 注意交減傷 <<<"
 })
 
 L:SetOptionLocalization({
@@ -170,6 +170,7 @@ L:SetOptionLocalization({
 	dr7				= "減傷提示：$spell:139458 7",
 	dr8				= "減傷提示：$spell:139458 8",
 	InfoFrame		= "資訊框：$journal:7006",
+	SpecWarnJSA		= "特別警告：注意減傷",
 	SetIconOnCinders		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(139822),
 	SetIconOnTorrentofIce	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(139889)
 })

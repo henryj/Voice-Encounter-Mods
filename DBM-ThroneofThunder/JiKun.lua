@@ -60,7 +60,6 @@ local FeedCount = 0
 local trippleNest = false
 local flockName = EJ_GetSectionInfo(7348)
 
--- BH ADD
 local flockCount = 0
 local myGroup = nil
 local wstime = 0
@@ -100,7 +99,7 @@ local function register(e)
 	return e
 end
 local FireMarkers = {}
--- BH ADD END
+
 function mod:OnCombatStart(delay)
 	flockC = 0
 	quillsCount = 0
@@ -222,7 +221,7 @@ function mod:SPELL_CAST_START(args)
 			timerQuillsCD:Start(nil, quillsCount+1)
 		end
 		if MyJS() then
-			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_mop_zyjs.mp3") --注意減傷
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
 		else
 			if mod:IsHealer() then
 				sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\healall.mp3") --注意群療
@@ -285,7 +284,6 @@ end
 
 function mod:CHAT_MSG_MONSTER_EMOTE(msg, _, _, _, target)
 	if msg:find(L.eggsHatchL) or msg:find(L.eggsHatchU) then
-		-- BH ADD
 		if self:AntiSpam(5, 2) then
 			flockCount = flockCount + 1
 			if MyAddDown(flockCount+1) then
@@ -323,7 +321,6 @@ function mod:CHAT_MSG_MONSTER_EMOTE(msg, _, _, _, target)
 				end
 			end
 		end
-		-- BH ADD END
 		flockC = flockC + 1
 		local messageText = msg:find(L.eggsHatchL) and L.Lower or L.Upper
 		local flockText = tostring(flockC)

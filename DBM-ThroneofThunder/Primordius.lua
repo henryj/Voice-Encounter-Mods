@@ -194,7 +194,7 @@ end
 function mod:SPELL_CAST_START(args)
 	if args.spellId == 136216 then
 		warnCausticGas:Show()
-		specWarnCausticGas:Show()		
+		specWarnCausticGas:Show()
 		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_tt_kjfd.mp3")--靠近分擔
 		timerCausticGasCD:Start()
 	end
