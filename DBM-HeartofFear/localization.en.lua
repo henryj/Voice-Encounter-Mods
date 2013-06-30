@@ -92,7 +92,7 @@ L= DBM:GetModLocalization(713)
 
 L:SetWarningLocalization({
 	specwarnUnder	= "Move out of purple ring!",
-	specWarnPungencyOtherFix 		= "%s - (%d)"
+	specWarnPungencyOtherFix 		= "%s - (%d)",
 	specwarnCrushH	= "Crush (%d)",
 	SpecWarnJSA		= "Crush in 5 >>Defensive<<",
 	specWarnFLM		= ">%s< Pheromones, Get ready to take over!"
@@ -110,7 +110,7 @@ L:SetOptionLocalization({
 	SoundZN				= "Voice Warning: Crush count down(Heroic only)",
 	specWarnPungencyOtherFix = "Special warning: $spell:123081",
 	HudMAP				= "HUDMAP: $spell:122835",
-	SoundFS				= "Countdown: $spell:122735"
+	SoundFS				= "Countdown: $spell:122735",
 	SpecWarnJSA			= "Special Warning: Defensive",
 	specWarnFLM			= "Special Warning: Get ready to take over Pheromones",
 	optFLM				= "Pheromones Notice: Type in the player name ahead of you",

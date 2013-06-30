@@ -23,7 +23,7 @@ L:SetOptionLocalization({
 	SoundDW 			= "voice warning: $spell:117283 disperse",
 	SoundSDQ			= "語音警告：$spell:117436的驅散",
 	SoundWater			= "語音警告：$spell:117309時提示拉開BOSS(坦克)",
-	SoundWOP			= "voice warning: important skills"
+	SoundWOP			= "voice warning: important skills",
 	optDD4				= "使用四人打斷鏈(不選則前3人循環)",
 	opthelpDD			= "語音警告：當$spell:118077出現時提示你幫忙打斷第一次$spell:118312",
 	specWarnDDL 		= "特殊警告：下一次到你打斷",
@@ -94,12 +94,12 @@ L:SetOptionLocalization ({
 	nine 		= "9",
 	twelve 		= "12",
 	fifteen 	= "15",
-	none 		= "Don't warning"
+	none 		= "Don't warning",
 	optTS						= "神牧天使警告",
 	TS1							= "第一次火息",
 	TS2							= "第二次火息",
 	TS3							= "第三次火息",
-	noms						= "不提示",
+	noms						= "不提示"
 })
 
 L:SetMiscLocalization{
@@ -170,7 +170,7 @@ L:SetTimerLocalization({
 
 L:SetOptionLocalization ({
 	SoundDD = "voice warning: $spell:131996",
-	SoundWOP = "voice warning: important skills"
+	SoundWOP = "voice warning: important skills",
 	InfoFrameTankMode	= "資訊框顯示首領攻擊計數器取代$spell:120629",
 	RangeFrame			= "Show range frame (2) for $spell:119519",
 	pscount				= "語音警告：為恐怖噴散報數",

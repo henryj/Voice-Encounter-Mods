@@ -165,7 +165,7 @@ L:SetOptionLocalization({
 	InfoFrame			= "InfoFrame: $spell:118303",
 	HudMAP				= "HudMAP: $spell:118047",
 	HudMAP2				= "HudMAP：$spell:118303",
-	SoundCT				= "Voice warning: Kick $spell:117833"
+	SoundCT				= "Voice warning: Kick $spell:117833",
 	DarknessSoon		= "Show pre-warning countdown for $spell:117697 (5s before)",
 	optDD				= "打断链",
 	nodd				= "我不打断",
@@ -252,7 +252,7 @@ L= DBM:GetModLocalization(677)
 
 L:SetWarningLocalization({
 	specWarnBomb				= ">> Bomb(%d) <<",
-	specWarnKZ					= ">> Control(%d) <<",
+	specWarnKZ					= ">> Control(%d) <<"
 })
 
 L:SetOptionLocalization({
