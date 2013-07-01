@@ -1,11 +1,9 @@
 DBM-VoiceEnhanced
 =================
 
-This is an unfinished English copy.
+This English Copy is finished now.
 
-If you speak Chinese, please find the full original version at http://bbs.ngacn.cc/read.php?tid=5397726&page=1
-
-At this moment only the ToT part is here. 
+If you speak Chinese, you can find the original version at http://bbs.ngacn.cc/read.php?tid=5397726&page=1
 
 All English voice is generated via VoiceRss.org TTS(Text-to-Speech) api.
 
@@ -14,10 +12,10 @@ If you feel uncomfortable with the robot accent and want to contribute as our vo
 How To Use
 =================
 
-Download full version of DBM and install. (http://www.curse.com/addons/wow/deadly-boss-mods)
+[Download Zip] (https://github.com/henryj/DBM-VoiceEnhanced/archive/master.zip)
 
-Goto the addon folder.
+Unzip and replace those folders in your WoW addons folder.
 
-Remove DBM-Core, DBM-GUI, DBM-ThroneofThunder and replace them with what you've downloaded here.
+(By 'replace', I mean remove your original dbm folders and then paste this version in.)
 
 Have fun.
