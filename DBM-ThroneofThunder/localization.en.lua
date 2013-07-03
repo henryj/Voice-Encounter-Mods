@@ -1,7 +1,6 @@
 -- English by Iceoven(iceoven@jjw.in)
 -- Last update: 11/6/2013
 
-
 local L
 
 --------------------------
@@ -569,6 +568,10 @@ L:SetOptionLocalization({
 	timerAnima		= "Timer: Next $spell:138295",
 	SetIconOnUnstableVita	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(138297),
 	SetIconOnUnstableAnima	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(138288)
+})
+
+L:SetMiscLocalization({
+	Defeat			= "Wait! I am... I am not your enemy."
 })
 
 -------------

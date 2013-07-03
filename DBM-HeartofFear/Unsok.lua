@@ -136,16 +136,16 @@ end
 local function updateInfoFrame()
 	if mod.Options.optInfoFrame == "IF1" then
 		if Phase == 2 then
-			DBM.InfoFrame:SetHeader("大黃動搖:"..boss2debuff)
+			DBM.InfoFrame:SetHeader("Yellow Boss Destabilize:"..boss2debuff)
 		else
-			DBM.InfoFrame:SetHeader("首領動搖:"..bossdebuff)
+			DBM.InfoFrame:SetHeader("Boss Destabilize:"..bossdebuff)
 		end
 		DBM.InfoFrame:Show(5, "playerpower", 1, ALTERNATE_POWER_INDEX, nil, nil, true)--At a point i need to add an arg that lets info frame show the 5 LOWEST not the 5 highest, instead of just showing 10
 	elseif mod.Options.optInfoFrame == "IF2" then
 		if otherconstruct and (Phase < 3) then
-			DBM.InfoFrame:SetHeader("我的能量:"..UnitPower("player", ALTERNATE_POWER_INDEX).."  其他能量"..UnitPower(otherconstruct, ALTERNATE_POWER_INDEX))
+			DBM.InfoFrame:SetHeader("My Power:"..UnitPower("player", ALTERNATE_POWER_INDEX).."  Others Power"..UnitPower(otherconstruct, ALTERNATE_POWER_INDEX))
 		else
-			DBM.InfoFrame:SetHeader("我的能量:"..UnitPower("player", ALTERNATE_POWER_INDEX))
+			DBM.InfoFrame:SetHeader("My Power:"..UnitPower("player", ALTERNATE_POWER_INDEX))
 		end
 		DBM.InfoFrame:Show(2, "bossdebuffstacks", 123059)
 	end

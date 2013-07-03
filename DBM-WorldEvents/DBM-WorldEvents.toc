@@ -16,8 +16,8 @@
 ## X-DBM-Mod-Name: World Events
 ## X-DBM-Mod-Name-zhTW: 世界事件
 ## X-DBM-Mod-Name-zhCN: 世界事件
+## X-DBM-Mod-MapID: 230,189,33,547,974,1
 ## X-DBM-Mod-Sort: 50
-## X-DBM-Mod-LoadZoneID: 704,762,764,728,823
 localization.en.lua
 localization.tw.lua
 localization.cn.lua

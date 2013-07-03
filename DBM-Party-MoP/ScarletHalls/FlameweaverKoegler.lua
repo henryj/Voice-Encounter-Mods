@@ -2,7 +2,7 @@
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 9469 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9886 $"):sub(12, -3))
 mod:SetCreatureID(59150)
 
 mod:RegisterCombat("combat")
@@ -16,11 +16,6 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_REMOVED"
 )
 
---Who can dispel what idon't actually know for MOP so this may need modifying. Also don't know a way to check for a prot warrior glyphed for shield slam.
-local isDispeller = select(2, UnitClass("player")) == "MAGE"
-	    		 or select(2, UnitClass("player")) == "PRIEST"
-	    		 or select(2, UnitClass("player")) == "SHAMAN"
-
 local warnPyroblast				= mod:NewSpellAnnounce(113690, 2, nil, false)
 local warnQuickenedMind			= mod:NewSpellAnnounce(113682, 3)--This is Magic dispelable, you can't interrupt anything if you don't dispel this.
 local warnFireballVolley		= mod:NewSpellAnnounce(113691, 3)
@@ -29,8 +24,8 @@ local warnDragonsBreath			= mod:NewSpellAnnounce(113641, 4)--This is showing Mag
 
 local specWarnFireballVolley	= mod:NewSpecialWarningInterrupt(113691, true)
 local specWarnPyroblast			= mod:NewSpecialWarningInterrupt(113690, false)
-local specWarnQuickenedMind		= mod:NewSpecialWarningDispel(113682, isDispeller)
---local specWarnDragonsBreathDispel		= mod:NewSpecialWarningDispel(113641, isDispeller)
+local specWarnQuickenedMind		= mod:NewSpecialWarningDispel(113682, mod:IsMagicDispeller())
+--local specWarnDragonsBreathDispel		= mod:NewSpecialWarningDispel(113641, mod:IsMagicDispeller())
 local specWarnDragonsBreath		= mod:NewSpecialWarningSpell(113641, nil, nil, nil, true)
 local specWarnBook				= mod:NewSpecialWarningMove(113620)
 
@@ -84,7 +79,7 @@ end
 function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 113682 and not args:IsDestTypePlayer() then
 		specWarnQuickenedMind:Show(args.destName)
-		if isDispeller then
+		if mod:IsMagicDispeller() then
 			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\dispelnow.mp3")--快驅散
 		end
 		quickcast = true

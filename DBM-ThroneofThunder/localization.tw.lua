@@ -567,6 +567,10 @@ L:SetOptionLocalization({
 	SetIconOnUnstableAnima	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(138288)
 })
 
+L:SetMiscLocalization({
+	Defeat			= "慢著!我不是你們的敵人。"
+})
+
 -------------
 --  Trash  --
 -------------

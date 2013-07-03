@@ -6,7 +6,7 @@ local sndSpirit	= mod:NewSound(nil, "Soundspirit", true)
 local sndLS		= mod:NewSound(nil, "SoundLs", false)
 local sndHS		= mod:NewSound(nil, "SoundHs", false)
 
-mod:SetRevision(("$Revision: 9709 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9928 $"):sub(12, -3))
 mod:SetCreatureID(69078, 69132, 69134, 69131)--69078 Sul the Sandcrawler, 69132 High Prestess Mar'li, 69131 Frost King Malakk, 69134 Kazra'jin --Adds: 69548 Shadowed Loa Spirit,
 mod:SetQuestID(32746)
 mod:SetZone()
@@ -320,8 +320,8 @@ function mod:SPELL_CAST_START(args)
 		sndSpirit:Schedule(31, "Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\counttwo.mp3")
 		sndSpirit:Schedule(32, "Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\countone.mp3")
 	--BH ADD
-	elseif args:IsSpellID(136990) then
-		timerFrostBiteCD:Start()
+	elseif args.spellId == 136990 then
+		timerFrostBiteCD:Schedule(1.5)
 		sndHS:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_tt_zyjt.mp3")
 	--BH ADD END
 	end
@@ -526,6 +526,8 @@ function mod:SPELL_AURA_APPLIED(args)
 		specWarnDischarge:Show(dischargeCount)
 		if MyJS() then
 			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
+		else
+			DBM:PlayCountSound(dischargeCount)
 		end
 	elseif args.spellId == 137641 and args:IsPlayer() then
 		specWarnSoulFragment:Show()

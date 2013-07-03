@@ -3,6 +3,7 @@
 ## Title:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Pandaria|r
 ## Title-zhTW:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0潘達利亞野外首領|r
 ## Title-zhCN:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0潘达利亚野外首领|r
+## Author: MysticalOS/nBlueWiz
 ## LoadOnDemand: 1
 ## RequiredDeps: DBM-Core
 ## SavedVariablesPerCharacter: DBMPandaria_SavedVars, DBMPandaria_SavedStats
@@ -11,11 +12,16 @@
 ## X-DBM-Mod-Category: MOP
 ## X-DBM-Mod-Has-Single-Format: 1
 ## X-DBM-Mod-Sort: 5
-## X-DBM-Mod-MapID: 870
+## X-DBM-Mod-MapID: 870,1064
 localization.en.lua
 localization.tw.lua
 localization.cn.lua
 Anger.lua
 Salyis.lua
-Oondasta.lua
 Nalak.lua
+Oondasta.lua
+ChiJi.lua
+Yulon.lua
+Niuzao.lua
+Xuen.lua
+Ordos.lua

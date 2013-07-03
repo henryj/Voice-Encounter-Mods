@@ -136,9 +136,29 @@ L:SetMiscLocalization({
 ----------------------
 L= DBM:GetModLocalization(741)
 
+L:SetWarningLocalization({
+	specWarnQuickeningX = "%s - Dispel!",
+	specWarnBH			= "Protect: >> %s <<"
+})
+
 L:SetOptionLocalization({
 	SoundWOP			= "voice warning: important skills",
-	SoundDQ				= "voice warning: $spell:122149 disperse",
+	SoundDS				= "voice warning: $spell:122149 spread",
+	InfoFrame			= "Info Frame: $spell:122149 stacks monitor",
+	optQS				= "Dispel Chain for $spell:122149",
+	noQS				= "No",
+	QS1					= "No. 1",
+	QS2					= "No. 2",
+	QS3					= "No. 3",
+	allQS				= "Always",
+	specWarnBH			= "Special Warning: Kor'thik Strike protection",
+	optBH				= "Kor'thik Strike protection chain",
+	noBH				= "No",
+	BH1					= "No. 1",
+	BH2					= "No. 2",
+	BH3					= "No. 3",
+	BH4					= "No. 4",
+	allBH				= "Always",
 	SoundJR				= "voice warning: Help others",
 	APArrow				= "DBM arrow: $spell:121881",
 	NearAP				= "voice warning: only warn within 20 yards of $spell:121881",
@@ -149,6 +169,7 @@ L:SetOptionLocalization({
 	always				= "always",
 	none				= "none",
 	RangeFrame			= "RangeFrame(3):$spell:121881",
+	specWarnQuickeningX	= "Special Warning: When need dispel/steal $spell:122149",
 	AmberPrisonIcons	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(121885)
 })
 
@@ -182,19 +203,27 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	SoundWOP			= "voice warning: important skills",
+	SoundWOP					= "voice warning: important skills",
+	SoundADD					= "Voice Warning: Living Ambers on you",
 	warnReshapeLife				= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.target:format(122784, GetSpellInfo(122784)),
 	warnReshapeLifeTutor		= "Display ability purpose rundown of Mutated Construct abilities",
 	warnAmberExplosion			= "Show warning (with source) when $spell:122398 is cast",
 	warnInterruptsAvailable		= "Announce who has Amber Strike interrupts available for\n $spell:122402",
 	warnWillPower				= "Announce current will power at 75, 50, 25, 10, and 5.",
+	specwarnHupo				= "Special Warning: Reshape Life",
+	specwarnOOYou				= "Special Warning: Living Amber on you",
+	specwarnOOYouD				= "Special Warning: Your Living Amber is dead",
 	specwarnWillPower			= "Show special warning when will power is low in construct",
 	specwarnAmberExplosionYou	= "Show special warning to interrupt your own $spell:122398",
 	specwarnAmberExplosionAM	= "Show special warning to interrupt Amber Montrosity's\n $spell:122402",
 	specwarnAmberExplosionOther	= "Show special warning to interrupt loose Mutated Construct's\n $spell:122398",
 	timerAmberExplosionAMCD		= "Show timer for Amber Monstrosity's next $spell:122402",
 	AdvInfoFrame				= "Show info frame for players will power and boss $spell:123059",
-	FixNameplates				= "Automatically disable interfering nameplates while a construct\n(restores settings upon leaving combat)"
+	FixNameplates				= "Automatically disable interfering nameplates while a construct\n(restores settings upon leaving combat)",
+	optInfoFrame				= "<Power and Destabilize> Monitor",
+	noIF						= "No",
+	IF1							= "Watch power mainly(DPS)",
+	IF2							= "Watch Destabilize mainly(TANK)"
 })
 
 L:SetMiscLocalization({
@@ -218,14 +247,47 @@ L:SetOptionLocalization({
 	InfoFrame		= "Show info frame for players affected by $spell:125390",
 	RangeFrame		= "Show range frame (5) for $spell:123735",
 	SoundWOP		= "voice warning: important skills",
+	SoundYB				= "Voice Warning: Count down for Dissonance Field",
 	HudMAP			= "HUDMAP: $spell:124863",
-	StickyResinIcons	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(124097)
+	HudMAPOther			= "HUD MAP: Others' $spell:124863",
+	HudMAP2				= "HUD MAP: $spell:124821 position",
+	RangeFrame			= "Range Frame(5 yards): $spell:123735",
+	StickyResinIcons	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(124097),
+	specWarnTT			= "Special Warning: Prepare Tremor Totem",
+	SendPos				= "Admin: Assign $spell:124863 positioning(RL only)",
+	AcceptPos			= "Client: Receive and show $spell:124863 positioning(Need RL turn on Admin function)",
+	optDR				= "Tremor Totem(123311231223-loop)",
+	DR1					= "Shaman A",
+	DR2					= "Shaman B",
+	DR3					= "Shaman C",
+	noDR				= "No",
+	warnDr				= "Warning: Defensive",
+	specWarnjs			= "Special Warning: Defensive",
+	optjs				= "Special defensive module",
+	optjs2				= "Special defensive module(- -)",
+	non					= "No",
+	non2				= "No",
+	shaman1				= "Shaman A",
+	shaman2				= "Shaman B",
+	pal1				= "Pally A",
+	pal2				= "Pally B",
+	pal3				= "Pally C",
+	dk					= "DK",
+	warrior1			= "Warrior A",
+	warrior2			= "Warrior B",
+	druid				= "Druid",
+	priest1				= "Priest A",
+	priest2				= "Priest B",
+	priest3				= "Priest C",
+	priest4				= "Priest D"
 })
 
 L:SetMiscLocalization({
 	PlayerDebuffs		= "Fixated",
 	YellPhase3			= "No more excuses, Empress! Eliminate these cretins or I will kill you myself!"
 })
+
+
 
 -------------
 --  Trash  --

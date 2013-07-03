@@ -40,7 +40,7 @@
 
 
 
-local revision =("$Revision: 9796 $"):sub(12, -3)
+local revision =("$Revision: 9931 $"):sub(12, -3)
 local FrameTitle = "DBM_GUI_Option_"	-- all GUI frames get automatically a name FrameTitle..ID
 local fixeditframe = false
 
@@ -1366,7 +1366,7 @@ local function CreateOptionsMenu()
 		----------------------------------------------
 		--             General Options              --
 		----------------------------------------------
-		local generaloptions = DBM_GUI_Frame:CreateArea(L.General, nil, 360, true)
+		local generaloptions = DBM_GUI_Frame:CreateArea(L.General, nil, 290, true)
 
 		local enabledbm = generaloptions:CreateCheckButton(L.EnableDBM, true)
 		enabledbm:SetScript("OnShow",  function() enabledbm:SetChecked(DBM:IsEnabled()) end)
@@ -1382,9 +1382,6 @@ local function CreateOptionsMenu()
 		end)
 		local SetPlayerRole				= generaloptions:CreateCheckButton(L.SetPlayerRole, true, nil, "SetPlayerRole")
 		local UseMasterVolume			= generaloptions:CreateCheckButton(L.UseMasterVolume, true, nil, "UseMasterVolume")
-		local DisableCinematics			= generaloptions:CreateCheckButton(L.DisableCinematics, true, nil, "DisableCinematics")
-		local DisableCinematicsOutside	= generaloptions:CreateCheckButton(L.DisableCinematicsOutside, true, nil, "DisableCinematicsOutside")
-		local EnableReadyCheckSound		= generaloptions:CreateCheckButton(L.EnableReadyCheckSound, true, nil, "EnableReadyCheckSound")
 		local AutologBosses				= generaloptions:CreateCheckButton(L.AutologBosses, true, nil, "AutologBosses")
 		local AdvancedAutologBosses
 		if Transcriptor then
@@ -2124,11 +2121,8 @@ local function CreateOptionsMenu()
 		spamOutArea:CreateCheckButton(L.SpamBlockNoInfoFrame, true, nil, "DontShowInfoFrame")
 
 		local spamArea = spamPanel:CreateArea(L.Area_SpamFilter, nil, 150, true)
-		spamArea:CreateCheckButton(L.HideBossEmoteFrame, true, nil, "HideBossEmoteFrame")
-		spamArea:CreateCheckButton(L.HideWatchFrame, true, nil, "HideWatchFrame")
 		spamArea:CreateCheckButton(L.StripServerName, true, nil, "StripServerName")
 		spamArea:CreateCheckButton(L.SpamBlockBossWhispers, true, nil, "SpamBlockBossWhispers")
-		spamArea:CreateCheckButton(L.SpamBlockSayYell, true, nil, "FilterSayAndYell")
 		spamArea:CreateCheckButton(L.BlockVersionUpdateNotice, true, nil, "BlockVersionUpdateNotice")
 		if BigBrother and type(BigBrother.ConsumableCheck) == "function" then
 			spamArea:CreateCheckButton(L.ShowBigBrotherOnCombatStart, true, nil, "ShowBigBrotherOnCombatStart")
@@ -2143,6 +2137,28 @@ local function CreateOptionsMenu()
 		spamArea:AutoSetDimension()
 		spamOutArea:AutoSetDimension()
 		spamPanel:SetMyOwnHeight()
+	end
+	
+	do
+		local hideBlizzPanel = DBM_GUI_Frame:CreateNewPanel(L.Panel_HideBlizzard, "option")
+		local hideBlizzArea = hideBlizzPanel:CreateArea(L.Area_HideBlizzard, nil, 140, true)
+		hideBlizzArea:CreateCheckButton(L.HideBossEmoteFrame, true, nil, "HideBossEmoteFrame")
+		hideBlizzArea:CreateCheckButton(L.HideWatchFrame, true, nil, "HideWatchFrame")
+		local filterYell	= hideBlizzArea:CreateCheckButton(L.SpamBlockSayYell, true, nil, "FilterSayAndYell")
+		
+		local movieOptions = {
+			{	text	= L.Disable,	value 	= "Never"},
+			{	text	= L.AfterFirst	,value 	= "AfterFirst"},
+			{	text	= L.Always		,value 	= "Block"},
+		}
+		local blockMovieDropDown = hideBlizzArea:CreateDropdown(L.DisableCinematics, movieOptions,
+		DBM.Options.MovieFilter, function(value)
+			DBM.Options.MovieFilter = value
+		end
+		)
+		blockMovieDropDown:SetPoint("TOPLEFT", filterYell, "TOPLEFT", 0, -40)
+
+		hideBlizzPanel:SetMyOwnHeight()
 	end
 
 	-- Set Revision // please don't translate this!
@@ -2163,7 +2179,7 @@ end
 DBM:RegisterOnGuiLoadCallback(CreateOptionsMenu, 1)
 
 do
-	local function OnShowGetStats(stats, statsType, top1value1, top1value2, top1value3, top2value1, top2value2, top2value3, top3value1, top3value2, top3value3, bottom1value1, bottom1value2, bottom1value3, bottom2value1, bottom2value2, bottom2value3)
+	local function OnShowGetStats(stats, statsType, top1value1, top1value2, top1value3, top2value1, top2value2, top2value3, top3value1, top3value2, top3value3, bottom1value1, bottom1value2, bottom1value3, bottom2value1, bottom2value2, bottom2value3, bottom3value1, bottom3value2, bottom3value3)
 		return function(self)
 			top1value1:SetText( stats.normalKills )
 			top1value2:SetText( stats.normalPulls - stats.normalKills )
@@ -2188,6 +2204,9 @@ do
 				bottom2value1:SetText( stats.heroic25Kills )
 				bottom2value2:SetText( stats.heroic25Pulls-stats.heroic25Kills )
 				bottom2value3:SetText( stats.heroic25BestTime and ("%d:%02d"):format(math.floor(stats.heroic25BestTime / 60), stats.heroic25BestTime % 60) or "-" )
+				bottom3value1:SetText( stats.flexKills )
+				bottom3value2:SetText( stats.flexPulls-stats.flexKills )
+				bottom3value3:SetText( stats.flexBestTime and ("%d:%02d"):format(math.floor(stats.flexBestTime / 60), stats.flexBestTime % 60) or "-" )
 			end
 		end
 	end
@@ -2269,6 +2288,13 @@ do
 				local bottom2value1		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
 				local bottom2value2		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
 				local bottom2value3		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
+				local bottom3header		= area:CreateText("", nil, nil, GameFontHighlightSmall, "LEFT")--Row 2, 3rd column
+				local bottom3text1		= area:CreateText(L.Statistic_Kills, nil, nil, GameFontNormalSmall, "LEFT")
+				local bottom3text2		= area:CreateText(L.Statistic_Wipes, nil, nil, GameFontNormalSmall, "LEFT")
+				local bottom3text3		= area:CreateText(L.Statistic_BestKill, nil, nil, GameFontNormalSmall, "LEFT")
+				local bottom3value1		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
+				local bottom3value2		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
+				local bottom3value3		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
 
 				--Set default position
 				top1header:SetPoint("TOPLEFT", Title, "BOTTOMLEFT", 20, -5)
@@ -2371,7 +2397,8 @@ do
 					bottom1header:SetText(PLAYER_DIFFICULTY2)
 					bottom2header:SetText(PLAYER_DIFFICULTY2)
 					area.frame:SetHeight( area.frame:GetHeight() + L.FontHeight*10 )
-				else--Uses everything
+				elseif mod.type == "RAID" and not mod.hasFlex then
+					--Use top1, top2, top3, bottom1 and bottom2 area.
 					Title:SetPoint("TOPLEFT", area.frame, "TOPLEFT", 10, -10-(L.FontHeight*10*(bossstats-1)))
 					top2header:SetPoint("LEFT", top1header, "LEFT", 150, 0)
 					top2text1:SetPoint("LEFT", top1text1, "LEFT", 150, 0)
@@ -2407,9 +2434,53 @@ do
 					bottom1header:SetText(PLAYER_DIFFICULTY2)
 					bottom2header:SetText(PLAYER_DIFFICULTY2)
 					area.frame:SetHeight( area.frame:GetHeight() + L.FontHeight*10 )
+				else--Uses everything
+					Title:SetPoint("TOPLEFT", area.frame, "TOPLEFT", 10, -10-(L.FontHeight*10*(bossstats-1)))
+					top2header:SetPoint("LEFT", top1header, "LEFT", 150, 0)
+					top2text1:SetPoint("LEFT", top1text1, "LEFT", 150, 0)
+					top2text2:SetPoint("LEFT", top1text2, "LEFT", 150, 0)
+					top2text3:SetPoint("LEFT", top1text3, "LEFT", 150, 0)
+					top2value1:SetPoint("TOPLEFT", top2text1, "TOPLEFT", 80, 0)
+					top2value2:SetPoint("TOPLEFT", top2text2, "TOPLEFT", 80, 0)
+					top2value3:SetPoint("TOPLEFT", top2text3, "TOPLEFT", 80, 0)
+					top3header:SetPoint("LEFT", top2header, "LEFT", 150, 0)
+					top3text1:SetPoint("LEFT", top2text1, "LEFT", 150, 0)
+					top3text2:SetPoint("LEFT", top2text2, "LEFT", 150, 0)
+					top3text3:SetPoint("LEFT", top2text3, "LEFT", 150, 0)
+					top3value1:SetPoint("TOPLEFT", top3text1, "TOPLEFT", 80, 0)
+					top3value2:SetPoint("TOPLEFT", top3text2, "TOPLEFT", 80, 0)
+					top3value3:SetPoint("TOPLEFT", top3text3, "TOPLEFT", 80, 0)
+					bottom1header:SetPoint("TOPLEFT", top1text3, "BOTTOMLEFT", -20, -5)
+					bottom1text1:SetPoint("TOPLEFT", bottom1header, "BOTTOMLEFT", 20, -5)
+					bottom1text2:SetPoint("TOPLEFT", bottom1text1, "BOTTOMLEFT", 0, -5)
+					bottom1text3:SetPoint("TOPLEFT", bottom1text2, "BOTTOMLEFT", 0, -5)
+					bottom1value1:SetPoint("TOPLEFT", bottom1text1, "TOPLEFT", 80, 0)
+					bottom1value2:SetPoint("TOPLEFT", bottom1text2, "TOPLEFT", 80, 0)
+					bottom1value3:SetPoint("TOPLEFT", bottom1text3, "TOPLEFT", 80, 0)
+					bottom2header:SetPoint("LEFT", bottom1header, "LEFT", 150, 0)
+					bottom2text1:SetPoint("LEFT", bottom1text1, "LEFT", 150, 0)
+					bottom2text2:SetPoint("LEFT", bottom1text2, "LEFT", 150, 0)
+					bottom2text3:SetPoint("LEFT", bottom1text3, "LEFT", 150, 0)
+					bottom2value1:SetPoint("TOPLEFT", bottom2text1, "TOPLEFT", 80, 0)
+					bottom2value2:SetPoint("TOPLEFT", bottom2text2, "TOPLEFT", 80, 0)
+					bottom2value3:SetPoint("TOPLEFT", bottom2text3, "TOPLEFT", 80, 0)
+					bottom3header:SetPoint("LEFT", bottom2header, "LEFT", 150, 0)
+					bottom3text1:SetPoint("LEFT", bottom2text1, "LEFT", 150, 0)
+					bottom3text2:SetPoint("LEFT", bottom2text2, "LEFT", 150, 0)
+					bottom3text3:SetPoint("LEFT", bottom2text3, "LEFT", 150, 0)
+					bottom3value1:SetPoint("TOPLEFT", bottom3text1, "TOPLEFT", 80, 0)
+					bottom3value2:SetPoint("TOPLEFT", bottom3text2, "TOPLEFT", 80, 0)
+					bottom3value3:SetPoint("TOPLEFT", bottom3text3, "TOPLEFT", 80, 0)
+					top1header:SetText(RAID_DIFFICULTY1)
+					top2header:SetText(RAID_DIFFICULTY2)
+					top3header:SetText(PLAYER_DIFFICULTY3)
+					bottom1header:SetText(PLAYER_DIFFICULTY2)
+					bottom2header:SetText(PLAYER_DIFFICULTY2)
+					bottom3header:SetText(PLAYER_DIFFICULTY4 or "Flexible")--Remove extra string in 5.4 live
+					area.frame:SetHeight( area.frame:GetHeight() + L.FontHeight*10 )
 				end
 
-				table.insert(area.onshowcall, OnShowGetStats(mod.stats, statsType, top1value1, top1value2, top1value3, top2value1, top2value2, top2value3, top3value1, top3value2, top3value3, bottom1value1, bottom1value2, bottom1value3, bottom2value1, bottom2value2, bottom2value3))
+				table.insert(area.onshowcall, OnShowGetStats(mod.stats, statsType, top1value1, top1value2, top1value3, top2value1, top2value2, top2value3, top3value1, top3value2, top3value3, bottom1value1, bottom1value2, bottom1value3, bottom2value1, bottom2value2, bottom2value3, bottom3value1, bottom3value2, bottom3value3))
 			end
 		end
 		area.frame:SetScript("OnShow", function(self)

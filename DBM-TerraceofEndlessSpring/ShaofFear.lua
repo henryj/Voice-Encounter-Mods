@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 local sndDD	= mod:NewSound(nil, "SoundDD", mod:IsTank())
 
-mod:SetRevision(("$Revision: 9720 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9929 $"):sub(12, -3))
 mod:SetCreatureID(60999)--61042 Cheng Kang, 61046 Jinlun Kun, 61038 Yang Guoshi, 61034 Terror Spawn
 mod:SetUsedIcons(8, 7, 6, 5, 4)
 

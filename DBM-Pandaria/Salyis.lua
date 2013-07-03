@@ -2,10 +2,10 @@
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 9469 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9841 $"):sub(12, -3))
 mod:SetCreatureID(62346)--Salyis not dies. Only Galleon attackable and dies.
 mod:SetQuestID(32098)
-mod:SetZone(807)--Valley of the Four winds
+mod:SetZone()
 
 mod:RegisterCombat("combat")
 

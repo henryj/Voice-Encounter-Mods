@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 -- BH ADD
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 9830 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9894 $"):sub(12, -3))
 mod:SetCreatureID(68397)--Diffusion Chain Conduit 68696, Static Shock Conduit 68398, Bouncing Bolt conduit 68698, Overcharge conduit 68697
 mod:SetQuestID(32756)
 mod:SetZone()

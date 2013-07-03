@@ -1,10 +1,10 @@
 local mod	= DBM:NewMod("d649", "DBM-Scenario-MoP")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 9646 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9883 $"):sub(12, -3))
 mod:SetZone()
 
-mod:RegisterCombat("scenario", 938)
+mod:RegisterCombat("scenario", 1131)
 
 mod:RegisterEventsInCombat(
 	"CHAT_MSG_MONSTER_YELL",

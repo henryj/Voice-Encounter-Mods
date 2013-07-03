@@ -61,6 +61,9 @@ local infoFrameThreshold
 local pIndex
 local extraPIndex
 local lowestFirst
+local lowestT
+local lowestF
+local tankIgnored
 local iconModifier
 local headerText = "DBM Info Frame"	-- this is only used if DBM.InfoFrame:SetHeader(text) is not called before :Show()
 local currentEvent
@@ -88,6 +91,8 @@ local GetSpellInfo = GetSpellInfo
 local UnitThreatSituation = UnitThreatSituation
 local GetRaidRosterInfo = GetRaidRosterInfo
 local GetRealZoneText = GetRealZoneText
+local GetPartyAssignment = GetPartyAssignment
+local UnitGroupRolesAssigned = UnitGroupRolesAssigned
 
 ---------------------
 --  Dropdown Menu  --
@@ -186,6 +191,7 @@ end
 ------------------------
 --  Update functions  --
 ------------------------
+local updateCallbacks = {}
 local function sortFuncDesc(a, b) return lines[a] > lines[b] end
 local function sortFuncAsc(a, b) return lines[a] < lines[b] end
 local function namesortFuncAsc(a, b) return a < b end
@@ -199,15 +205,23 @@ local function updateLines()
 	else
 		table.sort(sortedLines, sortFuncDesc)
 	end
+	for i, v in ipairs(updateCallbacks) do
+		v(sortedLines)
+	end
 end
 
+--namesort add start
 local function updateNamesortLines()
 	table.wipe(sortedLines)
 	for i in pairs(lines) do
 		sortedLines[#sortedLines + 1] = i
 	end
 	table.sort(sortedLines, namesortFuncAsc)
+		for i, v in ipairs(updateCallbacks) do
+		v(sortedLines)
+	end
 end
+--add end
 
 local function updateIcons()
 	table.wipe(icons)
@@ -265,6 +279,33 @@ local function updateEnemyPower()
 	end
 	updateLines()
 end
+
+local function updateNazgrimPower()
+	table.wipe(lines)	
+	if UnitPower("boss1") < 50 then
+		lines["|cFF088A08"..GetSpellInfo(143500).."|r"] = UnitPower("boss"..i)
+		lines[GetSpellInfo(143536)] = "50"
+		lines[GetSpellInfo(143872)] = "70"
+		lines[GetSpellInfo(143503)] = "100"
+	elseif UnitPower("boss1") < 70 then
+		lines[GetSpellInfo(143500)] = UnitPower("boss"..i)
+		lines["|cFF088A08"..GetSpellInfo(143536).."|r"] = UnitPower("boss"..i)
+		lines[GetSpellInfo(143872)] = "70"
+		lines[GetSpellInfo(143503)] = "100"
+	elseif UnitPower("boss1") < 100 then
+		lines[GetSpellInfo(143500)] = UnitPower("boss"..i)
+		lines[GetSpellInfo(143536)] = "50"
+		lines["|cFF088A08"..GetSpellInfo(143872).."|r"] = UnitPower("boss"..i)
+		lines[GetSpellInfo(143503)] = "100"
+	elseif UnitPower("boss1") == 100 then
+		lines[GetSpellInfo(143500)] = UnitPower("boss"..i)
+		lines[GetSpellInfo(143536)] = "50"
+		lines[GetSpellInfo(143872)] = "70"
+		lines["|cFF088A08"..GetSpellInfo(143503).."|r"] = UnitPower("boss"..i)
+	end
+	updateLines()
+end
+
 
 local function updateCobalyPower()
 	table.wipe(lines)	
@@ -352,6 +393,7 @@ local function updateGoodPlayerDebuffs()
 	table.wipe(lines)
 	if IsInGroup() then
 		for uId in DBM:GetGroupMembers() do
+			if tankIgnored and (UnitGroupRolesAssigned(uId) == "TANK" or GetPartyAssignment("MAINTANK", uId, 1)) then break end
 			if not UnitDebuff(uId, GetSpellInfo(infoFrameThreshold)) and not UnitIsDeadOrGhost(uId) then
 				lines[UnitName(uId)] = ""
 			end
@@ -365,13 +407,29 @@ end
 local function updateBadPlayerDebuffs()
 	table.wipe(lines)
 	if IsInGroup() then
-		for uId in DBM:GetGroupMembers() do
+		for uId, i in DBM:GetGroupMembers() do
+			if tankIgnored and (UnitGroupRolesAssigned(uId) == "TANK" or GetPartyAssignment("MAINTANK", uId, 1)) then break end
 			if UnitDebuff(uId, GetSpellInfo(infoFrameThreshold)) and not UnitIsDeadOrGhost(uId) then
 				if UnitGroupRolesAssigned(uId) == "HEALER" then
 					lines[UnitName(uId)] = _G["HEALER"]
 				else
 					lines[UnitName(uId)] = ""
 				end
+			end
+		end
+	end
+	updateLines()
+	updateIcons()
+end
+
+--Debuffs that are bad to have, but we want to show players who do NOT have them
+local function updateReverseBadPlayerDebuffs()
+	table.wipe(lines)
+	if IsInGroup() then
+		for uId, i in DBM:GetGroupMembers() do
+			if tankIgnored and (UnitGroupRolesAssigned(uId) == "TANK" or GetPartyAssignment("MAINTANK", uId, 1)) then break end
+			if not UnitDebuff(uId, GetSpellInfo(infoFrameThreshold)) and not UnitIsDeadOrGhost(uId) then
+				lines[UnitName(uId)] = ""
 			end
 		end
 	end
@@ -467,8 +525,8 @@ local function updateOther()
 	if extraPIndex then
 		lines[extraPIndex]= iconModifier
 	end
-	if lowestSecond then
-		lines[lowestSecond]= lowestFirst
+	if tankIgnored then
+		lines[tankIgnored]= lowestFirst
 	end
 	if lowestF then
 		lines[lowestF]= lowestT
@@ -501,7 +559,8 @@ local function updateTime()
 		lines[infot]= infoFrameThreshold
 	end
 	updateLines()
-end --BH ADD END
+end
+--BH ADD END
 
 local function updatePlayerAggro()
 	table.wipe(lines)
@@ -523,7 +582,7 @@ end
 local function updatePlayerTargets()
 	table.wipe(lines)
 	if IsInGroup() then
-		for uId in DBM:GetGroupMembers() do
+		for uId, i in DBM:GetGroupMembers() do
 			if getUnitCreatureId(uId.."target") ~= infoFrameThreshold and (UnitGroupRolesAssigned(uId) == "DAMAGER" or UnitGroupRolesAssigned(uId) == "NONE") then
 				lines[UnitName(uId)] = ""
 			end
@@ -555,6 +614,8 @@ function onUpdate(self, elapsed)
 		updateGoodPlayerDebuffs()
 	elseif currentEvent == "playerbaddebuff" then
 		updateBadPlayerDebuffs()
+	elseif currentEvent == "reverseplayerbaddebuff" then
+		updateReverseBadPlayerDebuffs()
 	elseif currentEvent == "playeraggro" then
 		updatePlayerAggro()
 	elseif currentEvent == "playerbuffstacks" then
@@ -565,6 +626,8 @@ function onUpdate(self, elapsed)
 		updatePlayerTargets()
 	elseif currentEvent == "cobalypower" then
 		updateCobalyPower()
+	elseif currentEvent == "nazgrimpower" then
+		updateNazgrimPower()
 	elseif currentEvent == "playerdebuffstackstime" then
 		updatePlayerDebuffStacksTime()
 	elseif currentEvent == "bossdebuffstacks" then
@@ -599,7 +662,7 @@ function onUpdate(self, elapsed)
 				addedSelf = true
 				if currentEvent == "playerbuff" or currentEvent == "playerbaddebuff" or currentEvent == "playergooddebuff" or currentEvent == "health" or currentEvent == "playertargets" or (currentEvent == "playeraggro" and infoFrameThreshold == 3) then--Player name on frame bad a thing make it red.
 					self:AddDoubleLine(name, power, 255, 0, 0, 255, 255, 255)	-- (leftText, rightText, left.R, left.G, left.B, right.R, right.G, right.B)
-				elseif currentEvent == "playerbuffstacks" or currentEvent == "playerdebuffstackstime" or (currentEvent == "playeraggro" and infoFrameThreshold == 0) or currentEvent == "enemypower" then--Player name on frame is a good thing, make it green
+				elseif currentEvent == "playerbuffstacks" or currentEvent == "playerdebuffstackstime" or (currentEvent == "playeraggro" and infoFrameThreshold == 0) or currentEvent == "enemypower" or currentEvent == "reverseplayerbaddebuff" then--Player name on frame is a good thing, make it green
 					self:AddDoubleLine(name, power, 0, 255, 0, 255, 255, 255)	-- (leftText, rightText, left.R, left.G, left.B, right.R, right.G, right.B)
 				else--it's not defined a color, so default to white.
 					self:AddDoubleLine(name, power, color.R, color.G, color.B, 255, 255, 255)	-- (leftText, rightText, left.R, left.G, left.B, right.R, right.G, right.B)
@@ -619,7 +682,7 @@ end
 ---------------
 --  Methods  --
 ---------------
-function infoFrame:Show(maxLines, event, threshold, powerIndex, iconMod, extraPowerIndex, sortLowest, ...)
+function infoFrame:Show(maxLines, event, threshold, powerIndex, iconMod, extraPowerIndex, sortLowest, ignoreTank, ...)
 	if DBM.Options.DontShowInfoFrame and (event or 0) ~= "test" then return end
 	maxLines = maxLines or 5
 	
@@ -629,9 +692,9 @@ function infoFrame:Show(maxLines, event, threshold, powerIndex, iconMod, extraPo
 	iconModifier = iconMod
 	extraPIndex = extraPowerIndex
 	lowestFirst = sortLowest
-	lowestSecond = select(1, ...)
-	lowestT = select(2, ...)
-	lowestF = select(3, ...)
+	tankIgnored = ignoreTank
+	lowestT = select(1, ...)
+	lowestF = select(2, ...)
 	currentEvent = event
 	frame = frame or createFrame()
 
@@ -651,6 +714,8 @@ function infoFrame:Show(maxLines, event, threshold, powerIndex, iconMod, extraPo
 		updateGoodPlayerDebuffs()
 	elseif event == "playerbaddebuff" then
 		updateBadPlayerDebuffs()
+	elseif currentEvent == "reverseplayerbaddebuff" then
+		updateReverseBadPlayerDebuffs()
 	elseif currentEvent == "playeraggro" then
 		updatePlayerAggro()
 	elseif currentEvent == "playerbuffstacks" then
@@ -661,14 +726,16 @@ function infoFrame:Show(maxLines, event, threshold, powerIndex, iconMod, extraPo
 		updatePlayerTargets()
 	elseif currentEvent == "cobalypower" then
 		updateCobalyPower()
+	elseif currentEvent == "nazgrimpower" then
+		updateNazgrimPower()
 	elseif currentEvent == "playerdebuffstackstime" then
 		updatePlayerDebuffStacksTime()
+	elseif currentEvent == "bossdebuffstacks" then
+		updateBossDebuffStacks()
 	elseif currentEvent == "other" then
 		updateOther()
 	elseif currentEvent == "time" then
 		updateTime()
-	elseif currentEvent == "bossdebuffstacks" then
-		updateBossDebuffStacks()
 	elseif currentEvent == "test" then
 	else
 		error("DBM-InfoFrame: Unsupported event", 2)
@@ -677,6 +744,10 @@ function infoFrame:Show(maxLines, event, threshold, powerIndex, iconMod, extraPo
 	frame:Show()
 	frame:SetOwner(UIParent, "ANCHOR_PRESERVE")
 	onUpdate(frame, 0)
+end
+
+function infoFrame:RegisterCallback(cb)
+	updateCallbacks[#updateCallbacks + 1] = cb
 end
 
 function infoFrame:Update(event)
@@ -692,6 +763,8 @@ function infoFrame:Update(event)
 		updateGoodPlayerDebuffs()
 	elseif event == "playerbaddebuff" then
 		updateBadPlayerDebuffs()
+	elseif currentEvent == "reverseplayerbaddebuff" then
+		updateReverseBadPlayerDebuffs()
 	elseif event == "playeraggro" then
 		updatePlayerAggro()
 	elseif event == "playerbuffstacks" then
@@ -702,12 +775,16 @@ function infoFrame:Update(event)
 		updatePlayerTargets()
 	elseif currentEvent == "cobalypower" then
 		updateCobalyPower()
+	elseif currentEvent == "nazgrimpower" then
+		updateNazgrimPower()
 	elseif currentEvent == "playerdebuffstackstime" then
 		updatePlayerDebuffStacksTime()
 	elseif currentEvent == "bossdebuffstacks" then
 		updateBossDebuffStacks()
 	elseif currentEvent == "other" then
 		updateOther()
+	elseif currentEvent == "time" then
+		updateTime()
 	else
 		error("DBM-InfoFrame: Unsupported event", 2)
 	end
@@ -716,13 +793,19 @@ end
 function infoFrame:Hide()
 	table.wipe(lines)
 	table.wipe(sortedLines)
+	table.wipe(updateCallbacks)
 	headerText = "DBM Info Frame"
 	sortingAsc = false
 	infoFrameThreshold = nil
 	pIndex = nil
-	showtime = 0
 	currentEvent = nil
 	maxlines = nil
+	lowestFirst = nil
+	tankIgnored = nil
+	extraPIndex = nil
+	showtime = 0
+	lowestT = nil
+	lowestF = nil
 	if frame then
 		frame:Hide()
 	end

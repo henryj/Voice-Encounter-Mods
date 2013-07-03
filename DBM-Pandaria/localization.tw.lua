@@ -52,3 +52,56 @@ L= DBM:GetModLocalization(814)
 L:SetOptionLocalization({
 	RangeFrame			= "距離監視(10碼)：$spell:136340"
 })
+
+---------------------------
+-- Chi-ji, The Red Crane --
+---------------------------
+L= DBM:GetModLocalization(857)
+
+L:SetOptionLocalization({
+	SoundWOP				= "語音警告：重要技能",
+	HudMAP					= "高級定位監視(HUD)：$spell:144473",
+	SetIconOnBeacon			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(144473),
+	BeaconArrow				= "DBM箭頭：$spell:144473"
+})
+
+------------------------------
+-- Yu'lon, The Jade Serpent --
+------------------------------
+L= DBM:GetModLocalization(858)
+
+L:SetOptionLocalization({
+	SoundWOP				= "語音警告：重要技能",
+	RangeFrame				= DBM_CORE_AUTO_RANGE_OPTION_TEXT:format(11, 144532)
+})
+
+--------------------------
+-- Niuzao, The Black Ox --
+--------------------------
+L= DBM:GetModLocalization(859)
+
+L:SetOptionLocalization({
+	SoundWOP				= "語音警告：重要技能"
+})
+
+---------------------------
+-- Xuen, The White Tiger --
+---------------------------
+L= DBM:GetModLocalization(860)
+
+L:SetOptionLocalization({
+	SoundWOP				= "語音警告：重要技能",
+	RangeFrame				= DBM_CORE_AUTO_RANGE_OPTION_TEXT:format(3, 144642)
+})
+
+------------------------------------
+-- Ordos, Fire-God of the Yaungol --
+------------------------------------
+L= DBM:GetModLocalization(861)
+
+L:SetOptionLocalization({
+	SoundWOP				= "語音警告：重要技能",
+	HudMAP					= "高級定位監視(HUD)：$spell:144689",
+	SetIconOnBurningSoul	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(144689),
+	RangeFrame				= DBM_CORE_AUTO_RANGE_OPTION_TEXT:format(8, 144689)
+})

@@ -16,7 +16,6 @@
 ## X-DBM-Mod-Name-zhCN: 魔古山宝库
 ## X-DBM-Mod-Sort: 5
 ## X-DBM-Mod-MapID: 1008
-## X-DBM-Mod-LoadZoneID: 896
 localization.en.lua
 localization.tw.lua
 localization.cn.lua

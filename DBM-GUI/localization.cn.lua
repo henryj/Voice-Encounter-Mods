@@ -10,7 +10,7 @@ L.MainFrame 				= "Deadly Boss Mods"
 
 L.TranslationByPrefix		= "本地化："
 L.TranslationBy 			= "Diablohu & yleaf"
-L.Website					= "拜访我们的讨论与支持论坛:|cFF73C2FBhttp://bbs.ngacn.cc/read.php?tid=5397726&page=1|r (语音版由Sunlcy维护)"
+L.Website					= "拜访我们的讨论与支持论坛:|cFF73C2FBhttp://bbs.ngacn.cc/read.php?tid=5397726&page=1|r"
 L.WebsiteButton				= "论坛"
 L.SoundMM					= "|cFFC3C2FB[查看配音介绍]|r"
 
@@ -189,13 +189,10 @@ L.BarWidth					= "计量条宽度: %d"
 -- Tab: Spam Filter
 L.Panel_SpamFilter				= "全局及信息过滤"
 L.Area_SpamFilter				= "信息过滤设置"
-L.HideBossEmoteFrame			= "首领战中隐藏团队首领表情框体"
-L.HideWatchFrame			= "首领战中隐藏任务追踪框体"
 L.SpamBlockBossWhispers			= "战斗中过滤DBM密语警报"
 L.BlockVersionUpdateNotice		= "禁用升级提示"
 L.ShowBigBrotherOnCombatStart	= "战斗开始时使用Big Brother检测增益情况"
 L.BigBrotherAnnounceToRaid		= "报告Big Brother的检测结果给团队"
-L.SpamBlockSayYell				= "隐藏聊天窗口中的使用聊天泡泡的警报信息"
 L.StripServerName				= "警告和计时器中不显示服务器名"
 
 L.Area_SpamFilter_Outgoing		= "全局过滤设置"
@@ -210,6 +207,15 @@ L.DontShowPT					= "不显示开怪倒计时条"
 L.DontShowPTCountdownText		= "不显示开怪倒计时动画"
 L.DontPlayPTCountdown			= "不播放开怪倒计时语音"
 L.DontShowPTText				= "不显示开怪倒计时文字"
+
+L.Panel_HideBlizzard				= "隐藏暴雪框架"
+L.Area_HideBlizzard				= "隐藏暴雪框架选项"
+L.HideBossEmoteFrame				= "首领战中隐藏团队首领表情框体"
+L.HideWatchFrame				= "首领战中隐藏任务追踪框体"
+L.SpamBlockSayYell				= "隐藏聊天窗口中的使用聊天泡泡的警报信息"
+L.DisableCinematics				= "自动跳过游戏内过场动画"
+L.AfterFirst					= "仅第一次播放"
+L.Always					= "总是跳过"
 
 -- Misc
 L.FontHeight	= 20

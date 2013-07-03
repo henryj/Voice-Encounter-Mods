@@ -4,7 +4,7 @@ local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 local sndJR	= mod:NewSound(nil, "SoundJR", true)
 local sndDS	= mod:NewSound(nil, "SoundDS", true)
 
-mod:SetRevision(("$Revision: 9626 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9886 $"):sub(12, -3))
 mod:SetCreatureID(62397)
 mod:SetZone()
 mod:SetUsedIcons(1, 2)
@@ -31,10 +31,6 @@ mod:RegisterEventsInCombat(
 	"UNIT_SPELLCAST_SUCCEEDED",
 	"UNIT_AURA_UNFILTERED"
 )
-
-local isDispeller = select(2, UnitClass("player")) == "MAGE"
-	    		 or select(2, UnitClass("player")) == "PRIEST"
-	    		 or select(2, UnitClass("player")) == "SHAMAN"
 
 local warnWhirlingBlade					= mod:NewTargetAnnounce(121896, 4)--Target scanning not tested
 local warnRainOfBlades					= mod:NewSpellAnnounce(122406, 4)

@@ -15,7 +15,7 @@
 ## X-DBM-Mod-Name-zhCN: 搏击俱乐部
 ## X-DBM-Mod-Name-zhTW: 鬥陣俱樂部
 ## X-DBM-Mod-Sort: 30
-## X-DBM-Mod-LoadZoneID: 922,925
+## X-DBM-Mod-MapID: 369,1043
 localization.en.lua
 localization.cn.lua
 localization.tw.lua

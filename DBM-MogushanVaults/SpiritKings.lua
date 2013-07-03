@@ -3,9 +3,10 @@ local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 local sndDSA	= mod:NewSound(nil, "SoundDSA", true)
 
-mod:SetRevision(("$Revision: 9656 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9886 $"):sub(12, -3))
 mod:SetCreatureID(60701, 60708, 60709, 60710)--Adds: 60731 Undying Shadow, 60958 Pinning Arrow
 mod:SetZone()
+mod:SetBossHPInfoToHighest()
 
 mod:RegisterCombat("combat")
 
@@ -23,11 +24,6 @@ mod:RegisterEventsInCombat(
 )
 
 local isDispellerZ = select(2, UnitClass("player")) == "PRIEST"
-
-local isDispeller = select(2, UnitClass("player")) == "MAGE"
-	    		 or select(2, UnitClass("player")) == "PRIEST"
-	    		 or select(2, UnitClass("player")) == "SHAMAN"
-
 --on heroic 2 will be up at same time, so most announces are "target" type for source distinction.
 --Unless it's a spell that doesn't directly affect the boss (ie summoning an add isn't applied to boss, it's a new mob).
 --Zian
@@ -61,8 +57,8 @@ local specWarnFixate			= mod:NewSpecialWarningYou(118303)
 local yellFixate				= mod:NewYell(118303)
 local specWarnCoalescingShadows	= mod:NewSpecialWarningMove(117558)
 local specWarnShadowBlast		= mod:NewSpecialWarningInterrupt(117628, false)--very spammy. better to optional use
-local specWarnShieldOfDarkness	= mod:NewSpecialWarningTarget(117697, nil, nil, nil, true)--Heroic Ability
-local specWarnShieldOfDarknessD	= mod:NewSpecialWarningDispel(117697, isDispeller)--Heroic Ability
+local specWarnShieldOfDarkness	= mod:NewSpecialWarningTarget(117697, nil, nil, nil, 3)--Heroic Ability
+local specWarnShieldOfDarknessD	= mod:NewSpecialWarningDispel(117697, mod:IsMagicDispeller())--Heroic Ability
 --Meng
 local specWarnMaddeningShout	= mod:NewSpecialWarningSpell(117708, nil, nil, nil, true)
 local specWarnCrazyThought		= mod:NewSpecialWarningInterrupt(117833, false)--At discretion of whoever to enable. depending on strat, you may NOT want to interrupt these (or at least not all of them)
@@ -347,12 +343,12 @@ function mod:SPELL_CAST_START(args)
 			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\stopatk.mp3") --注意停手
 			specWarnShieldOfDarkness:Show(args.sourceName)
 			DBM.Flash:Show(1, 0, 0)
-		elseif isDispeller then
+		elseif mod:IsMagicDispeller() then
 			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\ex_mop_zyhd.mp3") --注意护盾
 			specWarnShieldOfDarkness:Show(args.sourceName)
 			DBM.Flash:Show(1, 0, 0)
 		end
-		if isDispeller then
+		if mod:IsMagicDispeller() then
 			sndWOP:Schedule(1.5, "Interface\\AddOns\\DBM-Core\\extrasounds\\"..DBM.Options.CountdownVoice.."\\dispelnow.mp3") --快驅散
 		end
 	elseif args:IsSpellID(117833) then

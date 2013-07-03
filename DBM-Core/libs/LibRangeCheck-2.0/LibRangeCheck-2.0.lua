@@ -1,6 +1,6 @@
 --[[
 Name: LibRangeCheck-2.0
-Revision: $Revision: 115 $
+Revision: $Revision: 136 $
 Author(s): mitch0
 Website: http://www.wowace.com/projects/librangecheck-2-0/
 Description: A range checking library based on interact distances and spell ranges
@@ -41,7 +41,7 @@ License: Public Domain
 -- @class file
 -- @name LibRangeCheck-2.0
 local MAJOR_VERSION = "LibRangeCheck-2.0"
-local MINOR_VERSION = tonumber(("$Revision: 115 $"):match("%d+")) + 100000
+local MINOR_VERSION = tonumber(("$Revision: 136 $"):match("%d+")) + 100000
 
 local lib, oldminor = LibStub:NewLibrary(MAJOR_VERSION, MINOR_VERSION)
 if not lib then
@@ -90,7 +90,7 @@ HarmSpells["DRUID"] = {
     770, -- ["Faerie Fire"] -- 35 (Glyph of Faerie Fire: +10)
     339, -- ["Entangling Roots"], -- 35
     6795, -- ["Growl"], -- 30
-    16979, -- ["Feral Charge"], -- 8-25
+--    16979, -- ["Feral Charge"], -- 8-25
     33786, -- ["Cyclone"], -- 20 (Gale Winds: 22, 24)
     80964, -- ["Skull Bash"] -- 13
     5211, -- ["Bash"], -- 5
@@ -294,7 +294,8 @@ local HarmItems = {
         28767, -- The Decapitator
     },
     [45] = {
-        32698, -- Wrangling Rope
+--        32698, -- Wrangling Rope
+        23836, -- Goblin Rocket Launcher
     },
     [60] = {
         32825, -- Soul Cannon
@@ -329,7 +330,9 @@ local tinsert = tinsert
 local tremove = tremove
 local BOOKTYPE_SPELL = BOOKTYPE_SPELL
 local GetSpellInfo = GetSpellInfo
-local GetSpellName = GetSpellName or GetSpellBookItemName
+local GetSpellBookItemName = GetSpellBookItemName
+local GetNumSpellTabs = GetNumSpellTabs
+local GetSpellTabInfo = GetSpellTabInfo
 local GetItemInfo = GetItemInfo
 local UnitCanAttack = UnitCanAttack
 local UnitCanAssist = UnitCanAssist
@@ -426,14 +429,16 @@ local function initItemRequests(cacheAll)
     foundNewItems = nil
 end
 
+local function getNumSpells()
+    local _, _, offset, numSpells = GetSpellTabInfo(GetNumSpellTabs())
+    return offset + numSpells
+end
+
 -- return the spellIndex of the given spell by scanning the spellbook
 local function findSpellIdx(spellName)
-    local i = 1
-    while true do
-        local spell, rank = GetSpellName(i, BOOKTYPE_SPELL)
-        if not spell then return nil end
+    for i = 1, getNumSpells() do
+        local spell, rank = GetSpellBookItemName(i, BOOKTYPE_SPELL)
         if spell == spellName then return i end
-        i = i + 1
     end
     return nil
 end
@@ -458,9 +463,7 @@ local function createCheckerList(spellList, itemList, interactList)
         for i = 1, #spellList do
             local sid = spellList[i]
             local name, _, _, _, _, _, _, minRange, range = GetSpellInfo(sid)
-			if IsSpellKnown(sid) then
-				local spellIdx = findSpellIdx(name)
-			end
+            local spellIdx = findSpellIdx(name)
             if spellIdx and range then
                 minRange = math.floor(minRange + 0.5)
                 range = math.floor(range + 0.5)
@@ -896,6 +899,10 @@ function lib:GLYPH_UPDATED()
     self:scheduleInit()
 end
 
+function lib:SPELLS_CHANGED()
+    self:scheduleInit()
+end
+
 function lib:UNIT_INVENTORY_CHANGED(event, unit)
     if self.initialized and unit == "player" and self.handSlotItem ~= GetInventoryItemLink("player", HandSlotId) then
         self:scheduleInit()
@@ -981,6 +988,7 @@ function lib:activate()
         frame:RegisterEvent("GLYPH_ADDED")
         frame:RegisterEvent("GLYPH_REMOVED")
         frame:RegisterEvent("GLYPH_UPDATED")
+        frame:RegisterEvent("SPELLS_CHANGED")
         local _, playerClass = UnitClass("player")
         if playerClass == "MAGE" or playerClass == "SHAMAN" then
             -- Mage and Shaman gladiator gloves modify spell ranges

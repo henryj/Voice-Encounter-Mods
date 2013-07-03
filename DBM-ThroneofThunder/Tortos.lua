@@ -4,7 +4,7 @@ local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 local sndXG		= mod:NewSound(nil, "SoundXG", true)
 local sndAE		= mod:NewSound(nil, "SoundAE", true)
 
-mod:SetRevision(("$Revision: 9795 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9923 $"):sub(12, -3))
 mod:SetCreatureID(67977)
 mod:SetQuestID(32747)
 mod:SetZone()
