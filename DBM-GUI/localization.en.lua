@@ -2,11 +2,11 @@ DBM_GUI_Translations = {}
 
 local L = DBM_GUI_Translations
 
-L.MainFrame = "Deadly Boss Mods"
+L.MainFrame = "Deadly Encounter Mods"
 
 L.TranslationByPrefix		= "Translated by "
 L.TranslationBy 			= "Iceoven@Dath'Remar"
-L.Website					= "Visit our English version Github project page at |cFF73C2FBhttps://github.com/henryj/DBM-VoiceEnhanced|r"
+L.Website					= "Visit our English version Github project page at |cFF73C2FBhttps://github.com/henryj/Deadly-Encounter-Mods|r"
 L.WebsiteButton				= "Forums"
 L.SoundMM					= "Voice Actor"
 
@@ -58,8 +58,8 @@ L.Statistic_Incompletes		= "Incompletes:"--For scenarios, TODO, figure out a cle
 L.Statistic_BestKill		= "Best Victory:"
 
 -- Tab: General Core Options
-L.General 					= "General DBM Core Options"
-L.EnableDBM 				= "Enable DBM"
+L.General 					= "General DEM Core Options"
+L.EnableDBM 				= "Enable DEM"
 L.EnableMiniMapIcon			= "Show minimap button"
 L.SetPlayerRole				= "Automatically set player role (Enabled recommended)"
 L.UseMasterVolume			= "Use Master audio channel to play sound files"
@@ -68,7 +68,7 @@ L.AdvancedAutologBosses		= "Automatically record boss encounters with Transcript
 L.LogOnlyRaidBosses			= "Only record raid boss encounters (exclude Raid Finder/party/scenario)"
 L.Latency_Text				= "Set max latency sync threshold: %d"
 -- Tab: General Timer Options
-L.TimerGeneral 				= "General DBM Timer Options"
+L.TimerGeneral 				= "General DEM Timer Options"
 L.SKT_Enabled				= "Always show speed kill timer (Overrides boss-specific option)"
 L.ChallengeTimerOptions		= "Set option for challenge mode best clear timer"
 L.ChallengeTimerPersonal	= "Personal"
@@ -111,7 +111,7 @@ L.WarningIconLeft 			= "Show icon on left side"
 L.WarningIconRight 			= "Show icon on right side"
 L.WarningIconChat 			= "Show icons in chat frame"
 L.ShowCountdownText			= "Show countdown text"
-L.RaidWarnMessage 			= "Thanks for using Deadly Boss Mods"
+L.RaidWarnMessage 			= "Thanks for using Deadly Encounter Mods"
 L.BarWhileMove 				= "Raid warning movable"
 L.RaidWarnSound				= "Play sound on raid warning"
 L.CountdownVoice			= "Set voice"
@@ -182,7 +182,7 @@ L.BarWidth					= "Bar width: %d"
 L.Panel_SpamFilter				= "Global and Spam Filters"
 L.Area_SpamFilter				= "Spam Filter Options"
 L.StripServerName				= "Strip realm name in warnings and timers"
-L.SpamBlockBossWhispers			= "Filter <DBM> warning whispers while fighting"
+L.SpamBlockBossWhispers			= "Filter <DEM> warning whispers while fighting"
 L.BlockVersionUpdateNotice		= "Disable update notification popup (Not recommended)"
 L.ShowBigBrotherOnCombatStart	= "Perform Big Brother buff check on combat start"
 L.BigBrotherAnnounceToRaid		= "Announce Big Brother results to raid"

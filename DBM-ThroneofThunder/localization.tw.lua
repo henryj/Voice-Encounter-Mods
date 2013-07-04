@@ -292,13 +292,13 @@ L:SetOptionLocalization({
 	warnAddsLeft				= "警告：霧獸剩餘數量",
 	specWarnFogRevealed			= "特別警告：霧獸被照出",
 	specWarnDisintegrationBeam	= DBM_CORE_AUTO_SPEC_WARN_OPTIONS.spell:format("ej6882"),
-	ArrowOnBeam					= "DBM箭頭：$journal:6882的轉動方向",
+	ArrowOnBeam					= "DEM箭頭：$journal:6882的轉動方向",
 	soundhold					= "黑暗寄生經過多少秒時提示你開自保(30-剩幾秒驅散-自保持續時間)",
 	sounddisp					= "黑暗寄生剩餘多少秒時提示你幫忙驅散(治療)",
 	specWarnHold				= "特別警告：黑暗寄生開自保",
 	xx1							= "當你被吸血一層時喊話",
 	xx2							= "當你被吸血兩層時喊話",
-	xx3							= "當你被吸血超過三層時喊話(DBM會自動在結尾為你顯示層數)",
+	xx3							= "當你被吸血超過三層時喊話(DEM會自動在結尾為你顯示層數)",
 	lifeA						= "當你被吸血兩層時密語此目標擋線",
 	lifeB						= "當你被吸血兩層時密語此目標擋線",
 	SetIconRays					= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format("ej6891"),
@@ -528,8 +528,8 @@ L:SetOptionLocalization({
 	DD2				= "雙數盾反B",
 	RangeFrame		= "距離監視",--For two different spells
 	RangeFrameLB	= "距離監視：當閃電球存在時切換到3碼(英雄模式)",
-	StaticShockArrow	= "DBM箭頭：$spell:135695",
-	OverchargeArrow		= "DBM箭頭：$spell:136295",
+	StaticShockArrow	= "DEM箭頭：$spell:135695",
+	OverchargeArrow		= "DEM箭頭：$spell:136295",
 	SetIconOnOvercharge	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(136295),
 	SetIconOnStaticShock= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(135695)
 })

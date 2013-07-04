@@ -410,7 +410,7 @@ L= DBM:GetModLocalization(671)
 
 L:SetOptionLocalization({
 	SoundWOP			= "语音警告：重要技能",
-	KickArrow	= "DBM箭头：$spell:114487接近你时",
+	KickArrow	= "DEM箭头：$spell:114487接近你时",
 })
 
 -----------------------

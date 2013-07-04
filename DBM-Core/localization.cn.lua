@@ -4,22 +4,22 @@
 
 if GetLocale() ~= "zhCN" then return end
 
-DBM_CORE_NEED_SUPPORT				= "嘿, 你是否拥有良好的程序开发或语言能力? 如果是的话, DBM团队真心需要你的帮助以保持成为WOW里面最佳的首领报警插件。请访问 www.deadlybossmods.com 或发送邮件给 tandanu@deadlybossmods.com 或者 nitram@deadlybossmods.com 来加入我们的行列。"
-DBM_HOW_TO_USE_MOD					= "欢迎使用DBM。在聊天框输入 /dbm help 以获取可用命令的帮助。输入 /dbm 可打开设置窗口。手动打开指定区域的模组即可开始针对各个模块进行设置，也可以浏览首领击杀记录。DBM 会在你首次尝试首领战时自动进行扫描，但是有些设置需要手动开启。"
+DBM_CORE_NEED_SUPPORT				= "嘿, 你是否拥有良好的程序开发或语言能力? 如果是的话, DEM团队真心需要你的帮助以保持成为WOW里面最佳的首领报警插件。请访问 http://bbs.ngacn.cc/read.php?tid=5397726&page=1 或 https://github.com/henryj/Deadly-Encounter-Mods 来加入我们的行列。"
+DBM_HOW_TO_USE_MOD					= "欢迎使用DEM。在聊天框输入 /dem help 以获取可用命令的帮助。输入 /dem 可打开设置窗口。手动打开指定区域的模组即可开始针对各个模块进行设置，也可以浏览首领击杀记录。DEM 会在你首次尝试首领战时自动进行扫描，但是有些设置需要手动开启。"
 
-DBM_FORUMS_MESSAGE					= "发现BUG或错误的计时器?你希望要让某些模组有新的警告，计时器或是特别功能?\n拜访新的Deadly Boss Mods讨论，臭虫回报与功能要求论坛 |HDBM:论坛|h|cff3588ffhttp://bbs.ngacn.cc/read.php?tid=5397726&page=1|r (你可以点击链接复制网址)"
+DBM_FORUMS_MESSAGE					= "发现BUG或错误的计时器?你希望要让某些模组有新的警告，计时器或是特别功能?\n拜访新的Deadly Encounter Mods讨论，臭虫回报与功能要求论坛 |HDBM:论坛|h|cff3588ffhttp://bbs.ngacn.cc/read.php?tid=5397726&page=1|r (你可以点击链接复制网址)"
 DBM_FORUMS_COPY_URL_DIALOG			= "拜访我们的讨论与支持论坛\r"
 
 DBM_CORE_LOAD_MOD_ERROR				= "读取%s模块时发生错误：%s"
-DBM_CORE_LOAD_MOD_SUCCESS			= "成功读取%s模块。在聊天框输入 /dbm 或 /dbm help 可进行更多设置。"
+DBM_CORE_LOAD_MOD_SUCCESS			= "成功读取%s模块。在聊天框输入 /dem 或 /dem help 可进行更多设置。"
 DBM_CORE_LOAD_GUI_ERROR				= "无法读取图形界面：%s"
 DBM_CORE_LOAD_GUI_COMBAT			= "无法在战斗中初始化图形界面。请先在非战斗状态打开图形设置界面，之后的战斗中就可以自由打开和关闭该界面了。"
 DBM_CORE_LOAD_MOD_COMBAT			= "延迟读取模块 '%s' 直到你脱离战斗"
-DBM_CORE_BAD_LOAD				= "DBM检测到你无法完全正确加载当前副本模块(因為你正在战斗中),请在离开战斗后立刻重载介面"
+DBM_CORE_BAD_LOAD				= "DEM检测到你无法完全正确加载当前副本模块(因為你正在战斗中),请在离开战斗后立刻重载介面"
 
 DBM_CORE_LOOT_SPEC_REMINDER			= "你当前的专精为 %s. 你当前的拾取选择为 %s."
 
-DBM_CORE_BIGWIGS_ICON_CONFLICT			= "DBM检测到你同时开启了Bigwigs,请关闭自动标记以避免冲突"
+DBM_CORE_BIGWIGS_ICON_CONFLICT			= "DEM检测到你同时开启了Bigwigs,请关闭自动标记以避免冲突"
 
 DBM_CORE_COMBAT_STARTED				= "%s作战开始，祝你走运 :)"
 DBM_CORE_COMBAT_STARTED_IN_PROGRESS	= "已进行的战斗%s作战开始。祝你走运 :)"
@@ -79,29 +79,27 @@ DBM_CORE_WHISPER_SCENARIO_END_KILL_STATS	= "%s 已完成 %s! 总计 %d 次胜利
 DBM_CORE_WHISPER_SCENARIO_END_WIPE			= "%s 未能完成 %s."
 DBM_CORE_WHISPER_SCENARIO_END_WIPE_STATS	= "%s 未能完成 %s. 该难度下总计 %d 次失败."
 
-DBM_CORE_VERSIONCHECK_HEADER		= "Deadly Boss Mods - 版本检测"
+DBM_CORE_VERSIONCHECK_HEADER		= "Deadly Encounter Mods - 版本检测"
 DBM_CORE_VERSIONCHECK_ENTRY			= "%s：%s (r%d)"
 DBM_CORE_VERSIONCHECK_ENTRY_TWO			= "%s: %s (r%d) & %s (r%d)"
 DBM_CORE_VERSIONCHECK_ENTRY_NO_DBM		= "%s：尚未安装任何团队首领模组"
-DBM_CORE_VERSIONCHECK_FOOTER			= "团队中有%d玩家正在使用DBM / %d玩家正在使用Bigwigs"
-DBM_CORE_YOUR_VERSION_OUTDATED		= "你的Deadly Boss Mods已经过期。请访问 http://dev.deadlybossmods.com 下载最新版本。"
+DBM_CORE_VERSIONCHECK_FOOTER			= "团队中有%d玩家正在使用DEM|DBM / %d玩家正在使用Bigwigs"
+DBM_CORE_YOUR_VERSION_OUTDATED		= "你的Deadly Encounter Mods已经过期。请访问 https://github.com/henryj/Deadly-Encounter-Mods 下载最新版本。"
 --DBM_BIG_WIGS (Same as English locales)
 --DBM_BIG_WIGS_ALPHA (Same as English locales)
 
-DBM_CORE_UPDATEREMINDER_HEADER		= "你的Deadly Boss Mods版本已过期。\n你可以在如下地址下载到新版本%s（r%d）："
-DBM_CORE_UPDATEREMINDER_HEADER_ALPHA	= "你的Deadly Boss Mods版本已过期至少 %d 个版本。"
+DBM_CORE_UPDATEREMINDER_HEADER		= "你的Deadly Encounter Mods版本已过期。\n你可以在如下地址下载到新版本%s（r%d）："
+DBM_CORE_UPDATEREMINDER_HEADER_ALPHA	= "你的Deadly Encounter Mods版本已过期至少 %d 个版本。"
 DBM_CORE_UPDATEREMINDER_FOOTER		= (IsMacClient() and "Cmd-C" or "Ctrl-C")  ..  "复制地址到剪切板。"
 DBM_CORE_UPDATEREMINDER_FOOTER_GENERIC	= (IsMacClient() and "Cmd-C" or "Ctrl-C")  ..  "复制地址到剪切板。"
 DBM_CORE_UPDATEREMINDER_NOTAGAIN	= "检测到新版本后弹出提示框"
-DBM_CORE_UPDATEREMINDER_DISABLE		= "警告：你的DBM已经过时相当多的版本（%d个版本），它已被禁用，直到你更新。这是為了确保它不会导致你或其他团队成员出错。"
+DBM_CORE_UPDATEREMINDER_DISABLE		= "警告：你的DEM已经过时相当多的版本（%d个版本），它已被禁用，直到你更新。这是為了确保它不会导致你或其他团队成员出错。"
 
 DBM_CORE_MOVABLE_BAR				= "拖动我！"
 
-DBM_PIZZA_SYNC_INFO					= "|Hplayer:%1$s|h[%1$s]|h向你发送了一个DBM计时条：'%2$s'\n|HDBM:cancel:%2$s:nil|h|cff3588ff[取消该计时]|r|h  |HDBM:ignore:%2$s:%1$s|h|cff3588ff[忽略来自%1$s的计时条]|r|h"
+DBM_PIZZA_SYNC_INFO					= "|Hplayer:%1$s|h[%1$s]|h向你发送了一个DEM计时条：'%2$s'\n|HDBM:cancel:%2$s:nil|h|cff3588ff[取消该计时]|r|h  |HDBM:ignore:%2$s:%1$s|h|cff3588ff[忽略来自%1$s的计时条]|r|h"
 DBM_PIZZA_CONFIRM_IGNORE			= "是否要在该次游戏连接中屏蔽来自%s的计时条？"
-DBM_PIZZA_ERROR_USAGE				= "命令：/dbm [broadcast] timer <时间（秒）> <文本>"
-
-DBM_CORE_ERROR_DBMV3_LOADED			= "目前有2个版本的Deadly Boss Mods正在运行：DBMv3和DBMv4。\n单击“确定”按钮可将DBMv3关闭并重载用户界面。\n我们建议将插件目录下的DBMv3删除。"
+DBM_PIZZA_ERROR_USAGE				= "命令：/dem [broadcast] timer <时间（秒）> <文本>"
 
 --DBM_CORE_MINIMAP_TOOLTIP_HEADER (Same as English locales)
 DBM_CORE_MINIMAP_TOOLTIP_FOOTER		= "Shift+拖动 / 右键拖动：拖动\nAlt+Shift+拖动：自由拖动"
@@ -136,16 +134,16 @@ DBM_LFG_INVITE						= "地下城准备确认"
 
 DBM_CORE_SLASHCMD_HELP				= {
 	"可用命令：",
-	"/dbm version：进行团队范围的DBM版本检测（也可使用：ver）",
---	"/dbm version2: 进行团队范围的DBM版本检测并密语给那些使用过期版本的玩家（也可使用：ver2）",
-	"/dbm unlock：显示一个可移动的计时条，可通过对它来移动所有DBM计时条的位置（也可使用：move）",
-	"/dbm timer <x> <文本>：开始一个以<文本>为名称的时间为<x>秒的倒计时",
-	"/dbm broadcast timer <x> <文本>：向团队广播一个以<文本>为名称的时间为<x>秒的倒计时（需要团队领袖或助理权限）",
-	"/dbm break <分钟>: 开始一个<分钟>时间的休息计时条。并向所有团队成员发送这个DBM休息计时条（需开启团队广播及助理权限）。",
-	"/dbm pull <秒>: 开始一个<秒>时间的开怪计时条。 并向所有团队成员发送这个DBM开怪计时条（需开启团队广播及助理权限）。",
-	"/dbm arrow: 显示DBM箭头，输入/dbm arrow查询更多信息。",
-	"/dbm lockout: 查询团队成员当前的副本锁定状态（也可使用：lockouts, ids）（需要团队领袖或助理权限）。",
-	"/dbm help：显示可用命令的说明。",
+	"/dem version：进行团队范围的DEM版本检测（也可使用：ver）",
+--	"/dem version2: 进行团队范围的DBM版本检测并密语给那些使用过期版本的玩家（也可使用：ver2）",
+	"/dem unlock：显示一个可移动的计时条，可通过对它来移动所有DEM计时条的位置（也可使用：move）",
+	"/dem timer <x> <文本>：开始一个以<文本>为名称的时间为<x>秒的倒计时",
+	"/dem broadcast timer <x> <文本>：向团队广播一个以<文本>为名称的时间为<x>秒的倒计时（需要团队领袖或助理权限）",
+	"/dem break <分钟>: 开始一个<分钟>时间的休息计时条。并向所有团队成员发送这个DEM休息计时条（需开启团队广播及助理权限）。",
+	"/dem pull <秒>: 开始一个<秒>时间的开怪计时条。 并向所有团队成员发送这个DEM开怪计时条（需开启团队广播及助理权限）。",
+	"/dem arrow: 显示DEM箭头，输入/dem arrow查询更多信息。",
+	"/dem lockout: 查询团队成员当前的副本锁定状态（也可使用：lockouts, ids）（需要团队领袖或助理权限）。",
+	"/dem help：显示可用命令的说明。",
 }
 
 DBM_ERROR_NO_PERMISSION				= "无权进行该操作。"
@@ -300,10 +298,10 @@ DBM_ARROW_MOVABLE				= "可移动箭头"
 DBM_ARROW_NO_RAIDGROUP			= "此功能仅适用于副本中的团队。"
 DBM_ARROW_ERROR_USAGE	= {
 	"DBM-Arrow 可用命令：",
-	"/dbm arrow <x> <y>  新建一个箭头在指定位置(0 < x/y < 100)",
-	"/dbm arrow <玩家>  新建一个箭头并指向你队伍或团队中特定的玩家",
-	"/dbm arrow hide  隐藏箭头",
-	"/dbm arrow move  移动或锁定箭头",
+	"/dem arrow <x> <y>  新建一个箭头在指定位置(0 < x/y < 100)",
+	"/dem arrow <玩家>  新建一个箭头并指向你队伍或团队中特定的玩家",
+	"/dem arrow hide  隐藏箭头",
+	"/dem arrow move  移动或锁定箭头",
 }
 
 DBM_SPEED_KILL_TIMER_TEXT	= "击杀记录"
@@ -314,19 +312,19 @@ DBM_SPEED_CLEAR_TIMER_TEXT	= "最速清除"
 DBM_REQ_INSTANCE_ID_PERMISSION		= "%s请求获取你现在副本的存档ID与进度。是否愿意向&s提交进度？\n\n注意：在接受后，他可以随时查看您当前的进度情况，直到您下线、掉线或重载用户界面。"
 DBM_ERROR_NO_RAID					= "使用该功能需要身处一个团队中。"
 DBM_INSTANCE_INFO_REQUESTED			= "已发送团队副本进度查看请求。\n请注意，团员会根据需要选择接受或拒绝该请求。请求时间约一分钟，请等待。"
-DBM_INSTANCE_INFO_STATUS_UPDATE		= "已收到%d名团员的进度回复（已安装DBM的团员有%d名）：%d人接受请求，%d人拒绝。生成数据需要约%d秒，请等待。"
+DBM_INSTANCE_INFO_STATUS_UPDATE		= "已收到%d名团员的进度回复（已安装DEM|DBM的团员有%d名）：%d人接受请求，%d人拒绝。生成数据需要约%d秒，请等待。"
 DBM_INSTANCE_INFO_ALL_RESPONSES		= "所有团员接受请求。"
 DBM_INSTANCE_INFO_DETAIL_DEBUG		= "发送者：%s 结果类型：%s 副本名：%s 副本ID：%s 难度：%d 规模：%d 进度：%s"
 DBM_INSTANCE_INFO_DETAIL_HEADER		= "%s（%d），难度%d："
 DBM_INSTANCE_INFO_DETAIL_INSTANCE	= "    ID %s, 进度%d：%s"
 DBM_INSTANCE_INFO_STATS_DENIED		= "拒绝请求：%s"
 DBM_INSTANCE_INFO_STATS_AWAY		= "暂离：%s"
-DBM_INSTANCE_INFO_STATS_NO_RESPONSE	= "新版DBM未安装：%s"
+DBM_INSTANCE_INFO_STATS_NO_RESPONSE	= "新版DEM未安装：%s"
 DBM_INSTANCE_INFO_RESULTS			= "副本进度扫描结果。" --Note that instances might show up more than once if there are players with localized WoW clients in your raid.
 DBM_INSTANCE_INFO_SHOW_RESULTS		= "回复请求的玩家：%s\n|HDBM:showRaidIdResults|h|cff3588ff[点击显示结果]|r|h"
 
 DBM_CORE_LAG_CHECKING				= "延时检测--五秒后反馈结果..."
-DBM_CORE_LAG_HEADER					= "Deadly Boss Mods - 延时检测"
+DBM_CORE_LAG_HEADER					= "Deadly Encounter Mods - 延时检测"
 DBM_CORE_LAG_ENTRY					= "%s：世界延时[%d毫秒] / 本地延时[%d毫秒]"
 DBM_CORE_LAG_FOOTER					= "未反馈此次检测的团员:%s"
 

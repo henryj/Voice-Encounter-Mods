@@ -172,7 +172,7 @@ L:SetGeneralLocalization({
 })
 
 L:SetOptionLocalization({
-	ArrowOnBoxing			= "DBM箭頭：$spell:140868 / $spell:140862 / $spell:140886",
+	ArrowOnBoxing			= "DEM箭頭：$spell:140868 / $spell:140862 / $spell:140886",
 	SoundWOP			= "語音警告：重要技能"
 })
 

@@ -296,13 +296,13 @@ L:SetOptionLocalization({
 	warnAddsLeft				= "警告：雾兽剩余数量",
 	specWarnFogRevealed			= "特别警告：雾兽被照出",
 	specWarnDisintegrationBeam	= DBM_CORE_AUTO_SPEC_WARN_OPTIONS.spell:format("ej6882"),
-	ArrowOnBeam					= "DBM箭头：$journal:6882的转动方向",
+	ArrowOnBeam					= "DEM箭头：$journal:6882的转动方向",
 	soundhold					= "黑暗寄生经过多少秒时提示你开自保(30-剩几秒驱散-自保持续时间)",
 	sounddisp					= "黑暗寄生剩多少秒时如果还存在则提示你帮忙驱散(治疗)",
 	specWarnHold				= "特别警告：黑暗寄生开自保",
 	xx1							= "当你被吸血一层时喊话",
 	xx2							= "当你被吸血两层时喊话",
-	xx3							= "当你被吸血超过三层时喊话(DBM会自动在结尾為你显示层数)",
+	xx3							= "当你被吸血超过三层时喊话(DEM会自动在结尾為你显示层数)",
 	lifeA						= "当你被吸血两层时密语此目标挡线",
 	lifeB						= "当你被吸血两层时密语此目标挡线",
 	SetIconRays					= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format("ej6891"),
@@ -534,8 +534,8 @@ L:SetOptionLocalization({
 	HudMAP			= "高级定位监视(HUD)：$spell:135695",
 	HudMAP2			= "高级定位监视(HUD)：$spell:136295",
 	RangeFrame		= "距离监视",--For two different spells
-	StaticShockArrow	= "DBM箭头：$spell:135695",
-	OverchargeArrow		= "DBM箭头：$spell:136295",
+	StaticShockArrow	= "DEM箭头：$spell:135695",
+	OverchargeArrow		= "DEM箭头：$spell:136295",
 	SetIconOnOvercharge	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(136295),
 	SetIconOnStaticShock= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(135695)
 })

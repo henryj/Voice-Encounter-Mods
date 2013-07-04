@@ -43,9 +43,9 @@
 --  Globals/Default Options  --
 -------------------------------
 DBM = {
-	Revision = tonumber(("$Revision: 9950 $"):sub(12, -3)),
-	DisplayVersion = "5.3.5 "..DBM_CORE_SOUNDVER, -- the string that is shown as version
-	ReleaseRevision = 9947 -- the revision of the latest stable version that is available
+	Revision = tonumber(("$Revision: 9930 $"):sub(12, -3)),
+	DisplayVersion = "5.3 "..DBM_CORE_SOUNDVER, -- the string that is shown as version
+	ReleaseRevision = 9810 -- the revision of the latest stable version that is available
 }
 
 -- Legacy crap; that stupid "Version" field was never a good idea.
@@ -190,8 +190,8 @@ local updateFunctions = {}
 local raid = {}
 local modSyncSpam = {}
 local autoRespondSpam = {}
-local chatPrefix = "<Deadly Boss Mods> "
-local chatPrefixShort = "<DBM> "
+local chatPrefix = "<Deadly Encounter Mods> "
+local chatPrefixShort = "<DEM> "
 local ver = ("%s (r%d)"):format(DBM.DisplayVersion, DBM.Revision)
 local mainFrame = CreateFrame("Frame")
 local showedUpdateReminder = false
@@ -1007,7 +1007,7 @@ end
 ----------------------
 --  Slash Commands  --
 ----------------------
-SLASH_DEADLYBOSSMODS1 = "/dbm"
+SLASH_DEADLYBOSSMODS1 = "/dem"
 SlashCmdList["DEADLYBOSSMODS"] = function(msg)
 	local cmd = msg:lower()
 	if cmd == "ver" or cmd == "version" then
@@ -1169,7 +1169,11 @@ do
 		self:AddMsg(DBM_CORE_VERSIONCHECK_HEADER)
 		for i, v in ipairs(sortMe) do
 			if v.displayVersion and not (v.bwrevision or v.bwarevision) then--DBM, no BigWigs
-				self:AddMsg(DBM_CORE_VERSIONCHECK_ENTRY:format(v.name, "DBM "..v.displayVersion, v.revision))
+				if v.displayVersion:find(DBM_CORE_SOUNDVER) then
+					self:AddMsg(DBM_CORE_VERSIONCHECK_ENTRY:format(v.name, "DEM "..v.displayVersion, v.revision))
+				else
+					self:AddMsg(DBM_CORE_VERSIONCHECK_ENTRY:format(v.name, "DBM "..v.displayVersion, v.revision))
+				end
 				if notify and v.revision < DBM.ReleaseRevision then
 					SendChatMessage(chatPrefixShort..DBM_CORE_YOUR_VERSION_OUTDATED, "WHISPER", nil, v.name)
 				end
@@ -2243,7 +2247,7 @@ do
 		if not DBM.Options.DontShowPTCountdownText then
 			TimerTracker_OnEvent(TimerTracker, "PLAYER_ENTERING_WORLD")--easiest way to nil out timers on TimerTracker frame. This frame just has no actual star/stop functions :\
 		end
-		if timer == 0 then return DBM:AddMsg("<"..sender..">"..DBM_CORE_ANNOUNCE_PULL_CANCEL) end--"/dbm pull 0" will strictly be used to cancel the pull timer (which is w hy we let above part of code run but not below)
+		if timer == 0 then return DBM:AddMsg("<"..sender..">"..DBM_CORE_ANNOUNCE_PULL_CANCEL) end--"/dem pull 0" will strictly be used to cancel the pull timer (which is w hy we let above part of code run but not below)
 		if not DBM.Options.DontShowPT then
 			DBM.Bars:CreateBar(timer, DBM_CORE_TIMER_PULL, "Interface\\Icons\\Spell_Holy_BorrowedTime")
 		end
@@ -2296,7 +2300,7 @@ do
 			raid[sender].displayVersion = displayVersion
 			raid[sender].locale = locale
 			local revDifference = revision - tonumber(DBM.Revision)
-			if version > tonumber(DBM.Version) then -- Update reminder
+			if version > tonumber(DBM.Version) and displayVersion:find(DBM_CORE_SOUNDVER) then -- Update reminder
 				if not showedUpdateReminder then
 					local found = false
 					for i, v in pairs(raid) do
@@ -2321,23 +2325,20 @@ do
 					end
 				end
 			end
-			if revision > tonumber(DBM.Revision) then
+			if revision > tonumber(DBM.Revision) and displayVersion:find(DBM_CORE_SOUNDVER) then
 				if raid[sender].rank >= 1 then
 					enableIcons = false
 				end
 				if not showedUpdateReminder and DBM.DisplayVersion:find("alpha") and (revDifference > 20) then
 					local found = false
-					local other = nil
 					for i, v in pairs(raid) do
 						if v.revision == revision and v ~= raid[sender] then
 							found = true
-							other = i
 							break
 						end
 					end
 					if found then--Running alpha version that's out of date
 						showedUpdateReminder = true
---						print(("DBM Debug: Showing alpha update notification because %s and %s are running revision %d which is > than our reivision %d"):format(sender, other, revision, DBM.Revision))
 						DBM:AddMsg(DBM_CORE_UPDATEREMINDER_HEADER_ALPHA:format(revDifference))
 					end
 				end
@@ -2706,10 +2707,10 @@ do
 		editBox:SetFontObject("GameFontHighlight")
 		editBox:SetTextInsets(0, 0, 0, 1)
 		editBox:SetFocus()
-		editBox:SetText("http://bbs.ngacn.cc/read.php?tid=5397726&page=1")
+		editBox:SetText("https://github.com/henryj/Deadly-Encounter-Mods")
 		editBox:HighlightText()
 		editBox:SetScript("OnTextChanged", function(self)
-			editBox:SetText("http://bbs.ngacn.cc/read.php?tid=5397726&page=1")
+			editBox:SetText("https://github.com/henryj/Deadly-Encounter-Mods")
 			editBox:HighlightText()
 		end)
 		fontstringFooter = frame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -3983,7 +3984,7 @@ end
 --  Misc. Functions  --
 -----------------------
 function DBM:AddMsg(text, prefix)
-	prefix = prefix or (self.localization and self.localization.general.name) or "Deadly Boss Mods"
+	prefix = prefix or (self.localization and self.localization.general.name) or "Deadly Encounter Mods"
 	local frame = _G[tostring(DBM.Options.ChatFrame)]
 	frame = frame and frame:IsShown() and frame or DEFAULT_CHAT_FRAME
 	frame:AddMessage(("|cffff7d0a<|r|cffffd200%s|r|cffff7d0a>|r %s"):format(tostring(prefix), tostring(text)), 0.41, 0.8, 0.94)

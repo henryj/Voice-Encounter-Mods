@@ -1,21 +1,21 @@
 ﻿if GetLocale() ~= "zhTW" then return end
 
-DBM_CORE_NEED_SUPPORT				= "你是否擁有良好的程式開發或語言能力? 如果是的話, DBM團隊真的需要你的幫助以保持成為WOW裡最佳的首領模組。觀看 www.deadlybossmods.com 或發送郵件到 tandanu@deadlybossmods.com 或 nitram@deadlybossmods.com 來加入團隊。"
-DBM_HOW_TO_USE_MOD					= "歡迎使用黑手之鄉DBM-語音版。在聊天頻道輸入 /dbm 打開設定開始設定。你可以載入特定區域後為任何首領設定你喜歡的特別設置。DBM會在第一次啟動時嘗試掃描你的職業天賦，但有些選項你可能想打開。"
+DBM_CORE_NEED_SUPPORT				= "你是否擁有良好的程式開發或語言能力? 如果是的話, DBM團隊真的需要你的幫助以保持成為WOW裡最佳的首領模組。觀看 http://bbs.ngacn.cc/read.php?tid=5397726&page=1 或 https://github.com/henryj/Deadly-Encounter-Mods 來加入團隊。"
+DBM_HOW_TO_USE_MOD					= "歡迎使用黑手之鄉DEM-語音版。在聊天頻道輸入 /dem 打開設定開始設定。你可以載入特定區域後為任何首領設定你喜歡的特別設置。DEM會在第一次啟動時嘗試掃描你的職業天賦，但有些選項你可能想打開。"
 
 DBM_FORUMS_MESSAGE					= "發現BUG或錯誤? 希望有新的警告，計時器或是特別功能? \n |HDBM:論壇|h|cff3588ffhttp://bbs.ngacn.cc/read.php?tid=5397726&page=1|r (你可以點擊複製網址)"
 DBM_FORUMS_COPY_URL_DIALOG			= "拜訪我們的討論與支援論壇\r"
 
 DBM_CORE_LOAD_MOD_ERROR				= "載入%s模組時發生錯誤：%s"
-DBM_CORE_LOAD_MOD_SUCCESS			= "成功載入%s模組。輸入/dbm或/dbm help有更多選項。"
+DBM_CORE_LOAD_MOD_SUCCESS			= "成功載入%s模組。輸入/dem或/dem help有更多選項。"
 DBM_CORE_LOAD_MOD_COMBAT			= "延遲載入'%s'直到離開戰鬥"
 DBM_CORE_LOAD_GUI_ERROR				= "無法載入圖形介面：%s"
 DBM_CORE_LOAD_GUI_COMBAT			= "圖形介面不能在戰鬥中初始化。圖形介面將在戰鬥後自動讀取，這樣就能夠在戰鬥中使用。"
-DBM_CORE_BAD_LOAD					= "DBM偵測到你的此副本的模組在戰鬥中讀取失敗。一旦脫離戰鬥，請立即輸入/consoel reloadui重新載入。"
+DBM_CORE_BAD_LOAD					= "DEM偵測到你的此副本的模組在戰鬥中讀取失敗。一旦脫離戰鬥，請立即輸入/consoel reloadui重新載入。"
 
 DBM_CORE_LOOT_SPEC_REMINDER			= "你目前的專精為:%s。而你目前的拾取選擇為:%s。"
 
-DBM_CORE_BIGWIGS_ICON_CONFLICT		= "DBM偵測到你同時開啟BigWigs和DBM的團隊圖示。請關閉其中之一的團隊圖示功能以免與你的隊伍隊長產生衝突。"
+DBM_CORE_BIGWIGS_ICON_CONFLICT		= "DEM偵測到你同時開啟BigWigs和DEM的團隊圖示。請關閉其中之一的團隊圖示功能以免與你的隊伍隊長產生衝突。"
 
 DBM_CORE_COMBAT_STARTED				= "%s開戰。祝好運與盡興! :)"
 DBM_CORE_COMBAT_STARTED_IN_PROGRESS	= "開戰%s已進行的戰鬥。祝好運與盡興! :)"
@@ -73,27 +73,27 @@ DBM_CORE_WHISPER_SCENARIO_END_KILL_STATS	= "%s已經完成%s!他們總共有%d�
 DBM_CORE_WHISPER_SCENARIO_END_WIPE			= "%s未完成%s。"
 DBM_CORE_WHISPER_SCENARIO_END_WIPE_STATS	= "%s未完成%s。他們在這個難度總共未完成%d次。"
 
-DBM_CORE_VERSIONCHECK_HEADER		= "Deadly Boss Mods - 版本檢測"
+DBM_CORE_VERSIONCHECK_HEADER		= "Deadly Encounter Mods - 版本檢測"
 DBM_CORE_VERSIONCHECK_ENTRY			= "%s：%s(r%d)"
 DBM_CORE_VERSIONCHECK_ENTRY_TWO		= "%s: %s (r%d) & %s (r%d)"
 DBM_CORE_VERSIONCHECK_ENTRY_NO_DBM	= "%s：尚未安裝任何團隊首領模組"
-DBM_CORE_VERSIONCHECK_FOOTER			= "團隊中有%d玩家正在使用DBM / %d玩家正在使用Bigwigs"
-DBM_CORE_YOUR_VERSION_OUTDATED			= "你的 Deadly Boss Mod 已經過期。請到 www.deadlybossmods.com 下載最新版本。"
+DBM_CORE_VERSIONCHECK_FOOTER			= "團隊中有%d玩家正在使用DEM|DBM / %d玩家正在使用Bigwigs"
+DBM_CORE_YOUR_VERSION_OUTDATED			= "你的 Deadly Encounter Mods 已經過期。請到 https://github.com/henryj/Deadly-Encounter-Mods 下載最新版本。"
 --DBM_BIG_WIGS (Same as English locales)
 --DBM_BIG_WIGS_ALPHA (Same as English locales)
 
-DBM_CORE_UPDATEREMINDER_HEADER			= "你的Deadly Boss Mod已經過期。\n你可以在此網址下載到新版本%s(r%d)："
-DBM_CORE_UPDATEREMINDER_HEADER_ALPHA	= "你的alpha版本Deadly Boss Mods已經過期。\n 你至少落後%d個測試版本。建議DBM使用者使用最新的alpha或最新的穩定版本。過期的alpha版本可能會有低落或未完成的功能。"
+DBM_CORE_UPDATEREMINDER_HEADER			= "你的Deadly Encounter Mods已經過期。\n你可以在此網址下載到新版本%s(r%d)："
+DBM_CORE_UPDATEREMINDER_HEADER_ALPHA	= "你的alpha版本Deadly Encounter Mods已經過期。\n 你至少落後%d個測試版本。建議DEM使用者使用最新的alpha或最新的穩定版本。過期的alpha版本可能會有低落或未完成的功能。"
 DBM_CORE_UPDATEREMINDER_FOOTER			= "按下" .. (IsMacClient() and "Cmd-C" or "Ctrl-C")  ..  "：複製下載網址到剪貼簿。"
 DBM_CORE_UPDATEREMINDER_FOOTER_GENERIC	= "按下" .. (IsMacClient() and "Cmd-C" or "Ctrl-C")  ..  "：複製網址到剪貼簿。"
 DBM_CORE_UPDATEREMINDER_NOTAGAIN		= "當有新版本時顯示彈出提示"
-DBM_CORE_UPDATEREMINDER_DISABLE			= "警告: 你的DBM版本已大幅度的過期(%d修訂版)，已禁用除非更新。這是為了確保舊而不相容的程式碼不會對你而團隊夥伴造成低落的遊戲體驗。"
+DBM_CORE_UPDATEREMINDER_DISABLE			= "警告: 你的DEM版本已大幅度的過期(%d修訂版)，已禁用除非更新。這是為了確保舊而不相容的程式碼不會對你而團隊夥伴造成低落的遊戲體驗。"
 
 DBM_CORE_MOVABLE_BAR				= "拖動我!"
 
 DBM_PIZZA_SYNC_INFO					= "|Hplayer:%1$s|h[%1$s]|h向你發送了一個倒數計時：'%2$s'\n|HDBM:cancel:%2$s:nil|h|cff3588ff[取消該計時]|r|h  |HDBM:ignore:%2$s:%1$s|h|cff3588ff[忽略來自%1$s的計時]|r|h"
 DBM_PIZZA_CONFIRM_IGNORE			= "是否要在該次遊戲連結中忽略來自%s的計時？"
-DBM_PIZZA_ERROR_USAGE				= "命令：/dbm [broadcast] timer <時間（秒）> <文字>"
+DBM_PIZZA_ERROR_USAGE				= "命令：/dem [broadcast] timer <時間（秒）> <文字>"
 
 --DBM_CORE_MINIMAP_TOOLTIP_HEADER (Same as English locales)
 DBM_CORE_MINIMAP_TOOLTIP_FOOTER		= "Shift+左鍵或右鍵點擊即可移動，Alt+Shift+點擊即可拖放"
@@ -120,16 +120,16 @@ DBM_LFG_INVITE						= "地城準備確認"
 
 DBM_CORE_SLASHCMD_HELP				= {
 	"可用命令：",
-	"/dbm version：進行團隊範圍內的版本檢測（也可使用：ver）。",
---	"/dbm version2: 進行團隊範圍內的版本檢測及密語通知已過期的成員（也可使用: ver2）。",
-	"/dbm unlock：顯示一個可移動的計時器（也可使用：move）。",
-	"/dbm timer <x> <文字>：開始一個以<文字>為名稱的時間為<x>秒的計時器。",
-	"/dbm broadcast timer <x> <文字>：向團隊廣播一個以<文字>為名稱，時間為<x>秒的計時器（需要團隊隊長或助理權限）。",
-	"/dbm break <分鐘>: 開始休息計時器<分鐘>。向所有團隊成員發送一個DBM休息計時器（需要團隊隊長或助理權限）。",
-	"/dbm pull <秒數>: 開始備戰計時器<秒數>。向所有團隊成員發送一個DBM備戰計時器（需要團隊隊長或助理權限）。",
-	"/dbm arrow: 顯示DBM箭頭, 輸入 /dbm arrow help 獲得更多訊息。",
-	"/dbm lockout: 向團隊成員請求他們當前的團隊副本鎖定訊息(鎖定訊息、副本id) (需要團隊隊長或助理權限)。",
-	"/dbm help：顯示可用命令的說明。",
+	"/dem version：進行團隊範圍內的版本檢測（也可使用：ver）。",
+--	"/dem version2: 進行團隊範圍內的版本檢測及密語通知已過期的成員（也可使用: ver2）。",
+	"/dem unlock：顯示一個可移動的計時器（也可使用：move）。",
+	"/dem timer <x> <文字>：開始一個以<文字>為名稱的時間為<x>秒的計時器。",
+	"/dem broadcast timer <x> <文字>：向團隊廣播一個以<文字>為名稱，時間為<x>秒的計時器（需要團隊隊長或助理權限）。",
+	"/dem break <分鐘>: 開始休息計時器<分鐘>。向所有團隊成員發送一個DEM休息計時器（需要團隊隊長或助理權限）。",
+	"/dem pull <秒數>: 開始備戰計時器<秒數>。向所有團隊成員發送一個DEM備戰計時器（需要團隊隊長或助理權限）。",
+	"/dem arrow: 顯示DEM箭頭, 輸入 /dem arrow help 獲得更多訊息。",
+	"/dem lockout: 向團隊成員請求他們當前的團隊副本鎖定訊息(鎖定訊息、副本id) (需要團隊隊長或助理權限)。",
+	"/dem help：顯示可用命令的說明。",
 }
 
 DBM_ERROR_NO_PERMISSION				= "無權進行此操作。"
@@ -278,13 +278,13 @@ DBM_CORE_MOVE_SPECIAL_WARNING_TEXT	= "特別警告"
 DBM_CORE_RANGE_CHECK_ZONE_UNSUPPORTED	= "在此區域中不支援%d碼的距離檢查。\n已支援的距離有10，11，15及28碼。"
 
 DBM_ARROW_MOVABLE					= "可移動箭頭"
-DBM_ARROW_NO_RAIDGROUP				= "DBM箭頭僅可在副本中調試。"
+DBM_ARROW_NO_RAIDGROUP				= "DEM箭頭僅可在副本中調試。"
 DBM_ARROW_ERROR_USAGE	= {
-	"DBM-Arrow 用法:",
-	"/dbm arrow <x> <y>  建立一個箭頭在特定的位置(0 < x/y < 100)",
-	"/dbm arrow <玩家>  建立並箭頭指向你的隊伍或團隊中特定的玩家",
-	"/dbm arrow hide  隱藏箭頭",
-	"/dbm arrow move  可移動箭頭",
+	"DEM-Arrow 用法:",
+	"/dem arrow <x> <y>  建立一個箭頭在特定的位置(0 < x/y < 100)",
+	"/dem arrow <玩家>  建立並箭頭指向你的隊伍或團隊中特定的玩家",
+	"/dem arrow hide  隱藏箭頭",
+	"/dem arrow move  可移動箭頭",
 }
 
 DBM_SPEED_KILL_TIMER_TEXT			= "記錄擊殺"
@@ -295,19 +295,19 @@ DBM_SPEED_CLEAR_TIMER_TEXT			= "最速清除"
 DBM_REQ_INSTANCE_ID_PERMISSION		= "%s想要查看你的副本ID和進度鎖定情況。\n你想發送該訊息給%s嗎? 在你的當前進程（除非你下線）他可以一直查閱該訊息。"
 DBM_ERROR_NO_RAID					= "你必須在一個團隊中才可以使用這個功能。"
 DBM_INSTANCE_INFO_REQUESTED			= "查看團隊成員的副本鎖定訊息。\n請注意，隊員們將會被詢問是否願意發送資料給你，因此可能需要等待一段時間才能獲得全部的回覆。"
-DBM_INSTANCE_INFO_STATUS_UPDATE		= "從%d個玩家獲得訊息，來自%d個DBM用戶：%d人發送了資料, %d人拒絕回傳資料。繼續為更多回覆等待%d秒..."
+DBM_INSTANCE_INFO_STATUS_UPDATE		= "從%d個玩家獲得訊息，來自%d個DEM|DBM用戶：%d人發送了資料, %d人拒絕回傳資料。繼續為更多回覆等待%d秒..."
 DBM_INSTANCE_INFO_ALL_RESPONSES		= "已獲得全部團隊成員的回傳資料"
 DBM_INSTANCE_INFO_DETAIL_DEBUG		= "發送者:%s 結果類型:%s 副本名:%s 副本ID:%s 難度:%d 大小:%d 進度:%s"
 DBM_INSTANCE_INFO_DETAIL_HEADER		= "%s(%d), 難度%d:"
 DBM_INSTANCE_INFO_DETAIL_INSTANCE	= "    ID %s, 進度%d:%s"
 DBM_INSTANCE_INFO_STATS_DENIED		= "拒絕回傳數據:%s"
 DBM_INSTANCE_INFO_STATS_AWAY		= "離開:%s"
-DBM_INSTANCE_INFO_STATS_NO_RESPONSE	= "沒有安裝最新版本的DBM:%s"
+DBM_INSTANCE_INFO_STATS_NO_RESPONSE	= "沒有安裝最新版本的DEM:%s"
 DBM_INSTANCE_INFO_RESULTS			= "副本ID掃描結果。注意如果團隊中有不同語言版本的魔獸客戶端，那麼同一副本可能會出現不止一次。"
 DBM_INSTANCE_INFO_SHOW_RESULTS		= "回复請求的玩家: %s\n|HDBM:showRaidIdResults|h|cff3588ff[查看結果]|r|h"
 
 DBM_CORE_LAG_CHECKING				= "延遲檢測--五秒後反饋結果..."
-DBM_CORE_LAG_HEADER					= "Deadly Boss Mods - 延遲檢測"
+DBM_CORE_LAG_HEADER					= "Deadly Encounter Mods - 延遲檢測"
 DBM_CORE_LAG_ENTRY					= "%s：世界延時[%d毫秒] / 本地延時[%d毫秒]"
 DBM_CORE_LAG_FOOTER					= "未反饋此次檢測的團員:%s"
 

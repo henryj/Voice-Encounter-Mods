@@ -16,7 +16,7 @@ L:SetOptionLocalization({
 	SpecWarnOverloadSoon		= "Show special warning before overload",
 	specWarnMySD		= "Show special warning when you pull the BOSS point of the group of petrochemical",
 	specWarnBreakJasperChains	= "Show special warning when it is safe to break $spell:130395",
-	ArrowOnJasperChains			= "Show DBM Arrow when you are affected by $spell:130395 ",
+	ArrowOnJasperChains			= "Show DEM Arrow when you are affected by $spell:130395 ",
 	InfoFrame					= "Show info frame for active petrification",
 	AInfoFrame					= "Show simple info frame for active petrification"
 })
@@ -218,7 +218,7 @@ L:SetOptionLocalization({
 	twelve						= "12 Stacks",
 	fifteen						= "15 Stacks",
 	none						= "Don't warning",
-	optPos 						= "DBM arrow: highest Core (Anti-clockwise Starting at the entrance)",
+	optPos 						= "DEM arrow: highest Core (Anti-clockwise Starting at the entrance)",
 	nonepos 					= "Don't arrow",
 	posA 						= "number 1",
 	posB 						= "number 2",
@@ -257,7 +257,7 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	InfoFrame			= "Show info frame for players affected by $spell:116525",
-	ArrowOnCombo	= "Show DBM Arrow during $journal:5673\nNOTE: This assumes tank is in front of boss and anyone else is behind.",
+	ArrowOnCombo	= "Show DEM Arrow during $journal:5673\nNOTE: This assumes tank is in front of boss and anyone else is behind.",
 	SoundWOP			= "Voice warning: important skills",
 	SoundADD1A			= "Voice warning:$spell:ej5678 (5s before)",
 	SoundADD1			= "Voice warning:$spell:ej5678",

@@ -59,7 +59,7 @@ L= DBM:GetModLocalization(857)
 
 L:SetOptionLocalization({
 	SetIconOnBeacon			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(144473),
-	BeaconArrow				= "Show DBM Arrow when someone is affected by $spell:144473"
+	BeaconArrow				= "Show DEM Arrow when someone is affected by $spell:144473"
 })
 
 ------------------------------

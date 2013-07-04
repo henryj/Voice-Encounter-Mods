@@ -6,7 +6,7 @@ if not DBM_GUI_Translations then DBM_GUI_Translations = {} end
 
 local L = DBM_GUI_Translations
 
-L.MainFrame 				= "Deadly Boss Mods"
+L.MainFrame 				= "Deadly Encounter Mods"
 
 L.TranslationByPrefix		= "本地化："
 L.TranslationBy 			= "Diablohu & yleaf"
@@ -62,8 +62,8 @@ L.Statistic_Incompletes		= "完成:"--For scenarios, TODO, figure out a clean wa
 L.Statistic_BestKill		= "最好成绩："
 
 -- Tab: General Core Options
-L.General 					= "DBM核心综合设置"
-L.EnableDBM 				= "启用DBM"
+L.General 					= "DEM核心综合设置"
+L.EnableDBM 				= "启用DEM"
 L.EnableMiniMapIcon			= "显示小地图图标"
 L.SetPlayerRole				= "自动设置角色类型"
 L.UseMasterVolume			= "使用游戏总声道播放音频"
@@ -76,7 +76,7 @@ L.LogOnlyRaidBosses			= "只记录首领战斗"
 L.Latency_Text				= "设定启用同步功能的最高延迟阀值：%d"
 
 -- Tab: General Timer Options
-L.TimerGeneral 				= "DBM计时条综合设置"
+L.TimerGeneral 				= "DEM计时条综合设置"
 L.SKT_Enabled				= "总是显示最速胜利计时条(覆盖首领特定的选项)"
 L.ChallengeTimerOptions			= "设置挑战模式最佳记录计时条"
 L.ChallengeTimerPersonal		= "个人"
@@ -119,7 +119,7 @@ L.WarningIconLeft 			= "左侧显示图标"
 L.WarningIconRight 			= "右侧显示图标"
 L.WarningIconChat 			= "在聊天框显示图标"
 L.ShowCountdownText			= "显示倒数文字"
-L.RaidWarnMessage 			= "感谢您使用Deadly Boss Mods"
+L.RaidWarnMessage 			= "感谢您使用Deadly Encounter Mods"
 L.BarWhileMove 				= "可移动团队警报"
 L.RaidWarnSound				= "发出团队警报时播放声音"
 L.CountdownVoice			= "设置语音包"
@@ -189,7 +189,7 @@ L.BarWidth					= "计量条宽度: %d"
 -- Tab: Spam Filter
 L.Panel_SpamFilter				= "全局及信息过滤"
 L.Area_SpamFilter				= "信息过滤设置"
-L.SpamBlockBossWhispers			= "战斗中过滤DBM密语警报"
+L.SpamBlockBossWhispers			= "战斗中过滤DEM密语警报"
 L.BlockVersionUpdateNotice		= "禁用升级提示"
 L.ShowBigBrotherOnCombatStart	= "战斗开始时使用Big Brother检测增益情况"
 L.BigBrotherAnnounceToRaid		= "报告Big Brother的检测结果给团队"

@@ -2162,7 +2162,7 @@ local function CreateOptionsMenu()
 	end
 
 	-- Set Revision // please don't translate this!
-	DBM_GUI_OptionsFrameRevision:SetText("Deadly Boss Mods "..DBM.DisplayVersion.." (r"..DBM.Revision..")")
+	DBM_GUI_OptionsFrameRevision:SetText("Deadly Encounter Mods "..DBM.DisplayVersion.." (r"..DBM.Revision..")")
 	if L.TranslationBy then
 		DBM_GUI_OptionsFrameTranslation:SetText(L.TranslationByPrefix .. L.TranslationBy)
 	end

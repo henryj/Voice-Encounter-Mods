@@ -170,7 +170,7 @@ L:SetGeneralLocalization({
 })
 
 L:SetOptionLocalization({
-	ArrowOnBoxing	= "Show DBM Arrow during $spell:140868 and $spell:140862 and $spell:140886",
+	ArrowOnBoxing	= "Show DEM Arrow during $spell:140868 and $spell:140862 and $spell:140886",
 	SoundWOP			= "Voice warning: important skills"
 })
 

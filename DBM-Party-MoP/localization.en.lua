@@ -406,7 +406,7 @@ L= DBM:GetModLocalization(671)
 
 L:SetOptionLocalization({
 	SoundWOP 		= "voice warning: important skills",
-	KickArrow	= "Show DBM arrow when $spell:114487 is near you",
+	KickArrow	= "Show DEM arrow when $spell:114487 is near you",
 })
 
 -----------------------

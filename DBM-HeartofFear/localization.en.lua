@@ -7,7 +7,7 @@ L= DBM:GetModLocalization(745)
 
 L:SetOptionLocalization({
 	specwarnPlatform	= "Show special warning when boss changes platforms",
-	ArrowOnAttenuation	= "Show DBM Arrow during $spell:127834 to indicate which direction to move",
+	ArrowOnAttenuation	= "Show DEM Arrow during $spell:127834 to indicate which direction to move",
 	specwarnAttenuationL	= "Show special warning when left Attenuation",
 	specwarnAttenuationR	= "Show special warning when right Attenuation",
 	specwarnExhale		= "Show special warning for $spell:122761",
@@ -67,7 +67,7 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	UnseenStrikeArrow	= "Show DBM Arrow when someone is affected by $spell:122949",
+	UnseenStrikeArrow	= "Show DEM Arrow when someone is affected by $spell:122949",
 	RangeFrame			= "Show range frame (8) for $spell:123175",
 	InfoFrame			= "InfoFrame:$spell:123474",
 	SpecWarnOverwhelmingAssaultOther = "Special warning: $spell:123474",
@@ -160,7 +160,7 @@ L:SetOptionLocalization({
 	BH4					= "No. 4",
 	allBH				= "Always",
 	SoundJR				= "voice warning: Help others",
-	APArrow				= "DBM arrow: $spell:121881",
+	APArrow				= "DEM arrow: $spell:121881",
 	NearAP				= "voice warning: only warn within 20 yards of $spell:121881",
 	ReapetAP			= "special warning: if your $spell:121881 without breaking in 5 seconds then keeping yell",
 	HudMAP				= "HUDMAP:$spell:121885",
@@ -299,5 +299,5 @@ L:SetGeneralLocalization({
 })
 
 L:SetOptionLocalization({
-	UnseenStrikeArrow	= "Show DBM Arrow when someone is affected by $spell:122949"
+	UnseenStrikeArrow	= "Show DEM Arrow when someone is affected by $spell:122949"
 })
