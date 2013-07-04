@@ -1,5 +1,0 @@
-All the source code copied from HudMap in this addon is permitted by the original author Antiarc. 
-
-All the rights of HudMap are still reserved to the original author.
-
-Please contact the original author for further copy/distribute/modification/etc if needed at http://www.wowace.com/addons/hudmap/ .
