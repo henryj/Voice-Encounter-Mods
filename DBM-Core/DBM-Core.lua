@@ -43,9 +43,9 @@
 --  Globals/Default Options  --
 -------------------------------
 DBM = {
-	Revision = tonumber(("$Revision: 9930 $"):sub(12, -3)),
-	DisplayVersion = "5.3 "..DBM_CORE_SOUNDVER, -- the string that is shown as version
-	ReleaseRevision = 9810 -- the revision of the latest stable version that is available
+	Revision = tonumber(("$Revision: 9950 $"):sub(12, -3)),
+	DisplayVersion = "5.3.5 "..DBM_CORE_SOUNDVER, -- the string that is shown as version
+	ReleaseRevision = 9947 -- the revision of the latest stable version that is available
 }
 
 -- Legacy crap; that stupid "Version" field was never a good idea.
@@ -2327,14 +2327,17 @@ do
 				end
 				if not showedUpdateReminder and DBM.DisplayVersion:find("alpha") and (revDifference > 20) then
 					local found = false
+					local other = nil
 					for i, v in pairs(raid) do
 						if v.revision == revision and v ~= raid[sender] then
 							found = true
+							other = i
 							break
 						end
 					end
 					if found then--Running alpha version that's out of date
 						showedUpdateReminder = true
+--						print(("DBM Debug: Showing alpha update notification because %s and %s are running revision %d which is > than our reivision %d"):format(sender, other, revision, DBM.Revision))
 						DBM:AddMsg(DBM_CORE_UPDATEREMINDER_HEADER_ALPHA:format(revDifference))
 					end
 				end
