@@ -1,4 +1,4 @@
-Deadly-Encounter-Mods
+Deadly Encounter Mods
 =================
 
 Deadly Encounter Mods is based on the well known WOW addon DBM(Deadly Boss Mods), which means we have all the functions from the official DBM. 
