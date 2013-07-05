@@ -44,7 +44,7 @@
 -------------------------------
 DBM = {
 	Revision = tonumber(("$Revision: 9930 $"):sub(12, -3)),
-	DisplayVersion = "5.3 "..DBM_CORE_SOUNDVER, -- the string that is shown as version
+	DisplayVersion = "(DEM) 5.3 "..DBM_CORE_SOUNDVER, -- the string that is shown as version
 	ReleaseRevision = 9810 -- the revision of the latest stable version that is available
 }
 
@@ -1169,8 +1169,8 @@ do
 		self:AddMsg(DBM_CORE_VERSIONCHECK_HEADER)
 		for i, v in ipairs(sortMe) do
 			if v.displayVersion and not (v.bwrevision or v.bwarevision) then--DBM, no BigWigs
-				if v.displayVersion:find(DBM_CORE_SOUNDVER) then
-					self:AddMsg(DBM_CORE_VERSIONCHECK_ENTRY:format(v.name, "DEM "..v.displayVersion, v.revision))
+				if v.displayVersion:find("DEM") then
+					self:AddMsg(DBM_CORE_VERSIONCHECK_ENTRY:format(v.name, "Deadly Encounter Mods "..v.displayVersion, v.revision))
 				else
 					self:AddMsg(DBM_CORE_VERSIONCHECK_ENTRY:format(v.name, "DBM "..v.displayVersion, v.revision))
 				end
@@ -2300,7 +2300,7 @@ do
 			raid[sender].displayVersion = displayVersion
 			raid[sender].locale = locale
 			local revDifference = revision - tonumber(DBM.Revision)
-			if version > tonumber(DBM.Version) and displayVersion:find(DBM_CORE_SOUNDVER) then -- Update reminder
+			if version > tonumber(DBM.Version) and displayVersion:find("DEM") then -- Update reminder
 				if not showedUpdateReminder then
 					local found = false
 					for i, v in pairs(raid) do
@@ -2325,7 +2325,7 @@ do
 					end
 				end
 			end
-			if revision > tonumber(DBM.Revision) and displayVersion:find(DBM_CORE_SOUNDVER) then
+			if revision > tonumber(DBM.Revision) and displayVersion:find("DEM") then
 				if raid[sender].rank >= 1 then
 					enableIcons = false
 				end
