@@ -214,6 +214,7 @@ L.Always						= "總是"
 L.FontHeight	= 18
 
 L.sst = "Iceoven(EN)"
+L.stephanie = "Stephanie(EN)"
 L.yike = "夏一可(CN)"
 L.yun =  "芷小芸(TW)"
 L.other =  "自定義"

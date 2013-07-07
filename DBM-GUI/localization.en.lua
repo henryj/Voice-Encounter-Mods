@@ -212,6 +212,7 @@ L.Always						= "Always"
 L.FontHeight	= 16
 
 L.sst = "Iceoven(EN)"
+L.stephanie = "Stephanie(EN)"
 L.yike = "Xia Yike(CN)"
 L.yun =  "Xiao Yun(TW)"
 L.other =  "Custom"

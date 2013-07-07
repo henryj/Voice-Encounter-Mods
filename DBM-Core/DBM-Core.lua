@@ -1770,7 +1770,7 @@ do
 	end
 
 	local function fixsoundbug()
-		if DBM.Options.CountdownVoice ~= "Mosh" and DBM.Options.CountdownVoice ~= "sst" and DBM.Options.CountdownVoice ~= "yun" and DBM.Options.CountdownVoice ~= "other" then
+		if DBM.Options.CountdownVoice ~= "Mosh" and DBM.Options.CountdownVoice ~= "sst" and DBM.Options.CountdownVoice ~= "yun" and DBM.Options.CountdownVoice ~= "stephanie" and DBM.Options.CountdownVoice ~= "other" then
 			if GetLocale() == "zhTW" then
 				DBM.Options.CountdownVoice = "yun"
 			elseif  GetLocale() == "zhCN" then
@@ -2882,6 +2882,10 @@ do
 			Grilpic:SetTexture( [[Interface\AddOns\DBM-Core\textures\soundgrils\sst.tga]] )
 			fontstringHeader:SetText(DBM_CORE_SOUNDGRIL_NAME_SST)
 			fontstring:SetText(DBM_CORE_SOUNDGRIL_TEXT_SST)
+		elseif DBM.Options.CountdownVoice == "stephanie" then
+			Grilpic:SetTexture( [[Interface\AddOns\DBM-Core\textures\soundgrils\stephanie.tga]] )
+			fontstringHeader:SetText(DBM_CORE_SOUNDGRIL_NAME_STEPHANIE)
+			fontstring:SetText(DBM_CORE_SOUNDGRIL_TEXT_STEPHANIE)
 		else
 			Grilpic:SetTexture( [[Interface\AddOns\DBM-Core\textures\soundgrils\yike.tga]] )			
 			fontstringHeader:SetText(DBM_CORE_SOUNDGRIL_NAME_YIKE)

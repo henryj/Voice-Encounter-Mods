@@ -338,3 +338,6 @@ DBM_CORE_SOUNDGRIL_TEXT_YUN			= "    芷小芸，来自中国台湾省的魔兽�
 
 DBM_CORE_SOUNDGRIL_NAME_SST			= "Iceoven"
 DBM_CORE_SOUNDGRIL_TEXT_SST			= "    All Voice generated via VoiceRss TTS (Text To Speech), API by Iceoven (Worgen Mage from Ancient Ones @ US-Dath'Remar)."
+
+DBM_CORE_SOUNDGRIL_NAME_STEPHANIE = "Stephanie"
+DBM_CORE_SOUNDGRIL_TEXT_STEPHANIE = "Stephanie，人称白富美，女，安逸的杭州人。2010年就读于杭州电子科技大学，目前在美国哥伦比亚大学留学"

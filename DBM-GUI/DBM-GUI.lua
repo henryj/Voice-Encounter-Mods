@@ -1566,6 +1566,7 @@ local function CreateOptionsMenu()
 
 		local countSounds = {
 			{	text	= L.sst,	value 	= "sst"},
+			{	text	= L.stephanie,	value 	= "stephanie"},
 			{	text	= L.yike,	value 	= "Mosh"},
 			{	text	= L.yun,	value 	= "yun"},
 			{	text	= L.other,	value 	= "other"},

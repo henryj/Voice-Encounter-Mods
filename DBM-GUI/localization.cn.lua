@@ -220,6 +220,7 @@ L.Always					= "总是跳过"
 L.FontHeight	= 20
 
 L.sst = "Iceoven(EN)"
+L.stephanie = "Stephanie(EN)"
 L.yike = "夏一可(CN)"
 L.yun =  "芷小芸(TW)"
 L.other =  "自定义"
