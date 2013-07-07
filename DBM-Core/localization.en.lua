@@ -1,20 +1,20 @@
 
-DBM_CORE_NEED_SUPPORT				= "Are you good with programming or languages? If yes, the DEM team needs your help to keep DEM the best encounter mod for WoW. Join the team by visiting https://github.com/henryj/Deadly-Encounter-Mods (English) or http://bbs.ngacn.cc/read.php?tid=5397726&page=1 (Chinese)."
-DBM_HOW_TO_USE_MOD					= "Welcome to DEM. Type /dem help for a list of supported commands. To access options type /dem in your chat to begin configuration. Load specific zones manually to configure any boss specific settings to your liking as well. DEM tries to do this for you by scanning your spec on first run, but some might want additional options turned on anyways."
+DBM_CORE_NEED_SUPPORT				= "Are you good with programming or languages? If yes, the VEM team needs your help to keep VEM the best encounter mod for WoW. Join the team by visiting https://github.com/henryj/Voice-Encounter-Mods (English) or http://bbs.ngacn.cc/read.php?tid=5397726&page=1 (Chinese)."
+DBM_HOW_TO_USE_MOD					= "Welcome to VEM. Type /vem help for a list of supported commands. To access options type /vem in your chat to begin configuration. Load specific zones manually to configure any boss specific settings to your liking as well. VEM tries to do this for you by scanning your spec on first run, but some might want additional options turned on anyways."
 
-DBM_FORUMS_MESSAGE					= "Found a bug or wrong timer? Do you think some mod would need an additional warning, timer or special feature?\nVisit the new Deadly Encounter Mods Github site at |HDBM:forums|h|cff3588ffhttps://github.com/henryj/Deadly-Encounter-Mods|r (you can click the link to copy the URL)"
+DBM_FORUMS_MESSAGE					= "Found a bug or wrong timer? Do you think some mod would need an additional warning, timer or special feature?\nVisit the new Voice Encounter Mods Github site at |HDBM:forums|h|cff3588ffhttps://github.com/henryj/Voice-Encounter-Mods|r (you can click the link to copy the URL)"
 DBM_FORUMS_COPY_URL_DIALOG			= "Come visit our Github site"
 
 DBM_CORE_LOAD_MOD_ERROR				= "Error while loading boss mods for %s: %s"
-DBM_CORE_LOAD_MOD_SUCCESS			= "Loaded '%s' mods. For more options, type /dem or /dem help in your chat."
+DBM_CORE_LOAD_MOD_SUCCESS			= "Loaded '%s' mods. For more options, type /vem or /vem help in your chat."
 DBM_CORE_LOAD_MOD_COMBAT			= "Loading of '%s' delayed until you leave combat"
 DBM_CORE_LOAD_GUI_ERROR				= "Could not load GUI: %s"
 DBM_CORE_LOAD_GUI_COMBAT			= "GUI cannot be initially loaded in combat. GUI will be loaded out of combat. After GUI loaded, you can load GUI in combat."
-DBM_CORE_BAD_LOAD					= "DEM has detected your mod for this instance failed to fully load correctly because of combat. As soon as you are out of combat, please do /console reloadui as soon as possible."
+DBM_CORE_BAD_LOAD					= "VEM has detected your mod for this instance failed to fully load correctly because of combat. As soon as you are out of combat, please do /console reloadui as soon as possible."
 
 DBM_CORE_LOOT_SPEC_REMINDER			= "Your current spec is %s. Your current loot choice is %s."
 
-DBM_CORE_BIGWIGS_ICON_CONFLICT		= "DEM has detected that you have raid icons turned on in both BigWigs and DEM|DBM. Please disable icons in one of them to avoid conflict with your group leader"
+DBM_CORE_BIGWIGS_ICON_CONFLICT		= "VEM has detected that you have raid icons turned on in both BigWigs and VEM|DBM. Please disable icons in one of them to avoid conflict with your group leader"
 
 DBM_CORE_COMBAT_STARTED				= "%s engaged. Good luck and have fun! :)"
 DBM_CORE_COMBAT_STARTED_IN_PROGRESS	= "Engaged an in progress fight against %s. Good luck and have fun! :)"
@@ -75,25 +75,25 @@ DBM_CORE_VERSIONCHECK_HEADER		= "Boss Mod - Versions"
 DBM_CORE_VERSIONCHECK_ENTRY			= "%s: %s (r%d)"--One Boss mod
 DBM_CORE_VERSIONCHECK_ENTRY_TWO		= "%s: %s (r%d) & %s (r%d)"--Two Boss mods
 DBM_CORE_VERSIONCHECK_ENTRY_NO_DBM	= "%s: No boss mod installed"
-DBM_CORE_VERSIONCHECK_FOOTER		= "Found %d player(s) with DEM|DBM & %d player(s) with Bigwigs"
-DBM_CORE_YOUR_VERSION_OUTDATED      = "Your version of Deadly Encounter Mods is out-of-date. Please visit https://github.com/henryj/Deadly-Encounter-Mods to get the latest version."
+DBM_CORE_VERSIONCHECK_FOOTER		= "Found %d player(s) with VEM|DBM & %d player(s) with Bigwigs"
+DBM_CORE_YOUR_VERSION_OUTDATED      = "Your version of Voice Encounter Mods is out-of-date. Please visit https://github.com/henryj/Voice-Encounter-Mods to get the latest version."
 DBM_BIG_WIGS						= "BigWigs"
 DBM_BIG_WIGS_ALPHA					= "BigWigs Alpha"
 
-DBM_CORE_UPDATEREMINDER_HEADER			= "Your version of Deadly Encounter Mods is out-of-date.\n Version %s (r%d) is available for download here:"
-DBM_CORE_UPDATEREMINDER_HEADER_ALPHA	= "Your alpha version of Deadly Encounter Mods is out-of-date.\n You are at least %d test versions behind. It is recommended that DEM users use the latest alpha or latest stable version. Out of date alphas can lead to poor or incomplete functionality."
+DBM_CORE_UPDATEREMINDER_HEADER			= "Your version of Voice Encounter Mods is out-of-date.\n Version %s (r%d) is available for download here:"
+DBM_CORE_UPDATEREMINDER_HEADER_ALPHA	= "Your alpha version of Voice Encounter Mods is out-of-date.\n You are at least %d test versions behind. It is recommended that VEM users use the latest alpha or latest stable version. Out of date alphas can lead to poor or incomplete functionality."
 DBM_CORE_UPDATEREMINDER_FOOTER			= "Press " .. (IsMacClient() and "Cmd-C" or "Ctrl-C")  ..  " to copy the download link to your clipboard."
 DBM_CORE_UPDATEREMINDER_FOOTER_GENERIC	= "Press " .. (IsMacClient() and "Cmd-C" or "Ctrl-C")  ..  " to copy the link to your clipboard."
 DBM_CORE_UPDATEREMINDER_NOTAGAIN		= "Show popup when a new version is available"
-DBM_CORE_UPDATEREMINDER_DISABLE			= "WARNING: Do to your Deadly Encounter Mods being drastically (%d revisions) out of date, it has been disabled until updated. This is to ensure old and incompatable code doesn't cause poor play experience for yourself or fellow raid members."
+DBM_CORE_UPDATEREMINDER_DISABLE			= "WARNING: Do to your Voice Encounter Mods being drastically (%d revisions) out of date, it has been disabled until updated. This is to ensure old and incompatable code doesn't cause poor play experience for yourself or fellow raid members."
 
 DBM_CORE_MOVABLE_BAR				= "Drag me!"
 
-DBM_PIZZA_SYNC_INFO					= "|Hplayer:%1$s|h[%1$s]|h sent you a DEM timer: '%2$s'\n|HDBM:cancel:%2$s:nil|h|cff3588ff[Cancel this timer]|r|h  |HDBM:ignore:%2$s:%1$s|h|cff3588ff[Ignore timers from %1$s]|r|h"
-DBM_PIZZA_CONFIRM_IGNORE			= "Do you really want to ignore DEM timers from %s for this session?"
-DBM_PIZZA_ERROR_USAGE				= "Usage: /dem [broadcast] timer <time> <text>"
+DBM_PIZZA_SYNC_INFO					= "|Hplayer:%1$s|h[%1$s]|h sent you a VEM timer: '%2$s'\n|HDBM:cancel:%2$s:nil|h|cff3588ff[Cancel this timer]|r|h  |HDBM:ignore:%2$s:%1$s|h|cff3588ff[Ignore timers from %1$s]|r|h"
+DBM_PIZZA_CONFIRM_IGNORE			= "Do you really want to ignore VEM timers from %s for this session?"
+DBM_PIZZA_ERROR_USAGE				= "Usage: /vem [broadcast] timer <time> <text>"
 
-DBM_CORE_MINIMAP_TOOLTIP_HEADER		= "Deadly Encounter Mods"
+DBM_CORE_MINIMAP_TOOLTIP_HEADER		= "Voice Encounter Mods"
 DBM_CORE_MINIMAP_TOOLTIP_FOOTER		= "Shift+click or right-click to move\nAlt+shift+click for free drag and drop"
 
 DBM_CORE_RANGECHECK_HEADER			= "Range Check (%d yd)"
@@ -118,16 +118,16 @@ DBM_LFG_INVITE						= "LFG Invite"
 
 DBM_CORE_SLASHCMD_HELP				= {
 	"Available slash commands:",
-	"/dem version: Performs a raid-wide version check (alias: ver).",
---	"/dem version2: Performs a raid-wide version check and whispers members who are out of date (alias: ver2).",
-	"/dem unlock: Shows a movable status bar timer (alias: move).",
-	"/dem timer <x> <text>: Starts a <x> second DEM Timer with the name <text>.",
-	"/dem broadcast timer <x> <text>: Broadcasts a <x> second DEM Timer with the name <text> to the raid (requires leader/promoted status).",
-	"/dem break <min>: Starts a break timer for <min> minutes. Gives all raid members with DEM a break timer (requires leader/promoted status).",
-	"/dem pull <sec>: Starts a pull timer for <sec> seconds. Gives all raid members with DEM a pull timer (requires leader/promoted status).",
-	"/dem arrow: shows the DEM arrow, see /dem arrow help for details.",
-	"/dem lockout: asks raid members for their current raid instance lockouts (aliases: lockouts, ids) (requires leader/promoted status).",
-	"/dem help: Shows this message.",
+	"/vem version: Performs a raid-wide version check (alias: ver).",
+--	"/vem version2: Performs a raid-wide version check and whispers members who are out of date (alias: ver2).",
+	"/vem unlock: Shows a movable status bar timer (alias: move).",
+	"/vem timer <x> <text>: Starts a <x> second VEM Timer with the name <text>.",
+	"/vem broadcast timer <x> <text>: Broadcasts a <x> second VEM Timer with the name <text> to the raid (requires leader/promoted status).",
+	"/vem break <min>: Starts a break timer for <min> minutes. Gives all raid members with VEM a break timer (requires leader/promoted status).",
+	"/vem pull <sec>: Starts a pull timer for <sec> seconds. Gives all raid members with VEM a pull timer (requires leader/promoted status).",
+	"/vem arrow: shows the VEM arrow, see /vem arrow help for details.",
+	"/vem lockout: asks raid members for their current raid instance lockouts (aliases: lockouts, ids) (requires leader/promoted status).",
+	"/vem help: Shows this message.",
 }
 
 DBM_ERROR_NO_PERMISSION				= "You don't have the required permission to do this."
@@ -278,11 +278,11 @@ DBM_CORE_RANGE_CHECK_ZONE_UNSUPPORTED	= "A %d yard range check is not supported 
 DBM_ARROW_MOVABLE					= "Arrow movable"
 DBM_ARROW_NO_RAIDGROUP				= "This function only works in raid groups and within raid instances."
 DBM_ARROW_ERROR_USAGE	= {
-	"DEM-Arrow usage:",
-	"/dem arrow <x> <y>  creates an arrow that points to a specific locataion (0 < x/y < 100)",
-	"/dem arrow <player>  creates and arrow that points to a specific player in your party or raid",
-	"/dem arrow hide  hides the arrow",
-	"/dem arrow move  makes the arrow movable",
+	"VEM-Arrow usage:",
+	"/vem arrow <x> <y>  creates an arrow that points to a specific locataion (0 < x/y < 100)",
+	"/vem arrow <player>  creates and arrow that points to a specific player in your party or raid",
+	"/vem arrow hide  hides the arrow",
+	"/vem arrow move  makes the arrow movable",
 }
 
 DBM_SPEED_KILL_TIMER_TEXT	= "Record Victory"
@@ -293,19 +293,19 @@ DBM_SPEED_CLEAR_TIMER_TEXT	= "Best Clear"
 DBM_REQ_INSTANCE_ID_PERMISSION		= "%s requested to see your current instance IDs and progress.\nDo you want to send this information to %s? He or she will be able to request this information during your current session (i. e. until you relog)."
 DBM_ERROR_NO_RAID					= "You need to be in a raid group to use this feature."
 DBM_INSTANCE_INFO_REQUESTED			= "Sent request for raid lockout information to the raid group.\nPlease note that the users will be asked for permission before sending the data to you, so it might take a minute until we get all responses."
-DBM_INSTANCE_INFO_STATUS_UPDATE		= "Got responses from %d players of %d DEM|DBM users: %d sent data, %d denied the request. Waiting %d more seconds for responses..."
+DBM_INSTANCE_INFO_STATUS_UPDATE		= "Got responses from %d players of %d VEM|DBM users: %d sent data, %d denied the request. Waiting %d more seconds for responses..."
 DBM_INSTANCE_INFO_ALL_RESPONSES		= "Received responses from all raid members"
 DBM_INSTANCE_INFO_DETAIL_DEBUG		= "Sender: %s ResultType: %s InstanceName: %s InstanceID: %s Difficulty: %d Size: %d Progress: %s"
 DBM_INSTANCE_INFO_DETAIL_HEADER		= "%s (%d), difficulty %d:"
 DBM_INSTANCE_INFO_DETAIL_INSTANCE	= "    ID %s, progress %d: %s"
 DBM_INSTANCE_INFO_STATS_DENIED		= "Denied the request: %s"
 DBM_INSTANCE_INFO_STATS_AWAY		= "Away: %s"
-DBM_INSTANCE_INFO_STATS_NO_RESPONSE	= "No recent DEM version installed: %s"
+DBM_INSTANCE_INFO_STATS_NO_RESPONSE	= "No recent VEM version installed: %s"
 DBM_INSTANCE_INFO_RESULTS			= "Instance ID scan results. Note that instances might show up more than once if there are players with localized WoW clients in your raid."
 DBM_INSTANCE_INFO_SHOW_RESULTS		= "Players yet to respond: %s\n|HDBM:showRaidIdResults|h|cff3588ff[Show results now]|r|h"
 
 DBM_CORE_LAG_CHECKING				= "Delayed check - 5 seconds later output results..."
-DBM_CORE_LAG_HEADER					= "Deadly Encounter Mods - Delayed check"
+DBM_CORE_LAG_HEADER					= "Voice Encounter Mods - Delayed check"
 DBM_CORE_LAG_ENTRY					= "%s£ºWorld delay[%d ms] / Home delay[%d ms]"
 DBM_CORE_LAG_FOOTER					= "Without Member:%s"
 

@@ -1922,11 +1922,8 @@ local function CreateOptionsMenu()
 		local specPanel = DBM_GUI_Frame:CreateNewPanel(L.Panel_SpecWarnFrame, "option")
 		local specArea = specPanel:CreateArea(L.Area_SpecWarn, nil, 310, true)
 		specArea:CreateCheckButton(L.SpecWarn_Enabled, true, nil, "ShowSpecialWarnings")
-		specArea:CreateCheckButton(L.SpecWarn_LHFrame, true, nil, "ShowLHFrame")
+		specArea:CreateCheckButton(L.SpecWarn_FlashFrame, true, nil, "ShowFlashFrame")
 		specArea:CreateCheckButton(L.SpecWarn_AdSound, true, nil, "ShowAdvSWSounds")
-		
-		local flashbutton = specArea:CreateCheckButton(L.SpecWarn_FlashFrame, true, nil, "ShowFlashFrame")
-		flashbutton:SetPoint('TOPLEFT', specArea.frame, "TOPLEFT", 200, -36)
 
 		local showbutton = specArea:CreateButton(L.SpecWarn_DemoButton, 120, 16)
 		showbutton:SetPoint('TOPRIGHT', specArea.frame, "TOPRIGHT", -5, -5)
@@ -2162,7 +2159,7 @@ local function CreateOptionsMenu()
 	end
 
 	-- Set Revision // please don't translate this!
-	DBM_GUI_OptionsFrameRevision:SetText("Deadly Encounter Mods "..DBM.DisplayVersion.." (r"..DBM.Revision..")")
+	DBM_GUI_OptionsFrameRevision:SetText("Voice Encounter Mods "..DBM.DisplayVersion.." (r"..DBM.Revision..")")
 	if L.TranslationBy then
 		DBM_GUI_OptionsFrameTranslation:SetText(L.TranslationByPrefix .. L.TranslationBy)
 	end

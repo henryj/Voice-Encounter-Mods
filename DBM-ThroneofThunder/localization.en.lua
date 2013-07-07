@@ -296,13 +296,13 @@ L:SetOptionLocalization({
 	warnAddsLeft				= "Warning: Adds left",
 	specWarnFogRevealed			= "Special Warning: Fog Revealed",
 	specWarnDisintegrationBeam	= DBM_CORE_AUTO_SPEC_WARN_OPTIONS.spell:format("ej6882"),
-	ArrowOnBeam					= "DEM Arrow: $journal:6882 moving direction",
+	ArrowOnBeam					= "VEM Arrow: $journal:6882 moving direction",
 	soundhold					= "How many seconds after you got Dark Parasite do you want to be warned(30 - dispel cd - self defensive duration)",
 	sounddisp					= "How many seconds before Dark Parasite ends do you want to be warned to help dispel(Healer)",
 	specWarnHold				= "Special Warning: Dark Parasite Self Defensive",
 	xx1							= "Message for Life Drain stack 1",
 	xx2							= "Message for Life Drain stack 2",
-	xx3							= "Message for Life Drain stack 3(DEM will show stack numbers afterwards)",
+	xx3							= "Message for Life Drain stack 3(VEM will show stack numbers afterwards)",
 	lifeA						= "Wisper this player to help life drain when you got 2 stacks",
 	lifeB						= "Wisper this player to help life drain when you got 2 stacks",
 	SetIconRays					= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format("ej6891"),
@@ -534,8 +534,8 @@ L:SetOptionLocalization({
 	HudMAP			= "HUD MAP: $spell:135695",
 	HudMAP2			= "HUD MAP: $spell:136295",
 	RangeFrame		= "Range Frame",--For two different spells
-	StaticShockArrow	= "DEM Arrow: $spell:135695",
-	OverchargeArrow		= "DEM Arrow: $spell:136295",
+	StaticShockArrow	= "VEM Arrow: $spell:135695",
+	OverchargeArrow		= "VEM Arrow: $spell:136295",
 	SetIconOnOvercharge	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(136295),
 	SetIconOnStaticShock= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(135695)
 })

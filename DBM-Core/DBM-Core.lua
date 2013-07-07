@@ -44,7 +44,7 @@
 -------------------------------
 DBM = {
 	Revision = tonumber(("$Revision: 9930 $"):sub(12, -3)),
-	DisplayVersion = "(DEM) 5.3 "..DBM_CORE_SOUNDVER, -- the string that is shown as version
+	DisplayVersion = "(VEM) 5.3 "..DBM_CORE_SOUNDVER, -- the string that is shown as version
 	ReleaseRevision = 9810 -- the revision of the latest stable version that is available
 }
 
@@ -190,8 +190,8 @@ local updateFunctions = {}
 local raid = {}
 local modSyncSpam = {}
 local autoRespondSpam = {}
-local chatPrefix = "<Deadly Encounter Mods> "
-local chatPrefixShort = "<DEM> "
+local chatPrefix = "<Voice Encounter Mods> "
+local chatPrefixShort = "<VEM> "
 local ver = ("%s (r%d)"):format(DBM.DisplayVersion, DBM.Revision)
 local mainFrame = CreateFrame("Frame")
 local showedUpdateReminder = false
@@ -1007,7 +1007,7 @@ end
 ----------------------
 --  Slash Commands  --
 ----------------------
-SLASH_DEADLYBOSSMODS1 = "/dem"
+SLASH_DEADLYBOSSMODS1 = "/vem"
 SlashCmdList["DEADLYBOSSMODS"] = function(msg)
 	local cmd = msg:lower()
 	if cmd == "ver" or cmd == "version" then
@@ -1169,8 +1169,8 @@ do
 		self:AddMsg(DBM_CORE_VERSIONCHECK_HEADER)
 		for i, v in ipairs(sortMe) do
 			if v.displayVersion and not (v.bwrevision or v.bwarevision) then--DBM, no BigWigs
-				if v.displayVersion:find("DEM") then
-					self:AddMsg(DBM_CORE_VERSIONCHECK_ENTRY:format(v.name, "Deadly Encounter Mods "..v.displayVersion, v.revision))
+				if v.displayVersion:find("VEM") then
+					self:AddMsg(DBM_CORE_VERSIONCHECK_ENTRY:format(v.name, "Voice Encounter Mods "..v.displayVersion, v.revision))
 				else
 					self:AddMsg(DBM_CORE_VERSIONCHECK_ENTRY:format(v.name, "DBM "..v.displayVersion, v.revision))
 				end
@@ -2247,7 +2247,7 @@ do
 		if not DBM.Options.DontShowPTCountdownText then
 			TimerTracker_OnEvent(TimerTracker, "PLAYER_ENTERING_WORLD")--easiest way to nil out timers on TimerTracker frame. This frame just has no actual star/stop functions :\
 		end
-		if timer == 0 then return DBM:AddMsg("<"..sender..">"..DBM_CORE_ANNOUNCE_PULL_CANCEL) end--"/dem pull 0" will strictly be used to cancel the pull timer (which is w hy we let above part of code run but not below)
+		if timer == 0 then return DBM:AddMsg("<"..sender..">"..DBM_CORE_ANNOUNCE_PULL_CANCEL) end--"/vem pull 0" will strictly be used to cancel the pull timer (which is w hy we let above part of code run but not below)
 		if not DBM.Options.DontShowPT then
 			DBM.Bars:CreateBar(timer, DBM_CORE_TIMER_PULL, "Interface\\Icons\\Spell_Holy_BorrowedTime")
 		end
@@ -2300,7 +2300,7 @@ do
 			raid[sender].displayVersion = displayVersion
 			raid[sender].locale = locale
 			local revDifference = revision - tonumber(DBM.Revision)
-			if version > tonumber(DBM.Version) and displayVersion:find("DEM") then -- Update reminder
+			if version > tonumber(DBM.Version) and displayVersion:find("VEM") then -- Update reminder
 				if not showedUpdateReminder then
 					local found = false
 					for i, v in pairs(raid) do
@@ -2316,7 +2316,7 @@ do
 						else
 							DBM:AddMsg(DBM_CORE_UPDATEREMINDER_HEADER:match("([^\n]*)"))
 							DBM:AddMsg(DBM_CORE_UPDATEREMINDER_HEADER:match("\n(.*)"):format(displayVersion, version))
-							DBM:AddMsg(("|HDBM:update:%s:%s|h|cff3588ff[https://github.com/henryj/Deadly-Encounter-Mods]"):format(displayVersion, version))
+							DBM:AddMsg(("|HDBM:update:%s:%s|h|cff3588ff[https://github.com/henryj/Voice-Encounter-Mods]"):format(displayVersion, version))
 						end
 	--					if revDifference > 400 then--WTF? Sorry but your DBM is being turned off until you update. Grossly out of date mods cause fps loss, freezes, lua error spam, or just very bad information, if mod is not up to date with latest changes. All around undesirable experience to put yourself or other raid mates through
 	--						DBM:AddMsg(DBM_CORE_UPDATEREMINDER_DISABLE:format(revDifference))
@@ -2325,7 +2325,7 @@ do
 					end
 				end
 			end
-			if revision > tonumber(DBM.Revision) and displayVersion:find("DEM") then
+			if revision > tonumber(DBM.Revision) and displayVersion:find("VEM") then
 				if raid[sender].rank >= 1 then
 					enableIcons = false
 				end
@@ -2707,10 +2707,10 @@ do
 		editBox:SetFontObject("GameFontHighlight")
 		editBox:SetTextInsets(0, 0, 0, 1)
 		editBox:SetFocus()
-		editBox:SetText("https://github.com/henryj/Deadly-Encounter-Mods")
+		editBox:SetText("https://github.com/henryj/Voice-Encounter-Mods")
 		editBox:HighlightText()
 		editBox:SetScript("OnTextChanged", function(self)
-			editBox:SetText("https://github.com/henryj/Deadly-Encounter-Mods")
+			editBox:SetText("https://github.com/henryj/Voice-Encounter-Mods")
 			editBox:HighlightText()
 		end)
 		fontstringFooter = frame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -3984,7 +3984,7 @@ end
 --  Misc. Functions  --
 -----------------------
 function DBM:AddMsg(text, prefix)
-	prefix = prefix or (self.localization and self.localization.general.name) or "Deadly Encounter Mods"
+	prefix = prefix or (self.localization and self.localization.general.name) or "Voice Encounter Mods"
 	local frame = _G[tostring(DBM.Options.ChatFrame)]
 	frame = frame and frame:IsShown() and frame or DEFAULT_CHAT_FRAME
 	frame:AddMessage(("|cffff7d0a<|r|cffffd200%s|r|cffff7d0a>|r %s"):format(tostring(prefix), tostring(text)), 0.41, 0.8, 0.94)

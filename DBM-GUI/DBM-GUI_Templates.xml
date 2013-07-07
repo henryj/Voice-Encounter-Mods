@@ -359,7 +359,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<FontString name="$parentHeaderText" inherits="GameFontNormal" text="Deadly Encounter Mods">
+				<FontString name="$parentHeaderText" inherits="GameFontNormal" text="Voice Encounter Mods">
 					<Anchors>
 						<Anchor point="TOP" relativeTo="$parentHeader">
 							<Offset>

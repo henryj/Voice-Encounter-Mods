@@ -11,7 +11,7 @@ L= DBM:GetModLocalization(745)
 
 L:SetOptionLocalization({
 	specwarnPlatform	= "特别警告：当战斗露台改变时",
-	ArrowOnAttenuation	= "DEM箭头：当$spell:127834出现时指示移动的方向",
+	ArrowOnAttenuation	= "VEM箭头：当$spell:127834出现时指示移动的方向",
 	specwarnExhale		= "特别警告：$spell:122761",
 	specwarnExhaleB		= "特别警告：$spell:122761的预先警告",
 	specwarnAttenuationL	= "特别警告：左旋音波",
@@ -71,7 +71,7 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	UnseenStrikeArrow	= "DEM箭头：$spell:122949的目标",
+	UnseenStrikeArrow	= "VEM箭头：$spell:122949的目标",
 	InfoFrame			= "资讯框：$spell:123474",
 	RangeFrame			= "距离监视(8码)：$spell:123175",
 	SpecWarnOverwhelmingAssaultOther = "特别警告：$spell:123474的层数",
@@ -164,7 +164,7 @@ L:SetOptionLocalization({
 	allBH				= "总是提示",
 	SoundJR				= "语音警告：当你没有残渣时提示救琥珀",
 	specWarnQuickeningX	= "特殊警告：当需要驱散/窃取$spell:122149时",
-	APArrow				= "DEM箭头：$spell:121881的位置",
+	APArrow				= "VEM箭头：$spell:121881的位置",
 	NearAP				= "特殊功能：$spell:121881在你20码范围内才播放语音(仅影响语音)",
 	ReapetAP			= "特殊功能：若你的$spell:121881在5秒内无人打破则不停呼救",
 	HudMAP				= "高级定位监视(HUD)：$spell:121885的位置",
@@ -302,5 +302,5 @@ L:SetGeneralLocalization({
 })
 
 L:SetOptionLocalization({
-	UnseenStrikeArrow	= "DEM箭头：$spell:122949"
+	UnseenStrikeArrow	= "VEM箭头：$spell:122949"
 })

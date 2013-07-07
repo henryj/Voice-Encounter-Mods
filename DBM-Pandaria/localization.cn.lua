@@ -54,7 +54,7 @@ L:SetOptionLocalization({
 	SoundWOP				= "语音警告：重要技能",
 	HudMAP					= "高级定位监视(HUD)：$spell:144473",
 	SetIconOnBeacon			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(144473),
-	BeaconArrow				= "DEM箭头：$spell:144473"
+	BeaconArrow				= "VEM箭头：$spell:144473"
 })
 
 ------------------------------

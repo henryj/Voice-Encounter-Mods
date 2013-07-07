@@ -19,7 +19,7 @@ L:SetOptionLocalization({
 	SpecWarnOverloadSoon	= "特殊警報：即將超載",
 	specWarnMySD		= "特殊警報：你拉的王點了石化時(坦克)",
 	specWarnBreakJasperChains	= "特殊警報：當安全時拉斷$spell:130395",
-	ArrowOnJasperChains			= "DEM箭頭：當你獲得$spell:130395時"
+	ArrowOnJasperChains			= "VEM箭頭：當你獲得$spell:130395時"
 })
 
 L:SetMiscLocalization({
@@ -218,7 +218,7 @@ L:SetOptionLocalization({
 	twelve						= "12層",
 	fifteen						= "15層",
 	none						= "不報警",
-	optPos						= "DEM箭頭：\"能量電荷\"出現前指向\"至高天核\"(入口起逆時針)",
+	optPos						= "VEM箭頭：\"能量電荷\"出現前指向\"至高天核\"(入口起逆時針)",
 	nonepos						= "不顯示",
 	posA 						= "1號位",
 	posB 						= "2號位",
@@ -257,7 +257,7 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	InfoFrame			= "資訊框：$spell:116525的目標",
-	ArrowOnCombo	= "為$journal:5673顯示DEM箭頭\n注:這是假設坦克在前方而其他人在後方",
+	ArrowOnCombo	= "為$journal:5673顯示VEM箭頭\n注:這是假設坦克在前方而其他人在後方",
 	SoundWOP			= "語音警告：重要技能",
 	SoundADD1A			= "預先語音警告：$spell:ej5678 (5秒前)",
 	SoundADD1			= "語音警告：$spell:ej5678",

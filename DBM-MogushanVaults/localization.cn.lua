@@ -22,7 +22,7 @@ L:SetOptionLocalization({
 	specWarnMySD		= "特殊警报：当你拉的首領点了石化时(坦克)",
 	SpecWarnOverloadSoon	= "特殊警报：过载预警",
 	specWarnBreakJasperChains	= "特殊警报：可扯断$spell:130395",
-	ArrowOnJasperChains			= "DEM箭头：当你受到$spell:130395效果影响时"
+	ArrowOnJasperChains			= "VEM箭头：当你受到$spell:130395效果影响时"
 })
 
 L:SetMiscLocalization({
@@ -222,7 +222,7 @@ L:SetOptionLocalization({
 	twelve						= "12层",
 	fifteen						= "15层",
 	none						= "不报警",
-	optPos						= "DEM箭头：\"聚焦能量\"出现前指向\"以太焦镜\"(入口起逆时针)",
+	optPos						= "VEM箭头：\"聚焦能量\"出现前指向\"以太焦镜\"(入口起逆时针)",
 	nonepos						= "不显示",
 	posA 						= "1号位",
 	posB 						= "2号位",
@@ -261,7 +261,7 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	InfoFrame			= "资讯框：$spell:116525的目标",
-	ArrowOnCombo	= "DEM箭头：$journal:5673阶段\n注：该功能正常工作的前提是坦克在Boss面前而其他人在Boss身后。",
+	ArrowOnCombo	= "VEM箭头：$journal:5673阶段\n注：该功能正常工作的前提是坦克在Boss面前而其他人在Boss身后。",
 	SoundWOP			= "语音警告：重要技能",
 	SoundADD1A			= "预先语音警告：$spell:ej5678 (5秒前)",
 	SoundADD1			= "语音警告：$spell:ej5678",
