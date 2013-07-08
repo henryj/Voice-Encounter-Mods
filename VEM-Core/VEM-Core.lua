@@ -287,12 +287,12 @@ end
 local function sendSync(prefix, msg)
 	msg = msg or ""
 	if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) and IsInInstance() then--For BGs, LFR and LFG (we also check IsInInstance() so if you're in queue but fighting something outside like a world boss, it'll sync in "RAID" instead)
-		SendAddonMessage("D4", prefix .. "\t" .. msg, "INSTANCE_CHAT")
+		SendAddonMessage("V5", prefix .. "\t" .. msg, "INSTANCE_CHAT")
 	else
 		if IsInRaid() then
-			SendAddonMessage("D4", prefix .. "\t" .. msg, "RAID")
+			SendAddonMessage("V5", prefix .. "\t" .. msg, "RAID")
 		elseif IsInGroup(LE_PARTY_CATEGORY_HOME) then
-			SendAddonMessage("D4", prefix .. "\t" .. msg, "PARTY")
+			SendAddonMessage("V5", prefix .. "\t" .. msg, "PARTY")
 		end
 	end
 end
@@ -1171,11 +1171,11 @@ do
 			if v.displayVersion and not (v.bwrevision or v.bwarevision) then--VEM, no BigWigs
 				if v.displayVersion:find("VEM") then
 					self:AddMsg(VEM_CORE_VERSIONCHECK_ENTRY:format(v.name, "Voice Encounter Mods "..v.displayVersion, v.revision))
+					if notify and v.revision < VEM.ReleaseRevision then
+						SendChatMessage(chatPrefixShort..VEM_CORE_YOUR_VERSION_OUTDATED, "WHISPER", nil, v.name)
+					end
 				else
-					self:AddMsg(VEM_CORE_VERSIONCHECK_ENTRY:format(v.name, "VEM "..v.displayVersion, v.revision))
-				end
-				if notify and v.revision < VEM.ReleaseRevision then
-					SendChatMessage(chatPrefixShort..VEM_CORE_YOUR_VERSION_OUTDATED, "WHISPER", nil, v.name)
+					self:AddMsg(VEM_CORE_VERSIONCHECK_ENTRY:format(v.name, "DBM "..v.displayVersion, v.revision))
 				end
 			elseif v.displayVersion and (v.bwrevision or v.bwarevision) then--VEM & BigWigs
 				self:AddMsg(VEM_CORE_VERSIONCHECK_ENTRY_TWO:format(v.name, "VEM "..v.displayVersion, v.revision, v.bwarevision and VEM_BIG_WIGS_ALPHA or VEM_BIG_WIGS, v.bwarevision or v.bwrevision))
@@ -2385,7 +2385,7 @@ do
 				syncHandlers["IR"](self.data) -- just call the sync handler again, the sender is now on the accessList and the requested data will be sent
 			end,
 			OnCancel = function(self, data, reason)
-				SendAddonMessage("D4", "II\t" .. (reason or "unknown"), "WHISPER", self.data) -- some events might
+				SendAddonMessage("V5", "II\t" .. (reason or "unknown"), "WHISPER", self.data) -- some events might
 			end,
 			timeout = 59,
 			hideOnEscape = 1,
@@ -2411,13 +2411,13 @@ do
 				local name, id, _, difficulty, locked, extended, instanceIDMostSig, isRaid, maxPlayers, _, _, progress = GetSavedInstanceInfo(i)
 				local longId = ("%x%x"):format(instanceIDMostSig, id) -- used as unique id by then default UI, so it's probably the "real" id
 				if (locked or extended) and isRaid then -- only report locked raid instances
-					SendAddonMessage("D4", "II\tData\t" .. name .. "\t" .. longId .. "\t" .. difficulty .. "\t" .. maxPlayers .. "\t" .. (progress or 0), "WHISPER", sender)
+					SendAddonMessage("V5", "II\tData\t" .. name .. "\t" .. longId .. "\t" .. difficulty .. "\t" .. maxPlayers .. "\t" .. (progress or 0), "WHISPER", sender)
 					sentData = true
 				end
 			end
 			if not sentData then
 				-- send something even if there is nothing to report so the receiver is able to tell you apart from someone who just didn't respond...
-				SendAddonMessage("D4", "II\tNoData", "WHISPER", sender)
+				SendAddonMessage("V5", "II\tNoData", "WHISPER", sender)
 			end
 		end
 
@@ -2646,7 +2646,9 @@ do
 	end
 
 	function VEM:CHAT_MSG_ADDON(prefix, msg, channel, sender)
-		if prefix == "D4" and msg and (channel == "PARTY" or channel == "RAID" or channel == "INSTANCE_CHAT" or channel == "WHISPER" and self:GetRaidUnitId(sender)) then
+		if prefix == "V5" and msg and (channel == "PARTY" or channel == "RAID" or channel == "INSTANCE_CHAT" or channel == "WHISPER" and self:GetRaidUnitId(sender)) then
+			handleSync(channel, sender, strsplit("\t", msg))
+		elseif prefix == "D4" and msg and (channel == "PARTY" or channel == "RAID" or channel == "INSTANCE_CHAT" or channel == "WHISPER" and self:GetRaidUnitId(sender)) then
 			handleSync(channel, sender, strsplit("\t", msg))
 		elseif prefix == "BigWigs" and msg and (channel == "PARTY" or channel == "RAID" or channel == "INSTANCE_CHAT" or channel == "WHISPER" and self:GetRaidUnitId(sender)) then
 			local bwPrefix, bwMsg = msg:match("^(%u-):(.+)")
@@ -3635,7 +3637,7 @@ do
 		if not bestClient then return end
 		requestedFrom = bestClient.name
 		requestTime = GetTime()
-		SendAddonMessage("D4", "RT", "WHISPER", bestClient.name)
+		SendAddonMessage("V5", "RT", "WHISPER", bestClient.name)
 	end
 
 	function VEM:ReceiveCombatInfo(sender, mod, time)
@@ -3761,7 +3763,7 @@ function VEM:SendBGTimers(target)
 end
 
 function VEM:SendCombatInfo(mod, target)
-	return SendAddonMessage("D4", ("CI\t%s\t%s"):format(mod.id, GetTime() - mod.combatInfo.pull), "WHISPER", target)
+	return SendAddonMessage("V5", ("CI\t%s\t%s"):format(mod.id, GetTime() - mod.combatInfo.pull), "WHISPER", target)
 end
 
 function VEM:SendTimerInfo(mod, target)
@@ -3775,7 +3777,7 @@ function VEM:SendTimerInfo(mod, target)
 			end
 			timeLeft = totalTime - elapsed
 			if timeLeft > 0 and totalTime > 0 then
-				SendAddonMessage("D4", ("TI\t%s\t%s\t%s\t%s"):format(mod.id, timeLeft, totalTime, uId), "WHISPER", target)
+				SendAddonMessage("V5", ("TI\t%s\t%s\t%s\t%s"):format(mod.id, timeLeft, totalTime, uId), "WHISPER", target)
 			end
 		end
 	end
@@ -3808,8 +3810,11 @@ do
 		self:Schedule(10, function() if not VEM.Options.SettingsMessageShown then VEM.Options.SettingsMessageShown = true self:AddMsg(VEM_HOW_TO_USE_MOD) end end)
 --		self:Schedule(16, function() if not VEM.Options.ForumsMessageShown then VEM.Options.ForumsMessageShown = VEM.ReleaseRevision self:AddMsg(VEM_FORUMS_MESSAGE) end end)
 		if type(RegisterAddonMessagePrefix) == "function" then
-			if not RegisterAddonMessagePrefix("D4") then -- main prefix for VEM4
+			if not RegisterAddonMessagePrefix("V5") then -- main prefix for VEM
 				self:AddMsg("Error: unable to register VEM addon message prefix (reached client side addon message filter limit), synchronization will be unavailable") -- TODO: confirm that this actually means that the syncs won't show up
+			end			
+			if not RegisterAddonMessagePrefix("D4") then -- main prefix for DBM
+				self:AddMsg("Error: unable to register DBM addon message prefix (reached client side addon message filter limit), synchronization with DBM will be unavailable") -- TODO: confirm that this actually means that the syncs won't show up
 			end
 			if not RegisterAddonMessagePrefix("BigWigs") then
 				self:AddMsg("Error: unable to register BigWigs addon message prefix (reached client side addon message filter limit), BigWigs version checks will be unavailable")

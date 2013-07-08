@@ -14,7 +14,7 @@ VEM_CORE_BAD_LOAD					= "VEM has detected your mod for this instance failed to f
 
 VEM_CORE_LOOT_SPEC_REMINDER			= "Your current spec is %s. Your current loot choice is %s."
 
-VEM_CORE_BIGWIGS_ICON_CONFLICT		= "VEM has detected that you have raid icons turned on in both BigWigs and VEM|VEM. Please disable icons in one of them to avoid conflict with your group leader"
+VEM_CORE_BIGWIGS_ICON_CONFLICT		= "VEM has detected that you have raid icons turned on in both BigWigs and VEM. Please disable icons in one of them to avoid conflict with your group leader"
 
 VEM_CORE_COMBAT_STARTED				= "%s engaged. Good luck and have fun! :)"
 VEM_CORE_COMBAT_STARTED_IN_PROGRESS	= "Engaged an in progress fight against %s. Good luck and have fun! :)"
@@ -75,7 +75,7 @@ VEM_CORE_VERSIONCHECK_HEADER		= "Boss Mod - Versions"
 VEM_CORE_VERSIONCHECK_ENTRY			= "%s: %s (r%d)"--One Boss mod
 VEM_CORE_VERSIONCHECK_ENTRY_TWO		= "%s: %s (r%d) & %s (r%d)"--Two Boss mods
 VEM_CORE_VERSIONCHECK_ENTRY_NO_VEM	= "%s: No boss mod installed"
-VEM_CORE_VERSIONCHECK_FOOTER		= "Found %d player(s) with VEM|VEM & %d player(s) with Bigwigs"
+VEM_CORE_VERSIONCHECK_FOOTER		= "Found %d player(s) with VEM & %d player(s) with Bigwigs"
 VEM_CORE_YOUR_VERSION_OUTDATED      = "Your version of Voice Encounter Mods is out-of-date. Please visit https://github.com/henryj/Voice-Encounter-Mods to get the latest version."
 VEM_BIG_WIGS						= "BigWigs"
 VEM_BIG_WIGS_ALPHA					= "BigWigs Alpha"
@@ -293,7 +293,7 @@ VEM_SPEED_CLEAR_TIMER_TEXT	= "Best Clear"
 VEM_REQ_INSTANCE_ID_PERMISSION		= "%s requested to see your current instance IDs and progress.\nDo you want to send this information to %s? He or she will be able to request this information during your current session (i. e. until you relog)."
 VEM_ERROR_NO_RAID					= "You need to be in a raid group to use this feature."
 VEM_INSTANCE_INFO_REQUESTED			= "Sent request for raid lockout information to the raid group.\nPlease note that the users will be asked for permission before sending the data to you, so it might take a minute until we get all responses."
-VEM_INSTANCE_INFO_STATUS_UPDATE		= "Got responses from %d players of %d VEM|VEM users: %d sent data, %d denied the request. Waiting %d more seconds for responses..."
+VEM_INSTANCE_INFO_STATUS_UPDATE		= "Got responses from %d players of %d VEM users: %d sent data, %d denied the request. Waiting %d more seconds for responses..."
 VEM_INSTANCE_INFO_ALL_RESPONSES		= "Received responses from all raid members"
 VEM_INSTANCE_INFO_DETAIL_DEBUG		= "Sender: %s ResultType: %s InstanceName: %s InstanceID: %s Difficulty: %d Size: %d Progress: %s"
 VEM_INSTANCE_INFO_DETAIL_HEADER		= "%s (%d), difficulty %d:"

@@ -7,7 +7,7 @@ L.MainFrame = "Voice Encounter Mods"
 L.TranslationByPrefix		= "Translated by "
 L.TranslationBy 			= "Iceoven@Dath'Remar"
 L.Website					= "Visit our English version Github project page at |cFF73C2FBhttps://github.com/henryj/Voice-Encounter-Mods|r"
-L.WebsiteButton				= "Forums"
+L.WebsiteButton				= "Github"
 L.SoundMM					= "Voice Actor"
 
 L.OTabBosses	= "Bosses"
