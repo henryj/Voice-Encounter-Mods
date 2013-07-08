@@ -1,0 +1,27 @@
+﻿## Interface: 50300
+## X-Min-Interface: 50001
+## Title:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0Pandaria|r
+## Title-zhTW:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0潘達利亞野外首領|r
+## Title-zhCN:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0潘达利亚野外首领|r
+## Author: MysticalOS/nBlueWiz
+## LoadOnDemand: 1
+## RequiredDeps: VEM-Core
+## SavedVariablesPerCharacter: VEMPandaria_SavedVars, VEMPandaria_SavedStats
+## X-VEM-Mod: 1
+## X-VEM-Mod-Type: RAID
+## X-VEM-Mod-Category: MOP
+## X-VEM-Mod-Has-Single-Format: 1
+## X-VEM-Mod-Sort: 5
+## X-VEM-Mod-MapID: 870,1064
+localization.en.lua
+localization.tw.lua
+localization.cn.lua
+Anger.lua
+Salyis.lua
+Nalak.lua
+Oondasta.lua
+ChiJi.lua
+Yulon.lua
+Niuzao.lua
+Xuen.lua
+Ordos.lua

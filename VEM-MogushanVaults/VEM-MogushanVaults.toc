@@ -1,0 +1,27 @@
+﻿## Interface: 50300
+## X-Min-Interface: 50001
+## Title:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0Mogu'shan Vaults|r
+## Title-zhTW:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0魔古山寶庫  (MV)|r
+## Title-zhCN:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0魔古山宝库|r
+## Author: MysticalOS
+## LoadOnDemand: 1
+## RequiredDeps: VEM-Core
+## SavedVariablesPerCharacter: VEMMogushanVaults_SavedVars, VEMMogushanVaults_SavedStats
+## X-VEM-Mod: 1
+## X-VEM-Mod-Type: RAID
+## X-VEM-Mod-Category: MOP
+## X-VEM-Mod-Has-LFR : 1
+## X-VEM-Mod-Name: Mogu'shan Vaults
+## X-VEM-Mod-Name-zhTW: 魔古山寶庫  (MV)
+## X-VEM-Mod-Name-zhCN: 魔古山宝库
+## X-VEM-Mod-Sort: 5
+## X-VEM-Mod-MapID: 1008
+localization.en.lua
+localization.tw.lua
+localization.cn.lua
+StoneGuard.lua
+Feng.lua
+GarajalTheSpiritbinder.lua
+SpiritKings.lua
+Elegon.lua
+WillofEmperor.lua

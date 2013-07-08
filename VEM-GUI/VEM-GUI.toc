@@ -1,0 +1,20 @@
+﻿## Interface: 50300
+## X-Min-Interface: 50001
+## Title:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff0055FFOptions GUI|r
+## Title-zhCN:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff0055FF设置界面|r
+## Title-zhTW:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff0055FF使用者界面設定|r
+## Notes: GUI for Voice Encounter Mods
+## Notes-zhCN: Voice Encounter Mods的设置界面
+## Notes-zhTW: Voice Encounter Mods的使用者界面
+## RequiredDeps: VEM-Core
+## LoadOnDemand: 1
+## DefaultState: enabled
+## Author: Nitram and Tandanu
+## URL: http://www.deadlybossmods.com
+localization.en.lua
+localization.cn.lua
+localization.tw.lua
+VEM-GUI_DropDown.xml
+VEM-GUI_Templates.xml
+VEM-GUI.lua
+VEM-GUI_DropDown.lua

@@ -1,0 +1,35 @@
+﻿## Interface: 50300
+## X-Min-Interface: 50001
+## Title:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0World Events|r
+## Title-zhTW:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0世界事件|r
+## Title-zhCN:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0世界事件|r
+## LoadOnDemand: 1
+## RequiredDeps: VEM-Core
+## SavedVariablesPerCharacter: VEMWorldEvents_SavedVars, VEMWorldEvents_SavedStats
+## X-VEM-Mod: 1
+## X-VEM-Mod-Type: OTHER
+## X-VEM-Mod-Category: MOP
+## X-VEM-Mod-Has-Single-Format: 1
+## X-VEM-Mod-SubCategories: Holidays,Darkmoon Faire,Quests
+## X-VEM-Mod-SubCategories-zhTW: 節慶,暗月馬戲團,任務
+## X-VEM-Mod-SubCategories-zhCN: 节日,暗月马戏团,任务
+## X-VEM-Mod-Name: World Events
+## X-VEM-Mod-Name-zhTW: 世界事件
+## X-VEM-Mod-Name-zhCN: 世界事件
+## X-VEM-Mod-MapID: 230,189,33,547,974,1
+## X-VEM-Mod-Sort: 50
+localization.en.lua
+localization.tw.lua
+localization.cn.lua
+Holidays\Omen.lua
+Holidays\ApothecaryTrio.lua
+Holidays\Ahune.lua
+Holidays\CorenDirebrew.lua
+Holidays\HeadlessHorseman.lua
+Holidays\Greench.lua
+DMF\Cannon.lua
+DMF\Gnoll.lua
+DMF\Shot.lua
+DMF\Tonks.lua
+DMF\Rabbit.lua
+Quests\Plants.lua

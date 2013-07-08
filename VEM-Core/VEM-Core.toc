@@ -1,0 +1,27 @@
+﻿## Interface: 50300
+## X-Min-Interface: 50001
+## Title:|cffffd200Voice Encounter Mods|r |cff69ccf0Core|r
+## Title-zhCN:|cffffd200Voice Encounter Mods|r |cff69ccf0核心|r
+## Title-zhTW:|cffffd200Voice Encounter Mods|r |cff69ccf0核心|r
+## Notes: Voice Encounter Mods
+## SavedVariablesPerCharacter: VEM_SavedOptions, DBT_SavedOptions
+## LoadOnDemand: 0
+## DefaultState: enabled
+## Author: Tandanu and Nitram
+## X-Website: http://www.deadlybossmods.com
+
+embeds.xml
+
+localization.en.lua
+localization.cn.lua
+localization.tw.lua
+DBT-Template.xml
+DBT.lua
+VEM-Core.lua
+VEM-Arrow.lua
+VEM-Flash.lua
+VEM-RangeCheck.lua
+VEM-BossHealth.lua
+VEM-BossHealth.xml
+VEM-InfoFrame.lua
+VEM-HudMap.lua

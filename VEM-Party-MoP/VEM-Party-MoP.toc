@@ -1,0 +1,54 @@
+﻿## Interface: 50300
+## X-Min-Interface: 50001
+## Title:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0Party-MoP|r
+## Title-zhCN:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf05队伍首领 (潘达利亚)|r
+## Title-zhTW:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf05隊伍首領 (潘達利亞)|r
+## LoadOnDemand: 1
+## RequiredDeps: VEM-Core
+## SavedVariablesPerCharacter: VEMPartyMoP_SavedVars, VEMPartyMoP_SavedStats
+## X-VEM-Mod: 1
+## X-VEM-Mod-Type: PARTY
+## X-VEM-Mod-Category: MOP
+## X-VEM-Mod-Has-Challenge: 1
+## X-VEM-Mod-SubCategoriesID: 960, 961, 959, 962, 994, 1011, 1007, 1001, 1004
+## X-VEM-Mod-Name: Party (MoP)
+## X-VEM-Mod-Name-zhTW: 隊伍首領 (潘達利亞)
+## X-VEM-Mod-Name-zhCN: 队伍首领 (潘达利亚)
+## X-VEM-Mod-Sort: 25
+## X-VEM-Mod-MapID: 960,961,959,962,994,1011,1007,1001,1004
+localization.en.lua
+localization.tw.lua
+localization.cn.lua
+JadeSerpentTemple\WiseMari.lua
+JadeSerpentTemple\LibraryEvent.lua
+JadeSerpentTemple\LiuFlameheart.lua
+JadeSerpentTemple\ShaofDoubt.lua
+StormstoutBrewery\OokOok.lua
+StormstoutBrewery\Hoptallus.lua
+StormstoutBrewery\YanZhu.lua
+ShadoPanMonastery\GuCloudStrike.lua
+ShadoPanMonastery\Snowdrift.lua
+ShadoPanMonastery\ShaofViolence.lua
+ShadoPanMonastery\TaranZhu.lua
+GateSettingSun\Kiptilak.lua
+GateSettingSun\Gadok.lua
+GateSettingSun\Rimok.lua
+GateSettingSun\Raigonn.lua
+MogushanPalace\TrialoftheKing.lua
+MogushanPalace\Gekkan.lua
+MogushanPalace\WeaponmasterXin.lua
+NiuzaoTemple\Jinbak.lua
+NiuzaoTemple\Vojak.lua
+NiuzaoTemple\Pavalak.lua
+NiuzaoTemple\Neronok.lua
+Scholomance\Chillheart.lua
+Scholomance\JandiceBarov.lua
+Scholomance\Rattlegore.lua
+Scholomance\LillianVoss.lua
+Scholomance\DarkmasterGandling.lua
+ScarletHalls\Braun.lua
+ScarletHalls\Harlan.lua
+ScarletHalls\FlameweaverKoegler.lua
+ScarletCathedral\ThalnosSoulrender.lua
+ScarletCathedral\Korlof.lua
+ScarletCathedral\Durand.lua
