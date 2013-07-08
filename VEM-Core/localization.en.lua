@@ -309,8 +309,6 @@ VEM_CORE_LAG_HEADER					= "Voice Encounter Mods - Delayed check"
 VEM_CORE_LAG_ENTRY					= "%s£ºWorld delay[%d ms] / Home delay[%d ms]"
 VEM_CORE_LAG_FOOTER					= "Without Member:%s"
 
-VEM_CORE_SOUNDVER					= "Voice Enhanced"
-
 VEM_CORE_SOUNDGRIL_NAME_YIKE		= "Yike Xia"
 VEM_CORE_SOUNDGRIL_TEXT_YIKE		= "    Yike Xia, nickname coco-superwoman, girl, realname unknown. Dubbed as the female mage Mei Lv in <My name is MT>. Well known WOW narrator, Horde obsessed. Southwest University of Science and Technology China, 2009. She made her name in senior high with Sing Azeroth."
 

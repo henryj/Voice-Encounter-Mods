@@ -44,7 +44,7 @@
 -------------------------------
 VEM = {
 	Revision = tonumber(("$Revision: 9930 $"):sub(12, -3)),
-	DisplayVersion = "(VEM) 5.3 "..VEM_CORE_SOUNDVER, -- the string that is shown as version
+	DisplayVersion = "(VEM) 5.3.4", -- the string that is shown as version
 	ReleaseRevision = 9810 -- the revision of the latest stable version that is available
 }
 
@@ -2203,11 +2203,11 @@ do
 		end
 		if not VEM.Options.DontPlayPTCountdown then
 			VEM:Unschedule(SendChatMessage)
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\Sounds\\sst\\5.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\Sounds\\sst\\4.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\Sounds\\sst\\3.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\Sounds\\sst\\2.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\Sounds\\sst\\1.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfive.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3", "Master")
 			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\com_go.mp3", "Master")
 		end
 		if not VEM.Options.DontShowPTCountdownText then
@@ -2237,11 +2237,11 @@ do
 			VEM.Bars:CancelBar(VEM_CORE_TIMER_PULL) 
 		end
 		if not VEM.Options.DontPlayPTCountdown then
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\Sounds\\sst\\5.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\Sounds\\sst\\4.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\Sounds\\sst\\3.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\Sounds\\sst\\2.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\Sounds\\sst\\1.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfive.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3", "Master")
 			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\com_go.mp3", "Master")
 		end
 		if not VEM.Options.DontShowPTCountdownText then
@@ -2253,11 +2253,11 @@ do
 		end
 		if not VEM.Options.DontPlayPTCountdown then
 			PlaySoundFile("Interface\\AddOns\\VEM-Core\\Sounds\\win.ogg", "Master")
-			if timer > 5 then VEM:Schedule(timer-5, PlaySoundFile, "Interface\\AddOns\\VEM-Core\\Sounds\\sst\\5.mp3", "Master") end
-			if timer > 5 then VEM:Schedule(timer-4, PlaySoundFile, "Interface\\AddOns\\VEM-Core\\Sounds\\sst\\4.mp3", "Master") end
-			if timer > 3 then VEM:Schedule(timer-3, PlaySoundFile, "Interface\\AddOns\\VEM-Core\\Sounds\\sst\\3.mp3", "Master") end
-			if timer > 3 then VEM:Schedule(timer-2, PlaySoundFile, "Interface\\AddOns\\VEM-Core\\Sounds\\sst\\2.mp3", "Master") end
-			if timer > 3 then VEM:Schedule(timer-1, PlaySoundFile, "Interface\\AddOns\\VEM-Core\\Sounds\\sst\\1.mp3", "Master") end
+			if timer > 5 then VEM:Schedule(timer-5, PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfive.mp3", "Master") end
+			if timer > 5 then VEM:Schedule(timer-4, PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3", "Master") end
+			if timer > 3 then VEM:Schedule(timer-3, PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3", "Master") end
+			if timer > 3 then VEM:Schedule(timer-2, PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3",  "Master") end
+			if timer > 3 then VEM:Schedule(timer-1, PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3",  "Master") end
 			if timer > 1 then VEM:Schedule(timer, PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\com_go.mp3", "Master") end
 		end
 		if not VEM.Options.DontShowPTCountdownText then

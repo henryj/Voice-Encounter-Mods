@@ -328,8 +328,6 @@ VEM_CORE_LAG_HEADER					= "Voice Encounter Mods - 延时检测"
 VEM_CORE_LAG_ENTRY					= "%s：世界延时[%d毫秒] / 本地延时[%d毫秒]"
 VEM_CORE_LAG_FOOTER					= "未反馈此次检测的团员:%s"
 
-VEM_CORE_SOUNDVER					= "语音增强版"
-
 VEM_CORE_SOUNDGRIL_NAME_YIKE		= "夏一可"
 VEM_CORE_SOUNDGRIL_TEXT_YIKE		= "    夏一可，又名可可超人，女，真名不详，《我叫MT》中法师和美屡的配音，魔兽世界知名解说，部落控。2009年进入西南科技大学。高三时因参加唱响艾泽拉斯而成名。"
 
