@@ -125,8 +125,8 @@ mod:AddBoolOption("InfoFrame", true, "sound")
 mod:AddBoolOption("InfoFrameTankMode", mod:IsTank(), "sound")
 mod:AddBoolOption("SetIconOnWS", true)
 mod:AddBoolOption("pscount", true, "sound")
-mod:AddBoolOption("ShaAssist", true, "sound")
-mod:AddBoolOption("ShaStarMode", false, "sound")
+-- mod:AddBoolOption("ShaAssist", true, "sound")
+-- mod:AddBoolOption("ShaStarMode", false, "sound")
 local sndWOPWSCOUNT = mod:NewSound(nil, "SoundWSCOUNT", not mod:IsTank())
 
 for i = 1, 4 do
@@ -315,22 +315,24 @@ function mod:SPELL_AURA_APPLIED(args)
 			end
 		end)
 	elseif args:IsSpellID(129147) then
-		if self.Options.ShaAssist then
-			VEM.ShaOfFearAssistEnabled = true
-		else
-			VEM.ShaOfFearAssistEnabled = false
-		end
-		if self.Options.ShaStarMode then
-			if mod:IsDps() then
-				VEM.ShaAssistStarModeChosed = "Dps"
-			elseif mod:IsHealer() then
-				VEM.ShaAssistStarModeChosed = "Healther"
-			else
-				VEM.ShaAssistStarModeChosed = "Tank"
-			end
-		else
-			VEM.ShaAssistStarModeChosed = nil
-		end
+		VEM.ShaOfFearAssistEnabled = false
+		VEM.ShaAssistStarModeChosed = nil
+		-- if self.Options.ShaAssist then
+			-- VEM.ShaOfFearAssistEnabled = true
+		-- else
+			-- VEM.ShaOfFearAssistEnabled = false
+		-- end
+		-- if self.Options.ShaStarMode then
+			-- if mod:IsDps() then
+				-- VEM.ShaAssistStarModeChosed = "Dps"
+			-- elseif mod:IsHealer() then
+				-- VEM.ShaAssistStarModeChosed = "Healther"
+			-- else
+				-- VEM.ShaAssistStarModeChosed = "Tank"
+			-- end
+		-- else
+			-- VEM.ShaAssistStarModeChosed = nil
+		-- end
 		self:UnscheduleMethod("CheckPlatformLeaved")
 		ominousCackleTargets[#ominousCackleTargets + 1] = args.destName
 		if args:IsPlayer() then
