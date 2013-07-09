@@ -23,3 +23,6 @@ Unzip into your WoW addons folder.
 (You may want to remove your official DBM first.)
 
 Have fun.
+
+[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=KR8WK2P6DJA3Y&lc=AU&item_name=VEM&item_number=VEM&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
+
