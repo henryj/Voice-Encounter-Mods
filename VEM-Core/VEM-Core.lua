@@ -1007,8 +1007,8 @@ end
 ----------------------
 --  Slash Commands  --
 ----------------------
-SLASH_DEADLYBOSSMODS1 = "/vem"
-SlashCmdList["DEADLYBOSSMODS"] = function(msg)
+SLASH_VOICEENCOUNTERMODS1 = "/vem"
+SlashCmdList["VOICEENCOUNTERMODS"] = function(msg)
 	local cmd = msg:lower()
 	if cmd == "ver" or cmd == "version" then
 		VEM:ShowVersions(false)
