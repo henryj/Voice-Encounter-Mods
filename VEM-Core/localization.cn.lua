@@ -83,7 +83,7 @@ VEM_CORE_VERSIONCHECK_HEADER		= "Voice Encounter Mods - 版本检测"
 VEM_CORE_VERSIONCHECK_ENTRY			= "%s：%s (r%d)"
 VEM_CORE_VERSIONCHECK_ENTRY_TWO			= "%s: %s (r%d) & %s (r%d)"
 VEM_CORE_VERSIONCHECK_ENTRY_NO_VEM		= "%s：尚未安装任何团队首领模组"
-VEM_CORE_VERSIONCHECK_FOOTER			= "团队中有%d玩家正在使用VEM / %d玩家正在使用Bigwigs"
+VEM_CORE_VERSIONCHECK_FOOTER			= "团队中有%d玩家正在使用VEM或DBM / %d玩家正在使用Bigwigs"
 VEM_CORE_YOUR_VERSION_OUTDATED		= "你的Voice Encounter Mods已经过期。请访问 https://github.com/henryj/Voice-Encounter-Mods 下载最新版本。"
 --VEM_BIG_WIGS (Same as English locales)
 --VEM_BIG_WIGS_ALPHA (Same as English locales)
