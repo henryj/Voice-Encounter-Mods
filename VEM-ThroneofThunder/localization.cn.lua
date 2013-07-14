@@ -379,7 +379,8 @@ L:SetOptionLocalization({
 	MobC				= "第三波小怪",
 	SpecWarnJSA			= "特殊警告：注意减伤",
 	RangeFrame			= "显示距离框架(8码)",
-	warnMatterSwapped	= "警报：$spell:138618交换的目标"
+	warnMatterSwapped	= "警报：$spell:138618交换的目标",
+	SetIconOnFont           = VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(138707)
 })
 
 L:SetMiscLocalization({
@@ -556,11 +557,11 @@ L:SetOptionLocalization({
 	specWarnVitarun	= "特别警告：生命传递跑位",
 	optDD			= "生命跑位策略",
 	nodd			= "正常循环成员(下方设定编号)",
-	DD1			= "替补1",
-	DD2			= "替补2",
-	DD3			= "替补3",
-	DD4			= "替补4",
-	DD5			= "替补5",
+	DD1				= "替补1",
+	DD2				= "替补2",
+	DD3				= "替补3",
+	DD4				= "替补4",
+	DD5				= "替补5",
 	lightnumber		= "正常循环成员编号(不会分配编号为0的团员)",
 	lastnumber		= "总共安排了多少正常循环成员[必须填写 非常重要]",
 	HudMAPAnima		= "高级定位监视(HUD)：$spell:138295爆炸",

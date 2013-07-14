@@ -297,7 +297,7 @@ function mod:SPELL_CAST_START(args)
 		if args.sourceGUID == UnitGUID("target") then
 			specWarnSleightOfHand:Show(args.sourceName)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\stopatk.mp3") --注意停手
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 		end
 		timerSleightOfHand:Start()
 		timerSleightOfHandCD:Start()
@@ -342,11 +342,11 @@ function mod:SPELL_CAST_START(args)
 		if args.sourceGUID == UnitGUID("target") then
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\stopatk.mp3") --注意停手
 			specWarnShieldOfDarkness:Show(args.sourceName)
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 		elseif mod:IsMagicDispeller() then
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_mop_zyhd.mp3") --注意护盾
 			specWarnShieldOfDarkness:Show(args.sourceName)
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 		end
 		if mod:IsMagicDispeller() then
 			sndWOP:Schedule(1.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\dispelnow.mp3") --快驅散
@@ -419,11 +419,11 @@ function mod:SPELL_CAST_START(args)
 		if isDispellerZ then
 			specWarnImperviousShield:Show(args.sourceName)
 			sndWOP:Schedule(1.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\dispelnow.mp3")
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 		elseif args.sourceGUID == UnitGUID("target") then
 			specWarnImperviousShield:Show(args.sourceName)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\stopatk.mp3") --注意停手
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 		end
 	end
 end

@@ -253,7 +253,8 @@ local function updatePlayerPower()
 	table.wipe(lines)
 	if IsInGroup() then
 		for uId in VEM:GetGroupMembers() do
-			if not UnitIsDeadOrGhost(uId) and UnitPower(uId, pIndex)/UnitPowerMax(uId, pIndex)*100 >= infoFrameThreshold then
+			local maxPower = UnitPowerMax(uId, pIndex)
+			if maxPower ~= 0 and not UnitIsDeadOrGhost(uId) and UnitPower(uId, pIndex) / maxPower * 100 >= infoFrameThreshold then
 				lines[UnitName(uId)] = UnitPower(uId, pIndex)
 			end
 		end
@@ -280,6 +281,7 @@ local function updateEnemyPower()
 	updateLines()
 end
 
+--BH ADD
 local function updateNazgrimPower()
 	table.wipe(lines)	
 	if UnitPower("boss1") < 50 then
@@ -373,6 +375,7 @@ local function updateCobalyPower()
 	end
 	updateLines()
 end
+--BH ADD END
 
 --Buffs that are good to have, therefor bad not to have them.
 local function updatePlayerBuffs()
@@ -429,7 +432,7 @@ local function updateReverseBadPlayerDebuffs()
 		for uId, i in VEM:GetGroupMembers() do
 			if tankIgnored and (UnitGroupRolesAssigned(uId) == "TANK" or GetPartyAssignment("MAINTANK", uId, 1)) then break end
 			if not UnitDebuff(uId, GetSpellInfo(infoFrameThreshold)) and not UnitIsDeadOrGhost(uId) then
-				lines[UnitName(uId)] = ""
+				lines[UnitName(uId)] = i
 			end
 		end
 	end
@@ -584,7 +587,7 @@ local function updatePlayerTargets()
 	if IsInGroup() then
 		for uId, i in VEM:GetGroupMembers() do
 			if getUnitCreatureId(uId.."target") ~= infoFrameThreshold and (UnitGroupRolesAssigned(uId) == "DAMAGER" or UnitGroupRolesAssigned(uId) == "NONE") then
-				lines[UnitName(uId)] = ""
+				lines[UnitName(uId)] = i
 			end
 		end
 	end
@@ -763,7 +766,7 @@ function infoFrame:Update(event)
 		updateGoodPlayerDebuffs()
 	elseif event == "playerbaddebuff" then
 		updateBadPlayerDebuffs()
-	elseif currentEvent == "reverseplayerbaddebuff" then
+	elseif event == "reverseplayerbaddebuff" then
 		updateReverseBadPlayerDebuffs()
 	elseif event == "playeraggro" then
 		updatePlayerAggro()
@@ -773,17 +776,17 @@ function infoFrame:Update(event)
 		updatePlayerDebuffStacks()
 	elseif event == "playertargets" then
 		updatePlayerTargets()
-	elseif currentEvent == "cobalypower" then
+	elseif event == "cobalypower" then
 		updateCobalyPower()
-	elseif currentEvent == "nazgrimpower" then
+	elseif event == "nazgrimpower" then
 		updateNazgrimPower()
-	elseif currentEvent == "playerdebuffstackstime" then
+	elseif event == "playerdebuffstackstime" then
 		updatePlayerDebuffStacksTime()
-	elseif currentEvent == "bossdebuffstacks" then
+	elseif event == "bossdebuffstacks" then
 		updateBossDebuffStacks()
-	elseif currentEvent == "other" then
+	elseif event == "other" then
 		updateOther()
-	elseif currentEvent == "time" then
+	elseif event == "time" then
 		updateTime()
 	else
 		error("VEM-InfoFrame: Unsupported event", 2)

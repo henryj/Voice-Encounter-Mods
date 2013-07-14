@@ -228,7 +228,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			specWarnWildSpark:Show()
 			yellWildSpark:Yell()
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\firerun.mp3") --火焰點你
 			sndWOP:Schedule(1.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
 			sndWOP:Schedule(2.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")

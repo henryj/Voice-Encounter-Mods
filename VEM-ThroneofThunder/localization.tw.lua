@@ -373,7 +373,8 @@ L:SetOptionLocalization({
 	MobC				= "第三波小怪",
 	SpecWarnJSA			= "特殊警告：注意減傷",
 	RangeFrame			= "顯示距離框架(8碼)",
-	warnMatterSwapped	= "警告：被$spell:138618交換的目標"
+	warnMatterSwapped	= "警告：被$spell:138618交換的目標",
+	SetIconOnFont           = VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(138707)
 })
 
 L:SetMiscLocalization({
@@ -577,7 +578,7 @@ L:SetMiscLocalization({
 L = VEM:GetModLocalization("ToTTrash")
 
 L:SetGeneralLocalization({
-	name =	"雜兵"
+	name =	"雷霆王座雜兵"
 })
 
 L:SetOptionLocalization({

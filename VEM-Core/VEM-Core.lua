@@ -43,9 +43,9 @@
 --  Globals/Default Options  --
 -------------------------------
 VEM = {
-	Revision = tonumber(("$Revision: 9930 $"):sub(12, -3)),
-	DisplayVersion = "(VEM) 5.3.4", -- the string that is shown as version
-	ReleaseRevision = 9810 -- the revision of the latest stable version that is available
+	Revision = tonumber(("$Revision: 10023 $"):sub(12, -3)),
+	DisplayVersion = "(VEM) 5.3.5", -- the string that is shown as version
+	ReleaseRevision = 9947 -- the revision of the latest stable version that is available
 }
 
 -- Legacy crap; that stupid "Version" field was never a good idea.
@@ -102,9 +102,10 @@ VEM.DefaultOptions = {
 	ShowMinimapButton = false,
 	BlockVersionUpdateNotice = false,
 	ShowSpecialWarnings = true,
-	ShowLHFrame = true,
-	ShowAdvSWSounds = false,
 	ShowFlashFrame = true,
+	ShowAdvSWSounds = false,
+	ShowShakeFrame = true,
+	EnableReadyCheckSound = true,
 	AlwaysShowHealthFrame = false,
 	ShowBigBrotherOnCombatStart = false,
 	AutologBosses = false,
@@ -139,6 +140,15 @@ VEM.DefaultOptions = {
 	SpecialWarningFont = STANDARD_TEXT_FONT,
 	SpecialWarningFontSize = 50,
 	SpecialWarningFontColor = {0.0, 0.0, 1.0},
+	SpecialWarningFlashCol1 = {1.0, 1.0, 0.0},--Yellow
+	SpecialWarningFlashCol2 = {1.0, 0.5, 0.0},--Orange
+	SpecialWarningFlashCol3 = {1.0, 0.0, 0.0},--Red
+	SpecialWarningFlashDura1 = 0.4,
+	SpecialWarningFlashDura2 = 0.4,
+	SpecialWarningFlashDura3 = 1,
+	SpecialWarningFlashAlph1 = 0.3,
+	SpecialWarningFlashAlph2 = 0.3,
+	SpecialWarningFlashAlph3 = 0.4,
 	HealthFrameGrowUp = false,
 	HealthFrameLocked = false,
 	HealthFrameWidth = 200,
@@ -774,6 +784,7 @@ do
 				"LOADING_SCREEN_DISABLED"
 			)
 			self:GROUP_ROSTER_UPDATE()
+			self:LOADING_SCREEN_DISABLED()
 			self:Schedule(1.5, function()
         		combatInitialized = true
 			end)
@@ -1866,12 +1877,6 @@ function VEM:LFG_PROPOSAL_SHOW()
 	end
 end
 
-function VEM:READY_CHECK()
-	if VEM.Options.EnableReadyCheckSound then
-		PlaySoundFile("Sound\\interface\\levelup2.ogg", "Master")--Because regular sound uses SFX channel which is too low of volume most of time
-	end
-end
-
 function VEM:LFG_PROPOSAL_FAILED()
 	VEM.Bars:CancelBar(VEM_LFG_INVITE)
 end
@@ -1883,6 +1888,14 @@ end
 function VEM:ACTIVE_TALENT_GROUP_CHANGED()
 	VEM:RoleCheck()
 end
+
+--BH ADD
+function VEM:READY_CHECK()
+	if VEM.Options.EnableReadyCheckSound then
+		PlaySoundFile("Sound\\interface\\levelup2.ogg", "Master")--Because regular sound uses SFX channel which is too low of volume most of time
+	end
+end
+--ADD END
 
 function VEM:PLAYER_REGEN_ENABLED()
 	if loadDelay then
@@ -2049,9 +2062,9 @@ do
 	function VEM:LOADING_SCREEN_DISABLED()
 		local _, instanceType, _, _, _, _, _, mapID = GetInstanceInfo()
 		LastInstanceMapID = mapID
-		if instanceType == "none" and (mapID ~= 369) and (mapID ~= 1043) then return end -- instance type of brawlers guild is none ("Shlae'gararena none 0  5 0 false 1043")
+		if instanceType == "none" and (mapID ~= 369) and (mapID ~= 1043) and (mapID ~= 974) then return end -- instance type of brawlers guild and DMF are none
 		self:LoadModsOnDemand("mapId", mapID)
-		if instanceType == "scenario" and self:GetModByName("d511") then--mod already loaded
+		if instanceType == "scenario" and (mapID ~= 1148) and self:GetModByName("d511") then--mod already loaded (Filter 1148, which is proving grounds)
 			VEM:InstanceCheck()
 		end
 	end
@@ -2070,7 +2083,7 @@ end
 
 --Scenario mods
 function VEM:InstanceCheck()
-	if combatInfo[LastInstanceMapID] then--Scenarios not yet moved over to LastInstanceMapID
+	if combatInfo[LastInstanceMapID] then
 		for i, v in ipairs(combatInfo[LastInstanceMapID]) do
 			if (v.type == "scenario") and checkEntry(v.msgs, LastInstanceMapID) then
 				VEM:StartCombat(v.mod, 0)
@@ -2198,29 +2211,7 @@ do
 		cId = tonumber(cId or "")
 		if cId then VEM:OnMobKill(cId, true) end
 	end
-	
-	syncHandlers["CPT"] = function(sender)
-		if select(2, IsInInstance()) == "pvp" or VEM:GetRaidRank(sender) == 0 or IsEncounterInProgress() then
-			return
-		end
-		if not VEM.Options.DontShowPT and VEM.Bars:GetBar(VEM_CORE_TIMER_PULL) then
-			VEM.Bars:CancelBar(VEM_CORE_TIMER_PULL) 
-		end
-		if not VEM.Options.DontPlayPTCountdown then
-			VEM:Unschedule(SendChatMessage)
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfive.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\com_go.mp3", "Master")
-		end
-		if not VEM.Options.DontShowPTCountdownText then
-			TimerTracker_OnEvent(TimerTracker, "PLAYER_ENTERING_WORLD")--easiest way to nil out timers on TimerTracker frame. This frame just has no actual star/stop functions :\
-		end
-		VEM:AddMsg("<"..sender..">"..VEM_CORE_ANNOUNCE_PULL_CANCEL)
-	end
-	
+
 	local dummyMod -- dummy mod for the pull sound effect
 	syncHandlers["PT"] = function(sender, timer, mapid)
 		if select(2, IsInInstance()) == "pvp" or VEM:GetRaidRank(sender) == 0 or IsEncounterInProgress() then
@@ -2252,6 +2243,7 @@ do
 		if not VEM.Options.DontShowPTCountdownText then
 			TimerTracker_OnEvent(TimerTracker, "PLAYER_ENTERING_WORLD")--easiest way to nil out timers on TimerTracker frame. This frame just has no actual star/stop functions :\
 		end
+		dummyMod.text:Cancel()
 		if timer == 0 then return VEM:AddMsg("<"..sender..">"..VEM_CORE_ANNOUNCE_PULL_CANCEL) end--"/vem pull 0" will strictly be used to cancel the pull timer (which is w hy we let above part of code run but not below)
 		if not VEM.Options.DontShowPT then
 			VEM.Bars:CreateBar(timer, VEM_CORE_TIMER_PULL, "Interface\\Icons\\Spell_Holy_BorrowedTime")
@@ -2274,7 +2266,29 @@ do
 		end
 		VEM:StartLogging(timer, checkForActualPull)
 	end
-
+	
+	syncHandlers["CPT"] = function(sender)
+		if select(2, IsInInstance()) == "pvp" or VEM:GetRaidRank(sender) == 0 or IsEncounterInProgress() then
+			return
+		end
+		if not VEM.Options.DontShowPT and VEM.Bars:GetBar(VEM_CORE_TIMER_PULL) then
+			VEM.Bars:CancelBar(VEM_CORE_TIMER_PULL) 
+		end
+		dummyMod.text:Cancel()
+		if not VEM.Options.DontPlayPTCountdown then
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfive.mp3",  "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3",  "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3",   "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3",   "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\com_go.mp3", "Master")
+		end
+		if not VEM.Options.DontShowPTCountdownText then
+			TimerTracker_OnEvent(TimerTracker, "PLAYER_ENTERING_WORLD")--easiest way to nil out timers on TimerTracker frame. This frame just has no actual star/stop functions :\
+		end
+		VEM:AddMsg("<"..sender..">"..VEM_CORE_ANNOUNCE_PULL_CANCEL)
+	end
+	
 	local function SendVersion()
 		sendSync("V", ("%d\t%s\t%s\t%s"):format(VEM.Revision, VEM.Version, VEM.DisplayVersion, GetLocale()))
 	end
@@ -2336,14 +2350,17 @@ do
 				end
 				if not showedUpdateReminder and VEM.DisplayVersion:find("alpha") and (revDifference > 20) then
 					local found = false
+					local other = nil
 					for i, v in pairs(raid) do
 						if v.revision == revision and v ~= raid[sender] then
 							found = true
+							other = i
 							break
 						end
 					end
 					if found then--Running alpha version that's out of date
 						showedUpdateReminder = true
+--						print(("VEM Debug: Showing alpha update notification because %s and %s are running revision %d which is > than our reivision %d"):format(sender, other, revision, VEM.Revision))
 						VEM:AddMsg(VEM_CORE_UPDATEREMINDER_HEADER_ALPHA:format(revDifference))
 					end
 				end
@@ -4379,7 +4396,7 @@ function bossModPrototype:GetBossTarget(cid)
 	cid = cid or self.creatureId
 	local name, uid, bossuid
 	for i, uId in ipairs(bossTargetuIds) do
-		if self:GetUnitCreatureId(uId) == cid then
+		if self:GetUnitCreatureId(uId) == cid or UnitGUID(uId) == cid then
 			bossuid = uId
 			name = VEM:GetUnitFullName(uId.."target")
 			uid = VEM:GetRaidUnitId(name) or uId.."target"--overrride target uid because uid+"target" is variable uid.
@@ -4390,7 +4407,7 @@ function bossModPrototype:GetBossTarget(cid)
 	-- failed to detect from default uIds, scan all group members's target.
 	if IsInRaid() then
 		for i = 1, GetNumGroupMembers() do
-			if self:GetUnitCreatureId("raid"..i.."target") == cid then
+			if self:GetUnitCreatureId("raid"..i.."target") == cid or UnitGUID("raid"..i.."target") == cid then
 				bossuid = "raid"..i.."target"
 				name = VEM:GetUnitFullName("raid"..i.."targettarget")
 				uid = VEM:GetRaidUnitId(name) or "raid"..i.."targettarget"--overrride target uid because uid+"target" is variable uid.
@@ -4399,7 +4416,7 @@ function bossModPrototype:GetBossTarget(cid)
 		end
 	elseif IsInGroup() then
 		for i = 1, GetNumSubgroupMembers() do
-			if self:GetUnitCreatureId("party"..i.."target") == cid then
+			if self:GetUnitCreatureId("party"..i.."target") == cid or UnitGUID("party"..i.."target") == cid then
 				bossuid = "party"..i.."target"
 				name = VEM:GetUnitFullName("party"..i.."targettarget")
 				uid = VEM:GetRaidUnitId(name) or "party"..i.."targettarget"--overrride target uid because uid+"target" is variable uid.
@@ -4974,11 +4991,7 @@ do
 	function soundPrototype:Play(file)
 		if not self.option or self.mod.Options[self.option] then
 			if VEM.Options.UseMasterVolume then
-				if file == "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\justrun.mp3" and UnitName("player") == "Aberich" then
-					PlaySoundFile("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\abrun.mp3", "Master")
-				else
-					PlaySoundFile(file or "Sound\\Creature\\HoodWolf\\HoodWolfTransformPlayer01.ogg", "Master")
-				end
+				PlaySoundFile(file or "Sound\\Creature\\HoodWolf\\HoodWolfTransformPlayer01.ogg", "Master")
 			else
 				PlaySoundFile(file or "Sound\\Creature\\HoodWolf\\HoodWolfTransformPlayer01.ogg")
 			end
@@ -5369,12 +5382,14 @@ do
 			end
 			msg = msg:gsub(">.-<", stripName)
 			font:SetText(msg)
-			if VEM.Options.ShowLHFrame and not UnitIsDeadOrGhost("player") then
-				LowHealthFrame:Show()
-				LowHealthFrame:SetAlpha(1)
-				frame.healthFrameHidden = nil
-			else
-				frame.healthFrameHidden = true -- to prevent bugs in the case that this option is changed while the flash effect is active (which is not that unlikely as there is a test button in the gui...)
+			if not UnitIsDeadOrGhost("player") and VEM.Options.ShowFlashFrame then
+				if self.flash == 1 then
+					VEM.Flash:Show(VEM.Options.SpecialWarningFlashCol1[1],VEM.Options.SpecialWarningFlashCol1[2], VEM.Options.SpecialWarningFlashCol1[3], VEM.Options.SpecialWarningFlashDura1, VEM.Options.SpecialWarningFlashAlph1)
+				elseif self.flash == 2 then
+					VEM.Flash:Show(VEM.Options.SpecialWarningFlashCol2[1],VEM.Options.SpecialWarningFlashCol2[2], VEM.Options.SpecialWarningFlashCol2[3], VEM.Options.SpecialWarningFlashDura2, VEM.Options.SpecialWarningFlashAlph2)
+				elseif self.flash == 3 then
+					VEM.Flash:Show(VEM.Options.SpecialWarningFlashCol3[1],VEM.Options.SpecialWarningFlashCol3[2], VEM.Options.SpecialWarningFlashCol3[3], VEM.Options.SpecialWarningFlashDura3, VEM.Options.SpecialWarningFlashAlph3)
+				end
 			end
 			frame:Show()
 			frame:SetAlpha(1)
@@ -5404,11 +5419,13 @@ do
 		elseif not runSound then
 			runSound = 1
 		end
+		local flash
 		local obj = setmetatable(
 			{
 				text = self.localization.warnings[text],
 				mod = self,
 				sound = not noSound,
+				flash = runSound,--Set flash color to hard coded runsound (even if user sets custom sounds)
 			},
 			mt
 		)
@@ -5438,6 +5455,7 @@ do
 			spellName = GetSpellInfo(spellId) or VEM_CORE_UNKNOWN
 		end
 		local text
+		local flash
 		if announceType == "prewarn" then
 			if type(stacks) == "string" then
 				text = VEM_CORE_AUTO_SPEC_WARN_TEXTS[announceType]:format(spellName, stacks)
@@ -5453,6 +5471,7 @@ do
 				announceType = announceType,
 				mod = self,
 				sound = not noSound,
+				flash = runSound,--Set flash color to hard coded runsound (even if user sets custom sounds)
 			},
 			mt
 		)
@@ -5645,7 +5664,7 @@ do
 		frame:SetFrameStrata("HIGH")
 	end
 
-	function VEM:ShowTestSpecialWarning(text)
+	function VEM:ShowTestSpecialWarning(text, number)
 		if moving then
 			return
 		end
@@ -5656,7 +5675,16 @@ do
 		self:Unschedule(testWarningEnd)
 		self:Schedule(3, testWarningEnd)
 		frame.timer = 3
-		VEM.Flash:Show(1, 0, 0)
+		VEM:PlaySpecialWarningSound(number)
+		if VEM.Options.ShowFlashFrame then
+			if number == 1 then
+				VEM.Flash:Show(VEM.Options.SpecialWarningFlashCol1[1],VEM.Options.SpecialWarningFlashCol1[2], VEM.Options.SpecialWarningFlashCol1[3], VEM.Options.SpecialWarningFlashDura1, VEM.Options.SpecialWarningFlashAlph1)
+			elseif number == 2 then
+				VEM.Flash:Show(VEM.Options.SpecialWarningFlashCol2[1],VEM.Options.SpecialWarningFlashCol2[2], VEM.Options.SpecialWarningFlashCol2[3], VEM.Options.SpecialWarningFlashDura2, VEM.Options.SpecialWarningFlashAlph2)
+			elseif number == 3 then
+				VEM.Flash:Show(VEM.Options.SpecialWarningFlashCol3[1],VEM.Options.SpecialWarningFlashCol3[2], VEM.Options.SpecialWarningFlashCol3[3], VEM.Options.SpecialWarningFlashDura3, VEM.Options.SpecialWarningFlashAlph3)
+			end
+		end
 	end
 end
 

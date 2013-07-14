@@ -104,8 +104,8 @@ function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 139322 then--Or 139559, not sure which
 		stormEnergyTargets[#stormEnergyTargets + 1] = args.destName
 		if args:IsPlayer() then
-			VEM.Flash:Show(1, 0, 0)
 			specWarnStormEnergy:Show()
+			VEM.Flash:Shake(1, 0, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runout.mp3")
 		else
 			if self.Options.HudMAP then

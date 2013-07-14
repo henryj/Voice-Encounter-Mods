@@ -78,8 +78,8 @@ function mod:checkmydebuff()
 		self:ScheduleMethod(7, "checkmydebuff")
 		if not UnitIsDeadOrGhost("player") then
 			if GetTime() - stomptime > 10 then
-				VEM.Flash:Show(1, 1, 0)
 				specWarnCrystalShell:Show(shelldName)
+				VEM.Flash:Shake(1, 1, 0)
 				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_sjsl.mp3")--水晶碎裂
 			end
 		end
@@ -132,8 +132,8 @@ function mod:OnCombatStart(delay)
 		if mod.Options.warnsj then
 			mod:checkmydebuff()
 		else
-			VEM.Flash:Show(1, 1, 0)
 			specWarnCrystalShell:Show(shelldName)
+			VEM.Flash:Shake(1, 1, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_sjsl.mp3")--水晶碎裂
 		end
 	end
@@ -164,7 +164,7 @@ function mod:SPELL_CAST_START(args)
 			specWarnStoneBreath:Show(args.sourceName)
 		end
 		timerBreathCD:Start()
-		VEM.Flash:Show(1, 0, 0)
+		VEM.Flash:Shake(1, 0, 0)
 		sndAE:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\aesoon.mp3")
 		sndAE:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
 		sndAE:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")	
@@ -283,8 +283,8 @@ function mod:SPELL_AURA_REMOVED(args)
 		if mod.Options.warnsj then
 			mod:checkmydebuff()
 		else
-			VEM.Flash:Show(1, 1, 0)
 			specWarnCrystalShell:Show(shelldName)
+			VEM.Flash:Shake(1, 1, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_sjsl.mp3")--水晶碎裂
 		end
 	end

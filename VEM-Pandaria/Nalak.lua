@@ -1,7 +1,7 @@
 local mod	= VEM:NewMod(814, "VEM-Pandaria", nil, 322)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 9841 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9995 $"):sub(12, -3))
 mod:SetCreatureID(69099)
 mod:SetQuestID(32518)
 mod:SetZone()

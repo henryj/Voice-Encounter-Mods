@@ -2,7 +2,7 @@
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 9871 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9995 $"):sub(12, -3))
 mod:SetCreatureID(69161)
 mod:SetQuestID(32519)
 mod:SetZone()
@@ -64,7 +64,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnPiercingRoar:Show()
 		timerPiercingRoarCD:Start()
 		if mod:IsManaUser() and mod:IsRanged() then
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\stopcast.mp3") --停止施法
 		else
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\aesoon.mp3")

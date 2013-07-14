@@ -297,8 +297,8 @@ function mod:OnCombatStart(delay)
 			warnGroupOrder:Show(1)
 			if myGroup == 1 then
 				outgroup = true
-				VEM.Flash:Show(1, 0, 0)
 				specWarnYourGroup:Show()
+				VEM.Flash:Shake(1, 0, 0)
 				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3") --準備小怪
 			end
 		end)
@@ -392,9 +392,9 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			if (args.amount or 1) >= 9 then
 				specWarnCorruptedEssence:Show(args.amount)
-				self:Schedule(1, function() VEM.Flash:Show(1, 0, 0) end)
-				self:Schedule(1.5, function() VEM.Flash:Show(0, 0, 1) end)
-				self:Schedule(2, function() VEM.Flash:Show(1, 0, 0) end)
+				self:Schedule(1, function() VEM.Flash:Shake(1, 0, 0) end)
+				self:Schedule(1.5, function() VEM.Flash:Shake(0, 0, 1) end)
+				self:Schedule(2, function() VEM.Flash:Shake(1, 0, 0) end)
 				sndWOP:Schedule(1, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\mobenough.mp3") --能量已滿 遠離小怪
 			end
 		end
@@ -536,8 +536,8 @@ function mod:SPELL_CAST_SUCCESS(args)
 					warnGroupOrder:Show(1)
 					if myGroup == 1 then
 						outgroup = true
-						VEM.Flash:Show(1, 0, 0)
 						specWarnYourGroup:Show()
+						VEM.Flash:Shake(1, 0, 0)
 						sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3")
 					end
 					if myGroup ~= 1 and outgroup then
@@ -552,8 +552,8 @@ function mod:SPELL_CAST_SUCCESS(args)
 					warnGroupOrder:Show(2)
 					if myGroup == 2 then
 						outgroup = true
-						VEM.Flash:Show(1, 0, 0)
 						specWarnYourGroup:Show()
+						VEM.Flash:Shake(1, 0, 0)
 						sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3") --準備小怪
 					end
 					if myGroup ~= 2 and outgroup then
@@ -568,8 +568,8 @@ function mod:SPELL_CAST_SUCCESS(args)
 					warnGroupOrder:Show(3)
 					if myGroup == 3 then
 						outgroup = true
-						VEM.Flash:Show(1, 0, 0)
 						specWarnYourGroup:Show()
+						VEM.Flash:Shake(1, 0, 0)
 						sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3")
 					end
 					if myGroup ~= 3 and outgroup then
@@ -584,8 +584,8 @@ function mod:SPELL_CAST_SUCCESS(args)
 					warnGroupOrder:Show(4)
 					if myGroup == 4 then
 						outgroup = true
-						VEM.Flash:Show(1, 0, 0)
 						specWarnYourGroup:Show()
+						VEM.Flash:Shake(1, 0, 0)
 						sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3")
 					end
 					if myGroup ~= 4 and outgroup then
@@ -601,8 +601,8 @@ function mod:SPELL_CAST_SUCCESS(args)
 						warnGroupOrder:Show(5)
 						if myGroup == 5 then
 							outgroup = true
-							VEM.Flash:Show(1, 0, 0)
 							specWarnYourGroup:Show()
+							VEM.Flash:Shake(1, 0, 0)
 							sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3")
 						end
 						if myGroup ~= 5 and outgroup then

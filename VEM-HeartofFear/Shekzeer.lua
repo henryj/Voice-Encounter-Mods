@@ -341,8 +341,8 @@ function mod:SPELL_AURA_APPLIED(args)
 		timerCryOfTerror:Start(args.destName)
 		timerCryOfTerrorCD:Start()
 		if args:IsPlayer() then
-			VEM.Flash:Show(1, 0, 0)
 			specwarnCryOfTerror:Show()
+			VEM.Flash:Shake(1, 0, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_mop_kjyy.mp3") --快進音域
 		end
 	elseif args:IsSpellID(124748) then
@@ -354,7 +354,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnFixate:Show(args.destName)
 		if args:IsPlayer() then
 			specwarnFixate:Show()
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\justrun.mp3") --快跑
 		end
 	elseif args:IsSpellID(124862) then
@@ -362,7 +362,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			specwarnVisions:Show()
 			yellVisions:Yell()
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runout.mp3") --離開人群
 			sndWOP:Schedule(1.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
 			sndWOP:Schedule(2.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
@@ -404,7 +404,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif args:IsSpellID(124097) then
 		if args:IsPlayer() and self:AntiSpam(5, 2) then --prevent spam in heroic
 			specwarnStickyResin:Show()
-			VEM.Flash:Show(1, 1, 0)
+			VEM.Flash:Shake(1, 1, 0)
 			yellStickyResin:Yell()
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_mop_szkp.mp3") --樹脂
 		end
@@ -550,7 +550,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnConsumingTerror:Show()
 		timerConsumingTerrorCD:Start()
 		if mod:IsTank() then
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 		end
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_mop_kjts.mp3")--恐懼吞噬
 	end

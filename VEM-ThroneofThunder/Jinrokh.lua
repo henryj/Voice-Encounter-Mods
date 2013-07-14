@@ -5,7 +5,7 @@ local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 local sndIon	= mod:NewSound(nil, "SoundWOP", true)
 local sndIonCD	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 9619 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9998 $"):sub(12, -3))
 mod:SetCreatureID(69465)
 mod:SetQuestID(32744)
 mod:SetZone()
@@ -212,17 +212,17 @@ function mod:SPELL_AURA_APPLIED(args)
 		inoizame = true
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_dlzh.mp3") --電離子化
 		if self.Options.SoundWOPIonM then
-			self:Schedule(7, function() VEM.Flash:Show(1, 0, 0) end)
-			self:Schedule(7.5, function() VEM.Flash:Show(0, 0, 1) end)
-			self:Schedule(8, function() VEM.Flash:Show(1, 0, 0) end)
+			self:Schedule(7, function() VEM.Flash:Shake(1, 0, 0) end)
+			self:Schedule(7.5, function() VEM.Flash:Shake(0, 0, 1) end)
+			self:Schedule(8, function() VEM.Flash:Shake(1, 0, 0) end)
 			sndIon:Schedule(7, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runout.mp3")
 			sndIon:Schedule(8, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runout.mp3")
 		else			
 			self:Schedule(16, function()
 				if UnitDebuff("player", GetSpellInfo(138732)) then
-					VEM.Flash:Show(1, 0, 0)
-					self:Schedule(0.5, function() VEM.Flash:Show(0, 0, 1) end)
-					self:Schedule(1, function() VEM.Flash:Show(1, 0, 0) end)
+					VEM.Flash:Shake(1, 0, 0)
+					self:Schedule(0.5, function() VEM.Flash:Shake(0, 0, 1) end)
+					self:Schedule(1, function() VEM.Flash:Shake(1, 0, 0) end)
 				end
 			 end)
 			sndIon:Schedule(16, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runout.mp3")	--離開人群
@@ -322,7 +322,7 @@ function mod:RAID_BOSS_WHISPER(msg)
 			VEM.RangeCheck:Show(8)
 		end
 		focusme = true
-		VEM.Flash:Show(1, 0, 0)
+		VEM.Flash:Shake(1, 0, 0)
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_sddn.mp3") --閃電點你
 	end
 end

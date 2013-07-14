@@ -7,6 +7,7 @@
 VEM.Arrow = {}
 
 -- locals
+local arrowFrame = VEM.Arrow
 local runAwayArrow
 local targetType
 local targetPlayer
@@ -214,16 +215,16 @@ local function show(runAway, x, y, distance, time)
 	end
 end
 
-function VEM.Arrow:ShowRunTo(...)
+function arrowFrame:ShowRunTo(...)
 	return show(false, ...)
 end
 
-function VEM.Arrow:ShowRunAway(...)
+function arrowFrame:ShowRunAway(...)
 	return show(true, ...)
 end
 
 -- shows a static arrow
-function VEM.Arrow:ShowStatic(angle, time)
+function arrowFrame:ShowStatic(angle, time)
 	runAwayArrow = false
 	hideDistance = 0
 	targetType = "static"
@@ -236,20 +237,20 @@ function VEM.Arrow:ShowStatic(angle, time)
 	frame:Show()
 end
 
-function VEM.Arrow:IsShown()
+function arrowFrame:IsShown()
 	return frame and frame:IsShown()
 end
 
-function VEM.Arrow:Hide(autoHide)
+function arrowFrame:Hide(autoHide)
 	frame:Hide()
 end
 
 local function endMove()
 	frame:EnableMouse(false)
-	VEM.Arrow:Hide()
+	arrowFrame:Hide()
 end
 
-function VEM.Arrow:Move()
+function arrowFrame:Move()
 	targetType = "rotate"
 	runAwayArrow = false
 	hideDistance = 5
@@ -260,6 +261,6 @@ function VEM.Arrow:Move()
 	VEM:Schedule(25, endMove)
 end
 
-function VEM.Arrow:LoadPosition()
+function arrowFrame:LoadPosition()
 	frame:SetPoint(VEM.Options.ArrowPoint, VEM.Options.ArrowPosX, VEM.Options.ArrowPosY)
 end

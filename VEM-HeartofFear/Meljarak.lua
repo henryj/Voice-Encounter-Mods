@@ -420,7 +420,7 @@ function mod:SPELL_DAMAGE(_, _, _, _, destGUID, destName, _, _, spellId)
 		if destGUID == UnitGUID("player") and self:AntiSpam(3, 4) then
 			specWarnWindBomb:Show()
 			yellWindBomb:Yell()
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3")--快躲開
 		end
 	elseif spellId == 122125 and destGUID == UnitGUID("player") and self:AntiSpam(3, 5) then
@@ -497,8 +497,8 @@ function mod:UNIT_AURA_UNFILTERED(uId)
 	if uId ~= "player" then return end
 	if UnitDebuff("player", strikeTarget) and not strikeWarned then--Warn you that you have a meteor
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\holdit.mp3")--自保技能
-		VEM.Flash:Show(1, 0, 0)
 		specWarnKorthikStrike:Show()
+		VEM.Flash:Shake(1, 0, 0)
 		yellKorthikStrike:Yell()
 		strikeWarned = true
 		self:SendSync("KorthikStrikeTarget", UnitGUID("player"))--Screw target scanning, this way is much better, never wrong.

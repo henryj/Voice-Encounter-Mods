@@ -379,7 +379,8 @@ L:SetOptionLocalization({
 	MobC				= "3rd Wave Adds",
 	SpecWarnJSA			= "Special Warning: Defensive",
 	RangeFrame			= "Show Range Frame(8 yards)",
-	warnMatterSwapped	= "Warning: $spell:138618 target"
+	warnMatterSwapped	= "Warning: $spell:138618 target",
+	SetIconOnFont           = VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(138707),
 })
 
 L:SetMiscLocalization({

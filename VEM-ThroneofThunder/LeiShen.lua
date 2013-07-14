@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 -- BH ADD
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 9894 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10015 $"):sub(12, -3))
 mod:SetCreatureID(68397)--Diffusion Chain Conduit 68696, Static Shock Conduit 68398, Bouncing Bolt conduit 68698, Overcharge conduit 68697
 mod:SetQuestID(32756)
 mod:SetZone()
@@ -77,6 +77,7 @@ local specWarnElectricalShock			= mod:NewSpecialWarningStack(136914, mod:IsTank(
 local specWarnElectricalShockOther		= mod:NewSpecialWarningTarget(136914, mod:IsTank())
 --Herioc
 local specWarnHelmOfCommand				= mod:NewSpecialWarningYou(139011, nil, nil, nil, 3)
+local specWarnHelmOfCommandOther		= mod:NewSpecialWarningTarget(139011)
 
 --Conduits (All phases)
 local timerStaticShock					= mod:NewBuffFadesTimer(8, 135695)
@@ -143,7 +144,7 @@ local thundercount = 0
 
 local chaincount = 0
 
-local firstchain = false
+local firstchain = 0
 local circletime = 0
 local twocirle = false
 
@@ -271,7 +272,7 @@ function mod:SPELL_CAST_START(args)
 		warnThunderstruck:Show()
 		specWarnThunderstruck:Show()
 		timerThunderstruck:Start()
-		VEM.Flash:Show(1, 0, 0)
+		VEM.Flash:Shake(1, 0, 0)
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_yllj.mp3") --遠離雷擊
 		if phase < 3 then
 			timerThunderstruckCD:Start()
@@ -298,14 +299,14 @@ function mod:SPELL_CAST_START(args)
 		else
 			timerLightningWhipCD:Start(30)
 		end
-		VEM.Flash:Show(1, 0, 0)
+		VEM.Flash:Shake(1, 0, 0)
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_sdb.mp3") --閃電鞭
 	elseif args.spellId == 136478 then
 		warnFusionSlash:Show()
 		specWarnFusionSlash:Show()
 		timerFussionSlashCD:Start()
 		if UnitName("boss1target") == UnitName("player") then
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_xxjf.mp3") --小心擊飛
 		elseif mod:IsTank() or mod:IsHealer() then
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_jlz.mp3") --巨雷斬
@@ -319,7 +320,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		timerDecapitateCD:Start()
 		if args:IsPlayer() then
 			specWarnDecapitate:Show()
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_zs.mp3")--斬首快跑
 		else
 			specWarnDecapitateOther:Show(args.destName)
@@ -434,7 +435,7 @@ function mod:SPELL_AURA_APPLIED(args)
 				if inRange and inRange < 50 then
 					specWarnOverchargedNear:Show(args.destName)
 					if self:AntiSpam(3, 6) then
-						if intermissionActive and firstchain then
+						if intermissionActive and (firstchain == 1) then
 							sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_hmzb.mp3") --昏迷圈準備
 							twocirle = true
 							circletime = GetTime()
@@ -478,8 +479,22 @@ function mod:SPELL_AURA_APPLIED(args)
 		timerCommandTarget:Start(args.destName)
 		if args:IsPlayer() then
 			specWarnHelmOfCommand:Show()
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_jtzy.mp3") --注意擊退
+		else
+			local uId = VEM:GetRaidUnitId(args.destName)
+			if uId then
+				local x, y = GetPlayerMapPosition(uId)
+				if x == 0 and y == 0 then
+					SetMapToCurrentZone()
+					x, y = GetPlayerMapPosition(uId)
+				end
+				local inRange = VEM.RangeCheck:GetDistance("player", x, y)
+				--BH MODIFY
+				if inRange and inRange < 30 then
+					specWarnHelmOfCommandOther:Show(args.destName)
+				end
+			end
 		end
 		self:Unschedule(warnHelmOfCommandTargets)
 		self:Schedule(0.3, warnHelmOfCommandTargets)
@@ -509,15 +524,18 @@ function mod:SPELL_CAST_SUCCESS(args)
 			end
 		end
 		if intermissionActive and self:IsDifficulty("heroic10", "heroic25") then
-			if not firstchain then
-				self:Schedule(5, function() firstchain = true end)
-			elseif twocirle then
-				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\gather.mp3")--快集合
-				circletime = GetTime() - circletime
-				sndWOP:Schedule(1.5-circletime, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-				sndWOP:Schedule(2.5-circletime, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-				sndWOP:Schedule(3.5-circletime, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-				sndWOP:Schedule(4.5-circletime, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			if firstchain == 0 then
+				self:Schedule(5, function() firstchain = 1 end)
+			else
+				firstchain = 2
+				if twocirle then
+					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\gather.mp3")--快集合
+					circletime = GetTime() - circletime
+					sndWOP:Schedule(1.5-circletime, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
+					sndWOP:Schedule(2.5-circletime, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+					sndWOP:Schedule(3.5-circletime, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
+					sndWOP:Schedule(4.5-circletime, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+				end
 			end
 		end
 	elseif args.spellId == 136543 and self:AntiSpam(2, 1) then
@@ -749,7 +767,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 137146 and self:AntiSpam(2, 2) then--Supercharge Conduits (comes earlier than other events so we use this one)
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_cjcn.mp3") --超級充能		
 		intermissionActive = true
-		firstchain = false
+		firstchain = 0
 		twocirle = false
 		chaincount = 0
 		specWarnDiffusionChainSoon:Cancel()

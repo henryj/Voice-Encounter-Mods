@@ -8,6 +8,7 @@ mod:SetRevision(("$Revision: 9863 $"):sub(12, -3))
 mod:SetCreatureID(69427)
 mod:SetQuestID(32752)
 mod:SetZone()
+mod:SetUsedIcons(1)
 
 mod:RegisterCombat("emote", L.Pull)
 
@@ -67,6 +68,8 @@ local firstSiphonAnima = false
 local SiphonAnimaCount = 0
 local InterruptingJoltCount = 0
 local fpower = true
+
+mod:AddBoolOption("SetIconOnFont", true)
 
 mod:AddBoolOption("Mob", true, "sound")
 mod:AddBoolOption("MobA", false, "sound")
@@ -142,7 +145,7 @@ function mod:SPELL_CAST_START(args)
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 		if mod:IsManaUser() and mod:IsRanged() then
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\stopcast.mp3") --停止施法
 		else
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_dfzj.mp3") --斷法震擊
@@ -255,6 +258,9 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			specWarnAnimaFont:Show()
 		end
+		if self.Options.SetIconOnFont then
+			self:SetIcon(args.destName, 1)--star
+		end
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
@@ -264,6 +270,8 @@ function mod:SPELL_AURA_REMOVED(args)
 		timerMatterSwap:Cancel(args.destName)
 	elseif args.spellId == 138569 then
 		timerExplosiveSlam:Cancel(args.destName)
+	elseif args.spellId == 138691 and self.Options.SetIconOnFont then
+		self:SetIcon(args.destName, 0)
 	end
 end
 
@@ -286,7 +294,7 @@ function mod:RAID_BOSS_WHISPER(msg, npc)
 		end
 		yellCrimsonWake:Yell()
 ----BH DELETE	soundCrimsonWake:Play()
-		VEM.Flash:Show(1, 0, 0)
+		VEM.Flash:Shake(1, 0, 0)
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\justrun.mp3")  --快跑
 		self:SendSync("WakeTarget", UnitGUID("player"))
 	end

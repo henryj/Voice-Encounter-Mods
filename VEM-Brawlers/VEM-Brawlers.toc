@@ -6,7 +6,7 @@
 ## Author: MysticalOS
 ## LoadOnDemand: 1
 ## RequiredDeps: VEM-Core
-## SavedVariablesPerCharacter: VEMBrawlers_SavedVars, VEMBrawlers_SavedStats
+## SavedVariablesPerCharacter: VEMBrawlers_SavedVars
 ## X-VEM-Mod: 1
 ## X-VEM-Mod-Type: OTHER
 ## X-VEM-Mod-Category: MOP

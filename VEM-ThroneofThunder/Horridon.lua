@@ -127,12 +127,12 @@ local function checksprange()
 			if min and max then
 				if min <= 8 then
 					if mod:AntiSpam(1, 6) then
-						VEM.Flash:Show(1, 0, 0)
+						VEM.Flash:Shake(1, 0, 0)
 						sndWSP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\stilldanger.mp3") --危險
 					end
 				elseif min <= 15 then
 					if mod:AntiSpam(4, 5) then
-						VEM.Flash:Show(1, 0, 0)
+						VEM.Flash:Shake(1, 0, 0)
 						sndWSP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\killspirit.mp3") --靈魂快打
 					end
 --				elseif min >= 60 then
@@ -341,8 +341,8 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnMending:Show()
 		--BH MODIFY
 		if mod.Options.ddyls then
-			VEM.Flash:Show(1, 0, 0)
 			specWarnMending:Show(args.sourceName)
+			VEM.Flash:Shake(1, 0, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\kickcast.mp3")--快打斷
 		end
 		--BH MODIFY END
@@ -373,7 +373,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnDireFixate:Show()
 --BH DELETE		soundDireFixate:Play()
 			-- BH ADD
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_lhsd.mp3")
 			sndWOP:Schedule(1,"Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_lhsd.mp3")
 			checksprange()
@@ -520,7 +520,7 @@ function mod:OnSync(msg, target)
 		if target == UnitName("player") then
 			specWarnCharge:Show()
 			yellCharge:Yell()
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_nbcf.mp3")
 			sndWOP:Schedule(0.5,"Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_nbcf.mp3")
 		else

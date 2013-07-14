@@ -2,8 +2,8 @@
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 9841 $"):sub(12, -3))
-mod:SetCreatureID(62346)--Salyis not dies. Only Galleon attackable and dies.
+mod:SetRevision(("$Revision: 9995 $"):sub(12, -3))
+mod:SetCreatureID(62346)--Salyis not die. Only Galleon attackable and dies.
 mod:SetQuestID(32098)
 mod:SetZone()
 

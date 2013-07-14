@@ -202,7 +202,6 @@ function mod:SPELL_AURA_APPLIED(args)
 		self:Unschedule(warnStunnedTargets)
 		self:Schedule(0.3, warnStunnedTargets)
 	elseif args:IsSpellID(132265, 116598) and self:AntiSpam(30, 2) then
-		VEM.Flash:Show(1, 0, 0)
 		warnPhase3:Show()
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\pthree.mp3") --P3
 		coresCount = 0
@@ -213,6 +212,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 		VEM.Arrow:Hide()
 		specWarnCore:Show()
+		VEM.Flash:Shake(1, 0, 0)
 --		timerDespawnFloor:Start()--Should be pretty accurate, may need minor tweak
 	elseif args:IsSpellID(119360) then
 		if not mod:IsHealer() then

@@ -287,9 +287,9 @@ VEM_ARROW_ERROR_USAGE	= {
 	"/vem arrow move  可移動箭頭",
 }
 
-VEM_SPEED_KILL_TIMER_TEXT			= "記錄擊殺"
-VEM_SPEED_KILL_TIMER_OPTION			= "計時器：上次的最快擊殺"
-VEM_SPEED_CLEAR_TIMER_TEXT			= "最速清除"
+VEM_SPEED_KILL_TIMER_TEXT	= "勝利紀錄"
+VEM_SPEED_KILL_TIMER_OPTION			= "計時器：最快勝利"
+VEM_SPEED_CLEAR_TIMER_TEXT	= "最佳紀錄"
 
 
 VEM_REQ_INSTANCE_ID_PERMISSION		= "%s想要查看你的副本ID和進度鎖定情況。\n你想發送該訊息給%s嗎? 在你的當前進程（除非你下線）他可以一直查閱該訊息。"

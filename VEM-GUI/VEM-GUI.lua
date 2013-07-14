@@ -40,7 +40,7 @@
 
 
 
-local revision =("$Revision: 9931 $"):sub(12, -3)
+local revision =("$Revision: 10018 $"):sub(12, -3)
 local FrameTitle = "VEM_GUI_Option_"	-- all GUI frames get automatically a name FrameTitle..ID
 local fixeditframe = false
 
@@ -1382,6 +1382,7 @@ local function CreateOptionsMenu()
 		end)
 		local SetPlayerRole				= generaloptions:CreateCheckButton(L.SetPlayerRole, true, nil, "SetPlayerRole")
 		local UseMasterVolume			= generaloptions:CreateCheckButton(L.UseMasterVolume, true, nil, "UseMasterVolume")
+		local EnableReadyCheckSound		= generaloptions:CreateCheckButton(L.EnableReadyCheckSound, true, nil, "EnableReadyCheckSound")
 		local AutologBosses				= generaloptions:CreateCheckButton(L.AutologBosses, true, nil, "AutologBosses")
 		local AdvancedAutologBosses
 		if Transcriptor then
@@ -1580,7 +1581,6 @@ local function CreateOptionsMenu()
 		CountSoundDropDown:SetPoint("LEFT", RaidWarnSoundDropDown, "RIGHT", 30, 0)
 --[[		
 		local countSounds2 = {
-			{	text	= "SST (Female)",	value 	= "sst"},
 			{	text	= "Mosh (Male)",	value 	= "Mosh"},
 			{	text	= "Corsica (Female)",value 	= "Corsica"},
 			{	text	= "Kolt (Male)",value 	= "Kolt"},
@@ -1921,16 +1921,18 @@ local function CreateOptionsMenu()
 
 	do
 		local specPanel = VEM_GUI_Frame:CreateNewPanel(L.Panel_SpecWarnFrame, "option")
-		local specArea = specPanel:CreateArea(L.Area_SpecWarn, nil, 310, true)
-		specArea:CreateCheckButton(L.SpecWarn_Enabled, true, nil, "ShowSpecialWarnings")
-		specArea:CreateCheckButton(L.SpecWarn_FlashFrame, true, nil, "ShowFlashFrame")
-		specArea:CreateCheckButton(L.SpecWarn_AdSound, true, nil, "ShowAdvSWSounds")
+		local specArea = specPanel:CreateArea(L.Area_SpecWarn, nil, 515, true)
+		local check1 = specArea:CreateCheckButton(L.SpecWarn_Enabled, true, nil, "ShowSpecialWarnings")
+		local check2 = specArea:CreateCheckButton(L.SpecWarn_FlashFrame, true, nil, "ShowFlashFrame")
+		local check3 = specArea:CreateCheckButton(L.SpecWarn_AdSound, true, nil, "ShowAdvSWSounds")
+		local flashbutton = specArea:CreateCheckButton(L.SpecWarn_ShakeFrame, true, nil, "ShowShakeFrame")
+		flashbutton:SetPoint('TOPLEFT', specArea.frame, "TOPLEFT", 200, -36)
 
 		local showbutton = specArea:CreateButton(L.SpecWarn_DemoButton, 120, 16)
 		showbutton:SetPoint('TOPRIGHT', specArea.frame, "TOPRIGHT", -5, -5)
 		showbutton:SetNormalFontObject(GameFontNormalSmall)
 		showbutton:SetHighlightFontObject(GameFontNormalSmall)
-		showbutton:SetScript("OnClick", function() VEM:ShowTestSpecialWarning() end)
+		showbutton:SetScript("OnClick", function() VEM:ShowTestSpecialWarning(nil, 1) end)
 
 		local movemebutton = specArea:CreateButton(L.SpecWarn_MoveMe, 120, 16)
 		movemebutton:SetPoint('TOPRIGHT', showbutton, "BOTTOMRIGHT", 0, -5)
@@ -1938,53 +1940,37 @@ local function CreateOptionsMenu()
 		movemebutton:SetHighlightFontObject(GameFontNormalSmall)
 		movemebutton:SetScript("OnClick", function() VEM:MoveSpecialWarning() end)
 
-		local fontSizeSlider = specArea:CreateSlider(L.SpecWarn_FontSize, 16, 100, 1)
-		fontSizeSlider:SetPoint("TOPLEFT", specArea.frame, "TOPLEFT", 20, -105)
-		do
-			local firstshow = true
-			fontSizeSlider:SetScript("OnShow", function(self)
-					firstshow = true
-					self:SetValue(VEM.Options.SpecialWarningFontSize)
-			end)
-			fontSizeSlider:HookScript("OnValueChanged", function(self)
-					if firstshow then firstshow = false return end
-					VEM.Options.SpecialWarningFontSize = self:GetValue()
-					VEM:UpdateSpecialWarningOptions()
-					VEM:ShowTestSpecialWarning()
-			end)
-		end
-
-		local color1 = specArea:CreateColorSelect(64)
-		color1:SetPoint('TOPLEFT', specArea.frame, "TOPLEFT", 20, -155)
-		local color1text = specArea:CreateText(L.SpecWarn_FontColor, 80)
-		color1text:SetPoint("BOTTOM", color1, "TOP", 5, 4)
-		local color1reset = specArea:CreateButton(L.Reset, 64, 10, nil, GameFontNormalSmall)
-		color1reset:SetPoint('TOP', color1, "BOTTOM", 5, -10)
-		color1reset:SetScript("OnClick", function(self)
+		local color0 = specArea:CreateColorSelect(64)
+		color0:SetPoint('TOPLEFT', specArea.frame, "TOPLEFT", 20, -105)
+		local color0text = specArea:CreateText(L.SpecWarn_FontColor, 80)
+		color0text:SetPoint("BOTTOM", color0, "TOP", 5, 4)
+		local color0reset = specArea:CreateButton(L.Reset, 64, 10, nil, GameFontNormalSmall)
+		color0reset:SetPoint('TOP', color0, "BOTTOM", 5, -10)
+		color0reset:SetScript("OnClick", function(self)
 				VEM.Options.SpecialWarningFontColor[1] = VEM.DefaultOptions.SpecialWarningFontColor[1]
 				VEM.Options.SpecialWarningFontColor[2] = VEM.DefaultOptions.SpecialWarningFontColor[2]
 				VEM.Options.SpecialWarningFontColor[3] = VEM.DefaultOptions.SpecialWarningFontColor[3]
-				color1:SetColorRGB(VEM.Options.SpecialWarningFontColor[1], VEM.Options.SpecialWarningFontColor[2], VEM.Options.SpecialWarningFontColor[3])
+				color0:SetColorRGB(VEM.Options.SpecialWarningFontColor[1], VEM.Options.SpecialWarningFontColor[2], VEM.Options.SpecialWarningFontColor[3])
 				VEM:UpdateSpecialWarningOptions()
-				VEM:ShowTestSpecialWarning()
+				VEM:ShowTestSpecialWarning(nil, 1)
 		end)
 		do
 			local firstshow = true
-			color1:SetScript("OnShow", function(self)
+			color0:SetScript("OnShow", function(self)
 					firstshow = true
 					self:SetColorRGB(VEM.Options.SpecialWarningFontColor[1], VEM.Options.SpecialWarningFontColor[2], VEM.Options.SpecialWarningFontColor[3])
 			end)
-			color1:SetScript("OnColorSelect", function(self)
+			color0:SetScript("OnColorSelect", function(self)
 					if firstshow then firstshow = false return end
 					VEM.Options.SpecialWarningFontColor[1] = select(1, self:GetColorRGB())
 					VEM.Options.SpecialWarningFontColor[2] = select(2, self:GetColorRGB())
 					VEM.Options.SpecialWarningFontColor[3] = select(3, self:GetColorRGB())
-					color1text:SetTextColor(self:GetColorRGB())
+					color0text:SetTextColor(self:GetColorRGB())
 					VEM:UpdateSpecialWarningOptions()
-					VEM:ShowTestSpecialWarning()
+					VEM:ShowTestSpecialWarning(nil, 1)
 			end)
 		end
-
+		
 		local Fonts = MixinSharedMedia3("font", {
 			{	text	= "Default",		value 	= STANDARD_TEXT_FONT,			font = STANDARD_TEXT_FONT		},
 			{	text	= "Arial",			value 	= "Fonts\\ARIALN.TTF",			font = "Fonts\\ARIALN.TTF"		},
@@ -1996,10 +1982,119 @@ local function CreateOptionsMenu()
 			function(value)
 				VEM.Options.SpecialWarningFont = value
 				VEM:UpdateSpecialWarningOptions()
-				VEM:ShowTestSpecialWarning()
+				VEM:ShowTestSpecialWarning(nil, 1)
 			end
 		)
-		FontDropDown:SetPoint("TOPLEFT", specArea.frame, "TOPLEFT", 130, -150)
+		FontDropDown:SetPoint("TOPLEFT", specArea.frame, "TOPLEFT", 130, -100)
+
+		local fontSizeSlider = specArea:CreateSlider(L.SpecWarn_FontSize, 16, 60, 1, 200)
+		fontSizeSlider:SetPoint('TOPLEFT', FontDropDown, "TOPLEFT", 20, -45)
+		do
+			local firstshow = true
+			fontSizeSlider:SetScript("OnShow", function(self)
+				firstshow = true
+				self:SetValue(VEM.Options.SpecialWarningFontSize)
+			end)
+			fontSizeSlider:HookScript("OnValueChanged", function(self)
+				if firstshow then firstshow = false return end
+				VEM.Options.SpecialWarningFontSize = self:GetValue()
+				VEM:UpdateSpecialWarningOptions()
+				VEM:ShowTestSpecialWarning(nil, 1)
+			end)
+		end
+
+		local color1 = specArea:CreateColorSelect(64)
+		color1:SetPoint('TOPLEFT', color0, "TOPLEFT", 0, -105)
+		local color1text = specArea:CreateText(L.SpecWarn_FlashColor, 80)
+		color1text:SetPoint("BOTTOM", color1, "TOP", 5, 4)
+		local color1reset = specArea:CreateButton(L.Reset, 64, 10, nil, GameFontNormalSmall)
+		color1reset:SetPoint('TOP', color1, "BOTTOM", 5, -10)
+		color1reset:SetScript("OnClick", function(self)
+				VEM.Options.SpecialWarningFlashCol1[1] = VEM.DefaultOptions.SpecialWarningFlashCol1[1]
+				VEM.Options.SpecialWarningFlashCol1[2] = VEM.DefaultOptions.SpecialWarningFlashCol1[2]
+				VEM.Options.SpecialWarningFlashCol1[3] = VEM.DefaultOptions.SpecialWarningFlashCol1[3]
+				color1:SetColorRGB(VEM.Options.SpecialWarningFlashCol1[1], VEM.Options.SpecialWarningFlashCol1[2], VEM.Options.SpecialWarningFlashCol1[3])
+				VEM:UpdateSpecialWarningOptions()
+				VEM:ShowTestSpecialWarning(nil, 1)
+		end)
+		do
+			local firstshow = true
+			color1:SetScript("OnShow", function(self)
+					firstshow = true
+					self:SetColorRGB(VEM.Options.SpecialWarningFlashCol1[1], VEM.Options.SpecialWarningFlashCol1[2], VEM.Options.SpecialWarningFlashCol1[3])
+			end)
+			color1:SetScript("OnColorSelect", function(self)
+					if firstshow then firstshow = false return end
+					VEM.Options.SpecialWarningFlashCol1[1] = select(1, self:GetColorRGB())
+					VEM.Options.SpecialWarningFlashCol1[2] = select(2, self:GetColorRGB())
+					VEM.Options.SpecialWarningFlashCol1[3] = select(3, self:GetColorRGB())
+					color1text:SetTextColor(self:GetColorRGB())
+					VEM:UpdateSpecialWarningOptions()
+					VEM:ShowTestSpecialWarning(nil, 1)
+			end)
+		end
+		
+		local color2 = specArea:CreateColorSelect(64)
+		color2:SetPoint('TOPLEFT', color1, "TOPLEFT", 0, -105)
+		local color2text = specArea:CreateText(L.SpecWarn_FlashColor, 80)
+		color2text:SetPoint("BOTTOM", color2, "TOP", 5, 4)
+		local color2reset = specArea:CreateButton(L.Reset, 64, 10, nil, GameFontNormalSmall)
+		color2reset:SetPoint('TOP', color2, "BOTTOM", 5, -10)
+		color2reset:SetScript("OnClick", function(self)
+				VEM.Options.SpecialWarningFlashCol2[1] = VEM.DefaultOptions.SpecialWarningFlashCol2[1]
+				VEM.Options.SpecialWarningFlashCol2[2] = VEM.DefaultOptions.SpecialWarningFlashCol2[2]
+				VEM.Options.SpecialWarningFlashCol2[3] = VEM.DefaultOptions.SpecialWarningFlashCol2[3]
+				color2:SetColorRGB(VEM.Options.SpecialWarningFlashCol2[1], VEM.Options.SpecialWarningFlashCol2[2], VEM.Options.SpecialWarningFlashCol2[3])
+				VEM:UpdateSpecialWarningOptions()
+				VEM:ShowTestSpecialWarning(nil, 2)
+		end)
+		do
+			local firstshow = true
+			color2:SetScript("OnShow", function(self)
+					firstshow = true
+					self:SetColorRGB(VEM.Options.SpecialWarningFlashCol2[1], VEM.Options.SpecialWarningFlashCol2[2], VEM.Options.SpecialWarningFlashCol2[3])
+			end)
+			color2:SetScript("OnColorSelect", function(self)
+					if firstshow then firstshow = false return end
+					VEM.Options.SpecialWarningFlashCol2[1] = select(1, self:GetColorRGB())
+					VEM.Options.SpecialWarningFlashCol2[2] = select(2, self:GetColorRGB())
+					VEM.Options.SpecialWarningFlashCol2[3] = select(3, self:GetColorRGB())
+					color2text:SetTextColor(self:GetColorRGB())
+					VEM:UpdateSpecialWarningOptions()
+					VEM:ShowTestSpecialWarning(nil, 2)
+			end)
+		end
+		
+		local color3 = specArea:CreateColorSelect(64)
+		color3:SetPoint('TOPLEFT', color2, "TOPLEFT", 0, -105)
+		local color3text = specArea:CreateText(L.SpecWarn_FlashColor, 80)
+		color3text:SetPoint("BOTTOM", color3, "TOP", 5, 4)
+		local color3reset = specArea:CreateButton(L.Reset, 64, 10, nil, GameFontNormalSmall)
+		color3reset:SetPoint('TOP', color3, "BOTTOM", 5, -10)
+		color3reset:SetScript("OnClick", function(self)
+				VEM.Options.SpecialWarningFlashCol3[1] = VEM.DefaultOptions.SpecialWarningFlashCol3[1]
+				VEM.Options.SpecialWarningFlashCol3[2] = VEM.DefaultOptions.SpecialWarningFlashCol3[2]
+				VEM.Options.SpecialWarningFlashCol3[3] = VEM.DefaultOptions.SpecialWarningFlashCol3[3]
+				color3:SetColorRGB(VEM.Options.SpecialWarningFlashCol3[1], VEM.Options.SpecialWarningFlashCol3[2], VEM.Options.SpecialWarningFlashCol3[3])
+				VEM:UpdateSpecialWarningOptions()
+				VEM:ShowTestSpecialWarning(nil, 3)
+		end)
+		do
+			local firstshow = true
+			color3:SetScript("OnShow", function(self)
+					firstshow = true
+					self:SetColorRGB(VEM.Options.SpecialWarningFlashCol3[1], VEM.Options.SpecialWarningFlashCol3[2], VEM.Options.SpecialWarningFlashCol3[3])
+			end)
+			color3:SetScript("OnColorSelect", function(self)
+					if firstshow then firstshow = false return end
+					VEM.Options.SpecialWarningFlashCol3[1] = select(1, self:GetColorRGB())
+					VEM.Options.SpecialWarningFlashCol3[2] = select(2, self:GetColorRGB())
+					VEM.Options.SpecialWarningFlashCol3[3] = select(3, self:GetColorRGB())
+					color3text:SetTextColor(self:GetColorRGB())
+					VEM:UpdateSpecialWarningOptions()
+					VEM:ShowTestSpecialWarning(nil, 3)
+			end)
+		end
 
 		-- SpecialWarn Sound
 		local Sounds = MixinSharedMedia3("sound", {
@@ -2017,47 +2112,170 @@ local function CreateOptionsMenu()
 				VEM.Options.SpecialWarningSound = value
 			end
 		)
-		SpecialWarnSoundDropDown:SetPoint("TOPLEFT", specArea.frame, "TOPLEFT", 130, -190)
+		SpecialWarnSoundDropDown:SetPoint("TOPLEFT", specArea.frame, "TOPLEFT", 130, -205)
+
+		local flashdurSlider = specArea:CreateSlider(L.SpecWarn_FlashDur, 0.2, 2, 0.2, 120)   -- (text , min_value , max_value , step , width)
+		flashdurSlider:SetPoint('TOPLEFT', SpecialWarnSoundDropDown, "TOPLEFT", 20, -45)
+		do
+			local firstshow = true
+			flashdurSlider:HookScript("OnShow", function(self)
+				firstshow = true
+				self:SetValue(VEM.Options.SpecialWarningFlashDura1)
+			end)
+			flashdurSlider:HookScript("OnValueChanged", function(self)
+				if firstshow then firstshow = false return end
+				VEM.Options.SpecialWarningFlashDura1 = self:GetValue()
+				--VEM:UpdateSpecialWarningOptions()
+				VEM:ShowTestSpecialWarning(nil, 1)
+			end)
+		end
+
+		local flashdalphaSlider = specArea:CreateSlider(L.SpecWarn_FlashAlpha, 0.1, 1, 0.1, 120)   -- (text , min_value , max_value , step , width)
+		flashdalphaSlider:SetPoint('BOTTOMLEFT', flashdurSlider, "BOTTOMLEFT", 150, -0)
+		do
+			local firstshow = true
+			flashdalphaSlider:HookScript("OnShow", function(self)
+				firstshow = true
+				self:SetValue(VEM.Options.SpecialWarningFlashAlph1)
+			end)
+			flashdalphaSlider:HookScript("OnValueChanged", function(self)
+				if firstshow then firstshow = false return end
+				VEM.Options.SpecialWarningFlashAlph1 = self:GetValue()
+				--VEM:UpdateSpecialWarningOptions()
+				VEM:ShowTestSpecialWarning(nil, 1)
+			end)
+		end
 
 		local SpecialWarnSoundDropDown2 = specArea:CreateDropdown(L.SpecialWarnSound2, Sounds,
 			VEM.Options.SpecialWarningSound2, function(value)
 				VEM.Options.SpecialWarningSound2 = value
 			end
 		)
-		SpecialWarnSoundDropDown2:SetPoint("TOPLEFT", specArea.frame, "TOPLEFT", 130, -230)
-		
+		SpecialWarnSoundDropDown2:SetPoint("TOPLEFT", specArea.frame, "TOPLEFT", 130, -310)
+
+		local flashdurSlider2 = specArea:CreateSlider(L.SpecWarn_FlashDur, 0.2, 2, 0.2, 120)   -- (text , min_value , max_value , step , width)
+		flashdurSlider2:SetPoint('TOPLEFT', SpecialWarnSoundDropDown2, "TOPLEFT", 20, -45)
+		do
+			local firstshow = true
+			flashdurSlider2:HookScript("OnShow", function(self)
+				firstshow = true
+				self:SetValue(VEM.Options.SpecialWarningFlashDura2)
+			end)
+			flashdurSlider2:HookScript("OnValueChanged", function(self)
+				if firstshow then firstshow = false return end
+				VEM.Options.SpecialWarningFlashDura2 = self:GetValue()
+				--VEM:UpdateSpecialWarningOptions()
+				VEM:ShowTestSpecialWarning(nil, 2)
+			end)
+		end
+
+		local flashdalphaSlider2 = specArea:CreateSlider(L.SpecWarn_FlashAlpha, 0.1, 1, 0.1, 120)   -- (text , min_value , max_value , step , width)
+		flashdalphaSlider2:SetPoint('BOTTOMLEFT', flashdurSlider2, "BOTTOMLEFT", 150, -0)
+		do
+			local firstshow = true
+			flashdalphaSlider2:HookScript("OnShow", function(self)
+				firstshow = true
+				self:SetValue(VEM.Options.SpecialWarningFlashAlph2)
+			end)
+			flashdalphaSlider2:HookScript("OnValueChanged", function(self)
+				if firstshow then firstshow = false return end
+				VEM.Options.SpecialWarningFlashAlph2 = self:GetValue()
+				--VEM:UpdateSpecialWarningOptions()
+				VEM:ShowTestSpecialWarning(nil, 2)
+			end)
+		end
+
 		local SpecialWarnSoundDropDown3 = specArea:CreateDropdown(L.SpecialWarnSound3, Sounds,
 			VEM.Options.SpecialWarningSound3, function(value)
 				VEM.Options.SpecialWarningSound3 = value
 			end
 		)
-		SpecialWarnSoundDropDown3:SetPoint("TOPLEFT", specArea.frame, "TOPLEFT", 130, -270)
+		SpecialWarnSoundDropDown3:SetPoint("TOPLEFT", specArea.frame, "TOPLEFT", 130, -415)
 
+		local flashdurSlider3 = specArea:CreateSlider(L.SpecWarn_FlashDur, 0.2, 2, 0.2, 120)   -- (text , min_value , max_value , step , width)
+		flashdurSlider3:SetPoint('TOPLEFT', SpecialWarnSoundDropDown3, "TOPLEFT", 20, -45)
+		do
+			local firstshow = true
+			flashdurSlider3:HookScript("OnShow", function(self)
+				firstshow = true
+				self:SetValue(VEM.Options.SpecialWarningFlashDura3)
+			end)
+			flashdurSlider3:HookScript("OnValueChanged", function(self)
+				if firstshow then firstshow = false return end
+				VEM.Options.SpecialWarningFlashDura3 = self:GetValue()
+				--VEM:UpdateSpecialWarningOptions()
+				VEM:ShowTestSpecialWarning(nil, 3)
+			end)
+		end
+
+		local flashdalphaSlider3 = specArea:CreateSlider(L.SpecWarn_FlashAlpha, 0.1, 1, 0.1, 120)   -- (text , min_value , max_value , step , width)
+		flashdalphaSlider3:SetPoint('BOTTOMLEFT', flashdurSlider3, "BOTTOMLEFT", 150, -0)
+		do
+			local firstshow = true
+			flashdalphaSlider3:HookScript("OnShow", function(self)
+				firstshow = true
+				self:SetValue(VEM.Options.SpecialWarningFlashAlph3)
+			end)
+			flashdalphaSlider3:HookScript("OnValueChanged", function(self)
+				if firstshow then firstshow = false return end
+				VEM.Options.SpecialWarningFlashAlph3 = self:GetValue()
+				--VEM:UpdateSpecialWarningOptions()
+				VEM:ShowTestSpecialWarning(nil, 3)
+			end)
+		end
 
 		local resetbutton = specArea:CreateButton(L.SpecWarn_ResetMe, 120, 16)
 		resetbutton:SetPoint('BOTTOMRIGHT', specArea.frame, "BOTTOMRIGHT", -5, 5)
 		resetbutton:SetNormalFontObject(GameFontNormalSmall)
 		resetbutton:SetHighlightFontObject(GameFontNormalSmall)
 		resetbutton:SetScript("OnClick", function()
+				VEM.Options.ShowSpecialWarnings = VEM.DefaultOptions.ShowSpecialWarnings
+				VEM.Options.ShowFlashFrame = VEM.DefaultOptions.ShowFlashFrame
+				VEM.Options.ShowAdvSWSounds = VEM.DefaultOptions.ShowAdvSWSounds
 				VEM.Options.SpecialWarningFont = VEM.DefaultOptions.SpecialWarningFont
 				VEM.Options.SpecialWarningSound = VEM.DefaultOptions.SpecialWarningSound
 				VEM.Options.SpecialWarningSound2 = VEM.DefaultOptions.SpecialWarningSound2
 				VEM.Options.SpecialWarningSound3 = VEM.DefaultOptions.SpecialWarningSound3
 				VEM.Options.SpecialWarningFontSize = VEM.DefaultOptions.SpecialWarningFontSize
-				VEM.Options.SpecialWarningFontColor[1] = VEM.DefaultOptions.SpecialWarningFontColor[1]
-				VEM.Options.SpecialWarningFontColor[2] = VEM.DefaultOptions.SpecialWarningFontColor[2]
-				VEM.Options.SpecialWarningFontColor[3] = VEM.DefaultOptions.SpecialWarningFontColor[3]
+				VEM.Options.SpecialWarningFlashCol1[1] = VEM.DefaultOptions.SpecialWarningFlashCol1[1]
+				VEM.Options.SpecialWarningFlashCol1[2] = VEM.DefaultOptions.SpecialWarningFlashCol1[2]
+				VEM.Options.SpecialWarningFlashCol1[3] = VEM.DefaultOptions.SpecialWarningFlashCol1[3]
+				VEM.Options.SpecialWarningFlashCol2[1] = VEM.DefaultOptions.SpecialWarningFlashCol2[1]
+				VEM.Options.SpecialWarningFlashCol2[2] = VEM.DefaultOptions.SpecialWarningFlashCol2[2]
+				VEM.Options.SpecialWarningFlashCol2[3] = VEM.DefaultOptions.SpecialWarningFlashCol2[3]
+				VEM.Options.SpecialWarningFlashCol3[1] = VEM.DefaultOptions.SpecialWarningFlashCol3[1]
+				VEM.Options.SpecialWarningFlashCol3[2] = VEM.DefaultOptions.SpecialWarningFlashCol3[2]
+				VEM.Options.SpecialWarningFlashCol3[3] = VEM.DefaultOptions.SpecialWarningFlashCol3[3]
+				VEM.Options.SpecialWarningFlashDura1 = VEM.DefaultOptions.SpecialWarningFlashDura1
+				VEM.Options.SpecialWarningFlashDura2 = VEM.DefaultOptions.SpecialWarningFlashDura2
+				VEM.Options.SpecialWarningFlashDura3 = VEM.DefaultOptions.SpecialWarningFlashDura3
+				VEM.Options.SpecialWarningFlashAlph1 = VEM.DefaultOptions.SpecialWarningFlashAlph1
+				VEM.Options.SpecialWarningFlashAlph2 = VEM.DefaultOptions.SpecialWarningFlashAlph2
+				VEM.Options.SpecialWarningFlashAlph3 = VEM.DefaultOptions.SpecialWarningFlashAlph3
 				VEM.Options.SpecialWarningPoint = VEM.DefaultOptions.SpecialWarningPoint
 				VEM.Options.SpecialWarningX = VEM.DefaultOptions.SpecialWarningX
 				VEM.Options.SpecialWarningY = VEM.DefaultOptions.SpecialWarningY
+				check1:SetChecked(VEM.Options.ShowSpecialWarnings)
+				check2:SetChecked(VEM.Options.ShowFlashFrame)
+				check3:SetChecked(VEM.Options.ShowAdvSWSounds)
 				FontDropDown:SetSelectedValue(VEM.Options.SpecialWarningFont)
 				SpecialWarnSoundDropDown:SetSelectedValue(VEM.Options.SpecialWarningSound)
 				SpecialWarnSoundDropDown2:SetSelectedValue(VEM.Options.SpecialWarningSound2)
 				SpecialWarnSoundDropDown3:SetSelectedValue(VEM.Options.SpecialWarningSound3)
 				fontSizeSlider:SetValue(VEM.DefaultOptions.SpecialWarningFontSize)
-				color1:SetColorRGB(VEM.Options.SpecialWarningFontColor[1], VEM.Options.SpecialWarningFontColor[2], VEM.Options.SpecialWarningFontColor[3])
+				color0:SetColorRGB(VEM.Options.SpecialWarningFontColor[1], VEM.Options.SpecialWarningFontColor[2], VEM.Options.SpecialWarningFontColor[3])
+				color1:SetColorRGB(VEM.Options.SpecialWarningFlashCol1[1], VEM.Options.SpecialWarningFlashCol1[2], VEM.Options.SpecialWarningFlashCol1[3])
+				color2:SetColorRGB(VEM.Options.SpecialWarningFlashCol2[1], VEM.Options.SpecialWarningFlashCol2[2], VEM.Options.SpecialWarningFlashCol2[3])
+				color3:SetColorRGB(VEM.Options.SpecialWarningFlashCol3[1], VEM.Options.SpecialWarningFlashCol3[2], VEM.Options.SpecialWarningFlashCol3[3])
+				flashdurSlider:SetValue(VEM.DefaultOptions.SpecialWarningFlashDura1)
+				flashdurSlider2:SetValue(VEM.DefaultOptions.SpecialWarningFlashDura2)
+				flashdurSlider3:SetValue(VEM.DefaultOptions.SpecialWarningFlashDura3)
+				flashdalphaSlider:SetValue(VEM.DefaultOptions.SpecialWarningFlashAlph1)
+				flashdalphaSlider2:SetValue(VEM.DefaultOptions.SpecialWarningFlashAlph2)
+				flashdalphaSlider3:SetValue(VEM.DefaultOptions.SpecialWarningFlashAlph3)
 				VEM:UpdateSpecialWarningOptions()
 		end)
+		specPanel:SetMyOwnHeight()
 	end
 
 	do

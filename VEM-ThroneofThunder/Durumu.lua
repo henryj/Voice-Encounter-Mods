@@ -194,7 +194,7 @@ local function BeamEnded()
 		sndWOP:Schedule(66, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 		timerDisintegrationBeamCD:Start(186)
 		mod:Schedule(176, function()
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_tenwj.mp3") --10秒後瓦解光束
 			sndWOP:Schedule(5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
 			sndWOP:Schedule(6, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")	
@@ -210,7 +210,7 @@ local function BeamEnded()
 		sndWOP:Schedule(39, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 		timerDisintegrationBeamCD:Start()
 		mod:Schedule(126, function()
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_tenwj.mp3") --10秒後瓦解光束
 			sndWOP:Schedule(5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
 			sndWOP:Schedule(6, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")	
@@ -271,7 +271,7 @@ function mod:OnCombatStart(delay)
 		timerLifeDrainCD:Start(151)
 		timerDisintegrationBeamCD:Start(161-delay)
 		self:Schedule(151, function()
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_tenwj.mp3") --10秒後瓦解光束
 			sndWOP:Schedule(5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
 			sndWOP:Schedule(6, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")	
@@ -283,7 +283,7 @@ function mod:OnCombatStart(delay)
 		timerLifeDrainCD:Start(210)
 		timerDisintegrationBeamCD:Start(135-delay)
 		self:Schedule(125, function()
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_tenwj.mp3") --10秒後瓦解光束
 			sndWOP:Schedule(5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
 			sndWOP:Schedule(6, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")	
@@ -362,7 +362,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 			specWarnForceOfWill:Show()
 			yellForceOfWill:Yell()
 			if not self:IsDifficulty("lfr25") then
-				VEM.Flash:Show(1, 0, 0)
+				VEM.Flash:Shake(1, 0, 0)
 				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3")
 			end
 		else
@@ -396,7 +396,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 			else
 				specWarnBlueBeam:Show()
 			end
-			VEM.Flash:Show(0, 0, 1)
+			VEM.Flash:Shake(0, 0, 1)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_lgzb.mp3") --藍光
 		end
 		if self.Options.SetIconRays then
@@ -407,7 +407,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		lastRed = args.destName
 		if args:IsPlayer() then
 			specWarnRedBeam:Show()
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_hgzb.mp3") --紅光
 		end
 		if self.Options.SetIconRays then
@@ -431,7 +431,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		end
 		if args:IsPlayer() then
 			specWarnYellowBeam:Show()
-			VEM.Flash:Show(1, 1, 0)			
+			VEM.Flash:Shake(1, 1, 0)			
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_hgsd.mp3") --黃光
 		end
 		mod:Schedule(1.5, function()
@@ -493,8 +493,8 @@ function mod:SPELL_AURA_APPLIED(args)
 			if soundholdtime > 0 then				
 				self:Schedule(soundholdtime, function()
 					if UnitDebuff("player", GetSpellInfo(133597)) then
-						VEM.Flash:Show(1, 0, 0)
 						specWarnHold:Show(soundholdtime)
+						VEM.Flash:Shake(1, 0, 0)
 						sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\holdit.mp3") --快開自保
 					end
 				end)
@@ -533,8 +533,8 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif args.spellId == 134626 then
 		lingeringGazeTargets[#lingeringGazeTargets + 1] = args.destName
 		if args:IsPlayer() then
-			VEM.Flash:Show(1, 0, 0)
 			specWarnLingeringGaze:Show()
+			VEM.Flash:Shake(1, 0, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_xxns.mp3")--小心凝視
 			sndWOP:Schedule(1, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\leavecenter.mp3")
 			sndWOP:Schedule(2, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\leavecenter.mp3")
@@ -580,7 +580,7 @@ function mod:SPELL_AURA_APPLIED(args)
 				end
 			end
 		end
-		if self.Options.InfoFrameLife then
+		if self.Options.InfoFrameLife and (not self.Options.InfoFrame) then
 			VEM.InfoFrame:Update("playerdebuffstacks")
 		end
 	end
@@ -652,20 +652,20 @@ function mod:CHAT_MSG_MONSTER_EMOTE(msg, npc, _, _, target)
 			--BH ADD
 			if npc == azureFog then
 				if lastBlue == UnitName("player") then
-					VEM.Flash:Show(0, 0, 1)
+					VEM.Flash:Shake(0, 0, 1)
 					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\stopmove.mp3") --停止移動
 				else
 					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_lgcx.mp3") --蓝怪出現
 				end
 			elseif npc == crimsonFog then
 				if lastRed == UnitName("player") then
-					VEM.Flash:Show(1, 0, 0)
+					VEM.Flash:Shake(1, 0, 0)
 					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\stopmove.mp3") --停止移動
 				else
 					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_hong.mp3") --紅色快打
 				end
 			elseif npc == amberFog then
-				VEM.Flash:Show(1, 1, 0)
+				VEM.Flash:Shake(1, 1, 0)
 				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_huang.mp3") --黃色快打
 			end
 			--BH ADD END
@@ -683,7 +683,7 @@ function mod:CHAT_MSG_MONSTER_EMOTE(msg, npc, _, _, target)
 		end
 		lifeDrained = true
 		if target == UnitName("player") then
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 			yellLifeDrainFix:Yell()
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_xxdn.mp3") --吸血點你
 		else
@@ -753,7 +753,7 @@ function mod:UNIT_AURA(uId)
 				else
 					specWarnBlueBeam:Show()
 				end
-				VEM.Flash:Show(0, 0, 1)
+				VEM.Flash:Shake(0, 0, 1)
 				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_lgzb.mp3") --藍光
 			end
 --[[		if self.Options.SetIconRays then
@@ -766,7 +766,7 @@ function mod:UNIT_AURA(uId)
 			lastRed = name
 			if name == UnitName("player") then
 				specWarnRedBeam:Show()
-				VEM.Flash:Show(1, 0, 0)
+				VEM.Flash:Shake(1, 0, 0)
 				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_hgzb.mp3") --紅光
 			end
 --[[		if self.Options.SetIconRays then

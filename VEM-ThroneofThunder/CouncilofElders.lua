@@ -310,7 +310,7 @@ function mod:SPELL_CAST_START(args)
 		warnTwistedFate:Show()
 		specWarnTwistedFate:Show()
 		timerTwistedFateCD:Start()
-		VEM.Flash:Show(1, 0, 0)
+		VEM.Flash:Shake(1, 0, 0)
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\killspirit.mp3")
 		sndSpirit:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
 		sndSpirit:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
@@ -517,7 +517,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			specWarnMarkedSoul:Show()
 --BH DELETE		soundMarkedSoul:Play()
-			VEM.Flash:Show(1, 0, 0)
+			VEM.Flash:Shake(1, 0, 0)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\shadowrun.mp3") --快跑 暗影點你
 		end
 	elseif args.spellId == 137166 then

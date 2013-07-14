@@ -289,14 +289,14 @@ function mod:CHAT_MSG_MONSTER_EMOTE(msg, _, _, _, target)
 			if MyAddDown(flockCount+1) then
 				if self:IsDifficulty("normal10", "heroic10", "lfr25") then
 					self:Schedule(34, function()
-						VEM.Flash:Show(1, 0, 0)
+						VEM.Flash:Shake(1, 0, 0)
 					end)
 					specWarnFlock:Schedule(34, L.Lower, flockName, flockCount+1)
 					sndWOP:Schedule(34, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_xfxg.mp3")
 					sndWOP:Schedule(40, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_ddfh.mp3")
 				else
 					self:Schedule(24, function()
-						VEM.Flash:Show(1, 0, 0)
+						VEM.Flash:Shake(1, 0, 0)
 					end)
 					specWarnFlock:Schedule(24, L.Lower, flockName, flockCount+1)
 					sndWOP:Schedule(24, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_xfxg.mp3")
@@ -306,14 +306,14 @@ function mod:CHAT_MSG_MONSTER_EMOTE(msg, _, _, _, target)
 			if MyAddUp(flockCount+1) then
 				if self:IsDifficulty("normal10", "heroic10", "lfr25") then
 					self:Schedule(34, function()
-						VEM.Flash:Show(1, 0, 0)
+						VEM.Flash:Shake(1, 0, 0)
 					end)
 					specWarnFlock:Schedule(34, L.Upper, flockName, flockCount+1)
 					sndWOP:Schedule(34, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_sfxg.mp3")
 					sndWOP:Schedule(40, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_ddfh.mp3")
 				else
 					self:Schedule(24, function()
-						VEM.Flash:Show(1, 0, 0)
+						VEM.Flash:Shake(1, 0, 0)
 					end)
 					specWarnFlock:Schedule(24, L.Upper, flockName, flockCount+1)
 					sndWOP:Schedule(24, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_sfxg.mp3")
