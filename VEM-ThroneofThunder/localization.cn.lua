@@ -500,13 +500,15 @@ L:SetMiscLocalization({
 L= VEM:GetModLocalization(832)
 
 L:SetWarningLocalization({
-	specWarnIntermissionSoon	= "充能阶段即将到来"
+	specWarnIntermissionSoon	= "充能阶段即将到来",
+	warnDiffusionChainSpread	= "%s 传导至 >%s<",
 })
 
 L:SetOptionLocalization({
 	SoundWOP		= "语音警告：重要技能",
 	specWarnIntermissionSoon	= "特别警告：充能阶段即将到来",
 	RangeFrameLB	= "距离监视：当闪电球存在时切换到3码(英雄模式)",
+	warnDiffusionChainSpread	= "警告：$spell:135991 传导的目标",
 	cancelhud		= "当玩家白字说不需要分担时变换HUD标誌(输入监视关键字 例如:单吃)",
 	drpendp2		= "----减伤提示：第二阶段----",
 	drpend1			= "$spell:135695 1",

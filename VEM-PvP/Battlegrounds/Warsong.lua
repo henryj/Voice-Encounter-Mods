@@ -4,41 +4,43 @@
 -- thanks to LeoLeal, DiabloHu and Са°ЧТВ
 
 
-local Warsong	= VEM:NewMod("z489", "VEM-PvP", 2)
-local L			= Warsong:GetLocalizedStrings()
+local mod		= VEM:NewMod("z489", "VEM-PvP", 2)
+local L			= mod:GetLocalizedStrings()
 
-Warsong:RemoveOption("HealthFrame")
-Warsong:RemoveOption("SpeedKillTimer")
-Warsong:SetZone(VEM_DISABLE_ZONE_DETECTION)
+mod:RemoveOption("HealthFrame")
+mod:RemoveOption("SpeedKillTimer")
+
+mod:SetRevision(("$Revision: 3 $"):sub(12, -3))
+mod:SetZone(VEM_DISABLE_ZONE_DETECTION)
 
 local bgzone = false
 local FlagCarrier = {
 	[1] = nil,
 	[2] = nil
 }
-Warsong:RegisterEvents(
+mod:RegisterEvents(
 	"ZONE_CHANGED_NEW_AREA"
 )
 
---local startTimer = Warsong:NewTimer(62, "TimerStart", 2457)
-local flagTimer = Warsong:NewTimer(23, "TimerFlag", "Interface\\Icons\\INV_Banner_02")
-local vulnerableTimer	= Warsong:NewNextTimer(60, 46392)
+--local startTimer = mod:NewTimer(62, "TimerStart", 2457)
+local flagTimer = mod:NewTimer(23, "TimerFlag", "Interface\\Icons\\INV_Banner_02")
+local vulnerableTimer	= mod:NewNextTimer(60, 46392)
 
-Warsong:AddBoolOption("ShowFlagCarrier", true, nil, function()
-	if Warsong.Options.ShowFlagCarrier and bgzone then
-		Warsong:ShowFlagCarrier()
-		Warsong:CreateFlagCarrierButton()
+mod:AddBoolOption("ShowFlagCarrier", true, nil, function()
+	if mod.Options.ShowFlagCarrier and bgzone then
+		mod:ShowFlagCarrier()
+		mod:CreateFlagCarrierButton()
 	else
-		Warsong:HideFlagCarrier()
+		mod:HideFlagCarrier()
 	end	
 end)
-Warsong:AddBoolOption("ShowFlagCarrierErrorNote", false)
+mod:AddBoolOption("ShowFlagCarrierErrorNote", false)
 
 do
 	local function WSG_Initialize()
 		if VEM:GetCurrentArea() == 489 then
 			bgzone = true
-			Warsong:RegisterShortTermEvents(
+			mod:RegisterShortTermEvents(
 				"PLAYER_REGEN_ENABLED",
 				"CHAT_MSG_BG_SYSTEM_ALLIANCE",
 				"CHAT_MSG_BG_SYSTEM_HORDE",
@@ -46,11 +48,11 @@ do
 				"CHAT_MSG_RAID_BOSS_EMOTE",
 				"UPDATE_BATTLEFIELD_SCORE"
 			)
-			if Warsong.Options.ShowFlagCarrier then
-				Warsong:ShowFlagCarrier()
-				Warsong:CreateFlagCarrierButton()
-				Warsong.FlagCarrierFrame1Text:SetText("")
-				Warsong.FlagCarrierFrame2Text:SetText("")
+			if mod.Options.ShowFlagCarrier then
+				mod:ShowFlagCarrier()
+				mod:CreateFlagCarrierButton()
+				mod.FlagCarrierFrame1Text:SetText("")
+				mod.FlagCarrierFrame2Text:SetText("")
 			end
 
 			FlagCarrier[1] = nil
@@ -58,28 +60,28 @@ do
 
 		elseif bgzone then
 			bgzone = false
-			Warsong:UnregisterShortTermEvents()
-			if Warsong.Options.ShowFlagCarrier then
-				Warsong:HideFlagCarrier()
+			mod:UnregisterShortTermEvents()
+			if mod.Options.ShowFlagCarrier then
+				mod:HideFlagCarrier()
 			end
 		end
 	end
-	Warsong.OnInitialize = WSG_Initialize
+	mod.OnInitialize = WSG_Initialize
 	
-	function Warsong:ZONE_CHANGED_NEW_AREA()
+	function mod:ZONE_CHANGED_NEW_AREA()
 		self:Schedule(1, WSG_Initialize)
 	end
 end
 
-function Warsong:CHAT_MSG_BG_SYSTEM_NEUTRAL(msg)
+function mod:CHAT_MSG_BG_SYSTEM_NEUTRAL(msg)
 	if msg == L.Vulnerable1 or msg == L.Vulnerable2 or msg:find(L.Vulnerable1) or msg:find(L.Vulnerable2) then
 		vulnerableTimer:Start()
 	end
 end
 
 
-function Warsong:ShowFlagCarrier()
-	if not Warsong.Options.ShowFlagCarrier then return end
+function mod:ShowFlagCarrier()
+	if not self.Options.ShowFlagCarrier then return end
 	if AlwaysUpFrame3DynamicIconButton and AlwaysUpFrame3DynamicIconButton then
 		if not self.FlagCarrierFrame1 then
 			self.FlagCarrierFrame1 = CreateFrame("Frame", nil, AlwaysUpFrame2DynamicIconButton)
@@ -104,8 +106,8 @@ function Warsong:ShowFlagCarrier()
 	end
 end
 
-function Warsong:CreateFlagCarrierButton()
-	if not Warsong.Options.ShowFlagCarrier then return end
+function mod:CreateFlagCarrierButton()
+	if not self.Options.ShowFlagCarrier then return end
 	if not self.FlagCarrierFrame1Button then
 		self.FlagCarrierFrame1Button = CreateFrame("Button", nil, nil, "SecureActionButtonTemplate")
 		self.FlagCarrierFrame1Button:SetHeight(15)
@@ -124,7 +126,7 @@ function Warsong:CreateFlagCarrierButton()
 	self.FlagCarrierFrame2Button:Show()
 end
 
-function Warsong:HideFlagCarrier()
+function mod:HideFlagCarrier()
 	if self.FlagCarrierFrame1 and self.FlagCarrierFrame2 then
 		self.FlagCarrierFrame1:Hide()
 		self.FlagCarrierFrame2:Hide()
@@ -133,7 +135,7 @@ function Warsong:HideFlagCarrier()
 	end
 end
 
-function Warsong:CheckFlagCarrier()
+function mod:CheckFlagCarrier()
 	if not UnitAffectingCombat("player") then
 		if not self.FlagCarrierFrame1Button or not self.FlagCarrierFrame2Button then
 			self:CreateFlagCarrierButton()
@@ -149,7 +151,7 @@ end
 
 do
 	local lastCarrier
-	function Warsong:ColorFlagCarrier(carrier)
+	function mod:ColorFlagCarrier(carrier)
 		local found = false
 		for i = 1, GetNumBattlefieldScores() do
 			local name, _, _, _, _, faction, _, _, classToken = GetBattlefieldScore(i)
@@ -177,7 +179,7 @@ do
 		end
 	end
 	
-	function Warsong:UPDATE_BATTLEFIELD_SCORE()
+	function mod:UPDATE_BATTLEFIELD_SCORE()
 		if lastCarrier then
 			self:ColorFlagCarrier(lastCarrier)
 			lastCarrier = nil
@@ -185,7 +187,7 @@ do
 	end
 end
 
-function Warsong:PLAYER_REGEN_ENABLED()
+function mod:PLAYER_REGEN_ENABLED()
 	if bgzone then
 		self:CheckFlagCarrier()
 	end
@@ -286,16 +288,13 @@ do
 			end
 		end
 	end
-	function Warsong:CHAT_MSG_BG_SYSTEM_ALLIANCE(...)
+	function mod:CHAT_MSG_BG_SYSTEM_ALLIANCE(...)
 		updateflagcarrier(self, "CHAT_MSG_BG_SYSTEM_ALLIANCE", ...)
 	end
-	function Warsong:CHAT_MSG_BG_SYSTEM_HORDE(...)
+	function mod:CHAT_MSG_BG_SYSTEM_HORDE(...)
 		updateflagcarrier(self, "CHAT_MSG_BG_SYSTEM_HORDE", ...)
 	end
-	function Warsong:CHAT_MSG_RAID_BOSS_EMOTE(...)
+	function mod:CHAT_MSG_RAID_BOSS_EMOTE(...)
 		updateflagcarrier(self, "CHAT_MSG_RAID_BOSS_EMOTE", ...)
 	end
 end
-
-
-

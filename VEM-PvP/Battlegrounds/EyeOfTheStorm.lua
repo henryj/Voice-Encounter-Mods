@@ -3,14 +3,16 @@
 --
 -- thanks DiabloHu
 
-local EyeOfTheStorm	= VEM:NewMod("z566", "VEM-PvP", 2)
-local L				= EyeOfTheStorm:GetLocalizedStrings()
+local mod	= VEM:NewMod("z566", "VEM-PvP", 2)
+local L		= mod:GetLocalizedStrings()
 
-EyeOfTheStorm:RemoveOption("HealthFrame")
-EyeOfTheStorm:RemoveOption("SpeedKillTimer")
-EyeOfTheStorm:SetZone(VEM_DISABLE_ZONE_DETECTION)
+mod:RemoveOption("HealthFrame")
+mod:RemoveOption("SpeedKillTimer")
 
-EyeOfTheStorm:RegisterEvents(
+mod:SetRevision(("$Revision: 3 $"):sub(12, -3))
+mod:SetZone(VEM_DISABLE_ZONE_DETECTION)
+
+mod:RegisterEvents(
 	"ZONE_CHANGED_NEW_AREA"
 )
 
@@ -33,16 +35,16 @@ local hordeColor = {
 	b = 0,
 }
 
-EyeOfTheStorm:AddBoolOption("ShowPointFrame", true, nil, function()
-	if EyeOfTheStorm.Options.ShowPointFrame and bgzone then
-		EyeOfTheStorm:ShowEstimatedPoints()
+mod:AddBoolOption("ShowPointFrame", true, nil, function()
+	if mod.Options.ShowPointFrame and bgzone then
+		mod:ShowEstimatedPoints()
 	else
-		EyeOfTheStorm:HideEstimatedPoints()
+		mod:HideEstimatedPoints()
 	end
 end)
 
-local winTimer = EyeOfTheStorm:NewTimer(30, "TimerWin", "Interface\\Icons\\INV_Misc_PocketWatch_01")
-local flagTimer = EyeOfTheStorm:NewTimer(7, "TimerFlag", "Interface\\Icons\\INV_Banner_02")
+local winTimer = mod:NewTimer(30, "TimerWin", "Interface\\Icons\\INV_Misc_PocketWatch_01")
+local flagTimer = mod:NewTimer(7, "TimerFlag", "Interface\\Icons\\INV_Banner_02")
 
 local objectives = {
 	[1] = 6,	-- Blood Elf
@@ -104,7 +106,7 @@ do
 	local function initialize()
 		if VEM:GetCurrentArea() == 566 then
 			bgzone = true
-			EyeOfTheStorm:RegisterShortTermEvents(
+			mod:RegisterShortTermEvents(
 				"CHAT_MSG_BG_SYSTEM_HORDE",
 				"CHAT_MSG_BG_SYSTEM_ALLIANCE",
 				"CHAT_MSG_BG_SYSTEM_NEUTRAL",
@@ -119,20 +121,20 @@ do
 					end
 				end
 			end
-			if EyeOfTheStorm.Options.ShowPointFrame then
-				EyeOfTheStorm:ShowEstimatedPoints()
+			if mod.Options.ShowPointFrame then
+				mod:ShowEstimatedPoints()
 			end
 
 		elseif bgzone then
 			bgzone = false
-			EyeOfTheStorm:UnregisterShortTermEvents()
-			if EyeOfTheStorm.Options.ShowPointFrame then
-				EyeOfTheStorm:HideEstimatedPoints()
+			mod:UnregisterShortTermEvents()
+			if mod.Options.ShowPointFrame then
+				mod:HideEstimatedPoints()
 			end
 		end
 	end
-	EyeOfTheStorm.OnInitialize = initialize
-	function EyeOfTheStorm:ZONE_CHANGED_NEW_AREA()
+	mod.OnInitialize = initialize
+	function mod:ZONE_CHANGED_NEW_AREA()
 		self:Schedule(1, initialize)
 	end
 end
@@ -150,15 +152,15 @@ do
 				end
 			end
 		end
-		EyeOfTheStorm:UPDATE_WORLD_STATES()
+		mod:UPDATE_WORLD_STATES()
 	end
 	
 	local function scheduleCheck(self)
 		self:Schedule(1, checkForUpdates)
 	end
 
-	function EyeOfTheStorm:CHAT_MSG_BG_SYSTEM_ALLIANCE(arg1)
-		if EyeOfTheStorm.Options.ShowPointFrame then
+	function mod:CHAT_MSG_BG_SYSTEM_ALLIANCE(arg1)
+		if self.Options.ShowPointFrame then
 			if string.match(arg1, L.FlagTaken) then
 				local name = string.match(arg1, L.FlagTaken)
 				if name then
@@ -182,8 +184,8 @@ do
 		scheduleCheck(self)
 	end
 
-	function EyeOfTheStorm:CHAT_MSG_BG_SYSTEM_HORDE(arg1)
-		if EyeOfTheStorm.Options.ShowPointFrame then
+	function mod:CHAT_MSG_BG_SYSTEM_HORDE(arg1)
+		if self.Options.ShowPointFrame then
 			if string.match(arg1, L.FlagTaken) then
 				local name = string.match(arg1, L.FlagTaken)
 				if name then
@@ -207,22 +209,22 @@ do
 		scheduleCheck(self)
 	end
 
-	function EyeOfTheStorm:CHAT_MSG_BG_SYSTEM_NEUTRAL(arg1)
+	function mod:CHAT_MSG_BG_SYSTEM_NEUTRAL(arg1)
 		if not bgzone then
 			return
 		end
 
 		if string.match(arg1, L.FlagReset) then
-			EyeOfTheStorm.AllyFlag = nil
-			EyeOfTheStorm.HordeFlag = nil
-			EyeOfTheStorm:UpdateFlagDisplay()
+			self.AllyFlag = nil
+			self.HordeFlag = nil
+			self:UpdateFlagDisplay()
 		end
 		scheduleCheck(self)
 	end	
 end
 
 
-function EyeOfTheStorm:UPDATE_WORLD_STATES()
+function mod:UPDATE_WORLD_STATES()
 	if not bgzone then return end
 
 	local last_alliance_bases, last_horde_bases = getBasecount()
@@ -270,7 +272,7 @@ function EyeOfTheStorm:UPDATE_WORLD_STATES()
 	end
 end
 
-function EyeOfTheStorm:UpdateFlagDisplay()
+function mod:UpdateFlagDisplay()
 	if self.ScoreFrame1Text and self.ScoreFrame2Text then
 		
 		local newText
@@ -302,7 +304,7 @@ function EyeOfTheStorm:UpdateFlagDisplay()
 	end
 end
 
-function EyeOfTheStorm:ShowEstimatedPoints()
+function mod:ShowEstimatedPoints()
 	if AlwaysUpFrame1Text and AlwaysUpFrame2Text then
 		if not self.ScoreFrame1 then
 			self.ScoreFrame1 = CreateFrame("Frame", nil, AlwaysUpFrame1)
@@ -329,7 +331,7 @@ function EyeOfTheStorm:ShowEstimatedPoints()
 	end
 end
 
-function EyeOfTheStorm:HideEstimatedPoints()
+function mod:HideEstimatedPoints()
 	if self.ScoreFrame1 and self.ScoreFrame2 then
 		self.ScoreFrame1:Hide()
 		self.ScoreFrame1Text:SetText("")

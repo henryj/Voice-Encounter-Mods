@@ -11,7 +11,7 @@
 ## X-VEM-Mod-Type: RAID
 ## X-VEM-Mod-Category: MOP
 ## X-VEM-Mod-Has-Single-Format: 1
-## X-VEM-Mod-Sort: 5
+## X-VEM-Mod-Sort: 6
 ## X-VEM-Mod-MapID: 870,1064
 localization.en.lua
 localization.tw.lua

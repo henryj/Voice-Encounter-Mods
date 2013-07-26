@@ -1,7 +1,7 @@
 local mod	= VEM:NewMod(814, "VEM-Pandaria", nil, 322)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 9995 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10079 $"):sub(12, -3))
 mod:SetCreatureID(69099)
 mod:SetQuestID(32518)
 mod:SetZone()
@@ -13,6 +13,12 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED",
 	"SPELL_AURA_REMOVED"
 )
+
+
+mod:RegisterEvents(
+	"CHAT_MSG_MONSTER_YELL"
+)
+
 
 local warnStormcloud				= mod:NewTargetAnnounce(136340, 3)
 local warnLightningTether			= mod:NewTargetAnnounce(136339, 3)
@@ -33,6 +39,7 @@ mod:AddBoolOption("RangeFrame")--For Stormcloud, might tweek to not show all the
 
 local stormcloudTargets = {}
 local tetherTargets = {}
+local yellTriggered = false
 
 local function warnStormcloudTargets()
 	warnStormcloud:Show(table.concat(stormcloudTargets, "<, >"))
@@ -47,9 +54,11 @@ end
 function mod:OnCombatStart(delay)
 	table.wipe(stormcloudTargets)
 	table.wipe(tetherTargets)
-	timerStormcloudCD:Start(15-delay)--15-17 variation noted
-	timerLightningTetherCD:Start(28-delay)
-	timerArcNovaCD:Start(39-delay)--Not a large sample size
+	if yellTriggered then
+		timerStormcloudCD:Start(15-delay)--15-17 variation noted
+		timerLightningTetherCD:Start(28-delay)
+		timerArcNovaCD:Start(39-delay)--Not a large sample size
+	end
 	if self.Options.RangeFrame then
 		VEM.RangeCheck:Show(10)
 	end
@@ -92,5 +101,14 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 		self:Unschedule(warnTetherTargets)
 		self:Schedule(0.3, warnTetherTargets)
+	end
+end
+
+function mod:CHAT_MSG_MONSTER_YELL(msg)
+	if msg == L.Pull and not self:IsInCombat() then
+		if self:GetCIDFromGUID(UnitGUID("target")) == 69099 or self:GetCIDFromGUID(UnitGUID("targettarget")) == 69099 then--Whole zone gets yell, so lets not engage combat off yell unless he is our target (or the target of our target for healers)
+			yellTriggered = true
+			VEM:StartCombat(self, 0)
+		end
 	end
 end

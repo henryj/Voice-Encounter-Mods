@@ -1,21 +1,22 @@
 -- Alterac mod v3.0
 -- rewrite by Nitram and Tandanu
 
-local Alterac	= VEM:NewMod("z30", "VEM-PvP", 2)
-local L			= Alterac:GetLocalizedStrings()
+local mod	= VEM:NewMod("z30", "VEM-PvP", 2)
+local L		= mod:GetLocalizedStrings()
 
-Alterac:SetZone(VEM_DISABLE_ZONE_DETECTION)
+mod:SetRevision(("$Revision: 3 $"):sub(12, -3))
+mod:SetZone(VEM_DISABLE_ZONE_DETECTION)
 
-Alterac:AddBoolOption("AutoTurnIn")
-Alterac:RemoveOption("HealthFrame")
-Alterac:RemoveOption("SpeedKillTimer")
+mod:AddBoolOption("AutoTurnIn")
+mod:RemoveOption("HealthFrame")
+mod:RemoveOption("SpeedKillTimer")
 
-Alterac:RegisterEvents(
+mod:RegisterEvents(
 	"ZONE_CHANGED_NEW_AREA" 	-- Required for BG start
 )
 
-local towerTimer = Alterac:NewTimer(243, "TimerTower", "Interface\\Icons\\Spell_Shadow_HellifrePVPCombatMorale")
-local gyTimer = Alterac:NewTimer(243, "TimerGY", "Interface\\Icons\\Spell_Shadow_AnimateDead")
+local towerTimer = mod:NewTimer(243, "TimerTower", "Interface\\Icons\\Spell_Shadow_HellifrePVPCombatMorale")
+local gyTimer = mod:NewTimer(243, "TimerGY", "Interface\\Icons\\Spell_Shadow_AnimateDead")
 
 local allyTowerIcon = "Interface\\AddOns\\VEM-PvP\\Textures\\GuardTower"
 local allyColor = {
@@ -62,7 +63,7 @@ local bgzone = false
 do
 	local function AV_Initialize()
 		if VEM:GetCurrentArea() == 30 then
-			Alterac:RegisterShortTermEvents(
+			mod:RegisterShortTermEvents(
 				"CHAT_MSG_MONSTER_YELL",
 				"CHAT_MSG_BG_SYSTEM_ALLIANCE",
 				"CHAT_MSG_BG_SYSTEM_HORDE",
@@ -85,11 +86,11 @@ do
 			end
 		elseif bgzone then
 			bgzone = false
-			Alterac:UnregisterShortTermEvents()
+			mod:UnregisterShortTermEvents()
 		end
 	end
-	Alterac.OnInitialize = AV_Initialize
-	function Alterac:ZONE_CHANGED_NEW_AREA()
+	mod.OnInitialize = AV_Initialize
+	function mod:ZONE_CHANGED_NEW_AREA()
 		self:Schedule(1, AV_Initialize)
 	end
 end
@@ -145,11 +146,11 @@ do
 		self:Schedule(1, check_for_updates)
 	end
 
-	Alterac.CHAT_MSG_MONSTER_YELL = schedule_check
-	Alterac.CHAT_MSG_BG_SYSTEM_ALLIANCE = schedule_check
-	Alterac.CHAT_MSG_BG_SYSTEM_HORDE = schedule_check
-	Alterac.RAID_BOSS_EMOTE = schedule_check
-	Alterac.CHAT_MSG_BG_SYSTEM_NEUTRAL = schedule_check
+	mod.CHAT_MSG_MONSTER_YELL = schedule_check
+	mod.CHAT_MSG_BG_SYSTEM_ALLIANCE = schedule_check
+	mod.CHAT_MSG_BG_SYSTEM_HORDE = schedule_check
+	mod.RAID_BOSS_EMOTE = schedule_check
+	mod.CHAT_MSG_BG_SYSTEM_NEUTRAL = schedule_check
 end
 
 local quests
@@ -201,8 +202,8 @@ do
 	}	
 	
 	loadQuests() -- requests the quest information from the server
-	Alterac:Schedule(5, loadQuests) -- information should be available now....load it
-	Alterac:Schedule(15, loadQuests) -- sometimes this requires a lot more time, just to be sure!
+	mod:Schedule(5, loadQuests) -- information should be available now....load it
+	mod:Schedule(15, loadQuests) -- sometimes this requires a lot more time, just to be sure!
 end
 
 local function isQuestAutoTurnInQuest(name)
@@ -238,7 +239,7 @@ local function checkItems(item, amount)
 	return found >= amount
 end
 
-function Alterac:GOSSIP_SHOW()
+function mod:GOSSIP_SHOW()
 	if not bgzone or not self.Options.AutoTurnIn then return end
 	local quest = quests[tonumber(self:GetCIDFromGUID(UnitGUID("target") or "")) or 0]
 	if quest and type(quest[1]) == "table" then
@@ -253,13 +254,13 @@ function Alterac:GOSSIP_SHOW()
 	end
 end
 
-function Alterac:QUEST_PROGRESS()
+function mod:QUEST_PROGRESS()
 	if bgzone and isQuestAutoTurnInQuest(GetTitleText()) then
 		CompleteQuest()
 	end
 end
 
-function Alterac:QUEST_COMPLETE()
+function mod:QUEST_COMPLETE()
 	if bgzone and isQuestAutoTurnInQuest(GetTitleText()) then
 		GetQuestReward(0)
 	end

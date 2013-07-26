@@ -4,21 +4,21 @@ local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 local sndStrike	= mod:NewSound(nil, "SoundStrike", true)
 
-mod:SetRevision(("$Revision: 10017 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10044 $"):sub(12, -3))
 mod:SetCreatureID(69473)--69888
 mod:SetQuestID(32753)
 mod:SetZone()
 mod:SetUsedIcons(2, 6)
 
 mod:RegisterCombat("combat")
-mod:RegisterKill("yell_regex", L.Defeat)--Does not die, just yells
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START",
 	"SPELL_CAST_SUCCESS",
 	"SPELL_AURA_APPLIED",
 	"SPELL_AURA_REMOVED",
-	"UNIT_SPELLCAST_SUCCEEDED boss1"
+	"UNIT_SPELLCAST_SUCCEEDED boss1",
+	"CHAT_MSG_MONSTER_YELL"
 )
 
 local warnMurderousStrike						= mod:NewSpellAnnounce(138333, 4, nil, mod:IsTank() or mod:IsHealer())--Tank (think thrash, like sha. Gains buff, uses on next melee attack)
@@ -392,3 +392,10 @@ function mod:OnSync(msg, msg2)
 		timerCallEssenceCD:Start()
 	end
 end
+
+function mod:CHAT_MSG_MONSTER_YELL(msg)
+	if msg == L.Defeat or msg:find(L.Defeat) then
+		VEM:EndCombat(self)
+	end
+end
+

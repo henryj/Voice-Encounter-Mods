@@ -40,7 +40,7 @@
 
 
 
-local revision =("$Revision: 10018 $"):sub(12, -3)
+local revision =("$Revision: 10041 $"):sub(12, -3)
 local FrameTitle = "VEM_GUI_Option_"	-- all GUI frames get automatically a name FrameTitle..ID
 local fixeditframe = false
 
@@ -1426,8 +1426,8 @@ local function CreateOptionsMenu()
 		bmtestmode:SetScript("OnClick", function(self) VEM:DemoMode() end)
 
 		local latencySlider = generaloptions:CreateSlider(L.Latency_Text, 50, 750, 5, 210)   -- (text , min_value , max_value , step , width)
-     	latencySlider:SetPoint('BOTTOMLEFT', bminfo, "BOTTOMLEFT", 10, -35)
-     	latencySlider:HookScript("OnShow", function(self) self:SetValue(VEM.Options.LatencyThreshold) end)
+		latencySlider:SetPoint('BOTTOMLEFT', bminfo, "BOTTOMLEFT", 10, -35)
+		latencySlider:HookScript("OnShow", function(self) self:SetValue(VEM.Options.LatencyThreshold) end)
 		latencySlider:HookScript("OnValueChanged", function(self) VEM.Options.LatencyThreshold = self:GetValue() end)
 
 		local generaltimeroptions = VEM_GUI_Frame:CreateArea(L.TimerGeneral, nil, 85)
@@ -1570,12 +1570,13 @@ local function CreateOptionsMenu()
 			{	text	= L.stephanie,	value 	= "stephanie"},
 			{	text	= L.yike,	value 	= "Mosh"},
 			{	text	= L.yun,	value 	= "yun"},
-			{	text	= L.other,	value 	= "other"},
+			{	text	= VEM_CORE_SOUNDGRIL_CUSTOM,	value 	= "other"},
 		}
 		local CountSoundDropDown = raidwarnoptions:CreateDropdown(L.CountdownVoice, countSounds,
 		VEM.Options.CountdownVoice, function(value)
 			VEM.Options.CountdownVoice = value
 			PlaySoundFile("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\movesoon.mp3", "Master")
+			VEM:ShowSoundMM()
 		end
 		)
 		CountSoundDropDown:SetPoint("LEFT", RaidWarnSoundDropDown, "RIGHT", 30, 0)
@@ -2005,7 +2006,7 @@ local function CreateOptionsMenu()
 
 		local color1 = specArea:CreateColorSelect(64)
 		color1:SetPoint('TOPLEFT', color0, "TOPLEFT", 0, -105)
-		local color1text = specArea:CreateText(L.SpecWarn_FlashColor, 80)
+		local color1text = specArea:CreateText(L.SpecWarn_FlashColor:format(1), 80)
 		color1text:SetPoint("BOTTOM", color1, "TOP", 5, 4)
 		local color1reset = specArea:CreateButton(L.Reset, 64, 10, nil, GameFontNormalSmall)
 		color1reset:SetPoint('TOP', color1, "BOTTOM", 5, -10)
@@ -2036,7 +2037,7 @@ local function CreateOptionsMenu()
 		
 		local color2 = specArea:CreateColorSelect(64)
 		color2:SetPoint('TOPLEFT', color1, "TOPLEFT", 0, -105)
-		local color2text = specArea:CreateText(L.SpecWarn_FlashColor, 80)
+		local color2text = specArea:CreateText(L.SpecWarn_FlashColor:format(2), 80)
 		color2text:SetPoint("BOTTOM", color2, "TOP", 5, 4)
 		local color2reset = specArea:CreateButton(L.Reset, 64, 10, nil, GameFontNormalSmall)
 		color2reset:SetPoint('TOP', color2, "BOTTOM", 5, -10)
@@ -2067,7 +2068,7 @@ local function CreateOptionsMenu()
 		
 		local color3 = specArea:CreateColorSelect(64)
 		color3:SetPoint('TOPLEFT', color2, "TOPLEFT", 0, -105)
-		local color3text = specArea:CreateText(L.SpecWarn_FlashColor, 80)
+		local color3text = specArea:CreateText(L.SpecWarn_FlashColor:format(3), 80)
 		color3text:SetPoint("BOTTOM", color3, "TOP", 5, 4)
 		local color3reset = specArea:CreateButton(L.Reset, 64, 10, nil, GameFontNormalSmall)
 		color3reset:SetPoint('TOP', color3, "BOTTOM", 5, -10)
@@ -2281,14 +2282,13 @@ local function CreateOptionsMenu()
 	do
 		local hpPanel = VEM_GUI_Frame:CreateNewPanel(L.Panel_HPFrame, "option")
 		local hpArea = hpPanel:CreateArea(L.Area_HPFrame, nil, 150, true)
-		hpArea:CreateCheckButton(L.HP_Enabled, true, nil, "AlwaysShowHealthFrame")
+		local alwaysbttn = hpArea:CreateCheckButton(L.HP_Enabled, true, nil, "AlwaysShowHealthFrame")
 		local growbttn = hpArea:CreateCheckButton(L.HP_GrowUpwards, true)
 		growbttn:SetScript("OnShow",  function(self) self:SetChecked(VEM.Options.HealthFrameGrowUp) end)
 		growbttn:SetScript("OnClick", function(self)
 				VEM.Options.HealthFrameGrowUp = not not self:GetChecked()
 				VEM.BossHealth:UpdateSettings()
 		end)
-
 
 		local BarWidthSlider = hpArea:CreateSlider(L.BarWidth, 150, 275, 1)
 		BarWidthSlider:SetPoint("TOPLEFT", hpArea.frame, "TOPLEFT", 20, -75)
@@ -2306,8 +2306,10 @@ local function CreateOptionsMenu()
 				VEM.Options.HPFramePoint = VEM.DefaultOptions.HPFramePoint
 				VEM.Options.HPFrameX = VEM.DefaultOptions.HPFrameX
 				VEM.Options.HPFrameY = VEM.DefaultOptions.HPFrameY
+				VEM.Options.AlwaysShowHealthFrame = VEM.DefaultOptions.AlwaysShowHealthFrame
 				VEM.Options.HealthFrameGrowUp = VEM.DefaultOptions.HealthFrameGrowUp
 				VEM.Options.HealthFrameWidth = VEM.DefaultOptions.HealthFrameWidth
+				alwaysbttn:SetChecked(VEM.Options.AlwaysShowHealthFrame)
 				growbttn:SetChecked(VEM.Options.HealthFrameGrowUp)
 				BarWidthSlider:SetValue(VEM.Options.HealthFrameWidth)
 				VEM.BossHealth:UpdateSettings()

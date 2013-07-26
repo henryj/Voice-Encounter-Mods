@@ -4,7 +4,7 @@ local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 local sndWOPCX	= mod:NewSound(nil, "SoundWOP", true)
 local sndYX		= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 9816 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10063 $"):sub(12, -3))
 mod:SetCreatureID(68905, 68904)--Lu'lin 68905, Suen 68904
 mod:SetQuestID(32755)
 mod:SetZone()

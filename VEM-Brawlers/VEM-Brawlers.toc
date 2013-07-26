@@ -14,7 +14,7 @@
 ## X-VEM-Mod-Name: Brawlers
 ## X-VEM-Mod-Name-zhCN: 搏击俱乐部
 ## X-VEM-Mod-Name-zhTW: 鬥陣俱樂部
-## X-VEM-Mod-Sort: 30
+## X-VEM-Mod-Sort: 35
 ## X-VEM-Mod-MapID: 369,1043
 localization.en.lua
 localization.cn.lua

@@ -15,6 +15,7 @@ embeds.xml
 localization.en.lua
 localization.cn.lua
 localization.tw.lua
+extrasounds\other\other.lua
 DBT-Template.xml
 DBT.lua
 VEM-Core.lua

@@ -53,6 +53,11 @@ L:SetOptionLocalization({
 	RangeFrame			= "距離監視(10碼)：$spell:136340"
 })
 
+
+L:SetMiscLocalization({
+	Pull				= "你感覺到冷風吹過了嗎?風暴要來了..."
+})
+
 ---------------------------
 -- Chi-ji, The Red Crane --
 ---------------------------

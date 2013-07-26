@@ -6,6 +6,7 @@
 local mod	= VEM:NewMod("Battlegrounds", "VEM-PvP", 2)
 local L		= mod:GetLocalizedStrings()
 
+mod:SetRevision(("$Revision: 3 $"):sub(12, -3))
 mod:SetZone(VEM_DISABLE_ZONE_DETECTION)
 
 mod:AddBoolOption("ColorByClass", true)

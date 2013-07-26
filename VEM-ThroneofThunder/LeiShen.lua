@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 -- BH ADD
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 10015 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10063 $"):sub(12, -3))
 mod:SetCreatureID(68397)--Diffusion Chain Conduit 68696, Static Shock Conduit 68398, Bouncing Bolt conduit 68698, Overcharge conduit 68697
 mod:SetQuestID(32756)
 mod:SetZone()
@@ -30,6 +30,7 @@ mod:RegisterEvents(
 --Conduits (All phases)
 local warnStaticShock					= mod:NewTargetAnnounce(135695, 4)
 local warnDiffusionChain				= mod:NewTargetAnnounce(135991, 3)--More informative than actually preventative. (you need to just spread out, and that's it. can't control who it targets only that it doesn't spread)
+local warnDiffusionChainSpread			= mod:NewAnnounce("warnDiffusionChainSpread", 4, 135991)
 local warnOvercharged					= mod:NewTargetAnnounce(136295, 3)
 local warnBouncingBolt					= mod:NewSpellAnnounce(136361, 3)
 --Phase 1
@@ -190,6 +191,7 @@ local eastDestroyed = false
 local southDestroyed = false
 local westDestroyed = false
 local staticshockTargets = {}
+local diffusionTargets = {}
 local staticIcon = 8--Start high and count down
 local overchargeTarget = {}
 local overchargeIcon = 1--Start low and count up
@@ -200,6 +202,11 @@ local function warnStaticShockTargets()
 	warnStaticShock:Show(table.concat(staticshockTargets, "<, >"))
 	table.wipe(staticshockTargets)
 	staticIcon = 8
+end
+
+local function warnDiffusionSpreadTargets(spellName)
+	warnDiffusionChainSpread:Show(spellName, table.concat(diffusionTargets, "<, >"))
+	table.wipe(diffusionTargets)
 end
 
 local function warnOverchargeTargets()
@@ -610,13 +617,17 @@ function mod:SPELL_AURA_REMOVED(args)
 	end
 end
 
-function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
-	if spellId == 135150 and self:AntiSpam(10, 4) then
-		if destGUID == UnitGUID("player") then
-			specWarnCrashingThunder:Show()
-			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
-		end
+function mod:SPELL_DAMAGE(_, _, _, _, destGUID, destName, _, _, spellId, spellName)
+	if spellId == 135150 and destGUID == UnitGUID("player") and self:AntiSpam(10, 4) then
+		specWarnCrashingThunder:Show()
+		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
 		timerCrashingThunder:Start()
+	elseif spellId == 135991 and destName ~= diffusionCastTarget then--Filter actual target, so we only announce SPREADS
+		diffusionTargets[#diffusionTargets + 1] = destName
+		self:Unschedule(warnDiffusionSpreadTargets)
+		if #diffusionTargets >= 1 then
+			self:Schedule(0.3, warnDiffusionSpreadTargets, spellName)
+		end
 	end
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE

@@ -494,11 +494,13 @@ L:SetMiscLocalization({
 L= VEM:GetModLocalization(832)
 
 L:SetWarningLocalization({
-	specWarnIntermissionSoon	= "充能階段 即將到來"
+	specWarnIntermissionSoon	= "充能階段 即將到來",
+	warnDiffusionChainSpread	= "%s擴散在>%s<"
 })
 	
 L:SetOptionLocalization({
 	SoundWOP		= "語音警告：重要技能",
+	warnDiffusionChainSpread	= "警告：$spell:135991擴散的目標",
 	specWarnIntermissionSoon	= "特別警告：充能階段即將到來",
 	HudMAP			= "高級定位監視(HUD)：$spell:135695",
 	HudMAP2			= "高級定位監視(HUD)：$spell:136295",

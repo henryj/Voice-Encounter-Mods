@@ -1,33 +1,34 @@
-local Gilneas	= VEM:NewMod("z761", "VEM-PvP", 2)
-local L			= Gilneas:GetLocalizedStrings()
+local mod		= VEM:NewMod("z761", "VEM-PvP", 2)
+local L			= mod:GetLocalizedStrings()
 
-Gilneas:SetZone(VEM_DISABLE_ZONE_DETECTION)
+mod:SetRevision(("$Revision: 3 $"):sub(12, -3))
+mod:SetZone(VEM_DISABLE_ZONE_DETECTION)
 
-Gilneas:RegisterEvents(
+mod:RegisterEvents(
 	"ZONE_CHANGED_NEW_AREA"
 )
 
-local winTimer 		= Gilneas:NewTimer(30, "TimerWin", "Interface\\Icons\\INV_Misc_PocketWatch_01")
-local capTimer 		= Gilneas:NewTimer(63, "TimerCap", "Interface\\Icons\\Spell_Misc_HellifrePVPHonorHoldFavor")
+local winTimer 		= mod:NewTimer(30, "TimerWin", "Interface\\Icons\\INV_Misc_PocketWatch_01")
+local capTimer 		= mod:NewTimer(63, "TimerCap", "Interface\\Icons\\Spell_Misc_HellifrePVPHonorHoldFavor")
 
 local bgzone = false
-Gilneas:AddBoolOption("ShowGilneasEstimatedPoints", true, nil, function()
-	if Gilneas.Options.ShowGilneasEstimatedPoints and bgzone then
-		Gilneas:ShowEstimatedPoints()
+mod:AddBoolOption("ShowGilneasEstimatedPoints", true, nil, function()
+	if mod.Options.ShowGilneasEstimatedPoints and bgzone then
+		mod:ShowEstimatedPoints()
 	else
-		Gilneas:HideEstimatedPoints()
+		mod:HideEstimatedPoints()
 	end
 end)
-Gilneas:AddBoolOption("ShowGilneasBasesToWin", false, nil, function()
-	if Gilneas.Options.ShowGilneasBasesToWin and bgzone then
-		Gilneas:ShowBasesToWin()
+mod:AddBoolOption("ShowGilneasBasesToWin", false, nil, function()
+	if mod.Options.ShowGilneasBasesToWin and bgzone then
+		mod:ShowBasesToWin()
 	else
-		Gilneas:HideBasesToWin()
+		mod:HideBasesToWin()
 	end
 end)
 
-Gilneas:RemoveOption("HealthFrame")
-Gilneas:RemoveOption("SpeedKillTimer")
+mod:RemoveOption("HealthFrame")
+mod:RemoveOption("SpeedKillTimer")
 	
 local ResPerSec = {
 	[0] = 0.01,
@@ -117,7 +118,7 @@ end
 local function Gilneas_Initialize()
 	if VEM:GetCurrentArea() == 761 then--Two Ids? GilneasBattleground2 is one we been using, but what is BattleforGilneas (id instance id 728)
 		bgzone = true
-		Gilneas:RegisterShortTermEvents(
+		mod:RegisterShortTermEvents(
 			"CHAT_MSG_BG_SYSTEM_HORDE",
 			"CHAT_MSG_BG_SYSTEM_ALLIANCE",
 			"CHAT_MSG_BG_SYSTEM_NEUTRAL",
@@ -134,27 +135,27 @@ local function Gilneas_Initialize()
 				end
 			end
 		end
-		if Gilneas.Options.ShowGilneasEstimatedPoints then
-			Gilneas:ShowEstimatedPoints()
+		if mod.Options.ShowGilneasEstimatedPoints then
+			mod:ShowEstimatedPoints()
 		end
-		if Gilneas.Options.ShowGilneasBasesToWin then
-			Gilneas:ShowBasesToWin()
+		if mod.Options.ShowGilneasBasesToWin then
+			mod:ShowBasesToWin()
 		end
 	elseif bgzone then
 		bgzone = false
-		Gilneas:UnregisterShortTermEvents()
-		if Gilneas.Options.ShowGilneasEstimatedPoints then
-			Gilneas:HideEstimatedPoints()
+		mod:UnregisterShortTermEvents()
+		if mod.Options.ShowGilneasEstimatedPoints then
+			mod:HideEstimatedPoints()
 		end
-		if Gilneas.Options.ShowGilneasBasesToWin then
-			Gilneas:HideBasesToWin()
+		if mod.Options.ShowGilneasBasesToWin then
+			mod:HideBasesToWin()
 		end
 	end
 end
 
-Gilneas.OnInitialize = Gilneas_Initialize
+mod.OnInitialize = Gilneas_Initialize
 
-function Gilneas:ZONE_CHANGED_NEW_AREA()
+function mod:ZONE_CHANGED_NEW_AREA()
 	self:Schedule(1, Gilneas_Initialize)
 end
 
@@ -188,10 +189,10 @@ do
 		self:Schedule(1, check_for_updates)
 	end
 
-	Gilneas.CHAT_MSG_BG_SYSTEM_ALLIANCE = schedule_check
-	Gilneas.CHAT_MSG_BG_SYSTEM_HORDE = schedule_check
-	Gilneas.CHAT_MSG_RAID_BOSS_EMOTE = schedule_check
-	Gilneas.CHAT_MSG_BG_SYSTEM_NEUTRAL = schedule_check
+	mod.CHAT_MSG_BG_SYSTEM_ALLIANCE = schedule_check
+	mod.CHAT_MSG_BG_SYSTEM_HORDE = schedule_check
+	mod.CHAT_MSG_RAID_BOSS_EMOTE = schedule_check
+	mod.CHAT_MSG_BG_SYSTEM_NEUTRAL = schedule_check
 
 end
 
@@ -202,7 +203,7 @@ do
 	local last_horde_bases = 0
 	local last_alliance_bases = 0
 
-	function Gilneas:UPDATE_WORLD_STATES()
+	function mod:UPDATE_WORLD_STATES()
 		if not bgzone then return end
 
 		local AllyBases, HordeBases = get_basecount()
@@ -233,7 +234,7 @@ do
 			self:UpdateWinTimer()
 		end
 	end
-	function Gilneas:UpdateWinTimer()
+	function mod:UpdateWinTimer()
 		local AllyTime = (2000 - last_alliance_score) / ResPerSec[last_alliance_bases]
 		local HordeTime = (2000 - last_horde_score) / ResPerSec[last_horde_bases]
 		if AllyTime > 2000 then		AllyTime = 2000 end
@@ -314,7 +315,7 @@ do
 	end
 end
 
-function Gilneas:ShowEstimatedPoints()
+function mod:ShowEstimatedPoints()
 	if AlwaysUpFrame1Text and AlwaysUpFrame2Text then
 		if not self.ScoreFrame1 then
 			self.ScoreFrame1 = CreateFrame("Frame", nil, AlwaysUpFrame1)
@@ -341,7 +342,7 @@ function Gilneas:ShowEstimatedPoints()
 	end
 end
 
-function Gilneas:ShowBasesToWin()
+function mod:ShowBasesToWin()
 	if AlwaysUpFrame1Text and AlwaysUpFrame2Text then
 		if not self.ScoreFrameToWin then
 			self.ScoreFrameToWin = CreateFrame("Frame", nil, AlwaysUpFrame2)
@@ -357,7 +358,7 @@ function Gilneas:ShowBasesToWin()
 	end
 end
 
-function Gilneas:HideEstimatedPoints()
+function mod:HideEstimatedPoints()
 	if self.ScoreFrame1 and self.ScoreFrame2 then
 		self.ScoreFrame1:Hide()
 		self.ScoreFrame1Text:SetText("")
@@ -366,7 +367,7 @@ function Gilneas:HideEstimatedPoints()
 	end
 end
 
-function Gilneas:HideBasesToWin()
+function mod:HideBasesToWin()
 	if self.ScoreFrameToWin then
 		self.ScoreFrameToWin:Hide()
 		self.ScoreFrameToWinText:SetText("")

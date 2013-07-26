@@ -1,23 +1,24 @@
-local Silvershard	= VEM:NewMod("z727", "VEM-PvP", 2)
-local L			= Silvershard:GetLocalizedStrings()
+local mod		= VEM:NewMod("z727", "VEM-PvP", 2)
+local L			= mod:GetLocalizedStrings()
 
-Silvershard:SetZone(VEM_DISABLE_ZONE_DETECTION)
+mod:SetRevision(("$Revision: 3 $"):sub(12, -3))
+mod:SetZone(VEM_DISABLE_ZONE_DETECTION)
 
-Silvershard:RegisterEvents(
+mod:RegisterEvents(
 	"ZONE_CHANGED_NEW_AREA"
 )
 
-local cartTimer		= Silvershard:NewTimer(9.5, "TimerCart", "Interface\\Icons\\INV_Misc_PocketWatch_01")
+local cartTimer		= mod:NewTimer(9.5, "TimerCart", "Interface\\Icons\\INV_Misc_PocketWatch_01")
 
 local bgzone = false
 
-Silvershard:RemoveOption("HealthFrame")
-Silvershard:RemoveOption("SpeedKillTimer")
+mod:RemoveOption("HealthFrame")
+mod:RemoveOption("SpeedKillTimer")
 
-function Silvershard:OnInitialize()
+function mod:OnInitialize()
 	if VEM:GetCurrentArea() == 727 then
 		bgzone = true
-		Silvershard:RegisterShortTermEvents(
+		self:RegisterShortTermEvents(
 			"CHAT_MSG_MONSTER_YELL",
 			"CHAT_MSG_BG_SYSTEM_HORDE",
 			"CHAT_MSG_BG_SYSTEM_ALLIANCE",
@@ -27,21 +28,21 @@ function Silvershard:OnInitialize()
 		)
 	elseif bgzone then
 		bgzone = false
-		Silvershard:UnregisterShortTermEvents()
+		self:UnregisterShortTermEvents()
 	end
 end
 
-function Silvershard:ZONE_CHANGED_NEW_AREA()
+function mod:ZONE_CHANGED_NEW_AREA()
 	self:ScheduleMethod(1, "OnInitialize")
 end
 
-function Silvershard:CHAT_MSG_RAID_BOSS_EMOTE(msg)
+function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 	if not bgzone then return end
 	if msg:find(L.Capture) then	
 		cartTimer:Start()
 	end
 end
 
-Silvershard.CHAT_MSG_BG_SYSTEM_ALLIANCE = Silvershard.CHAT_MSG_RAID_BOSS_EMOTE
-Silvershard.CHAT_MSG_BG_SYSTEM_HORDE = Silvershard.CHAT_MSG_RAID_BOSS_EMOTE
-Silvershard.CHAT_MSG_BG_SYSTEM_NEUTRAL = Silvershard.CHAT_MSG_RAID_BOSS_EMOTE
+mod.CHAT_MSG_BG_SYSTEM_ALLIANCE = mod.CHAT_MSG_RAID_BOSS_EMOTE
+mod.CHAT_MSG_BG_SYSTEM_HORDE = mod.CHAT_MSG_RAID_BOSS_EMOTE
+mod.CHAT_MSG_BG_SYSTEM_NEUTRAL = mod.CHAT_MSG_RAID_BOSS_EMOTE
