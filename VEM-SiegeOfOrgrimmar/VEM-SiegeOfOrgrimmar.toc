@@ -1,0 +1,37 @@
+﻿## Interface: 50400
+## X-Min-Interface: 50400
+## Title:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0Siege of Orgrimmar|r
+## Title-zhTW:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0圍攻奧格瑪|r
+## Title-zhCN:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0决战奥格瑞玛|r
+## Author: MysticalOS
+## LoadOnDemand: 1
+## RequiredDeps: VEM-Core
+## SavedVariablesPerCharacter: VEMSiegeOfOrgrimmar_SavedVars, VEMSiegeOfOrgrimmar_SavedStats
+## X-VEM-Mod-Name: Siege of Orgrimmar
+## X-VEM-Mod-Name-zhTW: 圍攻奧格瑪 (SoO)
+## X-VEM-Mod-Name-zhCN: 决战奥格瑞玛
+## X-VEM-Mod: 1
+## X-VEM-Mod-Type: RAID
+## X-VEM-Mod-Category: MOP
+## X-VEM-Mod-Has-LFR : 1
+## X-VEM-Mod-Has-Flex : 1
+## X-VEM-Mod-Sort: 1
+## X-VEM-Mod-MapID: 1136
+localization.en.lua
+localization.tw.lua
+localization.cn.lua
+Immerseus.lua
+FallenProtectors.lua
+Norushen.lua
+ShaofPride.lua
+Galakras.lua
+IronJuggernaut.lua
+KorkronDarkShaman.lua
+GeneralNazgrim.lua
+Malkorok.lua
+SpoilsOfPandria.lua
+ThokTheBloodthirsty.lua
+SiegecrafterBlackfuse.lua
+ParagonsOfTheKlaxxi.lua
+GarroshHellscream.lua
+FoOTrash.lua

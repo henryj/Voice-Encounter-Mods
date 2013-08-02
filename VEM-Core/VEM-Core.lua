@@ -5216,10 +5216,10 @@ do
 		)
 		if optionName then
 			obj.option = obj.id
-			self:AddBoolOption(optionName, optionDefault, "misc")
+			self:AddBoolOption(optionName, optionDefault, "sound")
 		elseif not (optionName == false) then
 			obj.option = obj.id
-			self:AddBoolOption(obj.id, optionDefault, "misc")
+			self:AddBoolOption(obj.id, optionDefault, "sound")
 			self.localization.options[obj.id] = VEM_CORE_AUTO_COUNTDOWN_OPTION_TEXT2:format(spellId)
 		end
 		tinsert(self.countdowns, obj)

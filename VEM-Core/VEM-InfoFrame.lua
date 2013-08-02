@@ -478,6 +478,21 @@ local function updateBossDebuffStacks()
 	updateLines()
 end
 
+local function updateSomePlayerDebuffs()
+	table.wipe(lines)
+	for uId, i in VEM:GetGroupMembers() do
+		if (UnitDebuff(uId, GetSpellInfo(infoFrameThreshold)) or UnitDebuff(uId, GetSpellInfo(pIndex)) or UnitDebuff(uId, GetSpellInfo(iconModifier))) and not UnitIsDeadOrGhost(uId) then
+			if UnitGroupRolesAssigned(uId) == "HEALER" then
+				lines[UnitName(uId)] = _G["HEALER"]
+			elseif UnitGroupRolesAssigned(uId) == "TANK" then
+				lines[UnitName(uId)] = _G["TANK"]
+			end
+		end
+	end
+	updateLines()
+	updateIcons()
+end
+
 local function updatePlayerDebuffStacksTime()
 	table.wipe(lines)
 	local UnitDebuffTime
@@ -541,6 +556,100 @@ local function updateTime()
 	end
 	updateLines()
 end
+
+local function updateFallenProtectorsHealth()
+	table.wipe(lines)
+	local bosshealth,findws,finddz,findms
+	local wsname = EJ_GetSectionInfo(7885)
+	local dzname = EJ_GetSectionInfo(7889)
+	local msname = EJ_GetSectionInfo(7904)
+	findws,finddz,findms = false,false,false
+	for i = 1, 5 do
+		if UnitName("boss"..i) == wsname then findws = true end
+		if UnitName("boss"..i) == dzname then finddz = true end
+		if UnitName("boss"..i) == msname then findms = true end
+	end
+	if not findws then
+		if infoFrameThreshold["ws"] then
+			local GLtime
+			GLtime = 10 - GetTime() - infoFrameThreshold["ws"]
+			if GLtime >= 0 then
+				GLtime = ("%d:%0.2d"):format(GLtime/60, math.fmod(GLtime, 60))
+				lines[wsname]= GLtime.."s"
+			end
+		else
+			lines[wsname]= GetSpellInfo(65294)
+		end
+	else
+		for i = 1, 5 do
+			if UnitName("boss"..i) == wsname then
+				bosshealth = math.floor(UnitHealth("boss"..i) / UnitHealthMax("boss"..i) * 100)
+				if bosshealth >= 66 then
+					lines[wsname]= (bosshealth-66).."% ("..bosshealth.."%)"
+				elseif bosshealth >= 33 then
+					lines[wsname]= (bosshealth-33).."% ("..bosshealth.."%)"
+				elseif bosshealth >= 0 then
+					lines[wsname]= bosshealth.."%"
+				end
+				break
+			end
+		end
+	end
+	if not finddz then
+		if infoFrameThreshold["dz"] then
+			local GLtime
+			GLtime = 10 - GetTime() - infoFrameThreshold["dz"]
+			if GLtime >= 0 then
+				GLtime = ("%d:%0.2d"):format(GLtime/60, math.fmod(GLtime, 60))
+				lines[dzname]= GLtime.."s"
+			end
+		else
+			lines[dzname]= GetSpellInfo(65294)
+		end
+	else
+		for i = 1, 5 do
+			if UnitName("boss"..i) == dzname then
+				bosshealth = math.floor(UnitHealth("boss"..i) / UnitHealthMax("boss"..i) * 100)
+				if bosshealth >= 66 then
+					lines[dzname]= (bosshealth-66).."% ("..bosshealth.."%)"
+				elseif bosshealth >= 33 then
+					lines[dzname]= (bosshealth-33).."% ("..bosshealth.."%)"
+				elseif bosshealth >= 0 then
+					lines[dzname]= bosshealth.."%"
+				end
+				break
+			end				
+		end
+	end
+	if not findms then
+		if infoFrameThreshold["ms"] then
+			local GLtime 
+			GLtime = 10 - GetTime() - infoFrameThreshold["ms"]
+			if GLtime >= 0 then
+				GLtime = ("%d:%0.2d"):format(GLtime/60, math.fmod(GLtime, 60))			
+				lines[msname]= GLtime.."s"
+			end
+		else
+			lines[msname]= GetSpellInfo(65294)
+		end
+	else
+		for i = 1, 5 do
+			if UnitName("boss"..i) == msname then
+				bosshealth = math.floor(UnitHealth("boss"..i) / UnitHealthMax("boss"..i) * 100)
+				if bosshealth >= 66 then
+					lines[msname]= (bosshealth-66).."% ("..bosshealth.."%)"
+				elseif bosshealth >= 33 then
+					lines[msname]= (bosshealth-33).."% ("..bosshealth.."%)"
+				elseif bosshealth >= 0 then
+					lines[msname]= bosshealth.."%"
+				end				
+			end
+			break
+		end
+	end
+	updateLines()
+end
+
 --BH ADD END
 
 local function updatePlayerAggro()
@@ -607,12 +716,16 @@ function onUpdate(self, elapsed)
 		updateNazgrimPower()
 	elseif currentEvent == "playerdebuffstackstime" then
 		updatePlayerDebuffStacksTime()
+	elseif currentEvent == "playersomedebuffs" then
+		updateSomePlayerDebuffs()
 	elseif currentEvent == "bossdebuffstacks" then
 		updateBossDebuffStacks()
 	elseif currentEvent == "other" then
 		updateOther()
 	elseif currentEvent == "time" then
 		updateTime()
+	elseif currentEvent == "FPHealth" then
+		updateFallenProtectorsHealth()
 	end
 --	updateIcons()
 	local linesShown = 0
@@ -709,12 +822,16 @@ function infoFrame:Show(maxLines, event, threshold, powerIndex, iconMod, extraPo
 		updateNazgrimPower()
 	elseif currentEvent == "playerdebuffstackstime" then
 		updatePlayerDebuffStacksTime()
+	elseif currentEvent == "playersomedebuffs" then
+		updateSomePlayerDebuffs()
 	elseif currentEvent == "bossdebuffstacks" then
 		updateBossDebuffStacks()
 	elseif currentEvent == "other" then
 		updateOther()
 	elseif currentEvent == "time" then
 		updateTime()
+	elseif currentEvent == "FPHealth" then
+		updateFallenProtectorsHealth()
 	elseif currentEvent == "test" then
 	else
 		error("VEM-InfoFrame: Unsupported event", 2)
@@ -758,12 +875,16 @@ function infoFrame:Update(event)
 		updateNazgrimPower()
 	elseif event == "playerdebuffstackstime" then
 		updatePlayerDebuffStacksTime()
+	elseif event == "playersomedebuffs" then
+		updateSomePlayerDebuffs()
 	elseif event == "bossdebuffstacks" then
 		updateBossDebuffStacks()
 	elseif event == "other" then
 		updateOther()
 	elseif event == "time" then
 		updateTime()
+	elseif event == "FPHealth" then
+		updateFallenProtectorsHealth()
 	else
 		error("VEM-InfoFrame: Unsupported event", 2)
 	end

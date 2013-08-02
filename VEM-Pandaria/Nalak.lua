@@ -1,7 +1,7 @@
 local mod	= VEM:NewMod(814, "VEM-Pandaria", nil, 322)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10079 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10094 $"):sub(12, -3))
 mod:SetCreatureID(69099)
 mod:SetQuestID(32518)
 mod:SetZone()
@@ -13,7 +13,6 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED",
 	"SPELL_AURA_REMOVED"
 )
-
 
 mod:RegisterEvents(
 	"CHAT_MSG_MONSTER_YELL"
@@ -70,6 +69,7 @@ function mod:OnCombatEnd()
 	if self.Options.RangeFrame then
 		VEM.RangeCheck:Hide()
 	end
+	yellTriggered = false
 end
 
 function mod:SPELL_CAST_START(args)
