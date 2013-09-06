@@ -2,9 +2,8 @@
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 10091 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10155 $"):sub(12, -3))
 mod:SetCreatureID(71734)
---mod:SetQuestID(32744)
 mod:SetZone()
 mod:SetUsedIcons(8, 7, 6, 5, 4, 3, 2, 1)
 
@@ -17,6 +16,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED",
 --	"SPELL_AURA_APPLIED_DOSE",
 	"SPELL_AURA_REMOVED",
+	"UNIT_POWER player",
 	"UNIT_POWER_FREQUENT boss1"
 )
 
@@ -37,17 +37,18 @@ local warnAuraOfPride			= mod:NewTargetAnnounce(146817, 3)--75-99 Energy
 local warnOvercome				= mod:NewTargetAnnounce(144843, 3)--100 Energy (pre mind control)
 local warnOvercomeMC			= mod:NewTargetAnnounce(144863, 4)--Mind control version (ie applied being hit by swelling pride while you have 144843)
 --Manifestation of Pride
-local warnManifestation			= mod:NewSpellAnnounce("ej8262", 3)
-local warnMockingBlast			= mod:NewSpellAnnounce(144379, 3)
+local warnManifestation			= mod:NewSpellAnnounce("ej8262", 3, "Interface\\Icons\\achievement_raid_terraceofendlessspring04")
+local warnMockingBlast			= mod:NewSpellAnnounce(144379, 3, nil, false)
 
 --Sha of Pride
 local specWarnGiftOfTitans		= mod:NewSpecialWarningYou(144359)
+local yellGiftOfTitans			= mod:NewYell(144359)
 local specWarnSwellingPride		= mod:NewSpecialWarningSpell(144400, nil, nil, nil, 2)
 local specWarnWoundedPride		= mod:NewSpecialWarningSpell(144358, mod:IsTank())
 local specWarnSelfReflection	= mod:NewSpecialWarningSpell(144800, nil, nil, nil, 2)
 local specWarnCorruptedPrison	= mod:NewSpecialWarningSpell(144574)
 local specWarnCorruptedPrisonYou= mod:NewSpecialWarningYou(144574, false)--Since you can't do anything about it, might as well be off by default. but an option cause someone will want it
-local yellCorruptedPrison		= mod:NewYell(144574)--Yell useful though, they have to be freed quickly
+local yellCorruptedPrison		= mod:NewYell(144574, nil, false)
 --Pride
 local specWarnBurstingPride		= mod:NewSpecialWarningMove(144911)--25-49 Energy
 local yellBurstingPride			= mod:NewYell(144911)
@@ -67,7 +68,7 @@ local timerMarkCD				= mod:NewNextTimer(20.5, 144351, nil, mod:IsHealer())
 local timerSelfReflectionCD		= mod:NewNextTimer(20.5, 144800)
 local timerWoundedPrideCD		= mod:NewNextTimer(26, 144358, nil, mod:IsTank())--A tricky on that is based off unit power but with variable timings, but easily workable with an 11, 26 rule
 local timerCorruptedPrisonCD	= mod:NewNextTimer(42, 144574)--Technically 40 for Imprison base cast, but this is timer til debuffs go out.
-local timerManifestationCD		= mod:NewNextTimer(48, "ej8262")
+local timerManifestationCD		= mod:NewNextTimer(48, "ej8262", nil, nil, nil, "Interface\\Icons\\achievement_raid_terraceofendlessspring04")
 local timerSwellingPrideCD		= mod:NewNextTimer(60.5, 144400)--Energy based, like sha of fear breath, is it also 33?
 local timerWeakenedResolve		= mod:NewBuffFadesTimer(60, 147207, nil, false)
 --Pride
@@ -83,6 +84,8 @@ mod:AddBoolOption("SetIconOnMark", false)
 mod:AddBoolOption("HudMAPBP", true, "sound")
 mod:AddBoolOption("HudMAPCP", true, "sound")
 mod:AddBoolOption("HudMAPAoP", false, "sound")
+
+mod:AddBoolOption("RangeFrame", true, "sound")
 local VEMHudMap = VEMHudMap
 local free = VEMHudMap.free
 local function register(e)	
@@ -94,7 +97,7 @@ local CPMarkers = {}
 local AoPMarkers = {}
 
 local tinsert, tconcat, twipe = table.insert, table.concat, table.wipe--Sha of tables....Might as well cache frequent table globals
-local UnitPower, UnitPowerMax, UnitIsDeadOrGhost = UnitPower, UnitPowerMax, UnitIsDeadOrGhost--Power is checked VERY frequently
+local UnitPower, UnitPowerMax, UnitIsDeadOrGhost, UnitGUID = UnitPower, UnitPowerMax, UnitIsDeadOrGhost, UnitGUID
 local giftOfTitansTargets = {}
 local burstingPrideTargets = {}
 local projectionTargets = {}
@@ -106,8 +109,8 @@ local markOfArroganceTargets = {}
 local markOfArroganceIcons = {}
 local corruptedPrisonTargets = {}
 local prideLevel = EJ_GetSectionInfo(8255)
-local playerName = UnitName("player")
 local firstWound = false
+local warnedpowerhigh = false
 
 local function warnGiftOfTitansTargets()
 	warnGiftOfTitans:Show(tconcat(giftOfTitansTargets, "<, >"))
@@ -209,12 +212,12 @@ function mod:OnCombatStart(delay)
 	timerManifestationCD:Start(-delay)
 	timerSwellingPrideCD:Start(-delay)
 --	countdownSwellingPride:Start(-delay)
+	sndWOP:Schedule(35-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\readyrescue.mp3") --準備救人
+	sndWOP:Schedule(45-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmobsoon.mp3") --準備大怪
 	sndWOP:Schedule(57-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\aesoon.mp3") --準備AOE
 	sndWOP:Schedule(58-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
 	sndWOP:Schedule(59-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
 	sndWOP:Schedule(60-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
-	sndWOP:Schedule(35, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\readyrescue.mp3") --準備救人
-	sndWOP:Schedule(45, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmobsoon.mp3") --準備大怪
 	self:Schedule(50, function()
 		specWarnManifestation:Show()
 		if mod:IsDps() then
@@ -224,6 +227,7 @@ function mod:OnCombatStart(delay)
 		end
 	end)	
 	firstWound = false
+	warnedpowerhigh = false
 	if self.Options.InfoFrame then
 		VEM.InfoFrame:SetHeader(prideLevel)
 		VEM.InfoFrame:Show(5, "playerpower", 5, ALTERNATE_POWER_INDEX)
@@ -234,11 +238,12 @@ function mod:OnCombatEnd()
 	if self.Options.InfoFrame then
 		VEM.InfoFrame:Hide()
 	end
-	
+	if self.Options.RangeFrame then
+		VEM.RangeCheck:Hide()
+	end
 	if self.Options.HudMAPBP or self.Options.HudMAPCP or self.Options.HudMAPAoP then
 		VEMHudMap:FreeEncounterMarkers()
 	end
-	
 end
 
 function mod:SPELL_CAST_START(args)
@@ -246,10 +251,10 @@ function mod:SPELL_CAST_START(args)
 		warnSwellingPride:Show()
 		specWarnSwellingPride:Show()
 	elseif args.spellId == 144379 then
-		local source = args.sourceName
+		local sourceGUID = args.sourceGUID
 		warnMockingBlast:Show()
-		if source == UnitName("target") or source == UnitName("focus") then 
-			specWarnMockingBlast:Show(source)
+		if sourceGUID == UnitGUID("target") or sourceGUID == UnitGUID("focus") then 
+			specWarnMockingBlast:Show(args.sourceName)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\kickcast.mp3") --快打斷
 		end
 	elseif args.spellId == 144832 then
@@ -274,12 +279,15 @@ function mod:SPELL_CAST_SUCCESS(args)
 		timerManifestationCD:Start()
 		timerSwellingPrideCD:Start()
 --		countdownSwellingPride:Start()
+		sndWOP:Schedule(35, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\readyrescue.mp3") --準備救人
+		sndWOP:Schedule(45, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmobsoon.mp3") --準備大怪
+		if warnedpowerhigh then
+			sndWOP:Schedule(55, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runout.mp3") --離開人群
+		end
 		sndWOP:Schedule(57, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\aesoon.mp3") --準備AOE
 		sndWOP:Schedule(58, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
 		sndWOP:Schedule(59, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
 		sndWOP:Schedule(60, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
-		sndWOP:Schedule(35, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\readyrescue.mp3") --準備救人
-		sndWOP:Schedule(45, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmobsoon.mp3") --準備大怪
 		self:Schedule(50, function()
 			specWarnManifestation:Show()
 			if mod:IsDps() then
@@ -342,6 +350,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		self:Schedule(0.5, warnGiftOfTitansTargets)
 		if args:IsPlayer() then
 			specWarnGiftOfTitans:Show()
+			yellGiftOfTitans:Yell()
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_ttzc.mp3") --泰坦之賜
 			sndWOP:Schedule(1, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\gather.mp3") --快集合
 		end
@@ -373,7 +382,6 @@ function mod:SPELL_AURA_APPLIED(args)
 		self:Schedule(0.5, warnAuraOfPrideTargets)
 		if args:IsPlayer() then
 			specWarnAuraOfPride:Show()
-			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runout.mp3") --離開人群
 			yellAuraOfPride:Yell()
 		end
 		if self.Options.HudMAPAoP then
@@ -459,7 +467,25 @@ end
 
 function mod:UNIT_POWER_FREQUENT(uId)
 	local power = UnitPower(uId)
-	if power == 80 and self:AntiSpam(10, 1) then--May not be 100% precise, but very close, it spawns around 80-85 energy
-		warnManifestation:Show()
+	if power == 80 and self:AntiSpam(3, 1) then--May not be 100% precise, but very close, it spawns around 80-85 energy
+--		warnManifestation:Show()
+--		specWarnManifestation:Show()--No spawn trigger to speak of. fortunately for us, they spawn based on boss power.
+	end
+end
+
+function mod:UNIT_POWER(uId)
+	local playerpower = UnitPower(uId, ALTERNATE_POWER_INDEX)
+	if playerpower < 50 and warnedpowerhigh then
+		warnedpowerhigh = false
+		if self.Options.RangeFrame then
+			VEM.RangeCheck:Hide()
+		end
+	end
+	if playerpower > 75 and not warnedpowerhigh then
+		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_aqgg.mp3") --傲氣過高
+		if self.Options.RangeFrame then
+			VEM.RangeCheck:Show(5)
+		end
+		warnedpowerhigh = true
 	end
 end

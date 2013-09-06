@@ -11,6 +11,15 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
+	dr						= "減傷提示[警報會在$spell:143020時提示, 但您的減傷應在撞擊前開啟]",
+	dr1						= "$spell:143020 1",
+	dr2						= "$spell:143020 2",
+	dr3						= "$spell:143020 3",
+	dr4						= "$spell:143020 4",
+	dr5						= "$spell:143020 5",
+	dr6						= "$spell:143020 6",
+	dr7						= "$spell:143020 7",
+	dr8						= "$spell:143020 8"
 })
 
 ---------------------------
@@ -26,9 +35,24 @@ L:SetTimerLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
+	SoundBD					= "語音警告：驅散$spell:143434",
+	dr1						= "減傷提示：$spell:143491 1/4",
+	dr2						= "減傷提示：$spell:143491 2/4",
+	dr3						= "減傷提示：$spell:143491 3/4",
+	dr4						= "減傷提示：$spell:143491 4/4",
+	BaneGridCount			= "Grid：爲首領釋放的$spell:143434顯示編號(提示位置需要在Grid上設置\"VEM編號-暗言術:蠱\"，若不選中下邊一項則編號順序使用Grid默認排序。擴散出現的$spell:143434不會顯示編號)",
+	BaneRaidFrameCount		= "Grid：$spell:143434編號順序使用暴雪團隊框架的排序",
+	optBaneGridCount		= "Grid：閃動顯示分配給你驅散的\"暗言術:蠱\"編號",
+	noflash					= "不閃動",
+	flash1					= "1號",
+	flash2					= "2號",
+	flash3					= "3號",
+	flash4					= "4號",
+	flash5					= "5號"
 })
 
 L:SetMiscLocalization({
+	VEM_GridBaneCount		= "VEM編號-暗言術:蠱"
 })
 
 ---------------------------
@@ -37,11 +61,17 @@ L:SetMiscLocalization({
 L= VEM:GetModLocalization(866)
 
 L:SetWarningLocalization({
+	specWarnTestIn			= "隊友入場：%s",
+	specWarnTestOut			= "隊友出場：%s"
 })
 
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
-	InfoFrame				= "資訊框：$journal:8252"
+	InfoFrame				= "資訊框：$journal:8252",
+	InfoFrame2				= "資訊框：$spell:144452(取代$journal:8252提示)",
+	specWarnTestIn			= "特別警告：你監視的隊友入場",
+	specWarnTestOut			= "特別警告：你監視的隊友出場",
+	prevplayer				= "輸入一個隊友名，在他入場和離場時都會通知你"
 })
 
 ------------------
@@ -57,6 +87,7 @@ L:SetOptionLocalization({
 	HudMAPBP				= "高級定位監視(HUD)：$spell:144911",
 	HudMAPCP				= "高級定位監視(HUD)：$spell:144574",
 	HudMAPAoP				= "高級定位監視(HUD)：$spell:146817",
+	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(5, 146817),
 	SetIconOnMark			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(144351),
 	InfoFrame				= "資訊框：$journal:8255"
 })
@@ -74,9 +105,15 @@ L:SetTimerLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
+	SoundZQ					= "語音警告：$spell:147328",
+	SoundTT					= "語音警告：$spell:146753",
+	FixateIcon				= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(147068),
+	InfoFrame				= "資訊框：下一波$journal:8427"
 })
 
 L:SetMiscLocalization({
+	tower		= "The door barring the",--The door barring the South/North Tower has been breached!
+	demolisher	= "[Kor'kron Demolisher]|h|r to assault the tower!"--In case they remove the bad epiccenter spellid will use this
 })
 
 --------------------
@@ -127,7 +164,7 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
-	SoundTT					= "語音警告：打掉$spell:143474",
+	SoundTT					= "語音警告：$spell:143474",
 	InfoFrame				= "資訊框：怒氣監視器",	
 })
 
@@ -136,7 +173,8 @@ L:SetMiscLocalization({
 	newForces2				= "Defend the gate!",
 	newForces3				= "Rally the forces!",
 	newForces4				= "Kor'kron, at my side!",
-	newForces5				= "Next squad, to the front!"
+	newForces5				= "Next squad, to the front!",
+	allForces				= "All Kor'kron... under my command... kill them... NOW!"
 })
 
 
@@ -167,6 +205,12 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
+	Filterarea				= "其他：使用更嚴格的方式判定所在區域"
+})
+
+L:SetMiscLocalization({
+	Module1 = "Module 1's all prepared for system reset.",
+	Victory	= "Module 2's all prepared for system reset"
 })
 
 ---------------------------
@@ -182,7 +226,9 @@ L:SetTimerLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
-	RangeFrame				= "距離監視(10碼)：動態"
+	SoundPX					= "倒计时：$spell:143343",
+	RangeFrame				= "距離監視(10碼)：動態",
+	FixateIcon				= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(143445)
 })
 
 L:SetMiscLocalization({
@@ -240,12 +286,12 @@ L:SetMiscLocalization({
 	purple				= "Purple",
 	green				= "Green",
 	bomb				= "Bomb",
-	sword				= "Swords",
+	sword				= "Sword",
 	drums				= "Drums",
 	mantid				= "Mantid",--Assumed
 	staff 				= "Staff",--Assumed
 	one					= "One",
-	two					= "Pair",
+	two					= "Two",
 	three				= "Three",
 	four				= "Four",--Assumed
 	five				= "Five",--Assumed

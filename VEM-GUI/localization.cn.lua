@@ -51,9 +51,6 @@ L.NoSound					= "静音"
 
 L.IconsInUse				= "该模块使用到的团队标记"
 
-L.QuestComplete				= "本周已击杀."
-L.QuestIncomplete			= "本周未击杀(注意:如果你登录后曾重载界面则此信息不准确)"
-
 -- Tab: Boss Statistics
 L.BossStatistics			= "首领统计"
 L.Statistic_Kills			= "击杀："

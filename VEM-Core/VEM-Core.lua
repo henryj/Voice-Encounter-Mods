@@ -43,7 +43,7 @@
 --  Globals/Default Options  --
 -------------------------------
 VEM = {
-	Revision = tonumber(("$Revision: 10080 $"):sub(12, -3)),
+	Revision = tonumber(("$Revision: 10150 $"):sub(12, -3)),
 	DisplayVersion = "(VEM) 5.3.6", -- the string that is shown as version
 	DisplayReleaseVersion = "5.3.5", -- Needed to work around bigwigs sending improper version information
 	ReleaseRevision = 10055 -- the revision of the latest stable version that is available
@@ -793,6 +793,7 @@ do
 				"CHAT_MSG_RAID_BOSS_EMOTE",
 				"RAID_BOSS_EMOTE",
 				"PLAYER_ENTERING_WORLD",
+				"LFG_ROLE_CHECK_SHOW",
 				"LFG_PROPOSAL_SHOW",
 				"READY_CHECK",
 				"LFG_PROPOSAL_FAILED",
@@ -1767,6 +1768,26 @@ function VEM:GetNumGroupMembers()
 	return IsInGroup() and GetNumGroupMembers() or 1
 end
 
+--For returning the number of players actually in zone with us for status functions
+--This fails if player is in a  micro dungeon though (such as shrine of seven stars)
+--Fortunately as far as i know there aren't many raid bosses there.
+function VEM:GetNumRealGroupMembers()
+	SetMapToCurrentZone()
+	local currentMapId = GetCurrentMapAreaID()
+	local currentMapName = GetMapNameByID(currentMapId)
+	local realGroupMembers = 0
+	if IsInGroup() then
+		for i = 1, GetNumGroupMembers() do
+			if select(7, GetRaidRosterInfo(i)) == currentMapName then
+				realGroupMembers = realGroupMembers + 1
+			end
+		end
+	else
+		return 1
+	end
+	return realGroupMembers
+end
+
 function VEM:GetBossUnitId(name)
 	for i = 1, 5 do
 		if UnitName("boss" .. i) == name then
@@ -1893,6 +1914,11 @@ do
 	end
 end
 
+function VEM:LFG_ROLE_CHECK_SHOW()
+	if not UnitIsGroupLeader("player") and VEM.Options.EnableReadyCheckSound then
+		PlaySoundFile("Sound\\interface\\levelup2.ogg", "Master")--Because regular sound uses SFX channel which is too low of volume most of time
+	end
+end
 
 function VEM:LFG_PROPOSAL_SHOW()
 	VEM.Bars:CreateBar(40, VEM_LFG_INVITE, "Interface\\Icons\\Spell_Holy_BorrowedTime")
@@ -2172,6 +2198,14 @@ function VEM:LoadMod(mod)
 			RequestChallengeModeMapInfo()
 			RequestChallengeModeLeaders(mapID)
 		end
+		if instanceType == "pvp" and IsAddOnLoaded("VEM-PVP") then--Is a battleground and pvp mods are installed
+			if VEM:GetModByName("z30") and VEM:GetModByName("z30").revision >= 3 then--They are loaded and correct revision
+				--Do nothing
+			else--They either aren't loaded or are wrong revision. in either case, it means they have old pvp mods installed that don't load correctly or are out of date
+				--Not the new stand alone pvp mods these are old ones and user needs to remove them or install updated package
+--				self:AddMsg(VEM_CORE_OUTDATED_PVP_MODS)
+			end
+		end
 		if not InCombatLockdown() then--We loaded in combat because a raid boss was in process, but lets at least delay the garbage collect so at least load mod is half as bad, to do our best to avoid "script ran too long"
 			collectgarbage("collect")
 		end
@@ -2349,12 +2383,12 @@ do
 			raid[sender].locale = locale
 			local revDifference = revision - tonumber(VEM.Revision)
 			if version > tonumber(VEM.Version) and displayVersion:find("VEM") then -- Update reminder
-				--Bigwigs version faking breaks version update notification because they send alpha revision as release revision with their faking code
+				--Old version of Bigwigs version faking breaks version update notification because they send alpha revision as release revision with their faking code
 				--Bigwigs sniffs highest REVISION it finds in raid, (not highest ReleaseRevision) and then passes it as ReleaseRevision arg when sending sync back
 				--As a result, we'll get a valid DisplayVersion but the highest alpha Revision bigwigs saw in raid roster as a sync.
 				--For example, we might get 5.3.5 revision 10066 which is IMPOSSIBLE, anything above 10055 would be 5.3.6 alpha.
-				--So below we fix these problems so our users don't get spammed with invalid update notifications do to BW sending bad  version information
-				if displayVersion == VEM.DisplayVersion or displayVersion == VEM.DisplayReleaseVersion then--Their version is higher than hours, but display version is same, ignore it.
+				--So below we fix these problems so our users don't get spammed with invalid update notifications do to BW sending bad version information
+				if displayVersion == VEM.DisplayVersion or displayVersion == VEM.DisplayReleaseVersion then--Their version is higher than ours, but display version is same, ignore it.
 					--Since we know their version information is crap, nil it out.
 					raid[sender].revision = nil
 					raid[sender].version = nil
@@ -3487,7 +3521,7 @@ function VEM:EndCombat(mod, wipe)
 				mod.stats.heroicKills = mod.stats.heroicKills + 1
 				if not mod.ignoreBestkill then
 					mod.stats.heroicLastTime = thisTime
-					if bestTime and bestTime > 0 and bestTime < 3 then
+					if bestTime and bestTime > 0 and bestTime < 2 then
 						mod.stats.heroicBestTime = thisTime
 					else
 						mod.stats.heroicBestTime = math.min(bestTime or math.huge, thisTime)
@@ -3499,7 +3533,7 @@ function VEM:EndCombat(mod, wipe)
 				mod.stats.normal25Kills = mod.stats.normal25Kills + 1
 				if not mod.ignoreBestkill then
 					mod.stats.normal25LastTime = thisTime
-					if bestTime and bestTime > 0 and bestTime < 5 then
+					if bestTime and bestTime > 0 and bestTime < 3 then
 						mod.stats.normal25BestTime = thisTime
 					else
 						mod.stats.normal25BestTime = math.min(bestTime or math.huge, thisTime)
@@ -3511,7 +3545,7 @@ function VEM:EndCombat(mod, wipe)
 				mod.stats.heroic25Kills = mod.stats.heroic25Kills + 1
 				if not mod.ignoreBestkill then
 					mod.stats.heroic25LastTime = thisTime
-					if bestTime and bestTime > 0 and bestTime < 5 then
+					if bestTime and bestTime > 0 and bestTime < 4 then
 						mod.stats.heroic25BestTime = thisTime
 					else
 						mod.stats.heroic25BestTime = math.min(bestTime or math.huge, thisTime)
@@ -3940,7 +3974,7 @@ do
 			end
 			mod = mod or inCombat[1]
 			local hp = ("%d%%"):format((mod.mainBossId and VEM:GetBossHealthByCID(mod.mainBossId) or mod.highesthealth and VEM:GetHighestBossHealth() or VEM:GetLowestBossHealth()) * 100)
-			sendWhisper(sender, chatPrefix..VEM_CORE_STATUS_WHISPER:format(difficultyText..(mod.combatInfo.name or ""), hp or VEM_CORE_UNKNOWN, getNumAlivePlayers(), GetNumGroupMembers()))
+			sendWhisper(sender, chatPrefix..VEM_CORE_STATUS_WHISPER:format(difficultyText..(mod.combatInfo.name or ""), hp or VEM_CORE_UNKNOWN, getNumAlivePlayers(), VEM:GetNumRealGroupMembers()))
 		elseif #inCombat > 0 and VEM.Options.AutoRespond and
 		(isRealIdMessage and (not isOnSameServer(sender) or not VEM:GetRaidUnitId(select(4, BNGetFriendInfoByID(sender)))) or not isRealIdMessage and not VEM:GetRaidUnitId(sender)) then
 			if not difficultyText then -- prevent error when timer recovery function worked and etc (StartCombat not called)
@@ -3954,9 +3988,9 @@ do
 			local hp = ("%d%%"):format((mod.mainBossId and VEM:GetBossHealthByCID(mod.mainBossId) or mod.highesthealth and VEM:GetHighestBossHealth() or VEM:GetLowestBossHealth()) * 100)
 			if not autoRespondSpam[sender] then
 				if IsInScenarioGroup() then
-					sendWhisper(sender, chatPrefix..VEM_CORE_AUTO_RESPOND_WHISPER_SCENARIO:format(playerName, difficultyText..(mod.combatInfo.name or ""), getNumAlivePlayers(), GetNumGroupMembers()))
+					sendWhisper(sender, chatPrefix..VEM_CORE_AUTO_RESPOND_WHISPER_SCENARIO:format(playerName, difficultyText..(mod.combatInfo.name or ""), getNumAlivePlayers(), VEM:GetNumGroupMembers()))
 				else
-					sendWhisper(sender, chatPrefix..VEM_CORE_AUTO_RESPOND_WHISPER:format(playerName, difficultyText..(mod.combatInfo.name or ""), hp or VEM_CORE_UNKNOWN, getNumAlivePlayers(), GetNumGroupMembers()))
+					sendWhisper(sender, chatPrefix..VEM_CORE_AUTO_RESPOND_WHISPER:format(playerName, difficultyText..(mod.combatInfo.name or ""), hp or VEM_CORE_UNKNOWN, getNumAlivePlayers(), VEM:GetNumRealGroupMembers()))
 				end
 				VEM:AddMsg(VEM_CORE_AUTO_RESPONDED)
 			end
@@ -3964,8 +3998,10 @@ do
 		end
 	end
 
-	function VEM:CHAT_MSG_WHISPER(msg, name)
-		return onWhisper(msg, name, false)
+	function VEM:CHAT_MSG_WHISPER(msg, name, _, _, _, status)
+		if status ~= "GM" then
+			return onWhisper(msg, name, false)
+		end
 	end
 
 	function VEM:CHAT_MSG_BN_WHISPER(msg, ...)

@@ -53,7 +53,6 @@ L:SetOptionLocalization({
 	RangeFrame			= "距離監視(10碼)：$spell:136340"
 })
 
-
 L:SetMiscLocalization({
 	Pull				= "你感覺到冷風吹過了嗎?風暴要來了..."
 })
@@ -68,6 +67,10 @@ L:SetOptionLocalization({
 	HudMAP					= "高級定位監視(HUD)：$spell:144473",
 	SetIconOnBeacon			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(144473),
 	BeaconArrow				= "VEM箭頭：$spell:144473"
+})
+
+L:SetMiscLocalization({
+	Victory					= "Your hope shines brightly, and even more brightly when you work together to overcome. It will ever light your way in even the darkest of places."
 })
 
 ------------------------------
@@ -97,6 +100,10 @@ L= VEM:GetModLocalization(860)
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(3, 144642)
+})
+
+L:SetMiscLocalization({
+	Victory					= "You are strong, stronger even than you realize. Carry this thought with you into the darkness ahead, and let it shield you."
 })
 
 ------------------------------------

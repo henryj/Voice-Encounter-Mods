@@ -1,10 +1,10 @@
 ﻿local mod	= VEM:NewMod(849, "VEM-SiegeOfOrgrimmar", nil, 369)
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
+local sndBD		= mod:NewSound(nil, "SoundBD", mod:IsHealer())
 
-mod:SetRevision(("$Revision: 10086 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10150 $"):sub(12, -3))
 mod:SetCreatureID(71479, 71475, 71480)--He-Softfoot, Rook Stonetoe, Sun Tenderheart
---mod:SetQuestID(32744)
 mod:SetZone()
 
 mod:RegisterCombat("combat")
@@ -39,7 +39,7 @@ local warnGarrote					= mod:NewTargetAnnounce(143198, 3, nil, mod:IsHealer())
 local warnMarkOfAnguish				= mod:NewSpellAnnounce(143812, 2)--Activation
 local warnMarked					= mod:NewTargetAnnounce(143840, 3)--Embodied Anguish			
 --Sun Tenderheart
-local warnShaShear					= mod:NewCastAnnounce(143423, 3, 5)
+local warnShaShear					= mod:NewCastAnnounce(143423, 3, 5, nil, false)
 local warnBane						= mod:NewCastAnnounce(143446, 4, nil, nil, mod:IsHealer())
 local warnCalamity					= mod:NewSpellAnnounce(143491, 4)
 ----Sun Tenderheart's Desperate Measures
@@ -67,33 +67,58 @@ local specWarnMarkOfAnquish			= mod:NewSpecialWarningSpell(143812)
 local specWarnMarked				= mod:NewSpecialWarningYou(143840)
 local yellMarked					= mod:NewYell(143840, nil, false)
 --Sun Tenderheart
-local specWarnShaShear				= mod:NewSpecialWarningInterrupt(143423, mod:IsMelee())
+local specWarnShaShear				= mod:NewSpecialWarningInterrupt(143423, false)
 local specWarnBane					= mod:NewSpecialWarningSpell(143446, mod:IsHealer())
+local specWarnBaneDisp				= mod:NewSpecialWarningDispel(143446, mod:IsHealer())
 local specWarnCalamity				= mod:NewSpecialWarningSpell(143491, nil, nil, nil, 2)
 ----Sun Tenderheart's Desperate Measures
 local specWarnDarkMeditation		= mod:NewSpecialWarningSpell(143546)
 
 --Rook Stonetoe
-local timerVengefulStrikesCD		= mod:NewCDTimer(43, 144396)--(heroic 28)
+local timerVengefulStrikesCD		= mod:NewCDTimer(21, 144396, nil, mod:IsTank())
 local timerCorruptedBrewCD			= mod:NewCDTimer(11, 143019)--11-27
-local timerClashCD					= mod:NewCDTimer(49.5, 143027)--Seems changed to a next timer
+local timerClashCD					= mod:NewCDTimer(49, 143027)--49 second next timer IF none of bosses enter a special between casts, otherwise always delayed by specials (and usually cast within 5 seconds after special ends)
 ----Rook Stonetoe's Desperate Measures
 local timerDefiledGroundCD			= mod:NewCDTimer(10.5, 143961, nil, mod:IsTank())
-local timerInfernoStrikeCD			= mod:NewNextTimer(10, 143962)
+local timerInfernoStrikeCD			= mod:NewNextTimer(9.5, 143962)
 --He Softfoot
 local timerGougeCD					= mod:NewCDTimer(30, 143330, nil, mod:IsTank())--30-41
-local timerGarroteCD				= mod:NewCDTimer(30, 143198, nil, mod:IsHealer())--30-36 (heroic 20-26)
+local timerGarroteCD				= mod:NewCDTimer(30, 143198, nil, mod:IsHealer())--30-46 (heroic 20-26)
 --Sun Tenderheart
-local timerBaneCD					= mod:NewCDTimer(25, 143446, nil, mod:IsHealer())--25-30 (heroic 13-20)
-local timerCalamityCD				= mod:NewCDTimer(39, 143491)--39-43
+local timerBaneCD					= mod:NewCDTimer(17, 143446, nil, mod:IsHealer())--17-25 (heroic 13-20)
+local timerCalamityCD				= mod:NewCDTimer(42, 143491)--42-50 (when two can be cast in a row) Also affected by boss specials
 
---local berserkTimer					= mod:NewBerserkTimer(490)
+--local berserkTimer				= mod:NewBerserkTimer(490)
 
 local UnitExists = UnitExists
 local UnitGUID = UnitGUID
 local UnitDetailedThreatSituation = UnitDetailedThreatSituation
 
-local DeadTime = {}
+----Grid----
+local GridStatus
+if Grid then
+	GridStatus = GridStatus or Grid:GetModule("GridStatus")
+end
+local canrecount = true
+local DebuffGuid = {}
+local setflash = 0
+--------Grid End----
+
+local calacount = 0
+for i = 1, 4 do
+	mod:AddBoolOption("dr"..i, false, "sound")
+end
+
+mod:AddBoolOption("BaneGridCount", false, "sound")
+mod:AddBoolOption("BaneRaidFrameCount", false, "sound")
+mod:AddDropdownOption("optBaneGridCount", {"noflash", "flash1", "flash2", "flash3", "flash4", "flash5"}, "noflash", "sound")
+
+local function MyJS()
+	if (mod.Options.dr1 and calacount == 1) or (mod.Options.dr2 and calacount == 2) or (mod.Options.dr3 and calacount == 3) or (mod.Options.dr4 and calacount == 4) then
+		return true
+	end
+	return false
+end
 
 function mod:BrewTarget(targetname, uId)
 	if not targetname then return end
@@ -122,7 +147,8 @@ function mod:InfernoStrikeTarget(targetname, uId)
 	warnInfernoStrike:Show(targetname)
 	if targetname == UnitName("player") then
 		specWarnInfernoStrike:Show()
-		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_lydj.mp3") --煉獄打擊
+		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_lydj.mp3") --煉獄打擊 快回人群
+		sndWOP:Schedule(1, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runin.mp3")
 		sndWOP:Schedule(5.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
 		sndWOP:Schedule(6.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
 		sndWOP:Schedule(7.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
@@ -132,17 +158,29 @@ function mod:InfernoStrikeTarget(targetname, uId)
 end
 
 function mod:OnCombatStart(delay)
-	timerVengefulStrikesCD:Start(8-delay)
-	timerGarroteCD:Start(9-delay)
+	timerVengefulStrikesCD:Start(7-delay)
+	timerGarroteCD:Start(15-delay)
 	timerBaneCD:Start(15-delay)
 	timerCorruptedBrewCD:Start(18-delay)
-	timerGougeCD:Start(25-delay)
+	timerGougeCD:Start(23-delay)
 	timerCalamityCD:Start(31-delay)
-	timerClashCD:Start(-delay)
-	table.wipe(DeadTime)
+	timerClashCD:Start(-delay)--Unsure if stll same, since this almost NEVER happens, at least one of them will enter a special and cancel this timer
 --	berserkTimer:Start(-delay)
+	calacount = 0
 	VEM.InfoFrame:SetHeader(EJ_GetSectionInfo(8017))
-	VEM.InfoFrame:Show(3, "FPHealth", DeadTime)
+	VEM.InfoFrame:Show(3, "FPHealth")
+	if GridStatus then
+		GridStatusBaneDbmCount:UpdateAllUnitAuras()
+	end
+end
+
+function mod:OnCombatEnd()
+	if self.Options.InfoFrame then
+		VEM.InfoFrame:Hide()
+	end
+	if GridStatus then
+		GridStatusBaneDbmCount:UpdateAllUnitAuras()
+	end
 end
 
 function mod:SPELL_CAST_START(args)
@@ -168,21 +206,26 @@ function mod:SPELL_CAST_START(args)
 		specWarnBane:Show()
 		if mod:IsHealer() then
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_ays.mp3") --暗言術準備
-			sndWOP:Schedule(3, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\dispelnow.mp3")
 		end
 		if self:IsDifficulty("heroic10", "heroic25") then
 			timerBaneCD:Start(13)--TODO, verify normal to see if it was changed too
 		else
 			timerBaneCD:Start()
 		end
+		canrecount = true
 	elseif args.spellId == 143491 then
+		calacount = calacount + 1
 		warnCalamity:Show()
 		specWarnCalamity:Show()
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_zxzb.mp3") --災星準備
+		if MyJS() then
+			sndWOP:Schedule(1.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
+		end
 		sndWOP:Schedule(2.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
 		sndWOP:Schedule(3.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
 		sndWOP:Schedule(4.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 		timerCalamityCD:Start()
+		if calacount == 4 then calacount = 0 end
 	elseif args.spellId == 143961 then
 		warnDefiledGround:Show()
 		timerDefiledGroundCD:Start()
@@ -191,25 +234,14 @@ function mod:SPELL_CAST_START(args)
 		timerInfernoStrikeCD:Start()
 	elseif args.spellId == 143497 then
 		warnBondGoldenLotus:Show()
-		if args:GetSrcCreatureID() == 71479 and not DeadTime["dz"] then
-			DeadTime["dz"] = GetTime()
-		elseif args:GetSrcCreatureID() == 71475 and not DeadTime["ws"] then
-			DeadTime["ws"] = GetTime()
-		elseif args:GetSrcCreatureID() == 71480 and not DeadTime["ms"] then
-			DeadTime["ms"] = GetTime()
-		end
 		VEM.InfoFrame:SetHeader(EJ_GetSectionInfo(8017))
-		VEM.InfoFrame:Show(3, "FPHealth", DeadTime)
+		VEM.InfoFrame:Show(3, "FPHealth")
 	elseif args.spellId == 144396 then
 		warnVengefulStrikes:Show()
 		if mod:IsHealer() and self:AntiSpam(2, 3) then
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_fcdj.mp3") --復仇打擊
 		end
-		if self:IsDifficulty("heroic10", "heroic25") then
-			timerVengefulStrikesCD:Start(28)--TODO, verify normal to see if it was changed too
-		else
-			timerVengefulStrikesCD:Start()
-		end
+		timerVengefulStrikesCD:Start()
 		for i = 1, 3 do
 			local bossUnitID = "boss"..i
 			if UnitExists(bossUnitID) and UnitGUID(bossUnitID) == args.sourceGUID and UnitDetailedThreatSituation("player", bossUnitID) then--We are highest threat target
@@ -235,16 +267,10 @@ function mod:SPELL_CAST_SUCCESS(args)
 		if source == UnitName("target") or source == UnitName("focus") then--Only warn if your target or focus, period, because if you aren't actually dpsing her, you just stay out of melee range and ignore this
 			warnShaShear:Show()
 			specWarnShaShear:Show(source)
-			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\kickcast.mp3") --快打斷
 		end
-	elseif args.spellId == 143497 then
-		if args:GetSrcCreatureID() == 71479 then
-			DeadTime["dz"] = nil
-		elseif args:GetSrcCreatureID() == 71475 then
-			DeadTime["ws"] = nil
-		elseif args:GetSrcCreatureID() == 71480 then
-			DeadTime["ms"] = nil
-		end
+	elseif args.spellId == 143446 then
+		specWarnBaneDisp:Show()
+		sndBD:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\dispelnow.mp3")
 	end
 end
 
@@ -281,21 +307,31 @@ function mod:SPELL_AURA_APPLIED(args)
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_amqh.mp3")--暗牧強化
 		timerBaneCD:Cancel()
 		timerCalamityCD:Cancel()
+		timerClashCD:Cancel()--Can't be cast during ANYONES special
 	elseif args.spellId == 143955 then--Misery, Sorrow, and Gloom
 		warnMiserySorrowGloom:Show()
 		specWarnMiserySorrowGloom:Show()
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_wsqh.mp3")--武僧強化
 		timerVengefulStrikesCD:Cancel()
-		timerClashCD:Cancel()
+		timerClashCD:Cancel()--Can't be cast during ANYONES special
 		timerCorruptedBrewCD:Cancel()
-		timerInfernoStrikeCD:Start(7)
-		timerDefiledGroundCD:Start(9)
+		timerInfernoStrikeCD:Start(8)
+		timerDefiledGroundCD:Start(10)
 	elseif args.spellId == 143812 then--Mark of Anguish
 		warnMarkOfAnguish:Show()
 		specWarnMarkOfAnquish:Show()
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_dzqh.mp3")--盜賊強化
 		timerGougeCD:Cancel()
 		timerGarroteCD:Cancel()
+		timerClashCD:Cancel()--Can't be cast during ANYONES special
+		timerCalamityCD:Cancel()--Can't be cast during THIS special
+	elseif args.spellId == 143434 then
+		if not GridStatus or not mod.Options.BaneGridCount then return end
+		local cid = self:GetCIDFromGUID(args.sourceGUID)
+		if cid == 71480 then
+			DebuffGuid[args.destGUID] = true
+			GridStatusBaneDbmCount:UpdateAllUnitAuras()
+		end
 	end
 end
 
@@ -303,16 +339,23 @@ function mod:SPELL_AURA_REMOVED(args)
 	--Special phases
 	if args.spellId == 143546 then--Dark Meditation
 		timerBaneCD:Start(10)
---		timerCalamityCD:Start()--Seems cast almost right away now?
+		timerCalamityCD:Start(23)--Now back to not cast right away again.
 	elseif args.spellId == 143955 then--Misery, Sorrow, and Gloom
 		timerDefiledGroundCD:Cancel()
 		timerInfernoStrikeCD:Cancel()
-		timerVengefulStrikesCD:Start(7.5)
-		timerCorruptedBrewCD:Start(17)
-		timerClashCD:Start(42)--Seems highly variable after his special, 42-49. but is a next timer rest of fight
+		timerCorruptedBrewCD:Start(12)
+		timerVengefulStrikesCD:Start(18)
+--		timerClashCD:Start()--No good data on this, since i have no logs where I didn't push another bosses special before clash was cast after his own
 	elseif args.spellId == 143812 then--Mark of Anguish
-		timerGarroteCD:Start(8)--TODO, compare normal logs with heroic logs 
-		timerGougeCD:Start(23)
+		timerGarroteCD:Start(12)--TODO, verify consistency in all difficulties
+		timerGougeCD:Start(23)--Seems to be either be exactly 23 or exactly 35. Not sure what causes it to switch.
+	elseif args.spellId == 143434 then
+		if not GridStatus or not mod.Options.BaneGridCount then return end
+		if DebuffGuid[args.destGUID] then
+			DebuffGuid[args.destGUID] = nil
+			canrecount = false
+			GridStatusBaneDbmCount:UpdateAllUnitAuras()
+		end
 	end
 end
 
@@ -335,4 +378,159 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		self:BossTargetScanner(71475, "BrewTarget", 0.025)
 		timerCorruptedBrewCD:Start()
 	end
+end
+
+------------------------
+
+if not GridStatus then return end
+
+local fixduration = 0
+local flashicon
+local elapsed = 0
+local flashcount = {}
+local icon_prefix = "Interface\\AddOns\\VEM-Core\\textures\\count\\"
+local indicators = {}
+local counter = 0
+
+GridStatusBaneDbmCount = GridStatus:NewModule("GridStatusBaneDbmCount")
+
+local function FlashIcon(self, elapsed)
+	local settings = GridStatusBaneDbmCount.db.profile.vem_grid_banecountmod
+	for i, params in pairs(flashcount) do
+		local cd_start = params.start
+		local cd_duration = params.duration
+		if flashicon == params.queue then
+			flashicon = params.queue.."b"
+		else
+			flashicon = params.queue
+		end
+		GridStatusBaneDbmCount.core:SendStatusLost(i, "vem_grid_banecountmod")
+		GridStatusBaneDbmCount.core:SendStatusGained(i, "vem_grid_banecountmod",
+			settings.priority,
+			(settings.range and 40),
+			{r = settings.color.r, g = settings.color.g, b = settings.color.b, a = settings.color.a, ignore = true},
+			tostring(params.queue),
+			nil,
+			nil,
+			icon_prefix..flashicon..".tga",
+			cd_start,
+			cd_duration
+		)
+	end
+end
+
+GridStatusBaneDbmCount.defaultDB = {
+	vem_grid_banecountmod = {
+		enable = true,
+		color = { r = 1, g = 1, b = 1, a = 1, ignore = true },
+		priority = 99,
+		range = false,
+	}
+}
+
+function GridStatusBaneDbmCount:OnInitialize()
+	local GridStatusBaneDbmCountName = L.VEM_GridBaneCount
+	self.super.OnInitialize(self)
+	self:RegisterStatus("vem_grid_banecountmod", GridStatusBaneDbmCountName, nil, true)
+end
+
+
+function GridStatusBaneDbmCount:OnStatusEnable(status)
+	if status == "vem_grid_banecountmod" then
+		self.CountFrame = CreateFrame("Frame")
+		self.CountFrame:SetScript("OnUpdate", function(self, e)
+			elapsed = elapsed + e
+			if elapsed >= 0.5 then
+				FlashIcon(self, elapsed)
+				elapsed = 0
+			end
+		end)
+		self.CountFrame:Show()
+	end
+end
+
+function GridStatusBaneDbmCount:OnStatusDisable(status)
+	if status == "vem_grid_banecountmod" then
+		self.CountFrame:Hide()
+		self.core:SendStatusLostAllUnits("vem_grid_banecountmod")
+	end
+end
+
+local function sortByGroupAsc(a,b)
+	if a.gp == b.gp then
+		if mod.Options.BaneRaidFrameCount then
+			return a.ui < b.ui
+		else
+			return a.n < b.n
+		end
+	else
+		return a.gp < b.gp
+	end
+end
+
+function GridStatusBaneDbmCount:UpdateAllUnitAuras()
+	local settings = self.db.profile.vem_grid_banecountmod	
+	local countsort = 0
+	local k = 0
+	local tbl = {}
+	setflash = mod.Options.optBaneGridCount == "flash1" and 1 or mod.Options.optBaneGridCount == "flash2" and 2 or mod.Options.optBaneGridCount == "flash3" and 3 or mod.Options.optBaneGridCount == "flash4" and 4 or mod.Options.optBaneGridCount == "flash5" and 5 or mod.Options.optindex == "noflash" and 0
+	if canrecount then
+		counter = 0
+		table.wipe(indicators)
+	end
+	table.wipe(flashcount)
+	
+	for unitid in VEM:GetGroupMembers() do
+		local guid = UnitGUID(unitid)
+		local name, subgroup
+		local index = UnitInRaid(unitid)
+		if UnitInRaid(unitid) then
+			name, _, subgroup = GetRaidRosterInfo(index)
+		end		
+		if subgroup then
+			table.insert(tbl, {ui = index, g = guid, n = name, gp = subgroup})
+			countsort = countsort + 1
+		end
+	end
+
+	table.sort(tbl, sortByGroupAsc)
+  	for k = 1, countsort do
+		if DebuffGuid[tbl[k].g] then			
+			if not indicators[tbl[k].g] and canrecount then
+				counter = counter + 1
+				indicators[tbl[k].g] = counter
+			end			
+		end
+	end
+	
+	for unitid in VEM:GetGroupMembers() do
+		local guid = UnitGUID(unitid)
+		local count = indicators[guid]
+		local _, _, _, _, _, duration, expiration = UnitAura(unitid, GetSpellInfo(143434))
+		if count and duration then
+			local cd_start = expiration - duration
+			local cd_duration
+			if fixduration then
+				cd_duration = fixduration
+			else
+				cd_duration = duration
+			end		
+			self.core:SendStatusGained(guid, "vem_grid_banecountmod",
+				settings.priority,
+				(settings.range and 40),
+				{r = settings.color.r, g = settings.color.g, b = settings.color.b, a = settings.color.a, ignore = true},
+				tostring(count),
+				nil,
+				nil,
+				icon_prefix..count..".tga",
+				cd_start,
+				cd_duration
+			)
+			if setflash == count then
+				flashcount[guid] = {start = cd_start, duration = cd_duration, queue = count}
+			end
+		else
+			self.core:SendStatusLost(guid, "vem_grid_banecountmod")
+		end
+	end 
 end

@@ -2,9 +2,8 @@
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 10049 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10106 $"):sub(12, -3))
 mod:SetCreatureID(72276)
---mod:SetQuestID(32744)
 mod:SetZone()
 
 mod:RegisterCombat("combat")
@@ -51,6 +50,8 @@ local specWarnTitanicSmash				= mod:NewSpecialWarningMove(144628)
 local specWarnBurstOfCorruption			= mod:NewSpecialWarningSpell(144654, nil, nil, nil, 2)
 local specWarnHurlCorruption			= mod:NewSpecialWarningInterrupt(144649, nil, nil, nil, 3)
 local specWarnPiercingCorruption		= mod:NewSpecialWarningSpell(144657)
+local specWarnTestIn					= mod:NewSpecialWarning("specWarnTestIn")
+local specWarnTestOut					= mod:NewSpecialWarning("specWarnTestOut")
 
 --Amalgam of Corruption
 local timerUnleashedAngerCD				= mod:NewCDTimer(11, 145216, nil, mod:IsTank())
@@ -68,15 +69,18 @@ local timerTitanicSmashCD				= mod:NewCDTimer(14.5, 144628)--14-17sec variation
 local timerPiercingCorruptionCD			= mod:NewCDTimer(14, 144657)--14-17sec variation
 local timerHurlCorruptionCD				= mod:NewNextTimer(20, 144649)
 
-local berserkTimer						= mod:NewBerserkTimer(420)
+local berserkTimer						= mod:NewBerserkTimer(353)
 
 local countdownLookWithin				= mod:NewCountdownFades(59, "ej8220", false)
 --local countdownLingeringCorruption	= mod:NewCountdown(15.5, 144514, mod:IsHealer(), nil, nil, nil, true)
 --local countdownHurlCorruption			= mod:NewCountdown(20, 144649, mod:IsTank(), nil, nil, nil, true)
 
-mod:AddBoolOption("InfoFrame", true, "sound")
+mod:AddBoolOption("InfoFrame", false, "sound")
+mod:AddBoolOption("InfoFrame2", true, "sound")
+mod:AddEditBoxOption("prevplayer", 150, "", "sound")
 
 local corruptionLevel = EJ_GetSectionInfo(8252)
+local testDebuff = GetSpellInfo(144452)
 local unleashedAngerCast = 0
 
 function notindoor()
@@ -84,6 +88,14 @@ function notindoor()
 		return true
 	end
 	return false
+end
+local function fixdebuffremovebug(checkplayer)
+    if UnitDebuff(checkplayer, GetSpellInfo(144849)) or UnitDebuff(checkplayer, GetSpellInfo(144850)) or UnitDebuff(checkplayer, GetSpellInfo(144851)) then
+		mod:Schedule(1, function() fixdebuffremovebug(checkplayer) end)
+	else
+		specWarnTestOut:Show(checkplayer)
+		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_mbcc.mp3")--隊友出场
+	end
 end
 
 function mod:OnCombatStart(delay)
@@ -96,15 +108,23 @@ function mod:OnCombatStart(delay)
 			sndWOP:Schedule(3, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 		end
 	end)
-	berserkTimer:Start(-delay)
-	if self.Options.InfoFrame then
-		VEM.InfoFrame:SetHeader(GetSpellInfo(16213))
+	if self:IsDifficulty("lfr25") then
+		berserkTimer:Start(413-delay)--Still true?
+	else
+		berserkTimer:Start(-delay)
+	end
+	if self.Options.InfoFrame and not self.Options.InfoFrame2 then
+		VEM.InfoFrame:SetHeader(corruptionLevel)
+		VEM.InfoFrame:Show(5, "playerpower", 5, ALTERNATE_POWER_INDEX)
+	end
+	if self.Options.InfoFrame2 then
+		VEM.InfoFrame:SetHeader(testDebuff)
 		VEM.InfoFrame:Show(4, "playersomedebuffs", 144849, 144850, 144851)
 	end
 end
 
 function mod:OnCombatEnd()
-	if self.Options.InfoFrame then
+	if self.Options.InfoFrame or self.Options.InfoFrame2 then
 		VEM.InfoFrame:Hide()
 	end
 end
@@ -134,14 +154,12 @@ function mod:SPELL_CAST_START(args)
 	elseif args.spellId == 144649 then
 		warnHurlCorruption:Show()
 		specWarnHurlCorruption:Show()
-		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\interruptsoon.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\kickcast.mp3") --快打斷
 		timerHurlCorruptionCD:Start()
 --		countdownHurlCorruption:Start()
-		sndWOP:Schedule(16, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\interruptsoon.mp3") --準備打斷	
 		sndWOP:Schedule(17, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
 		sndWOP:Schedule(18, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
 		sndWOP:Schedule(19, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
@@ -169,19 +187,19 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif args.spellId == 145226 then
 		self:SendSync("BlindHatred")
 		specWarnBlindHatred:Show()
-	elseif args:IsSpellID(144849, 144850, 144851) and args:IsPlayer() then--Look Within
-		timerLookWithin:Start()
-		countdownLookWithin:Start()
-		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
---[[		if mod:IsTank() then
-			timerHurlCorruptionCD:Start()
-			sndWOP:Schedule(16, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\interruptsoon.mp3") --準備打斷	
-			sndWOP:Schedule(17, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-			sndWOP:Schedule(18, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-			sndWOP:Schedule(19, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
-		end]]
+	elseif args:IsSpellID(144849, 144850, 144851) then--Look Within
+		if args:IsPlayer() then
+			timerLookWithin:Start()
+			countdownLookWithin:Start()
+			sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+			sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
+			sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		end
+		if args.destName == mod.Options.prevplayer then
+			specWarnTestIn:Show(args.destName)
+			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_mbrc.mp3")--隊友入场			
+			fixdebuffremovebug(args.destName)
+		end
 	end
 end
 
@@ -194,7 +212,6 @@ function mod:SPELL_AURA_REMOVED(args)
 		timerTitanicSmashCD:Cancel()
 		timerHurlCorruptionCD:Cancel()
 --		countdownHurlCorruption:Cancel()
-		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\interruptsoon.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
@@ -219,7 +236,6 @@ function mod:UNIT_DIED(args)
 		timerTitanicSmashCD:Cancel()
 		timerHurlCorruptionCD:Cancel()
 --		countdownHurlCorruption:Cancel()
-		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\interruptsoon.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
@@ -253,6 +269,7 @@ mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 function mod:OnSync(msg)
 	if msg == "BlindHatred" then
 		warnBlindHatred:Show()
+		specWarnBlindHatred:Show()
 		timerBlindHatred:Start()
 	elseif msg == "BlindHatredEnded" then
 		timerBlindHatredCD:Start()
@@ -268,10 +285,11 @@ function mod:OnSync(msg)
 	elseif msg == "ManifestationDied" then
 		if notindoor() then
 			specWarnManifestation:Show()
+			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmobsoon.mp3")--準備大怪
 			if mod:IsDps() then
-				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\killbigmob.mp3")--大怪快打
+				sndWOP:Schedule(5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\killbigmob.mp3")--大怪快打
 			else
-				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmob.mp3")--大怪出現
+				sndWOP:Schedule(5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmob.mp3")--大怪出現
 			end
 		end
 	end

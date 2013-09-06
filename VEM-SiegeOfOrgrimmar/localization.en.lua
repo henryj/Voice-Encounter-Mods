@@ -10,6 +10,15 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
+	dr						= "Defensive warning[Warning will be showed at $spell:143020, but you should use your defensive cooldowns before contact]",
+	dr1						= "$spell:143020 1",
+	dr2						= "$spell:143020 2",
+	dr3						= "$spell:143020 3",
+	dr4						= "$spell:143020 4",
+	dr5						= "$spell:143020 5",
+	dr6						= "$spell:143020 6",
+	dr7						= "$spell:143020 7",
+	dr8						= "$spell:143020 8"
 })
 
 ---------------------------
@@ -25,9 +34,24 @@ L:SetTimerLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
+	SoundBD					= "Voice Warning: Dispel $spell:143434",
+	dr1						= "Defensive warning: $spell:143491 1/4",
+	dr2						= "Defensive warning: $spell:143491 2/4",
+	dr3						= "Defensive warning: $spell:143491 3/4",
+	dr4						= "Defensive warning: $spell:143491 4/4",
+	BaneGridCount			= "Grid: Number $spell:143434 (Position need to be set on Grid \"VEM number - Shadow Word: Bane\". If none of the following options is selected, the default order from Grid will be used. The spreaded $spell:143434 will not be numbered)",
+	BaneRaidFrameCount		= "Grid: $spell:143434 number order use BLZ raid frame order",
+	optBaneGridCount		= "Grid: Flash the \"Shadow Word: Bane\" number which is assigned to you to dispel ",
+	noflash					= "No flash",
+	flash1					= "1",
+	flash2					= "2",
+	flash3					= "3",
+	flash4					= "4",
+	flash5					= "5"
 })
 
 L:SetMiscLocalization({
+	VEM_GridBaneCount		= "VEM number - Shadow Word: Bane"
 })
 
 ---------------------------
@@ -36,11 +60,17 @@ L:SetMiscLocalization({
 L= VEM:GetModLocalization(866)
 
 L:SetWarningLocalization({
+	specWarnTestIn			= "Player in: %s",
+	specWarnTestOut			= "Player out: %s"
 })
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
 	InfoFrame			= "Show info frame for $journal:8252"
+	InfoFrame2				= "Info frame: $spell:144452(取代$journal:8252提示)",
+	specWarnTestIn			= "Special Warning: The player you monitor is in",
+	specWarnTestOut			= "Special Warning: The player you monitor is out",
+	prevplayer				= "Type in a player's name and you will be warned when he/she is in or out"
 })
 
 ------------------
@@ -56,6 +86,7 @@ L:SetOptionLocalization({
 	HudMAPBP				= "HUD MAP: $spell:144911",
 	HudMAPCP				= "HUD MAP: $spell:144574",
 	HudMAPAoP				= "HUD MAP: $spell:146817",
+	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(5, 146817),
 	SetIconOnMark		= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(144351),
 	InfoFrame			= "Show info frame for $journal:8255"
 })
@@ -73,9 +104,15 @@ L:SetTimerLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
+	SoundZQ					= "Voice Warning: $spell:147328",
+	SoundTT					= "Voice Warning: $spell:146753",
+	FixateIcon				= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(147068),
+	InfoFrame				= "Info frame: Next $journal:8427"
 })
 
 L:SetMiscLocalization({
+	tower		= "The door barring the",--The door barring the South/North Tower has been breached!
+	demolisher	= "[Kor'kron Demolisher]|h|r to assault the tower!"--In case they remove the bad epiccenter spellid will use this
 })
 
 --------------------
@@ -126,7 +163,7 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
-	SoundTT					= "Voice Warning: 打掉$spell:143474",
+	SoundTT					= "Voice Warning: Kill $spell:143474",
 	InfoFrame				= "Info Frame: Rage Monitor",	
 })
 
@@ -136,6 +173,7 @@ L:SetMiscLocalization({
 	newForces3				= "Rally the forces!",
 	newForces4				= "Kor'kron, at my side!",
 	newForces5				= "Next squad, to the front!"
+	allForces				= "All Kor'kron... under my command... kill them... NOW!"
 })
 
 
@@ -166,6 +204,12 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
+	Filterarea				= "Other: Use stricter way to tell the area"
+})
+
+L:SetMiscLocalization({
+	Module1 = "Module 1's all prepared for system reset.",
+	Victory	= "Module 2's all prepared for system reset"
 })
 
 ---------------------------
@@ -181,7 +225,9 @@ L:SetTimerLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
+	SoundPX					= "Countdown: $spell:143343",
 	RangeFrame	= "Show dynamic range frame (10)\n(This is a smart range frame that shows when you reach Frenzy threshold)"
+	FixateIcon				= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(143445)
 })
 
 L:SetMiscLocalization({
@@ -239,12 +285,12 @@ L:SetMiscLocalization({
 	purple				= "Purple",
 	green				= "Green",
 	bomb				= "Bomb",
-	sword				= "Swords",
+	sword				= "Sword",
 	drums				= "Drums",
 	mantid				= "Mantid",--Assumed
 	staff 				= "Staff",--Assumed
 	one					= "One",
-	two					= "Pair",
+	two					= "Two",
 	three				= "Three",
 	four				= "Four",--Assumed
 	five				= "Five",--Assumed

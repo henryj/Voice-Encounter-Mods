@@ -3,7 +3,7 @@ local mod	= VEM:NewMod(857, "VEM-Pandaria", nil, 322)
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 10093 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10106 $"):sub(12, -3))
 mod:SetCreatureID(71953)
 --mod:SetQuestID(32519)
 mod:SetZone()

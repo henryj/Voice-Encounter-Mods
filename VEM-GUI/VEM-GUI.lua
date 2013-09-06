@@ -40,7 +40,7 @@
 
 
 
-local revision =("$Revision: 10041 $"):sub(12, -3)
+local revision =("$Revision: 10143 $"):sub(12, -3)
 local FrameTitle = "VEM_GUI_Option_"	-- all GUI frames get automatically a name FrameTitle..ID
 local fixeditframe = false
 
@@ -385,7 +385,7 @@ do
 			return
 		end
 		if type(name) == "number" then
-			return VEM:AddMsg("CreateCheckButton: error: expected string, received number. You probably called mod:NewTimer(optionId) with a spell id.")
+			return VEM:AddMsg("CreateCheckButton: error: expected string, received number:\""..name.."\".You probably called mod:NewTimer(optionId) with a spell id.")
 		end
 		local button = CreateFrame('CheckButton', FrameTitle..self:GetNewID(), self.frame, 'OptionsCheckButtonTemplate')
 		local buttonName = button:GetName()
@@ -2102,9 +2102,9 @@ local function CreateOptionsMenu()
 			{	text	= L.NoSound,		value	= "" },
 			{	text	= "Default",		value 	= "Sound\\Spells\\PVPFlagTaken.ogg", 		sound=true },
 			{	text	= "Blizzard",		value 	= "Sound\\interface\\UI_RaidBossWhisperWarning.ogg", 		sound=true },
-			{	text	= "Beware!",		value 	= "Sound\\Creature\\AlgalonTheObserver\\UR_Algalon_BHole01.ogg", 		sound=true },--Great sound, short and to the point. Best pick for a secondary default!
+			{	text	= "Beware!",		value 	= "Sound\\Creature\\AlgalonTheObserver\\UR_Algalon_BHole01.ogg", 		sound=true },
 			{	text	= "Destruction",	value 	= "Sound\\Creature\\KilJaeden\\KILJAEDEN02.ogg", 		sound=true },
-			{	text	= "NotPrepared",	value 	= "Sound\\Creature\\Illidan\\BLACK_Illidan_04.ogg", 		sound=true },--Maybe a bit long? wouldn't recommend it as a default, but good for customizing.
+			{	text	= "NotPrepared",	value 	= "Sound\\Creature\\Illidan\\BLACK_Illidan_04.ogg", 		sound=true },
 			{	text	= "NightElfBell",	value 	= "Sound\\Doodad\\BellTollNightElf.ogg", 	sound=true }
 		})
 
@@ -2821,12 +2821,6 @@ do
 			elseif	i == 8 then		icon:SetTexCoord(0.75,	1,		0.25,	0.5)
 			end
 		end
-		
-		--[[IsQuestFlaggedCompleted() is throttled by the server and will only get a response every 2-3 minutes.
-		It's cached internally by the client during that time.
-		If you reload, the client probably loses its cache and is unable to refresh it for a few minutes
-		In other words, if you reloadui often or log in and out a bunch, the checks will be all wrong.
-		--]]
 		if mod.questId then
 			local icon = panel.frame:CreateTexture()
 			if IsQuestFlaggedCompleted(mod.questId) then
@@ -2838,6 +2832,7 @@ do
 			icon:SetWidth(16)
 			icon:SetHeight(16)
 		end
+
 		local reset  = panel:CreateButton(L.Mod_Reset, 150, nil, nil, GameFontNormalSmall)
 		reset:SetPoint('TOPRIGHT', panel.frame, "TOPRIGHT", -14, -2)
 		reset:SetScript("OnClick", function(self)
