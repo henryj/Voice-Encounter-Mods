@@ -54,7 +54,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Pull				= "你感覺到冷風吹過了嗎?風暴要來了..."
+	Pull				= "你感覺到冷風吹過了嗎?"
 })
 
 ---------------------------
@@ -70,6 +70,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
+	Pull					= "Then let us begin.",
 	Victory					= "Your hope shines brightly, and even more brightly when you work together to overcome. It will ever light your way in even the darkest of places."
 })
 
@@ -83,6 +84,13 @@ L:SetOptionLocalization({
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(11, 144532)
 })
 
+L:SetMiscLocalization({
+	Pull					= "The trial begins!",
+	Wave1					= "Do not let your judgement be clouded in trying times!",
+	Wave2					= "Listen to your inner voice, and seek out the truth!",
+	Victory					= "Your wisdom has seen you through this trial. May it ever light your way out of dark places."
+})
+
 --------------------------
 -- Niuzao, The Black Ox --
 --------------------------
@@ -91,6 +99,13 @@ L= VEM:GetModLocalization(859)
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能"
 })
+
+L:SetMiscLocalization({
+	Pull					= "We shall see.",
+--	Victory					= "",
+	VictoryDem				= "Rakkas shi alar re pathrebosh il zila rethule kiel shi shi belaros rikk kanrethad adare revos shi xi thorje Rukadare zila te lok zekul melar "--Cover all bases and all
+})
+
 
 ---------------------------
 -- Xuen, The White Tiger --
@@ -103,6 +118,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
+	Pull					= "Ha ha! The trial commences",
 	Victory					= "You are strong, stronger even than you realize. Carry this thought with you into the darkness ahead, and let it shield you."
 })
 

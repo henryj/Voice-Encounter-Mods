@@ -1,7 +1,7 @@
 local mod		= VEM:NewMod("z727", "VEM-PvP", 2)
 local L			= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 3 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 4 $"):sub(12, -3))
 mod:SetZone(VEM_DISABLE_ZONE_DETECTION)
 
 mod:RegisterEvents(

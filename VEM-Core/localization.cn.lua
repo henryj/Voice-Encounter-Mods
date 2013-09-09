@@ -143,7 +143,7 @@ VEM_CORE_SLASHCMD_HELP				= {
 	"/vem pull <秒>: 开始一个<秒>时间的开怪计时条。 并向所有团队成员发送这个VEM开怪计时条（需开启团队广播及助理权限）。",
 	"/vem arrow: 显示VEM箭头，输入/vem arrow查询更多信息。",
 	"/vem lockout: 查询团队成员当前的副本锁定状态（也可使用：lockouts, ids）（需要团队领袖或助理权限）。",
-	"/vem help：显示可用命令的说明。",
+	"/vem help：显示可用命令的说明。"
 }
 
 VEM_ERROR_NO_PERMISSION				= "无权进行该操作。"
@@ -159,6 +159,10 @@ VEM_CORE_LEFT						= "左"
 VEM_CORE_RIGHT						= "右"
 VEM_CORE_BACK						= "后"
 VEM_CORE_FRONT						= "前"
+
+VEM_CORE_SETTO						= "设置为："
+VEM_CORE_SETWISP					= "的观察目标设置为你，请协助检查是否正确。"
+VEM_CORE_WRONGSET					= "|cFFFF0000你输入了错误的内容："
 
 VEM_CORE_BREAK_START				= "开始休息 - %s分钟！"
 VEM_CORE_BREAK_MIN					= "%s分钟后休息结束！"
@@ -215,6 +219,7 @@ VEM_CORE_AUTO_SPEC_WARN_TEXTS = {
 	prewarn					= "%s 于 %s",
 	dispel					= ">%%s<中了%s - 快驱散",
 	interrupt				= "%s - 快打断",
+	reflect					= "%s - 停止攻击",
 	you						= "你中了%s",
 	target					= ">%%s<中了%s",
 	close					= "你附近的>%%s<中了%s",
@@ -234,6 +239,7 @@ VEM_CORE_AUTO_SPEC_WARN_OPTIONS = {
 	soon					= "特殊警报：$spell:%s即将到来",
 	prewarn					= "特殊警报：%d秒后$spell:%s",
 	dispel					= "特殊警报：需要驱散或偷取$spell:%s",
+	reflect 				= "特殊警报：$spell:%s需要停止攻击",--Spell Reflect
 	interrupt				= "特殊警报：需要打断$spell:%s",
 	you						= "特殊警报：当你受到$spell:%s影响时",
 	target					= "特殊警报：当他人受到$spell:%s影响时",
@@ -278,9 +284,9 @@ VEM_CORE_AUTO_TIMER_OPTIONS = {
 
 VEM_CORE_AUTO_ICONS_OPTION_TEXT			= "为$spell:%s的目标添加团队标记"
 VEM_CORE_AUTO_SOUND_OPTION_TEXT			= "声音警报（快跑啊）：$spell:%s"
-VEM_CORE_AUTO_COUNTDOWN_OPTION_TEXT		= "声音警报：$spell:%s的冷却时间倒计时"
-VEM_CORE_AUTO_COUNTDOWN_OPTION_TEXT2		= "声音警报：$spell:%s的消散时间倒计时"
-VEM_CORE_AUTO_COUNTOUT_OPTION_TEXT		= "声音警报：$spell:%s的持续时间正计时"
+VEM_CORE_AUTO_COUNTDOWN_OPTION_TEXT		= "倒计时：$spell:%s(冷却)"
+VEM_CORE_AUTO_COUNTDOWN_OPTION_TEXT2	= "倒计时：$spell:%s(消散)"
+VEM_CORE_AUTO_COUNTOUT_OPTION_TEXT		= "正计时：$spell:%s(持续)"
 VEM_CORE_AUTO_YELL_OPTION_TEXT			= "当你受到$spell:%s影响时时大喊"
 VEM_CORE_AUTO_YELL_ANNOUNCE_TEXT		= "" .. UnitName("player") .. "中了%s！"
 VEM_CORE_AUTO_RANGE_OPTION_TEXT			= "距离监视(%s)：$spell:%s"--string used for range so we can use things like "5/2" as a value for that field
@@ -301,7 +307,7 @@ VEM_ARROW_ERROR_USAGE	= {
 	"/vem arrow <x> <y>  新建一个箭头在指定位置(0 < x/y < 100)",
 	"/vem arrow <玩家>  新建一个箭头并指向你队伍或团队中特定的玩家",
 	"/vem arrow hide  隐藏箭头",
-	"/vem arrow move  移动或锁定箭头",
+	"/vem arrow move  移动或锁定箭头"
 }
 
 VEM_SPEED_KILL_TIMER_TEXT	= "击杀记录"
@@ -336,6 +342,3 @@ VEM_CORE_SOUNDGRIL_TEXT_YUN			= "    芷小芸，来自中国台湾省的魔兽�
 
 VEM_CORE_SOUNDGRIL_NAME_SST			= "Iceoven"
 VEM_CORE_SOUNDGRIL_TEXT_SST			= "    All Voice generated via VoiceRss TTS (Text To Speech), API by Iceoven (Worgen Mage from Ancient Ones @ US-Dath'Remar)."
-
-VEM_CORE_SOUNDGRIL_NAME_STEPHANIE = "Stephanie"
-VEM_CORE_SOUNDGRIL_TEXT_STEPHANIE = "Stephanie，人称白富美，女，安逸的杭州人。2010年就读于杭州电子科技大学，目前在美国哥伦比亚大学留学"

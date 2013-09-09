@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 local sndPX		= mod:NewSound(nil, "SoundPX", mod:IsManaUser())
 
-mod:SetRevision(("$Revision: 10144 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10246 $"):sub(12, -3))
 mod:SetCreatureID(71529)
 mod:SetZone()
 mod:SetUsedIcons(8)
@@ -86,8 +86,10 @@ local timerScorchingBreath		= mod:NewTargetTimer(30, 143767, nil, mod:IsTank() o
 local timerScorchingBreathCD	= mod:NewCDTimer(11, 143767, nil, mod:IsTank())--Often 12, but sometimes 11
 local timerBurningBloodCD		= mod:NewCDTimer(3.5, 143783, nil, false)--cast often, but someone might want to show it
 
-local soundBloodFrenzy			= mod:NewSound(144067)
-local soundFixate				= mod:NewSound(143445)
+local berserkTimer				= mod:NewBerserkTimer(600)
+
+--local soundBloodFrenzy			= mod:NewSound(144067)
+--local soundFixate				= mod:NewSound(143445)
 
 mod:AddBoolOption("RangeFrame", true)
 mod:AddBoolOption("FixateIcon", true)
@@ -174,6 +176,7 @@ function mod:OnCombatStart(delay)
 	table.wipe(burningBloodTargets)
 	timerFearsomeRoarCD:Start(-delay)
 	timerDeafeningScreechCD:Start(-delay, 1)
+	berserkTimer:Start(-delay)
 	sndPX:Schedule(10-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\aesoon.mp3")	
 	sndPX:Schedule(11-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
 	sndPX:Schedule(12-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
@@ -282,6 +285,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			specWarnFixate:Show()
 			yellFixate:Yell()
+--DELETE		soundFixate:Play()
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\justrun.mp3") --快跑
 		end
 		if self.Options.FixateIcon then
@@ -317,12 +321,10 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnEnrage:Show(args.destName)
 		specWarnEnrage:Show(args.destName)
 		local source = args.sourceName
-		if source == UnitName("target") or source == UnitName("focus") then
-			if mod:IsTank() then
-				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\speedup.mp3") -- 首領加速
-			elseif mod:CanRemoveEnrage() then
-				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\removeenrage.mp3") -- 注意寧神
-			end
+		if (source == UnitName("target") or source == UnitName("focus")) and mod:IsTank() then
+			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\enrage.mp3") -- 激怒
+		elseif mod:CanRemoveEnrage() then
+			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\trannow.mp3") -- 注意寧神
 		end
 	end
 end
@@ -395,6 +397,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		timerScorchingBreathCD:Cancel()
 		timerTailLashCD:Cancel()
 		specWarnBloodFrenzy:Show()
+--DELETE	soundBloodFrenzy:Play()
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ptwo.mp3") --2階段準備
 		if self.Options.RangeFrame then
 			VEM.RangeCheck:Hide()

@@ -2,7 +2,7 @@ local mod	= VEM:NewMod(870, "VEM-SiegeOfOrgrimmar", nil, 369)
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 10146 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10247 $"):sub(12, -3))
 mod:SetCreatureID(73720, 71512)
 mod:SetZone()
 
@@ -128,9 +128,17 @@ local function warnspecmob(guid)
 	if not checkTankDistance(guid) then return end
 	local cid = mod:GetCIDFromGUID(guid)
 	if cid == 71382 then
-		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_hpkd.mp3") --花瓶快打
+		if mod:IsDps() then
+			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_hpkd.mp3") --花瓶快打
+		end
 	elseif cid == 71395 then
-		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_mxcx.mp3") --魔像出现
+		if mod:IsDps() then
+			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_mxkd.mp3") --魔像快打
+		else
+			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_mxcx.mp3") --魔像出现
+		end
+	elseif cid == 71385 then
+		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_tdsd.mp3") --投彈手快打
 	end
 end
 
@@ -164,8 +172,13 @@ end
 function mod:OnCombatStart(delay)
 	table.wipe(activeBossGUIDS)
 	table.wipe(setToBlowTargets)
-	timerArmageddonCD:Start(167.5-delay)--May variate by 1 second, my world state stata is showing osmetimes it's 167 and somtimes it's 168 when IEEU fires. may have to just do shitty world state stuff to make it more accurate
-	countdownArmageddon:Start(167.5-delay)
+	if self:IsDifficulty("lfr25") then
+		timerArmageddonCD:Start(297.5-delay)
+		countdownArmageddon:Start(297.5-delay)
+	else
+		timerArmageddonCD:Start(267.5-delay)--May variate by 1 second, my world state stata is showing osmetimes it's 167 and somtimes it's 168 when IEEU fires. may have to just do shitty world state stuff to make it more accurate
+		countdownArmageddon:Start(267.5-delay)
+	end
 end
 
 function mod:OnCombatEnd()
@@ -244,7 +257,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		specWarnCrimsonRecon:Show()--Done here because we want to warn when we need to move mobs, not on cast start (when we can do nothing)
 		timerCrimsonReconCD:Start(args.sourceGUID)
 		if mod:IsTank() then
-			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_xft.mp3") --拉開BOSS
+			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bossout.mp3") --拉開BOSS
 		end
 	elseif args.spellId == 145712 and checkTankDistance(args.sourceGUID) then
 		timerBlazingChargeCD:Start(args.sourceGUID)
@@ -298,13 +311,14 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 	elseif args.spellId == 145692 and checkTankDistance(args.sourceGUID) then
 		warnEnrage:Show(args.destName)
---		specWarnEnrage:Show(args.destName)
+		specWarnEnrage:Show(args.destName)
 		timerEnrage:Start(args.destName)
 		if mod:IsTank() or mod:CanRemoveEnrage() then
 			local source = args.sourceName
-			if source == UnitName("target") or source == UnitName("focus") then
-				specWarnEnrage:Show(args.destName)
-				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\enrage.mp3") --激怒
+			if (source == UnitName("target") or source == UnitName("focus")) and mod:IsTank() then
+				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\enrage.mp3") -- 激怒
+			elseif mod:CanRemoveEnrage() then
+				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\trannow.mp3") -- 注意寧神
 			end
 		end
 	elseif args.spellId == 145998 and checkTankDistance(args.sourceGUID) then--This is a massive crate mogu spawning
@@ -417,7 +431,12 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 		local elapsed, total = timerArmageddonCD:GetTime()
 		local remaining = total - elapsed
 		countdownArmageddon:Cancel()
-		timerArmageddonCD:Start(270+remaining)
-		countdownArmageddon:Start(270+remaining)
+		if self:IsDifficulty("lfr25") then
+			timerArmageddonCD:Start(300+remaining)
+			countdownArmageddon:Start(300+remaining)
+		else
+			timerArmageddonCD:Start(270+remaining)
+			countdownArmageddon:Start(270+remaining)
+		end
 	end
 end

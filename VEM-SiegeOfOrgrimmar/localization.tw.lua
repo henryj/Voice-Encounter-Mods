@@ -10,16 +10,23 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	SoundWOP				= "語音警告：重要技能",
-	dr						= "減傷提示[警報會在$spell:143020時提示, 但您的減傷應在撞擊前開啟]",
-	dr1						= "$spell:143020 1",
-	dr2						= "$spell:143020 2",
-	dr3						= "$spell:143020 3",
-	dr4						= "$spell:143020 4",
-	dr5						= "$spell:143020 5",
-	dr6						= "$spell:143020 6",
-	dr7						= "$spell:143020 7",
-	dr8						= "$spell:143020 8"
+	SoundWOP				= "語音警告：重要技能",	
+	SoundPZ					= "語音警告：當$spell:117878疊加超過三層時提示注意停手",
+	InfoFrame				= "資訊框：顯示擊殺和淨化的軟泥怪數量",
+	dr						= "減傷提示[警報會在第一個軟泥怪撞擊到本體時提示]",
+	dr1						= "$spell:143469 1",
+	dr2						= "$spell:143469 2",
+	dr3						= "$spell:143469 3",
+	dr4						= "$spell:143469 4",
+	dr5						= "$spell:143469 5",
+	dr6						= "$spell:143469 6",
+	dr7						= "$spell:143469 7",
+	dr8						= "$spell:143469 8",
+})
+
+L:SetMiscLocalization({
+	kill					= "擊殺",
+	clean					= "淨化"
 })
 
 ---------------------------
@@ -40,19 +47,20 @@ L:SetOptionLocalization({
 	dr2						= "減傷提示：$spell:143491 2/4",
 	dr3						= "減傷提示：$spell:143491 3/4",
 	dr4						= "減傷提示：$spell:143491 4/4",
-	BaneGridCount			= "Grid：爲首領釋放的$spell:143434顯示編號(提示位置需要在Grid上設置\"VEM編號-暗言術:蠱\"，若不選中下邊一項則編號順序使用Grid默認排序。擴散出現的$spell:143434不會顯示編號)",
-	BaneRaidFrameCount		= "Grid：$spell:143434編號順序使用暴雪團隊框架的排序",
-	optBaneGridCount		= "Grid：閃動顯示分配給你驅散的\"暗言術:蠱\"編號",
-	noflash					= "不閃動",
-	flash1					= "1號",
-	flash2					= "2號",
-	flash3					= "3號",
-	flash4					= "4號",
-	flash5					= "5號"
+	BaneGridCount			= "特殊：爲$spell:143434啟用GRID編號支持(提示位置等更多相關選項請在GRID中設置。擴散出現的状态不會顯示編號)",
+	optOC					= "當苦痛印記疊加多少層時提示傳遞",
+	imm						= "立刻提示",
+	five					= "5層",
+	ten						= "10層",
+	fift					= "15層",
+	twty					= "20層",
+	none					= "從不提示",
 })
 
 L:SetMiscLocalization({
-	VEM_GridBaneCount		= "VEM編號-暗言術:蠱"
+	VEM_GridBaneCount		= "VEM編號-暗言術:蠱",
+	BaneRaidFrameCount		= "編號順序使用暴雪團隊框架的排序",
+	optBaneGridCount		= "閃動顯示編號:",
 })
 
 ---------------------------
@@ -68,10 +76,14 @@ L:SetWarningLocalization({
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
 	InfoFrame				= "資訊框：$journal:8252",
-	InfoFrame2				= "資訊框：$spell:144452(取代$journal:8252提示)",
+	InfoFrame2				= "資訊框：$spell:144452中的隊友",
 	specWarnTestIn			= "特別警告：你監視的隊友入場",
 	specWarnTestOut			= "特別警告：你監視的隊友出場",
 	prevplayer				= "輸入一個隊友名，在他入場和離場時都會通知你"
+})
+
+L:SetMiscLocalization({
+	wasteOfTime				= "很好，我會創造一個力場隔離你們的腐化。"
 })
 
 ------------------
@@ -84,12 +96,16 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
+	SoundQS					= "額外驅散提示：當你帶有$spell:144359時技能一旦冷卻即提示驅散",
 	HudMAPBP				= "高級定位監視(HUD)：$spell:144911",
 	HudMAPCP				= "高級定位監視(HUD)：$spell:144574",
 	HudMAPAoP				= "高級定位監視(HUD)：$spell:146817",
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(5, 146817),
 	SetIconOnMark			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(144351),
-	InfoFrame				= "資訊框：$journal:8255"
+	InfoFrame				= "資訊框：$journal:8255",
+	dr1						= "減傷提示：$spell:144400 1/3",
+	dr2						= "減傷提示：$spell:144400 2/3",
+	dr3						= "減傷提示：$spell:144400 3/3",
 })
 
 L:SetMiscLocalization({
@@ -101,19 +117,28 @@ L:SetMiscLocalization({
 L= VEM:GetModLocalization(868)
 
 L:SetTimerLocalization({
+	timerAddsCD		= "下一波小怪",
+	timerTowerCD	= "下一個塔樓攻破"
 })
 
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
 	SoundZQ					= "語音警告：$spell:147328",
 	SoundTT					= "語音警告：$spell:146753",
+	timerAddsCD				= "計時器：下一波小怪",
+	timerTowerCD			= "計時器：下一個塔樓攻破",
 	FixateIcon				= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(147068),
-	InfoFrame				= "資訊框：下一波$journal:8427"
+	InfoFrame				= "資訊框：下一波$journal:8427",
+	flamecount				= "減傷提示：第二階段時第幾個火球提示減傷"
 })
 
 L:SetMiscLocalization({
-	tower		= "The door barring the",--The door barring the South/North Tower has been breached!
-	demolisher	= "[Kor'kron Demolisher]|h|r to assault the tower!"--In case they remove the bad epiccenter spellid will use this
+	newForces1	= "Here they come!",--Jaina's line, horde may not be same
+	newForces2	= "龍喉氏族，前進!",
+	newForces3	= "為了地獄吼!",
+	newForces4	= "下一隊，前進!",
+	tower		= "邊的防空砲塔!",--The door barring the South/North Tower has been breached!
+	demolisher	= "|h柯爾克隆石毀車|h|r前去進攻砲台!"--In case they remove the bad epiccenter spellid will use this
 })
 
 --------------------
@@ -131,7 +156,14 @@ L:SetTimerLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
-	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(6, 144154)
+	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(6, 144154),
+	dr						= "減傷提示：$spell:144485 [此順序每次攻城階段都會重置]",
+	dr1						= "$spell:144485 1",
+	dr2						= "$spell:144485 2",
+	dr3						= "$spell:144485 3",
+	dr4						= "$spell:144485 4",
+	dr5						= "$spell:144485 5",
+	dr6						= "$spell:144485 6"
 })
 
 L:SetMiscLocalization({
@@ -147,11 +179,19 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
+	dr						= "減傷提示[警報會在撞擊前4秒提示]",
+	dr1						= "$spell:143973 1",
+	dr2						= "$spell:143973 2",
+	dr3						= "$spell:143973 3",
+	dr4						= "$spell:143973 4",
+	dr5						= "$spell:143973 5",
+	dr6						= "$spell:143973 6",
 	SetIconOnToxicMists		= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(144089),
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(4, 143990)
 })
 
 L:SetMiscLocalization({
+	PrisonYell		= "%s 的囚牢即將結束 (%d)"
 })
 
 ---------------------
@@ -160,21 +200,23 @@ L:SetMiscLocalization({
 L= VEM:GetModLocalization(850)
 
 L:SetWarningLocalization({
+	warnDefensiveStanceSoon		= "%d秒後 防禦姿態"
 })
 
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
 	SoundTT					= "語音警告：$spell:143474",
-	InfoFrame				= "資訊框：怒氣監視器",	
+	InfoFrame				= "資訊框：怒氣監視器",
+	warnDefensiveStanceSoon			= "預先警告：$spell:143593 (5秒前)"
 })
 
 L:SetMiscLocalization({
-	newForces1				= "Warriors, on the double!",
-	newForces2				= "Defend the gate!",
-	newForces3				= "Rally the forces!",
-	newForces4				= "Kor'kron, at my side!",
-	newForces5				= "Next squad, to the front!",
-	allForces				= "All Kor'kron... under my command... kill them... NOW!"
+	newForces1				= "戰士們，快點過來!",
+	newForces2				= "守住大門!",
+	newForces3				= "重整部隊!",
+	newForces4				= "柯爾克隆，來我身邊!",
+	newForces5				= "下一隊，來前線!",
+	allForces				= "所有科爾克隆...聽我號令...殺死他們!"
 })
 
 
@@ -244,11 +286,17 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
+	SoundFMD				= "語音警告：$spell:144208前提示伐木機快打",
+	InfoFrame				= "資訊框：$journal:8202",
+	optCS					= "傳送帶啟動提示",
+	CSA						= "傳送帶一組",
+	CSB						= "傳送帶二組",
+	none					= "我不去",
 })
 
 L:SetMiscLocalization({
-	newWeapons	= "Unfinished weapons begin to roll out on the assembly line.",
-	newShredder	= "An Automated Shredder draws near!"
+	newWeapons				= "尚未完成的武器開始從生產線上掉落。",
+	newShredder				= "有個自動化伐木機靠近了!"
 })
 
 ----------------------------
@@ -263,49 +311,44 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
-	InfoFrame				= "資訊框：下一個激活的英傑",
-	HudMAPRed				= "高級定位監視(HUD)：$spell:142726",
-	HudMAPBlue				= "高級定位監視(HUD)：$spell:142725",
-	HudMAPYellow			= "高級定位監視(HUD)：$spell:142727",
+	InfoFrame				= "資訊框：英傑技能提示",
+	HudMAP					= "高級定位監視(HUD)：$spell:142726 / $spell:142727",
+	HudMAPMZ				= "高級定位監視(HUD)：$journal:8073",
 	warnToxicCatalyst			= VEM_CORE_AUTO_ANNOUNCE_OPTIONS.spell:format("ej8036"),
 	specWarnToxicInjection			= VEM_CORE_AUTO_SPEC_WARN_OPTIONS.you:format(142528),
 	specWarnToxicCatalyst			= VEM_CORE_AUTO_SPEC_WARN_OPTIONS.you:format("ej8036"),
 	specWarnActivatedVulnerable		= "特別警告：新激活的英傑對你有易傷",
-	specWarnCriteriaLinked			= "特别警告：你被$spell:144095連線的目標",
+	specWarnCriteriaLinked			= "特别警告：你是$spell:144095連線的目標",
 	SetIconOnAim				= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(142948),
 	yellToxicCatalyst			= VEM_CORE_AUTO_YELL_OPTION_TEXT:format("ej8036"),
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT_SHORT:format("6/5")
 })
 
 L:SetMiscLocalization({
-	calculatedTarget	= "calculating eye!",
-	--thanks to blizz, the only accurate way for this to work, is to translate 15 emotes in all languages
-	yellow				= "Yellow",
-	red					= "Red",
-	blue				= "Blue",
-	purple				= "Purple",
-	green				= "Green",
-	bomb				= "Bomb",
-	sword				= "Sword",
-	drums				= "Drums",
-	mantid				= "Mantid",--Assumed
-	staff 				= "Staff",--Assumed
-	one					= "One",
-	two					= "Two",
-	three				= "Three",
-	four				= "Four",--Assumed
-	five				= "Five",--Assumed
-	hisekFlavor			= "Look who's quiet now",--http://ptr.wowhead.com/quest=31510
-	KilrukFlavor		= "Just another day, culling the swarm",--http://ptr.wowhead.com/quest=31109
-	XarilFlavor			= "I see only dark skies in your future",--http://ptr.wowhead.com/quest=31216
-	KaztikFlavor		= "Reduced to mere kunchong treats",--http://ptr.wowhead.com/quest=31024
-	KaztikFlavor2		= "1 Mantid down, only 199 to go",--http://ptr.wowhead.com/quest=31808
-	KorvenFlavor		= "The end of an ancient empire",--http://ptr.wowhead.com/quest=31232
-	KorvenFlavor2		= "Take your Gurthani Tablets and choke on them",--http://ptr.wowhead.com/quest=31232
-	IyyokukFlavor		= "See opportunities. Exploit them!",--Does not have quests, http://ptr.wowhead.com/npc=65305
-	KarozFlavor			= "You won't be leaping anymore!",---Does not have questst, http://ptr.wowhead.com/npc=65303
-	SkeerFlavor			= "A bloody delight!",--http://ptr.wowhead.com/quest=31178
-	RikkalFlavor		= "Specimen request fulfilled"--http://ptr.wowhead.com/quest=31508
+	one					= "一",
+	two					= "二",
+	three				= "三",
+	four				= "四",
+	five				= "五",
+	BossSpellInfo		= "首領技能分析",
+	LF					= "掠風者",
+	LFspell				= "鑿擊/旋風",
+	DX					= "毒心者",
+	DXspell				= "毒素技能",
+	CZ					= "操縱者",
+	CZspell				= "吃人蟲",
+	ZZ					= "至尊者",
+	ZZspell				= "盾擊/琥珀",
+	MC					= "明澈者",
+	MCspell				= "火線",
+	BS					= "暴食蝗",
+	BSspell				= "黃水/衝鋒",
+	MX					= "覓血者",
+	MXspell				= "軟泥",
+	QG					= "切割者",
+	QGspell				= "寄生蟲/蠍子",
+	CQ					= "蟲群衛士",
+	CQspell				= "分擔音波",
 })
 
 ------------------------

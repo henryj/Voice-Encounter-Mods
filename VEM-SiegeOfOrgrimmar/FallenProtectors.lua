@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 local sndBD		= mod:NewSound(nil, "SoundBD", mod:IsHealer())
 
-mod:SetRevision(("$Revision: 10150 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10181 $"):sub(12, -3))
 mod:SetCreatureID(71479, 71475, 71480)--He-Softfoot, Rook Stonetoe, Sun Tenderheart
 mod:SetZone()
 
@@ -13,6 +13,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_START",
 	"SPELL_CAST_SUCCESS",
 	"SPELL_AURA_APPLIED",
+	"SPELL_AURA_APPLIED_DOSE",
 	"SPELL_AURA_REMOVED",
 	"SPELL_DAMAGE",
 	"SPELL_MISSED",
@@ -30,7 +31,7 @@ local warnClash						= mod:NewSpellAnnounce(143027, 3)--No target scanning, no e
 local warnMiserySorrowGloom			= mod:NewSpellAnnounce(143955, 2)--Activation
 local warnCorruptionShock			= mod:NewSpellAnnounce(143958, 3)--Embodied Gloom (spammy if you do it wrong, but very important everyone sees. SOMEONE needs to interrupt it if it keeps going off)
 local warnDefiledGround				= mod:NewSpellAnnounce(143961, 3, nil, mod:IsTank())--Embodied Misery
-local warnInfernoStrike				= mod:NewTargetAnnounce(143962, 3)
+local warnInfernoStrike				= mod:NewSpellAnnounce(143962, 3)
 --He Softfoot
 local warnGouge						= mod:NewCastAnnounce(143330, 4, nil, nil, mod:IsTank())--The cast, so you can react and turn back to it and avoid stun.
 local warnGougeStun					= mod:NewTargetAnnounce(143301, 4, nil, mod:IsTank())--Failed, stunned. the success ID is 143331 (knockback)
@@ -39,7 +40,7 @@ local warnGarrote					= mod:NewTargetAnnounce(143198, 3, nil, mod:IsHealer())
 local warnMarkOfAnguish				= mod:NewSpellAnnounce(143812, 2)--Activation
 local warnMarked					= mod:NewTargetAnnounce(143840, 3)--Embodied Anguish			
 --Sun Tenderheart
-local warnShaShear					= mod:NewCastAnnounce(143423, 3, 5, nil, false)
+local warnShaShear					= mod:NewTargetAnnounce(143423, 3)--BH FIXED
 local warnBane						= mod:NewCastAnnounce(143446, 4, nil, nil, mod:IsHealer())
 local warnCalamity					= mod:NewSpellAnnounce(143491, 4)
 ----Sun Tenderheart's Desperate Measures
@@ -66,8 +67,10 @@ local specWarnNoxiousPoison			= mod:NewSpecialWarningMove(144367)
 local specWarnMarkOfAnquish			= mod:NewSpecialWarningSpell(143812)
 local specWarnMarked				= mod:NewSpecialWarningYou(143840)
 local yellMarked					= mod:NewYell(143840, nil, false)
+local specWarnOC					= mod:NewSpecialWarningStack(144176, nil, 5)
 --Sun Tenderheart
-local specWarnShaShear				= mod:NewSpecialWarningInterrupt(143423, false)
+local specWarnShaShear				= mod:NewSpecialWarningInterrupt(143423)
+local specWarnShaShearYou			= mod:NewSpecialWarningYou(143423)
 local specWarnBane					= mod:NewSpecialWarningSpell(143446, mod:IsHealer())
 local specWarnBaneDisp				= mod:NewSpecialWarningDispel(143446, mod:IsHealer())
 local specWarnCalamity				= mod:NewSpecialWarningSpell(143491, nil, nil, nil, 2)
@@ -94,6 +97,8 @@ local UnitExists = UnitExists
 local UnitGUID = UnitGUID
 local UnitDetailedThreatSituation = UnitDetailedThreatSituation
 
+local needshowbrew = true
+
 ----Grid----
 local GridStatus
 if Grid then
@@ -101,17 +106,14 @@ if Grid then
 end
 local canrecount = true
 local DebuffGuid = {}
-local setflash = 0
 --------Grid End----
 
+mod:AddBoolOption("BaneGridCount", false, "sound")
 local calacount = 0
 for i = 1, 4 do
 	mod:AddBoolOption("dr"..i, false, "sound")
 end
-
-mod:AddBoolOption("BaneGridCount", false, "sound")
-mod:AddBoolOption("BaneRaidFrameCount", false, "sound")
-mod:AddDropdownOption("optBaneGridCount", {"noflash", "flash1", "flash2", "flash3", "flash4", "flash5"}, "noflash", "sound")
+mod:AddDropdownOption("optOC", {"imm", "five", "ten", "fift", "twty", "none"}, "imm", "sound")
 
 local function MyJS()
 	if (mod.Options.dr1 and calacount == 1) or (mod.Options.dr2 and calacount == 2) or (mod.Options.dr3 and calacount == 3) or (mod.Options.dr4 and calacount == 4) then
@@ -123,37 +125,40 @@ end
 function mod:BrewTarget(targetname, uId)
 	if not targetname then return end
 	warnCorruptedBrew:Show(targetname)
+	self:SendSync("Brew", targetname, uId)
+	if not needshowbrew then return end
+	needshowbrew = false
 	if targetname == UnitName("player") then
 		specWarnCorruptedBrew:Show()
 		yellCorruptedBrew:Yell()
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
-	end
-	if uId then
-		local x, y = GetPlayerMapPosition(uId)
-		if x == 0 and y == 0 then
-			SetMapToCurrentZone()
-			x, y = GetPlayerMapPosition(uId)
-		end
-		local inRange = VEM.RangeCheck:GetDistance("player", x, y)
-		if inRange and inRange < 6 then
-			specWarnCorruptedBrewNear:Show(targetname)
-			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+	else
+		if uId then
+			local x, y = GetPlayerMapPosition(uId)
+			if x == 0 and y == 0 then
+				SetMapToCurrentZone()
+				x, y = GetPlayerMapPosition(uId)
+			end
+			local inRange = VEM.RangeCheck:GetDistance("player", x, y)
+			if inRange and inRange < 6 then
+				specWarnCorruptedBrewNear:Show(targetname)
+				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+			end
 		end
 	end
 end
 
 function mod:InfernoStrikeTarget(targetname, uId)
 	if not targetname then return end
-	warnInfernoStrike:Show(targetname)
 	if targetname == UnitName("player") then
 		specWarnInfernoStrike:Show()
-		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_lydj.mp3") --煉獄打擊 快回人群
-		sndWOP:Schedule(1, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runin.mp3")
-		sndWOP:Schedule(5.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-		sndWOP:Schedule(6.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOP:Schedule(7.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Schedule(8.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 		yellInfernoStrike:Yell()
+		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runin.mp3") --快回人群
+		sndWOP:Schedule(1, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runin.mp3")
+		sndWOP:Schedule(6, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
+		sndWOP:Schedule(7, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+		sndWOP:Schedule(8, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
+		sndWOP:Schedule(9, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 	end
 end
 
@@ -167,8 +172,11 @@ function mod:OnCombatStart(delay)
 	timerClashCD:Start(-delay)--Unsure if stll same, since this almost NEVER happens, at least one of them will enter a special and cancel this timer
 --	berserkTimer:Start(-delay)
 	calacount = 0
-	VEM.InfoFrame:SetHeader(EJ_GetSectionInfo(8017))
-	VEM.InfoFrame:Show(3, "FPHealth")
+	needshowbrew = true
+	if self.Options.InfoFrame then
+		VEM.InfoFrame:SetHeader(EJ_GetSectionInfo(8017))
+		VEM.InfoFrame:Show(3, "FPHealth")
+	end
 	if GridStatus then
 		GridStatusBaneDbmCount:UpdateAllUnitAuras()
 	end
@@ -204,9 +212,7 @@ function mod:SPELL_CAST_START(args)
 	elseif args.spellId == 143446 then
 		warnBane:Show()
 		specWarnBane:Show()
-		if mod:IsHealer() then
-			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_ays.mp3") --暗言術準備
-		end
+		sndBD:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_ays.mp3") --暗言術準備
 		if self:IsDifficulty("heroic10", "heroic25") then
 			timerBaneCD:Start(13)--TODO, verify normal to see if it was changed too
 		else
@@ -217,7 +223,7 @@ function mod:SPELL_CAST_START(args)
 		calacount = calacount + 1
 		warnCalamity:Show()
 		specWarnCalamity:Show()
-		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_zxzb.mp3") --災星準備
+		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_zxzb.mp3") --災禍準備
 		if MyJS() then
 			sndWOP:Schedule(1.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
 		end
@@ -230,12 +236,11 @@ function mod:SPELL_CAST_START(args)
 		warnDefiledGround:Show()
 		timerDefiledGroundCD:Start()
 	elseif args.spellId == 143962 then
-		self:BossTargetScanner(71481, "InfernoStrikeTarget", 0.025)
+		self:BossTargetScanner(71481, "InfernoStrikeTarget", 2, 1)
+		warnInfernoStrike:Show()
 		timerInfernoStrikeCD:Start()
 	elseif args.spellId == 143497 then
 		warnBondGoldenLotus:Show()
-		VEM.InfoFrame:SetHeader(EJ_GetSectionInfo(8017))
-		VEM.InfoFrame:Show(3, "FPHealth")
 	elseif args.spellId == 144396 then
 		warnVengefulStrikes:Show()
 		if mod:IsHealer() and self:AntiSpam(2, 3) then
@@ -260,17 +265,17 @@ function mod:SPELL_CAST_SUCCESS(args)
 		timerClashCD:Start()
 		if args:IsPlayer() then
 			specWarnClash:Show()
-			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_dc.mp3") --對沖快躲
 		end
 	elseif args.spellId == 143423 then
 		local source = args.sourceName
 		if source == UnitName("target") or source == UnitName("focus") then--Only warn if your target or focus, period, because if you aren't actually dpsing her, you just stay out of melee range and ignore this
-			warnShaShear:Show()
-			specWarnShaShear:Show(source)
+--			warnShaShear:Show()
+--			specWarnShaShear:Show(source)
 		end
 	elseif args.spellId == 143446 then
 		specWarnBaneDisp:Show()
 		sndBD:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\dispelnow.mp3")
+		self:Schedule(2, function() canrecount = false end)
 	end
 end
 
@@ -297,8 +302,10 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnMarked:Show(args.destName)
 		if args:IsPlayer() then
 			specWarnMarked:Show(args.destName)
-			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_zyyj.mp3")--注意印記
 			yellMarked:Yell()
+			if self.Options.optOC == "imm" then
+				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_cdyj.mp3")--傳遞印記
+			end
 		end
 	--Special phases
 	elseif args.spellId == 143546 then--Dark Meditation
@@ -332,8 +339,23 @@ function mod:SPELL_AURA_APPLIED(args)
 			DebuffGuid[args.destGUID] = true
 			GridStatusBaneDbmCount:UpdateAllUnitAuras()
 		end
+	elseif args.spellId == 143423 then
+		warnShaShear:Show(args.destName)
+		if args:IsPlayer() then
+			specWarnShaShearYou:Show()
+			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runout.mp3")--離開人群
+		end
+	elseif args.spellId == 144176 then
+		local OCn = self.Options.optOC == "imm" and 2 or self.Options.optOC == "five" and 5 or self.Options.optOC == "ten" and 10 or self.Options.optOC == "fift" and 15 or self.Options.optOC == "twty" and 20 or self.Options.optOC == "none" and 0
+		if args:IsPlayer() and UnitDebuff("player", GetSpellInfo(143840)) then
+			if (args.amount or 1) >= OCn then
+				specWarnOC:Show(args.amount)
+				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_cdyj.mp3") --傳遞印記
+			end
+		end
 	end
 end
+mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 
 function mod:SPELL_AURA_REMOVED(args)
 	--Special phases
@@ -365,18 +387,43 @@ function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
 	elseif spellId == 144367 and destGUID == UnitGUID("player") and self:AntiSpam(1.5, 4) then
 		specWarnNoxiousPoison:Show()
-		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3")
 	elseif spellId == 143009 and destGUID == UnitGUID("player") and self:AntiSpam(2, 5) then
 		specWarnClashMove:Show()
-		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3")
 	end
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 143019 then--Does not show in combat log on normal
+		needshowbrew = true
 		self:BossTargetScanner(71475, "BrewTarget", 0.025)
 		timerCorruptedBrewCD:Start()
+	end
+end
+
+function mod:OnSync(msg, targetname, uId)
+	if msg == "Brew" and targetname and needshowbrew then
+		needshowbrew = false
+		if targetname == UnitName("player") then
+			specWarnCorruptedBrew:Show()
+			yellCorruptedBrew:Yell()
+			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+		else
+			if uId then
+				local x, y = GetPlayerMapPosition(uId)
+				if x == 0 and y == 0 then
+					SetMapToCurrentZone()
+					x, y = GetPlayerMapPosition(uId)
+				end
+				local inRange = VEM.RangeCheck:GetDistance("player", x, y)
+				if inRange and inRange < 6 then
+					specWarnCorruptedBrewNear:Show(targetname)
+					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+				end
+			end
+		end		
 	end
 end
 
@@ -393,6 +440,49 @@ local indicators = {}
 local counter = 0
 
 GridStatusBaneDbmCount = GridStatus:NewModule("GridStatusBaneDbmCount")
+
+GridStatusBaneDbmCount.defaultDB = {
+	vem_grid_banecountmod = {
+		enable = true,
+		color = { r = 1, g = 1, b = 1, a = 1, ignore = true },
+		setflash = {[1] = false, [2] = false, [3] = false, [4] = false, [5] = false },
+		priority = 99,
+		range = false,
+		raidframecount = false,
+	}
+}
+
+function GridStatusBaneDbmCount:OnInitialize()
+	local GridStatusBaneDbmCountName = L.VEM_GridBaneCount
+	self.super.OnInitialize(self)	
+	local option = {}	
+	option["raidframecount"] = {
+		type = "toggle",
+		name = L.BaneRaidFrameCount,
+		order = 10,
+		get = function()
+			return GridStatusBaneDbmCount.db.profile.vem_grid_banecountmod.raidframecount
+		end,
+		set = function()
+			GridStatusBaneDbmCount.db.profile.vem_grid_banecountmod.raidframecount = not GridStatusBaneDbmCount.db.profile.vem_grid_banecountmod.raidframecount
+		end
+	}
+	local i
+	for i = 1, 5 do
+		option["setflash" .. i] = {
+			type = "toggle",
+			name = L.optBaneGridCount .. i,
+			order = 10 + i,
+			get = function()
+				return GridStatusBaneDbmCount.db.profile.vem_grid_banecountmod.setflash[i]
+			end,
+			set = function()
+				GridStatusBaneDbmCount.db.profile.vem_grid_banecountmod.setflash[i] = not GridStatusBaneDbmCount.db.profile.vem_grid_banecountmod.setflash[i]
+			end
+		}
+	end
+	self:RegisterStatus("vem_grid_banecountmod", GridStatusBaneDbmCountName, option, true)
+end
 
 local function FlashIcon(self, elapsed)
 	local settings = GridStatusBaneDbmCount.db.profile.vem_grid_banecountmod
@@ -419,22 +509,6 @@ local function FlashIcon(self, elapsed)
 	end
 end
 
-GridStatusBaneDbmCount.defaultDB = {
-	vem_grid_banecountmod = {
-		enable = true,
-		color = { r = 1, g = 1, b = 1, a = 1, ignore = true },
-		priority = 99,
-		range = false,
-	}
-}
-
-function GridStatusBaneDbmCount:OnInitialize()
-	local GridStatusBaneDbmCountName = L.VEM_GridBaneCount
-	self.super.OnInitialize(self)
-	self:RegisterStatus("vem_grid_banecountmod", GridStatusBaneDbmCountName, nil, true)
-end
-
-
 function GridStatusBaneDbmCount:OnStatusEnable(status)
 	if status == "vem_grid_banecountmod" then
 		self.CountFrame = CreateFrame("Frame")
@@ -458,7 +532,7 @@ end
 
 local function sortByGroupAsc(a,b)
 	if a.gp == b.gp then
-		if mod.Options.BaneRaidFrameCount then
+		if GridStatusBaneDbmCount.db.profile.vem_grid_banecountmod.raidframecount then
 			return a.ui < b.ui
 		else
 			return a.n < b.n
@@ -468,12 +542,27 @@ local function sortByGroupAsc(a,b)
 	end
 end
 
+local function hasDebuff(unitid)
+	local i = 1
+	while true do
+		local name, _, _, _, _, duration, expirationTime = UnitDebuff(unitid, i)
+		if not name then
+			break
+		end
+		local debuffname = GetSpellInfo(143434)
+		if name == debuffname then
+			return duration, expirationTime
+		end
+		i = i + 1
+	end
+	return nil
+end
+
 function GridStatusBaneDbmCount:UpdateAllUnitAuras()
 	local settings = self.db.profile.vem_grid_banecountmod	
 	local countsort = 0
 	local k = 0
 	local tbl = {}
-	setflash = mod.Options.optBaneGridCount == "flash1" and 1 or mod.Options.optBaneGridCount == "flash2" and 2 or mod.Options.optBaneGridCount == "flash3" and 3 or mod.Options.optBaneGridCount == "flash4" and 4 or mod.Options.optBaneGridCount == "flash5" and 5 or mod.Options.optindex == "noflash" and 0
 	if canrecount then
 		counter = 0
 		table.wipe(indicators)
@@ -506,7 +595,7 @@ function GridStatusBaneDbmCount:UpdateAllUnitAuras()
 	for unitid in VEM:GetGroupMembers() do
 		local guid = UnitGUID(unitid)
 		local count = indicators[guid]
-		local _, _, _, _, _, duration, expiration = UnitAura(unitid, GetSpellInfo(143434))
+		local duration, expiration = hasDebuff(unitid)
 		if count and duration then
 			local cd_start = expiration - duration
 			local cd_duration
@@ -526,7 +615,7 @@ function GridStatusBaneDbmCount:UpdateAllUnitAuras()
 				cd_start,
 				cd_duration
 			)
-			if setflash == count then
+			if settings.setflash[count] then
 				flashcount[guid] = {start = cd_start, duration = cd_duration, queue = count}
 			end
 		else

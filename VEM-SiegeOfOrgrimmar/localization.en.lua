@@ -10,6 +10,8 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
+	SoundPZ					= "Voice Warning: When $spell:117878 stacks more than 3 warn you to stop attack",
+	InfoFrame				= "Info Frame: Track how many puddles have been killed or purified",
 	dr						= "Defensive warning[Warning will be showed at $spell:143020, but you should use your defensive cooldowns before contact]",
 	dr1						= "$spell:143020 1",
 	dr2						= "$spell:143020 2",
@@ -19,6 +21,11 @@ L:SetOptionLocalization({
 	dr6						= "$spell:143020 6",
 	dr7						= "$spell:143020 7",
 	dr8						= "$spell:143020 8"
+})
+
+L:SetMiscLocalization({
+	kill					= "Killed",
+	clean					= "Purified"
 })
 
 ---------------------------
@@ -40,18 +47,19 @@ L:SetOptionLocalization({
 	dr3						= "Defensive warning: $spell:143491 3/4",
 	dr4						= "Defensive warning: $spell:143491 4/4",
 	BaneGridCount			= "Grid: Number $spell:143434 (Position need to be set on Grid \"VEM number - Shadow Word: Bane\". If none of the following options is selected, the default order from Grid will be used. The spreaded $spell:143434 will not be numbered)",
-	BaneRaidFrameCount		= "Grid: $spell:143434 number order use BLZ raid frame order",
-	optBaneGridCount		= "Grid: Flash the \"Shadow Word: Bane\" number which is assigned to you to dispel ",
-	noflash					= "No flash",
-	flash1					= "1",
-	flash2					= "2",
-	flash3					= "3",
-	flash4					= "4",
-	flash5					= "5"
+	optOC					= "How many stacks of Mark of Anguish do you want to be warned to pass it",
+	imm						= "Immediately",
+	five					= "5",
+	ten						= "10",
+	fift					= "15",
+	twty					= "20",
+	none					= "Never",
 })
 
 L:SetMiscLocalization({
-	VEM_GridBaneCount		= "VEM number - Shadow Word: Bane"
+	VEM_GridBaneCount		= "VEM number - Shadow Word: Bane",
+	BaneRaidFrameCount		= "Use Blizzard raid frame number order",
+	optBaneGridCount		= "Flash number:",
 })
 
 ---------------------------
@@ -66,11 +74,15 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
-	InfoFrame			= "Show info frame for $journal:8252"
-	InfoFrame2				= "Info frame: $spell:144452(取代$journal:8252提示)",
+	InfoFrame			= "Show info frame for $journal:8252",
+	InfoFrame2				= "Info frame: $spell:144452(Replace $journal:8252 notice)",
 	specWarnTestIn			= "Special Warning: The player you monitor is in",
 	specWarnTestOut			= "Special Warning: The player you monitor is out",
 	prevplayer				= "Type in a player's name and you will be warned when he/she is in or out"
+})
+
+L:SetMiscLocalization({
+	wasteOfTime				= "Very well, I will create a field to keep your corruption quarantined."
 })
 
 ------------------
@@ -83,12 +95,16 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
+	SoundQS					= "Extra dispel warning: When you got $spell:144359 warn you as soon as dispel cd",
 	HudMAPBP				= "HUD MAP: $spell:144911",
 	HudMAPCP				= "HUD MAP: $spell:144574",
 	HudMAPAoP				= "HUD MAP: $spell:146817",
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(5, 146817),
 	SetIconOnMark		= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(144351),
-	InfoFrame			= "Show info frame for $journal:8255"
+	InfoFrame			= "Show info frame for $journal:8255",
+	dr1						= "Defensive Warning: $spell:144400 1/3",
+	dr2						= "Defensive Warning: $spell:144400 2/3",
+	dr3						= "Defensive Warning: $spell:144400 3/3",
 })
 
 L:SetMiscLocalization({
@@ -100,17 +116,26 @@ L:SetMiscLocalization({
 L= VEM:GetModLocalization(868)
 
 L:SetTimerLocalization({
+	timerAddsCD		= "Next Adds",
+	timerTowerCD	= "Next Tower & Adds"
 })
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
 	SoundZQ					= "Voice Warning: $spell:147328",
 	SoundTT					= "Voice Warning: $spell:146753",
+	timerAddsCD				= "Show timer for next adds wave",
+	timerTowerCD			= "Show timer for next tower assault",
 	FixateIcon				= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(147068),
-	InfoFrame				= "Info frame: Next $journal:8427"
+	InfoFrame				= "Info frame: Next $journal:8427",
+	flamecount				= "Defensive Warning: 2nd phase, which Pulsing Flames do you want to be warned."
 })
 
 L:SetMiscLocalization({
+	newForces1	= "Here they come!",--Jaina's line, horde may not be same
+	newForces2	= "Dragonmaw, advance!",
+	newForces3	= "For Hellscream!",
+	newForces4	= "Next squad, push forward!",
 	tower		= "The door barring the",--The door barring the South/North Tower has been breached!
 	demolisher	= "[Kor'kron Demolisher]|h|r to assault the tower!"--In case they remove the bad epiccenter spellid will use this
 })
@@ -130,7 +155,14 @@ L:SetTimerLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
-	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(6, 144154)
+	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(6, 144154),
+	dr						= "Defensive Warning: $spell:144485 [reset each siege mode]",
+	dr1						= "$spell:144485 1",
+	dr2						= "$spell:144485 2",
+	dr3						= "$spell:144485 3",
+	dr4						= "$spell:144485 4",
+	dr5						= "$spell:144485 5",
+	dr6						= "$spell:144485 6"
 })
 
 L:SetMiscLocalization({
@@ -146,11 +178,19 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
+	dr						= "Defensive Warning[4 seconds before]",
+	dr1						= "$spell:143973 1",
+	dr2						= "$spell:143973 2",
+	dr3						= "$spell:143973 3",
+	dr4						= "$spell:143973 4",
+	dr5						= "$spell:143973 5",
+	dr6						= "$spell:143973 6",
 	SetIconOnToxicMists		= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(144089),
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(4, 143990)
 })
 
 L:SetMiscLocalization({
+	PrisonYell		= "Prison on %s fades (%d)"
 })
 
 ---------------------
@@ -159,12 +199,14 @@ L:SetMiscLocalization({
 L= VEM:GetModLocalization(850)
 
 L:SetWarningLocalization({
+	warnDefensiveStanceSoon		= "Defensive Stance in %ds"
 })
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
 	SoundTT					= "Voice Warning: Kill $spell:143474",
 	InfoFrame				= "Info Frame: Rage Monitor",	
+	warnDefensiveStanceSoon			= "Pre-warning: $spell:143593 (5 seconds before)"
 })
 
 L:SetMiscLocalization({
@@ -172,7 +214,7 @@ L:SetMiscLocalization({
 	newForces2				= "Defend the gate!",
 	newForces3				= "Rally the forces!",
 	newForces4				= "Kor'kron, at my side!",
-	newForces5				= "Next squad, to the front!"
+	newForces5				= "Next squad, to the front!",
 	allForces				= "All Kor'kron... under my command... kill them... NOW!"
 })
 
@@ -226,7 +268,7 @@ L:SetTimerLocalization({
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
 	SoundPX					= "Countdown: $spell:143343",
-	RangeFrame	= "Show dynamic range frame (10)\n(This is a smart range frame that shows when you reach Frenzy threshold)"
+	RangeFrame	= "Show dynamic range frame (10)\n(This is a smart range frame that shows when you reach Frenzy threshold)",
 	FixateIcon				= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(143445)
 })
 
@@ -243,6 +285,12 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
+	SoundFMD				= "Voice Warning: Before $spell:144208 warn to attack Shredder",
+	InfoFrame				= "Info Frame: $journal:8202",
+	optCS					= "Conveyor belt warning",
+	CSA						= "Conveyor belt 1",
+	CSB						= "Conveyor belt 2",
+	none					= "None",
 })
 
 L:SetMiscLocalization({
@@ -263,9 +311,8 @@ L:SetWarningLocalization({
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
 	InfoFrame				= "Info Frame: Next Klaxxi Paragon",
-	HudMAPRed				= "HUD MAP: $spell:142726",
-	HudMAPBlue				= "HUD MAP: $spell:142725",
-	HudMAPYellow			= "HUD MAP: $spell:142727",
+	HudMAP					= "HUD MAP: $spell:142726 / $spell:142727",
+	HudMAPMZ				= "HUD MAP: $journal:8073",
 	warnToxicCatalyst				= VEM_CORE_AUTO_ANNOUNCE_OPTIONS.spell:format("ej8036"),
 	specWarnToxicInjection			= VEM_CORE_AUTO_SPEC_WARN_OPTIONS.you:format(142528),
 	specWarnToxicCatalyst			= VEM_CORE_AUTO_SPEC_WARN_OPTIONS.you:format("ej8036"),
@@ -277,34 +324,30 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	calculatedTarget	= "calculating eye!",
-	--thanks to blizz, the only accurate way for this to work, is to translate 15 emotes in all languages
-	yellow				= "Yellow",
-	red					= "Red",
-	blue				= "Blue",
-	purple				= "Purple",
-	green				= "Green",
-	bomb				= "Bomb",
-	sword				= "Sword",
-	drums				= "Drums",
-	mantid				= "Mantid",--Assumed
-	staff 				= "Staff",--Assumed
 	one					= "One",
 	two					= "Two",
 	three				= "Three",
-	four				= "Four",--Assumed
-	five				= "Five",--Assumed
-	hisekFlavor			= "Look who's quiet now",--http://ptr.wowhead.com/quest=31510
-	KilrukFlavor		= "Just another day, culling the swarm",--http://ptr.wowhead.com/quest=31109
-	XarilFlavor			= "I see only dark skies in your future",--http://ptr.wowhead.com/quest=31216
-	KaztikFlavor		= "Reduced to mere kunchong treats",--http://ptr.wowhead.com/quest=31024
-	KaztikFlavor2		= "1 Mantid down, only 199 to go",--http://ptr.wowhead.com/quest=31808
-	KorvenFlavor		= "The end of an ancient empire",--http://ptr.wowhead.com/quest=31232
-	KorvenFlavor2		= "Take your Gurthani Tablets and choke on them",--http://ptr.wowhead.com/quest=31232
-	IyyokukFlavor		= "See opportunities. Exploit them!",--Does not have quests, http://ptr.wowhead.com/npc=65305
-	KarozFlavor			= "You won't be leaping anymore!",---Does not have questst, http://ptr.wowhead.com/npc=65303
-	SkeerFlavor			= "A bloody delight!",--http://ptr.wowhead.com/quest=31178
-	RikkalFlavor		= "Specimen request fulfilled"--http://ptr.wowhead.com/quest=31508
+	four				= "Four",
+	five				= "Five",
+	BossSpellInfo		= "Boss Spell Info",
+	LF					= "Kil'ruk the Wind-Reaver",
+	LFspell				= "Gouge/Reave",
+	DX					= "Xaril the Poisoned-Mind",
+	DXspell				= "Toxic Spells",
+	CZ					= "Kaz'tik the Manipulator",
+	CZspell				= "Hungry Kunchongs",
+	ZZ					= "Korven the Prime",
+	ZZspell				= "Shield Bash/Amber",
+	MC					= "Iyyokuk the Lucid",
+	MCspell				= "lines of fire",
+	BS					= "Ka'roz the Locust",
+	BSspell				= "Pool of Caustic Amber/Flash",
+	MX					= "Skeer the Bloodseeker",
+	MXspell				= "Blood creatures",
+	QG					= "Rik'kal the Dissector",
+	QGspell				= "Parasite/Scorpion",
+	CQ					= "Hisek the Swarmkeeper",
+	CQspell				= "Share Aim",
 })
 
 ------------------------

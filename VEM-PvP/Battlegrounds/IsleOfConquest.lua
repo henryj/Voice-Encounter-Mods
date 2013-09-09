@@ -1,7 +1,7 @@
 local mod		= VEM:NewMod("z628", "VEM-PvP", 2)
 local L			= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 3 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 4 $"):sub(12, -3))
 mod:SetZone(VEM_DISABLE_ZONE_DETECTION)
 
 mod:RegisterEvents(
@@ -19,6 +19,7 @@ local timerSiegeEngine 	= mod:NewTimer(180, "TimerSiegeEngine", 15048)
 
 mod:AddBoolOption("ShowGatesHealth", true)
 
+local GetMapLandmarkInfo, GetNumMapLandmarks = GetMapLandmarkInfo, GetNumMapLandmarks
 local allyTowerIcon = "Interface\\AddOns\\VEM-PvP\\Textures\\GuardTower"
 local allyColor = {r = 0, g = 0, b = 1}
 local hordeTowerIcon = "Interface\\AddOns\\VEM-PvP\\Textures\\OrcTower"

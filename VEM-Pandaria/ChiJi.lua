@@ -3,19 +3,17 @@ local mod	= VEM:NewMod(857, "VEM-Pandaria", nil, 322)
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 10106 $"):sub(12, -3))
-mod:SetCreatureID(71953)
---mod:SetQuestID(32519)
+mod:SetRevision(("$Revision: 10165 $"):sub(12, -3))
+mod:SetCreatureID(71952)
 mod:SetZone()
-mod:SetUsedIcons(1)
+mod:SetMinSyncRevision(10162)
 
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START",
 	"SPELL_CAST_SUCCESS",
-	"SPELL_AURA_APPLIED",
-	"SPELL_AURA_REMOVED"
+	"UNIT_SPELLCAST_SUCCEEDED target focus"
 )
 
 mod:RegisterEvents(
@@ -24,22 +22,18 @@ mod:RegisterEvents(
 
 local warnInspiringSong			= mod:NewSpellAnnounce(144468, 3)
 local warnBeaconOfHope			= mod:NewTargetAnnounce(144473, 1)
+local warnFirestorm				= mod:NewSpellAnnounce(144461, 3)
 local warnBlazingSong			= mod:NewSpellAnnounce(144471, 4)
 local warnCraneRush				= mod:NewSpellAnnounce(144470, 3)--Health based, 66% and 33% (maybe register UNIT_HEALTH and give soon warning?)
 
 local specWarnInspiringSong		= mod:NewSpecialWarningInterrupt(144468)
-local specWarnBeaconOfHope		= mod:NewSpecialWarningYou(144473)
-local yellBeaconOfHope			= mod:NewYell(144473)
-local specWarnBeaconOfHopeOther	= mod:NewSpecialWarningTarget(144473)
+local specWarnBeaconOfHope		= mod:NewSpecialWarningSpell(144473)
+local specWarnFirestorm			= mod:NewSpecialWarningSpell(144461, nil, nil, nil, 2)
 local specWarnBlazingSong		= mod:NewSpecialWarningSpell(144471, nil, nil, nil, 3)
-local specWarnCraneRush			= mod:NewSpecialWarningSpell(144470, nil, nil, nil, 2)--Add range frame for spreading?
+local specWarnCraneRush			= mod:NewSpecialWarningSpell(144470, nil, nil, nil, 2)
 
---local timerInspiringSongCD	= mod:NewCDTimer(26, 144468)
---local timerBeaconOfhopeCD		= mod:NewCDTimer(25, 144473)
-local timerBlazingSong			= mod:NewCastTimer(5, 144471)--Possibly redundant, if it's always after beacon of hope
+local timerInspiringSongCD		= mod:NewCDTimer(30, 144468)--30-50sec variation?
 
-mod:AddBoolOption("SetIconOnBeacon", true)
-mod:AddBoolOption("BeaconArrow")
 mod:AddBoolOption("HudMAP", true, "sound")
 local VEMHudMap = VEMHudMap
 local free = VEMHudMap.free
@@ -49,22 +43,17 @@ local function register(e)
 end
 local HopeMarkers = {}
 
---local yellTriggered = false
+local yellTriggered = false
 
 function mod:OnCombatStart(delay)
---[[	if yellTriggered then--We know for sure this is an actual pull and not diving into in progress
-		timerInspiringSongCD:Start(15-delay)
-		timerBeaconOfhopeCD:Start(20-delay)
-		timerBlazingSongCD:Start(40-delay)
-	end-]]
+	if yellTriggered then--We know for sure this is an actual pull and not diving into in progress
+		timerInspiringSongCD:Start(20-delay)
+	end
 	table.wipe(HopeMarkers)
 end
 
 function mod:OnCombatEnd()
---	yellTriggered = false
-	if self.Options.BeaconArrow then
-		VEM.Arrow:Hide()
-	end
+	yellTriggered = false
 	if self.Options.HudMAP then
 		VEMHudMap:FreeEncounterMarkers()
 	end
@@ -74,14 +63,13 @@ function mod:SPELL_CAST_START(args)
 	if args.spellId == 144468 then
 		warnInspiringSong:Show()
 		specWarnInspiringSong:Show()
---		timerInspiringSongCD:Start()
+		timerInspiringSongCD:Start()
 		if args.sourceGUID == UnitGUID("target") or args.sourceGUID == UnitGUID("focus") then
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\kickcast.mp3") --快打斷
 		end
 	elseif args.spellId == 144471 then
 		warnBlazingSong:Show()
 		specWarnBlazingSong:Show()
-		timerBlazingSong:Start()
 		sndWOP:Schedule(2, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
 		sndWOP:Schedule(3, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
 		sndWOP:Schedule(4, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
@@ -94,15 +82,44 @@ function mod:SPELL_CAST_START(args)
 		warnCraneRush:Show()
 		specWarnCraneRush:Show()
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_shbx.mp3") --神鹤奔袭
-	elseif args.spellId == 144473 then 
+	elseif args.spellId == 144473 then
+		warnBeaconOfHope:Show()
+		specWarnBeaconOfHope:Show()
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_xbzb.mp3") --信标准备
+	elseif args.spellId == 144461 then
+		warnFirestorm:Show()
+		specWarnFirestorm:Show()
+	end
+end
+
+function mod:CHAT_MSG_MONSTER_YELL(msg)
+	--This victory yell fails if curse of tongues is on boss
+	if msg == L.Victory then
+		self:SendSync("Victory")
+	elseif msg == L.Pull and not self:IsInCombat() then
+		if self:GetCIDFromGUID(UnitGUID("target")) == 71953 or self:GetCIDFromGUID(UnitGUID("targettarget")) == 71953 then--Whole zone gets yell, so lets not engage combat off yell unless he is our target (or the target of our target for healers)
+			yellTriggered = true
+			VEM:StartCombat(self, 0)
+		end
+	end
+end
+
+--This method works without local and doesn't fail with curse of tongues. However, it requires at least ONE person in raid targeting boss to be running vem (which SHOULD be most of the time)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+	if spellId == 148318 or spellId == 148317 or spellId == 149304 and self:AntiSpam(3, 2) then--use all 3 because i'm not sure which ones fire on repeat kills
+		self:SendSync("Victory")
+	end
+end
+
+function mod:OnSync(msg)
+	if msg == "Victory" and self:IsInCombat() then
+		VEM:EndCombat(self)
 	end
 end
 
 function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 144473 then
 		warnBeaconOfHope:Show(args.destName)
---		timerBeaconOfhopeCD:Start()
 		if args:IsPlayer() then
 			specWarnBeaconOfHope:Show()
 			yellBeaconOfHope:Yell()
@@ -132,16 +149,5 @@ function mod:SPELL_AURA_REMOVED(args)
 		if HopeMarkers[args.destName] then
 			HopeMarkers[args.destName] = free(HopeMarkers[args.destName])
 		end
-	end
-end
-
-function mod:CHAT_MSG_MONSTER_YELL(msg)
-	if (msg == L.Victory or msg:find(L.Victory)) and self:IsInCombat() then
-		VEM:EndCombat(self)
-	--[[elseif msg == L.Pull and not self:IsInCombat() then
-		if self:GetCIDFromGUID(UnitGUID("target")) == 71953 or self:GetCIDFromGUID(UnitGUID("targettarget")) == 71953 then--Whole zone gets yell, so lets not engage combat off yell unless he is our target (or the target of our target for healers)
-			yellTriggered = true
-			VEM:StartCombat(self, 0)
-		end--]]
 	end
 end

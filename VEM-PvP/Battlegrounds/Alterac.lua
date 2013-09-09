@@ -4,7 +4,7 @@
 local mod	= VEM:NewMod("z30", "VEM-PvP", 2)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 3 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 4 $"):sub(12, -3))
 mod:SetZone(VEM_DISABLE_ZONE_DETECTION)
 
 mod:AddBoolOption("AutoTurnIn")
@@ -15,6 +15,7 @@ mod:RegisterEvents(
 	"ZONE_CHANGED_NEW_AREA" 	-- Required for BG start
 )
 
+local GetMapLandmarkInfo, GetNumMapLandmarks = GetMapLandmarkInfo, GetNumMapLandmarks
 local towerTimer = mod:NewTimer(243, "TimerTower", "Interface\\Icons\\Spell_Shadow_HellifrePVPCombatMorale")
 local gyTimer = mod:NewTimer(243, "TimerGY", "Interface\\Icons\\Spell_Shadow_AnimateDead")
 

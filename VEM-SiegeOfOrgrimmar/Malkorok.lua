@@ -2,7 +2,7 @@ local mod	= VEM:NewMod(846, "VEM-SiegeOfOrgrimmar", nil, 369)
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 10106 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10243 $"):sub(12, -3))
 mod:SetCreatureID(71454)
 mod:SetZone()
 
@@ -130,12 +130,16 @@ function mod:OnCombatStart(delay)
 	timerSeismicSlamCD:Start(5-delay, 1)
 	timerArcingSmashCD:Start(11-delay, 1)
 	timerBreathofYShaarjCD:Start(-delay, 1)
-	sndWOP:Schedule(58, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\breathsoon.mp3") --準備吐息
-	sndWOP:Schedule(59, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-	sndWOP:Schedule(60, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-	sndWOP:Schedule(61, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+	sndWOP:Schedule(58, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_yszb.mp3") --亞煞極之息準備
+	sndWOP:Schedule(59.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+	sndWOP:Schedule(60.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
+	sndWOP:Schedule(61.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 	timerBloodRageCD:Start(122-delay)
-	berserkTimer:Start(-delay)
+	if self:IsDifficulty("lfr25") then
+		berserkTimer:Start(720-delay)
+	else
+		berserkTimer:Start(-delay)
+	end
 	if self.Options.RangeFrame then
 		VEM.RangeCheck:Show(5)
 	end
@@ -168,10 +172,10 @@ function mod:SPELL_CAST_START(args)
 			timerSeismicSlamCD:Start(5, 1)
 			timerArcingSmashCD:Start(11, 1)
 			timerBreathofYShaarjCD:Start(nil, 2)
-			sndWOP:Schedule(58, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\breathsoon.mp3") --準備吐息
-			sndWOP:Schedule(59, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-			sndWOP:Schedule(60, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-			sndWOP:Schedule(61, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			sndWOP:Schedule(58, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_yszb.mp3") --亞煞極之息準備
+			sndWOP:Schedule(59.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+			sndWOP:Schedule(60.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
+			sndWOP:Schedule(61.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 		end
 	elseif args.spellId == 143199 then
 		breathCast = 0
@@ -182,10 +186,10 @@ function mod:SPELL_CAST_START(args)
 		timerSeismicSlamCD:Start(5, 1)
 		timerArcingSmashCD:Start(11, 1)
 		timerBreathofYShaarjCD:Start()
-		sndWOP:Schedule(58, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\breathsoon.mp3") --準備吐息
-		sndWOP:Schedule(59, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOP:Schedule(60, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Schedule(61, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndWOP:Schedule(58, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_yszb.mp3") --亞煞極之息準備
+		sndWOP:Schedule(59.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+		sndWOP:Schedule(60.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
+		sndWOP:Schedule(61.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 		timerBloodRageCD:Start()
 		if self.Options.RangeFrame then
 			VEM.RangeCheck:Show(5)

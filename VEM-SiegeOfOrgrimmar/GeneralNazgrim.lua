@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 local sndTT		= mod:NewSound(nil, "SoundTT", true)
 
-mod:SetRevision(("$Revision: 10154 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10204 $"):sub(12, -3))
 mod:SetCreatureID(71515)
 mod:SetZone()
 
@@ -17,7 +17,6 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_REMOVED",
 	"UNIT_DIED",
 	"CHAT_MSG_MONSTER_YELL",
-	"UNIT_POWER boss1",
 	"UNIT_SPELLCAST_SUCCEEDED boss1"
 )
 
@@ -26,8 +25,9 @@ local warnSunder					= mod:NewStackAnnounce(143494, 2)--Will add special warning
 local warnBonecracker				= mod:NewTargetAnnounce(143638, 2, nil, mod:IsHealer())
 local warnBattleStance				= mod:NewSpellAnnounce(143589, 2)
 local warnBerserkerStance			= mod:NewSpellAnnounce(143594, 3)
+local warnDefensiveStanceSoon		= mod:NewAnnounce("warnDefensiveStanceSoon", 4, 143593, nil, nil, true)
 local warnDefensiveStance			= mod:NewSpellAnnounce(143593, 4)
-local warnAdds						= mod:NewCountAnnounce("ej7920", 3)
+local warnAdds						= mod:NewCountAnnounce("ej7920", 3, 2457)
 local warnExecute					= mod:NewSpellAnnounce(143502, 4, nil, mod:IsTank())--Heroic
 --Nazgrim Rage Abilities
 local warnHeroicShockwave			= mod:NewSpellAnnounce(143500, 2)
@@ -41,7 +41,7 @@ local warnArcaneShock				= mod:NewSpellAnnounce(143432, 3, nil, false)--Spammy
 local warnMagistrike				= mod:NewSpellAnnounce(143431, 3, nil, false)--Spammy
 local warnAssasinsMark				= mod:NewTargetAnnounce(143480, 3)
 local warnEarthShield				= mod:NewTargetAnnounce(143475, 4, nil, mod:IsMagicDispeller())
-local warnEmpoweredChainHeal		= mod:NewSpellAnnounce(143473, 4)
+local warnEmpoweredChainHeal		= mod:NewCastAnnounce(143473, 4)
 local warnHealingTideTotem			= mod:NewSpellAnnounce(143474, 4)
 
 --Nazgrim Core Abilities
@@ -69,13 +69,13 @@ local specWarnHealingTideTotem		= mod:NewSpecialWarningSwitch(143474, false)--No
 
 --Nazgrim Core Abilities
 local timerAddsCD					= mod:NewNextCountTimer(45, "ej7920", nil, nil, nil, 2457)
-local timerSunder					= mod:NewTargetTimer(60, 143494, nil, mod:IsTank() or mod:IsHealer())
+local timerSunder					= mod:NewTargetTimer(30, 143494, nil, mod:IsTank() or mod:IsHealer())
 local timerSunderCD					= mod:NewCDTimer(10, 143494, nil, mod:IsTank())
 local timerExecuteCD				= mod:NewNextTimer(33.5, 143502, nil, mod:IsTank() or mod:IsHealer())
 local timerBoneCD					= mod:NewCDTimer(30, 143638, nil, mod:IsHealer())
-local timerBattleStance				= mod:NewBuffActiveTimer(60, 143589)
+local timerBerserkerStanceCD		= mod:NewNextTimer(60, 143594)
+local timerDefensiveStanceCD		= mod:NewNextTimer(60, 143593)
 local timerDefensiveStance			= mod:NewBuffActiveTimer(60, 143593)
-local timerBerserkerStance			= mod:NewBuffActiveTimer(60, 143594)
 --Nazgrim Rage Abilities
 local timerCoolingOff				= mod:NewBuffFadesTimer(15, 143484)
 --Kor'kron Adds
@@ -83,6 +83,8 @@ local timerEmpoweredChainHealCD		= mod:NewNextSourceTimer(6, 143473)
 
 --local countdownAdds					= mod:NewCountdown(45, "ej7920")
 --local countdownCoolingOff			= mod:NewCountdown(15, 143484, nil, nil, nil, nil, true)
+
+local berserkTimer					= mod:NewBerserkTimer(600)
 
 local addsCount = 0
 local boneTargets = {}
@@ -100,8 +102,9 @@ function mod:OnCombatStart(delay)
 	addsCount = 0
 	table.wipe(boneTargets)
 	timerAddsCD:Start(-delay, 1)
-	sndWOP:Schedule(40, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3") --五秒後小怪
+	sndWOP:Schedule(40, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3") --準備小怪
 --	countdownAdds:Start()
+	berserkTimer:Start(-delay)
 end
 
 function mod:OnCombatEnd()
@@ -154,12 +157,22 @@ function mod:SPELL_CAST_START(args)
 		end
 	elseif args.spellId == 143502 then
 		warnExecute:Show()
-		timerExecuteCD:Start()
+		if self:IsDifficulty("heroic25") then
+			timerExecuteCD:Start(18)
+		else
+			timerExecuteCD:Start()
+		end
 		if UnitExists("boss1") and UnitGUID("boss1") == args.sourceGUID and UnitDetailedThreatSituation("player", "boss1") then--threat check instead of target because we may be helping dps adds
 			specWarnExecute:Show()
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\execute.mp3") --斬殺
-			--TODO 很可能需要預警
 		end
+		local executecd = 30
+		if self:IsDifficulty("heroic25") then executecd = 15 end
+		self:Schedule(executecd, function()
+			if UnitExists("boss1") and UnitDetailedThreatSituation("player", "boss1") then
+				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\executeready.mp3") --準備斬殺
+			end
+		end)
 	end
 end
 
@@ -171,7 +184,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 			VEM.InfoFrame:SetHeader(GetSpellInfo(143589))
 			VEM.InfoFrame:Show(4, "nazgrimpower")
 		end
-		timerBattleStance:Start()
+		timerBerserkerStanceCD:Start()
 	elseif args.spellId == 143594 then
 		warnBerserkerStance:Show()
 		specWarnBerserkerStance:Show()
@@ -180,7 +193,12 @@ function mod:SPELL_CAST_SUCCESS(args)
 			VEM.InfoFrame:SetHeader(GetSpellInfo(143594))
 			VEM.InfoFrame:Show(4, "nazgrimpower")
 		end
-		timerBerserkerStance:Start()
+		timerDefensiveStanceCD:Start()
+		warnDefensiveStanceSoon:Schedule(55, 5)--Start pre warning with regular warnings only as you don't move at this point yet.
+		warnDefensiveStanceSoon:Schedule(56, 4)
+		warnDefensiveStanceSoon:Schedule(57, 3)
+		warnDefensiveStanceSoon:Schedule(58, 2)
+		warnDefensiveStanceSoon:Schedule(59, 1)
 		sndWOP:Schedule(55, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_fyzb.mp3") --防禦姿態準備
 		sndWOP:Schedule(56, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
 		sndWOP:Schedule(57, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
@@ -224,7 +242,7 @@ function mod:SPELL_AURA_APPLIED(args)
 				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\sunderhigh.mp3") --破甲過高
 			end
 		else--Taunt as soon as stacks are clear, regardless of stack count.
-			if not UnitDebuff("player", GetSpellInfo(143494)) and not UnitIsDeadOrGhost("player") then
+			if amount >= 3 and not UnitDebuff("player", GetSpellInfo(143494)) and not UnitIsDeadOrGhost("player") then
 				specWarnSunderOther:Show(args.destName)
 				if mod:IsTank() then
 					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\changemt.mp3") --換坦嘲諷
@@ -299,6 +317,6 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 143500 then--Faster than combat log by 0.3-0.5 seconds
 		warnHeroicShockwave:Show()
 		specWarnHeroicShockwave:Show()
-		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_dt.mp3") --大跳
+		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_yzkd.mp3") --餘震快躲
 	end
 end

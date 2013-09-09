@@ -2,7 +2,7 @@
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 10149 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10206 $"):sub(12, -3))
 mod:SetCreatureID(71466)
 mod:SetZone()
 
@@ -30,7 +30,7 @@ local warnIgniteArmor			= mod:NewStackAnnounce(144467, 2, nil, mod:IsTank())--Se
 --Siege Mode
 local warnSeismicActivity		= mod:NewSpellAnnounce(144483, 2)--A mere activation of phase
 local warnNapalmOil				= mod:NewSpellAnnounce(144492, 3)
-local warnShockPulse			= mod:NewSpellAnnounce(144485, 3)--The actual threatening quake mechanic
+local warnShockPulse			= mod:NewCountAnnounce(144485, 3)
 local warnDemolisherCanon		= mod:NewSpellAnnounce(144154, 3)
 local warnCutterLaser			= mod:NewTargetAnnounce(146325, 4)--Not holding my breath this shows in combat log.
 local warnMortarBarrage			= mod:NewSpellAnnounce(144555, 4)--Heroic
@@ -41,7 +41,7 @@ local specWarnIgniteArmorOther	= mod:NewSpecialWarningTarget(144467, mod:IsTank(
 local specWarnBorerDrill		= mod:NewSpecialWarningSpell(144218, false, nil, nil, 2)
 local specWarnBorerDrillMove	= mod:NewSpecialWarningMove(144218)
 --Siege Mode
-local specWarnShockPulse		= mod:NewSpecialWarningSpell(144485, nil, nil, nil, 2)
+local specWarnShockPulse		= mod:NewSpecialWarningCount(144485, nil, nil, nil, 2)
 local specWarnCutterLaser		= mod:NewSpecialWarningRun(146325)
 local specWarnNapalmOil			= mod:NewSpecialWarningMove(144498)
 local yellCutterLaser			= mod:NewYell(146325)
@@ -60,30 +60,45 @@ local timerCrawlerMineCD		= mod:NewCDTimer(30, 144673)
 local timerSiegeModeCD			= mod:NewNextTimer(116, 84974, nil, nil, "timerSiegeModeCD")--Wish spell name was a litlte shorter but still better than localizing
 local timerCuttingLaser			= mod:NewTargetTimer(10, 146325)--Spell tooltip says 15 but combat log showed 10
 --local timerCuttingLaserCD		= mod:NewCDTimer(10, 146325)
---local timerShockPulseCD		= mod:NewCDTimer(10, 144485)
+local timerShockPulseCD			= mod:NewNextCountTimer(16.5, 144485)--Confirmed, blizzard did take solid argued feedback and changed this mechanic, yay.
 --local timerNapalmOilCD		= mod:NewCDTimer(21.5, 144492)
 local timerDemolisherCanonCD	= mod:NewCDTimer(10, 144154)
 local timerMortarBarrageCD		= mod:NewCDTimer(30, 144555)
 
 --local soundCuttingLaser			= mod:NewSound(146325)
 
+local berserkTimer				= mod:NewBerserkTimer(600)
+
 mod:AddBoolOption("RangeFrame", mod:IsRanged())
 
 local siegeMode = false
+local shockCount = 0
+mod:AddBoolOption("dr", true, "sound")
+for i = 1, 5 do
+	mod:AddBoolOption("dr"..i, false, "sound")
+end
+local function MyJS()
+	if (mod.Options.dr1 and shockCount == 1) or (mod.Options.dr2 and shockCount == 2) or (mod.Options.dr3 and shockCount == 3) or (mod.Options.dr4 and shockCount == 4) or (mod.Options.dr5 and shockCount == 5) then
+		return true
+	end
+	return false
+end
 
 function mod:OnCombatStart(delay)
 	siegeMode = false
+	shockCount = 0
 	timerIgniteArmorCD:Start(9-delay)
 	timerLaserBurnCD:Start(-delay)
 	timerBorerDrillCD:Start(-delay)
 	timerCrawlerMineCD:Start(-delay)
 	timerSiegeModeCD:Start(120.5-delay)--First one longer than rest
+	berserkTimer:Start(-delay)
 	sndWOP:Schedule(117, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_qgzb.mp3") --強攻階段準備
 	sndWOP:Schedule(118, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
 	sndWOP:Schedule(119, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
 	sndWOP:Schedule(120, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 	if self.Options.RangeFrame then
-		VEM.RangeCheck:Show(8)
+		VEM.RangeCheck:Show(6) --BH FIX
 	end
 end
 
@@ -94,14 +109,16 @@ function mod:OnCombatEnd()
 end
 
 function mod:SPELL_CAST_START(args)
-	if args.spellId == 144483 then
+	if args.spellId == 144483 then--Siege mode transition
 		siegeMode = true
+		shockCount = 0
 		timerLaserBurnCD:Cancel()
 		timerCrawlerMineCD:Cancel()
 		timerBorerDrillCD:Cancel()
 		warnSeismicActivity:Show()
+		timerShockPulseCD:Start(nil, 1)
 		if self:IsDifficulty("heroic10", "heroic25") then
-			timerMortarBarrageCD:Start(15)--So far, the ONLY ability with consistent timing that we can start here
+			timerMortarBarrageCD:Start(15)
 		end
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_qgzb.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
@@ -113,15 +130,22 @@ function mod:SPELL_CAST_START(args)
 		sndWOP:Schedule(61, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
 		sndWOP:Schedule(62, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
 		sndWOP:Schedule(63, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
-		if self.Options.RangeFrame then
+--[[		if self.Options.RangeFrame then
 			VEM.RangeCheck:Hide()
-		end
+		end]]
 	elseif args.spellId == 144485 then
-		warnShockPulse:Show()
-		specWarnShockPulse:Show()
---		timerShockPulseCD:Start()
-		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_zbjt.mp3") --準備擊飞
-		sndWOP:Schedule(1, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+		shockCount = shockCount + 1
+		warnShockPulse:Show(shockCount)
+		specWarnShockPulse:Show(shockCount)
+		if shockCount < 3 then
+			timerShockPulseCD:Start(nil, shockCount+1)
+		end
+		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_zbjt.mp3") --準備擊飞		
+		if MyJS() then
+			sndWOP:Schedule(1, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
+		else
+			sndWOP:Schedule(1, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+		end		
 		sndWOP:Schedule(2, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
 		sndWOP:Schedule(3, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 	end
@@ -141,7 +165,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		timerIgniteArmorCD:Start()
 		if amount >= 3 then
 			if args:IsPlayer() then
-				specWarnIgniteArmor:Show(args.amount)
+				specWarnIgniteArmor:Show(amount)
 				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\sunderhigh.mp3") --破甲過高
 			else
 				specWarnIgniteArmorOther:Show(args.destName)
@@ -226,9 +250,9 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 			sndWOP:Schedule(115, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 			siegeMode = false
 		end
-		if self.Options.RangeFrame then
+--[[		if self.Options.RangeFrame then
 			VEM.RangeCheck:Show(8)
-		end
+		end]]
 	elseif spellId == 144555 then
 		warnMortarBarrage:Show()
 		specWarnMortarBarrage:Show()

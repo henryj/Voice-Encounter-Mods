@@ -129,7 +129,7 @@ VEM_CORE_SLASHCMD_HELP				= {
 	"/vem pull <秒數>: 開始備戰計時器<秒數>。向所有團隊成員發送一個VEM備戰計時器（需要團隊隊長或助理權限）。",
 	"/vem arrow: 顯示VEM箭頭, 輸入 /vem arrow help 獲得更多訊息。",
 	"/vem lockout: 向團隊成員請求他們當前的團隊副本鎖定訊息(鎖定訊息、副本id) (需要團隊隊長或助理權限)。",
-	"/vem help：顯示可用命令的說明。",
+	"/vem help：顯示可用命令的說明。"
 }
 
 VEM_ERROR_NO_PERMISSION				= "無權進行此操作。"
@@ -142,6 +142,10 @@ VEM_CORE_LEFT						= "左"
 VEM_CORE_RIGHT						= "右"
 VEM_CORE_BACK						= "後"
 VEM_CORE_FRONT						= "前"
+
+VEM_CORE_SETTO						= "設置為："
+VEM_CORE_SETWISP					= "的觀察目標設置為你，請協助檢查是否正確。"
+VEM_CORE_WRONGSET					= "|cFFFF0000你輸入了錯誤的內容："
 
 VEM_CORE_BREAK_START				= "現在開始休息-你有%s分鐘!"
 VEM_CORE_BREAK_MIN					= "%s分鐘後休息時間結束!"
@@ -202,6 +206,7 @@ VEM_CORE_AUTO_SPEC_WARN_TEXTS = {
 	target					= ">%%s<中了%s",
 	close					= "你附近的>%%s<中了%s",
 	move					= "%s - 快移動",
+	reflect					= "%s - 停止攻擊",
 	run						= "%s - 快躲開",
 	cast					= "%s - 停止施法",
 	count 					= "%s! (%%d)",
@@ -217,6 +222,7 @@ VEM_CORE_AUTO_SPEC_WARN_OPTIONS = {
 	soon					= "特別警告：$spell:%s即将到来",
 	prewarn					= "特別警告：%d秒後$spell:%s",
 	dispel					= "特別警告：需要驅散/竊取$spell:%s時",
+	reflect 				= "特別警告：$spell:%s需要停止攻擊時",--Spell Reflect
 	interrupt				= "特別警告：需要打斷$spell:%s時",
 	you						= "特別警告：當你中了$spell:%s時",
 	target					= "特別警告：當有人中了$spell:%s時",
@@ -284,7 +290,7 @@ VEM_ARROW_ERROR_USAGE	= {
 	"/vem arrow <x> <y>  建立一個箭頭在特定的位置(0 < x/y < 100)",
 	"/vem arrow <玩家>  建立並箭頭指向你的隊伍或團隊中特定的玩家",
 	"/vem arrow hide  隱藏箭頭",
-	"/vem arrow move  可移動箭頭",
+	"/vem arrow move  可移動箭頭"
 }
 
 VEM_SPEED_KILL_TIMER_TEXT	= "勝利紀錄"
@@ -323,6 +329,3 @@ VEM_CORE_SOUNDGRIL_TEXT_YUN			= "    芷小芸，來自中國台灣省的魔獸�
 
 VEM_CORE_SOUNDGRIL_NAME_SST			= "Iceoven"
 VEM_CORE_SOUNDGRIL_TEXT_SST			= "    All Voice generated via VoiceRss TTS (Text To Speech), API by Iceoven (Worgen Mage from Ancient Ones @ US-Dath'Remar)."
-
-VEM_CORE_SOUNDGRIL_NAME_STEPHANIE = "Stephanie"
-VEM_CORE_SOUNDGRIL_TEXT_STEPHANIE = "Stephanie，人称白富美，女，安逸的杭州人。2010年就读于杭州电子科技大学，目前在美国哥伦比亚大学留学"

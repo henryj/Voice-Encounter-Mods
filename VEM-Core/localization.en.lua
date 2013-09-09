@@ -127,7 +127,7 @@ VEM_CORE_SLASHCMD_HELP				= {
 	"/vem pull <sec>: Starts a pull timer for <sec> seconds. Gives all raid members with VEM a pull timer (requires leader/promoted status).",
 	"/vem arrow: shows the VEM arrow, see /vem arrow help for details.",
 	"/vem lockout: asks raid members for their current raid instance lockouts (aliases: lockouts, ids) (requires leader/promoted status).",
-	"/vem help: Shows this message.",
+	"/vem help: Shows this message."
 }
 
 VEM_ERROR_NO_PERMISSION				= "You don't have the required permission to do this."
@@ -140,6 +140,10 @@ VEM_CORE_LEFT						= "Left"
 VEM_CORE_RIGHT						= "Right"
 VEM_CORE_BACK						= "Back"--BACK
 VEM_CORE_FRONT						= "Front"
+
+VEM_CORE_SETTO						= "Set To: "
+VEM_CORE_SETWISP					= " set to you"
+VEM_CORE_WRONGSET					= "|cFFFF0000You have entered the wrong content: "
 
 VEM_CORE_BREAK_START				= "Break starting now -- you have %s minute(s)!"
 VEM_CORE_BREAK_MIN					= "Break ends in %s minute(s)!"
@@ -202,6 +206,7 @@ VEM_CORE_AUTO_SPEC_WARN_TEXTS = {
 	move		= "%s - move away",
 	run			= "%s - run away",
 	cast		= "%s - stop casting",
+	reflect		= "%s - stop attacking",
 	count		= "%s! (%%d)",
 	stack		= "%%d stacks of %s on you",
 	switch		= ">%s< - switch targets"
@@ -221,7 +226,8 @@ VEM_CORE_AUTO_SPEC_WARN_OPTIONS = {
 	close 		= "Show special warning when someone close to you is affected by $spell:%s",
 	move 		= "Show special warning to move out from $spell:%s",
 	run 		= "Show special warning to run away from $spell:%s",
-	cast 		= "Show special warning for $spell:%s cast",
+	cast 		= "Show special warning to stop casting for $spell:%s",--Spell Interrupt
+	reflect 	= "Show special warning to stop attacking $spell:%s",--Spell Reflect
 	count 		= "Show special warning for $spell:%s",
 	stack 		= "Show special warning when you are affected by >=%d stacks of $spell:%s",--too long?
 	switch		= "Show special warning to switch targets for $spell:%s"
@@ -282,7 +288,7 @@ VEM_ARROW_ERROR_USAGE	= {
 	"/vem arrow <x> <y>  creates an arrow that points to a specific locataion (0 < x/y < 100)",
 	"/vem arrow <player>  creates and arrow that points to a specific player in your party or raid",
 	"/vem arrow hide  hides the arrow",
-	"/vem arrow move  makes the arrow movable",
+	"/vem arrow move  makes the arrow movable"
 }
 
 VEM_SPEED_KILL_TIMER_TEXT	= "Record Victory"
@@ -317,6 +323,3 @@ VEM_CORE_SOUNDGRIL_TEXT_YUN			= "    Xiaoyun Zhi, WOW player from Taiwan, beauti
 
 VEM_CORE_SOUNDGRIL_NAME_SST			= "Iceoven"
 VEM_CORE_SOUNDGRIL_TEXT_SST			= "    All Voice generated via VoiceRss TTS (Text To Speech), API by Iceoven (Worgen Mage from Ancient Ones @ US-Dath'Remar)."
-
-VEM_CORE_SOUNDGRIL_NAME_STEPHANIE   = "Stephanie"
-VEM_CORE_SOUNDGRIL_TEXT_STEPHANIE   = "    Stephanie, nickname Bai'fumei, girl from Hangzhou China. Study in Columbia University U.S. now and Hangzhou Dianzi University China back in 2010."

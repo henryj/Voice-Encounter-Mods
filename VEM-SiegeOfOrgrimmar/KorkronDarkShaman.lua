@@ -2,7 +2,7 @@
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 10155 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10201 $"):sub(12, -3))
 mod:SetCreatureID(71859, 71858)--haromm, Kardris
 mod:SetZone()
 mod:SetUsedIcons(5, 4, 3, 2, 1)
@@ -18,7 +18,7 @@ mod:RegisterEventsInCombat(
 )
 
 --Dogs
-local warnRend						= mod:NewStackAnnounce(144304, 2)--Dont have an idea of frequently yet so just a general anounce for now. tank warnings later
+local warnRend						= mod:NewStackAnnounce(144304, 2)
 
 --General
 local warnPoisonmistTotem			= mod:NewSpellAnnounce(144288, 3)--85%
@@ -29,13 +29,13 @@ local warnRustedIronTotem			= mod:NewSpellAnnounce(144291, 3)--Heroic (95%)
 --Earthbreaker Haromm
 local warnFroststormStrike			= mod:NewStackAnnounce(144215, 2, nil, mod:IsTank())
 local warnToxicMists				= mod:NewTargetAnnounce(144089, 3)
-local warnFoulStream				= mod:NewTargetAnnounce(144090, 3)--Verify if targetscanning will work here (or if spell itself has a target emote or something)
+local warnFoulStream				= mod:NewTargetAnnounce(144090, 3)
 local warnAshenWall					= mod:NewSpellAnnounce(144070, 4)
 local warnIronTomb					= mod:NewSpellAnnounce(144328, 3)
 --Wavebinder Kardris
 local warnFrostStormBolt			= mod:NewSpellAnnounce(144214, 2, nil, mod:IsTank())
 local warnToxicStorm				= mod:NewSpellAnnounce(144005, 3)
-local warnFoulGeyser				= mod:NewSpellAnnounce(143990, 4)--This may be cast on an actual target player instead of location, as such some changes will be needed
+local warnFoulGeyser				= mod:NewTargetAnnounce(143990, 4)
 local warnFallingAsh				= mod:NewSpellAnnounce(143973, 3)
 local warnIronPrison				= mod:NewTargetAnnounce(144330, 3)
 
@@ -52,8 +52,10 @@ local specWarnIronTomb				= mod:NewSpecialWarningSpell(144328, nil, nil, nil, 2)
 local specWarnFrostStormBolt		= mod:NewSpecialWarningSpell(144214, false)--spammy, but useful for a tank if they want to time active mitigation around it.
 local specWarnToxicStorm			= mod:NewSpecialWarningSpell(144005, mod:IsMelee())
 local specWarnFoulGeyser			= mod:NewSpecialWarningSpell(143990)
+local yellFoulGeyser				= mod:NewYell(143990)
 local specWarnFallingAsh			= mod:NewSpecialWarningSpell(143973, nil, nil, nil, 2)--Seems like an everyone waring.
-local specWarnIronPrison			= mod:NewSpecialWarningPreWarn(144330, nil, 4)
+local specWarnIronPrison			= mod:NewSpecialWarningSoon(144330)--If this generic isn't too clear i'll localize it. this is warning that it's about to expire not that it's just been applied
+local yellIronPrisonFades			= mod:NewYell(144330, L.PrisonYell, false)--Off by default since it's an atypical yell (it's not used for avoiding person it's used to get healer attention to person)
 
 --Earthbreaker Haromm
 local timerFroststormStrike			= mod:NewTargetTimer(30, 144215, nil, mod:IsTank())
@@ -68,9 +70,12 @@ local timerToxicStormCD				= mod:NewCDTimer(32, 144005)--Pretty much a next time
 local timerFoulGeyserCD				= mod:NewCDTimer(32.5, 143990)--Pretty much a next timers unless boss is casting something else
 local timerFallingAshCD				= mod:NewCDTimer(32.5, 143973)--Pretty much a next timers unless boss is casting something else
 local timerIronPrisonCD				= mod:NewCDTimer(31.5, 144330)--Pretty much a next timers unless boss is casting something else
+local timerIronPrison				= mod:NewBuffFadesTimer(60, 144330)
 
 --local countdownFoulGeyser			= mod:NewCountdown(32.5, 143990)
 --local countdownAshenWall			= mod:NewCountdown(32.5, 144070, nil, nil, nil, nil, true)
+
+local berserkTimer					= mod:NewBerserkTimer(540)
 
 mod:AddBoolOption("RangeFrame")--This is more or less for foul geyser and foul stream splash damage
 mod:AddBoolOption("SetIconOnToxicMists", false)
@@ -79,6 +84,19 @@ local toxicMistsTargets = {}
 local toxicMistsTargetsIcons = {}
 local ironPrisonTargets = {}
 local UnitExists, UnitGUID, UnitDetailedThreatSituation = UnitExists, UnitGUID, UnitDetailedThreatSituation
+local playerName = UnitName("player")
+
+mod:AddBoolOption("dr", true, "sound")
+for i = 1, 6 do
+	mod:AddBoolOption("dr"..i, false, "sound")
+end
+local ashCount = 0
+local function MyJS()
+	if (mod.Options.dr1 and ashCount == 1) or (mod.Options.dr2 and ashCount == 2) or (mod.Options.dr3 and ashCount == 3) or (mod.Options.dr4 and ashCount == 4) or (mod.Options.dr5 and ashCount == 5) or (mod.Options.dr6 and ashCount == 6) then
+		return true
+	end
+	return false
+end
 
 local function warnToxicMistTargets()
 	warnToxicMists:Show(table.concat(toxicMistsTargets, "<, >"))
@@ -89,23 +107,6 @@ end
 local function warnIronPrisonTargets()
 	warnIronPrison:Show(table.concat(ironPrisonTargets, "<, >"))
 	table.wipe(ironPrisonTargets)
-end
-
---Auto detection of "tank them apart" strategy. if you keep them > 50 yards apart like we did, abilities other casts do not concern you.
-local function checkTankDistance(cid)
-	local _, uId = mod:GetBossTarget(cid)
-	if uId then--Now we know who is tanking that boss
-		local x, y = GetPlayerMapPosition(uId)
-		if x == 0 and y == 0 then
-			SetMapToCurrentZone()
-			x, y = GetPlayerMapPosition(uId)
-		end
-		local inRange = VEM.RangeCheck:GetDistance("player", x, y)--We check how far we are from the tank who has that boss
-		if (inRange and inRange < 50) or (x == 0 and y == 0) then--You are near the person tanking boss
-			return true
-		end
-	end
-	return false
 end
 
 local function ClearToxicMistTargets()
@@ -131,15 +132,16 @@ function mod:FoulStreamTarget(targetname, uId)
 	if not targetname then return end
 	if self:IsTanking(uId) then--Never target tanks, so if target is tank, that means scanning failed.
 		specWarnFoulStream:Show()
+		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_xxsl.mp3")
 	else
 		warnFoulStream:Show(targetname)
 		timerFoulStreamCD:Start()
 		if targetname == UnitName("player") then
 			specWarnFoulStreamYou:Show()
 			yellFoulStream:Yell()
-			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runout.mp3") --離開人群
+			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_xxsl.mp3")
 		else
-			if checkTankDistance(71859) then
+			if self:checkTankDistance(71859) then
 				specWarnFoulStream:Show()
 				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_xxsl.mp3") --小心水流
 			end
@@ -147,8 +149,19 @@ function mod:FoulStreamTarget(targetname, uId)
 	end
 end
 
+function mod:ToxicStormTarget(targetname, uId)
+	if not targetname then 
+		print("VEM DEBUG: Target scanning Failed")
+		return
+	else
+		print("VEM DEBUG: ToxicStormTarget returned "..targetname)
+	end
+end
+
 function mod:OnCombatStart(delay)
 	table.wipe(toxicMistsTargets)
+	ashCount = 0
+	berserkTimer:Start(-delay)
 end
 
 function mod:OnCombatEnd()
@@ -168,20 +181,17 @@ function mod:SPELL_CAST_START(args)
 			end
 		end
 	elseif args.spellId == 144005 then
+		self:BossTargetScanner(71858, "ToxicStormTarget", 0.025, 12)
 		warnToxicStorm:Show()
 		timerToxicStormCD:Start()
-		if checkTankDistance(args:GetSrcCreatureID()) then
-			specWarnToxicStorm:Show()
-			if mod:IsMelee() then
-				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_jdfb.mp3") --劇毒風暴
-			end
+		if self:checkTankDistance(args:GetSrcCreatureID()) then
+			specWarnToxicStorm:Show() --劇毒風暴
 		end
 	elseif args.spellId == 144090 then
 		self:BossTargetScanner(71859, "FoulStreamTarget", 0.025, 12)
 	elseif args.spellId == 143990 then
-		warnFoulGeyser:Show()
 		timerFoulGeyserCD:Start()
-		if checkTankDistance(args:GetSrcCreatureID()) then
+		if self:checkTankDistance(args:GetSrcCreatureID()) then
 			specWarnFoulGeyser:Show()
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_zbrn.mp3") --準備軟泥
 --DELETE		countdownFoulGeyser:Start()
@@ -189,17 +199,22 @@ function mod:SPELL_CAST_START(args)
 	elseif args.spellId == 144070 then
 		warnAshenWall:Show()
 		timerAshenWallCD:Start()
-		if checkTankDistance(args:GetSrcCreatureID()) then--Now we know who is tanking that boss
+		if self:checkTankDistance(args:GetSrcCreatureID()) then--Now we know who is tanking that boss
 			specWarnAshenWall:Show()--Give special warning cause this ability concerns you
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_yszq.mp3") --元素之牆
 		end
 	elseif args.spellId == 143973 then
+		ashCount = ashCount + 1
 		warnFallingAsh:Show()
 		timerFallingAshCD:Start()
-		if checkTankDistance(args:GetSrcCreatureID()) then--Now we know who is tanking that boss
+		if self:checkTankDistance(args:GetSrcCreatureID()) then--Now we know who is tanking that boss
 			specWarnFallingAsh:Show()--Give special warning cause this ability concerns you
 			sndWOP:Schedule(26, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_wmys.mp3") -- 5s後隕石爆炸
-			sndWOP:Schedule(27.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
+			if MyJS() then
+				sndWOP:Schedule(27.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
+			else
+				sndWOP:Schedule(27.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
+			end
 			sndWOP:Schedule(28.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
 			sndWOP:Schedule(29.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
 			sndWOP:Schedule(30.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
@@ -207,7 +222,6 @@ function mod:SPELL_CAST_START(args)
 	elseif args.spellId == 144330 then
 		warnIronPrison:Show()
 		timerIronPrisonCD:Start()
---DELETE	specWarnIronPrison:Show()
 	elseif args.spellId == 144328 then
 		warnIronTomb:Show()
 		timerIronTombCD:Start()
@@ -240,6 +254,11 @@ function mod:SPELL_CAST_SUCCESS(args)
 				timerFroststormStrikeCD:Start()
 			end
 		end
+	elseif args.spellId == 143990 then
+		warnFoulGeyser:Show(args.destName)
+		if args:IsPlayer() then
+			yellFoulGeyser:Yell()
+		end
 	end
 end
 
@@ -266,6 +285,12 @@ function mod:SPELL_AURA_APPLIED(args)
 		self:Schedule(0.5, warnIronPrisonTargets)
 		if args:IsPlayer() then
 			specWarnIronPrison:Schedule(56)
+			timerIronPrison:Start()
+			yellIronPrisonFades:Schedule(59, playerName, 1)
+			yellIronPrisonFades:Schedule(58, playerName, 2)
+			yellIronPrisonFades:Schedule(57, playerName, 3)
+			yellIronPrisonFades:Schedule(56, playerName, 4)
+			yellIronPrisonFades:Schedule(55, playerName, 5)
 			sndWOP:Schedule(56, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\holdit.mp3") --快開自保
 		end
 	elseif args.spellId == 144215 then
@@ -293,10 +318,10 @@ function mod:SPELL_AURA_REMOVED(args)
 		self:SetIcon(args.destName, 0)
 	elseif args.spellId == 144215 then
 		timerFroststormStrike:Cancel(args.destName)
-	elseif args.spellId == 144330 then
-		if args:IsPlayer() then
-			specWarnIronPrison:Cancel()
-			sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\holdit.mp3")
-		end
+	elseif args.spellId == 144330 and args:IsPlayer() then
+		specWarnIronPrison:Cancel()
+		yellIronPrisonFades:Cancel()
+		timerIronPrison:Cancel()
+		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\holdit.mp3")
 	end
 end

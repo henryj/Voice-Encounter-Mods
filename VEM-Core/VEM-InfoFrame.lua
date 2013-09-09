@@ -218,7 +218,17 @@ local function updateNamesortLines()
 		sortedLines[#sortedLines + 1] = i
 	end
 	table.sort(sortedLines, namesortFuncAsc)
-		for i, v in ipairs(updateCallbacks) do
+	for i, v in ipairs(updateCallbacks) do
+		v(sortedLines)
+	end
+end
+
+local function updateNotsortLines()
+	table.wipe(sortedLines)
+	for i in pairs(lines) do
+		sortedLines[#sortedLines + 1] = i
+	end
+	for i, v in ipairs(updateCallbacks) do
 		v(sortedLines)
 	end
 end
@@ -299,7 +309,7 @@ local function updateNazgrimPower()
 		lines[GetSpellInfo(143503)] = 70
 		lines["|cFF088A08"..GetSpellInfo(143872).."|r"] = UnitPower("boss1")
 	end
-	updateLines()
+	updateNotsortLines()
 end
 
 
@@ -537,7 +547,7 @@ local function updateOther()
 	if lowestF then
 		lines[lowestF]= lowestT
 	end
-	updateLines()
+	updateNotsortLines()
 end
 
 local function updateTime()
@@ -579,19 +589,25 @@ local function updateFallenProtectorsHealth()
 		if UnitName("boss"..i) == dzname then finddz = true end
 		if UnitName("boss"..i) == msname then findms = true end
 	end
+	if (not findws) and (not finddz) and (not findms) then return end
+	
+	local function insertline(name, health)
+		if health >= 66 then
+			lines[name]= "|cFFFF0000"..(health-66).."%|r"
+		elseif health >= 33 then
+			lines[name]= "|cFFFFFF00"..(health-33).."%|r"
+		elseif health >= 0 then
+			lines[name]= "|cFF00FF00"..health.."%|r"
+		end
+	end
+	
 	if not findws then
 		lines[wsname]= GetSpellInfo(65294)
 	else
 		for i = 1, 5 do
 			if UnitName("boss"..i) == wsname then
 				bosshealth = math.floor(UnitHealth("boss"..i) / UnitHealthMax("boss"..i) * 100)
-				if bosshealth >= 66 then
-					lines[wsname]= (bosshealth-66).."% ("..bosshealth.."%)"
-				elseif bosshealth >= 33 then
-					lines[wsname]= (bosshealth-33).."% ("..bosshealth.."%)"
-				elseif bosshealth >= 0 then
-					lines[wsname]= bosshealth.."%"
-				end
+				insertline(wsname, bosshealth)
 				break
 			end
 		end
@@ -602,13 +618,7 @@ local function updateFallenProtectorsHealth()
 		for i = 1, 5 do
 			if UnitName("boss"..i) == dzname then
 				bosshealth = math.floor(UnitHealth("boss"..i) / UnitHealthMax("boss"..i) * 100)
-				if bosshealth >= 66 then
-					lines[dzname]= (bosshealth-66).."% ("..bosshealth.."%)"
-				elseif bosshealth >= 33 then
-					lines[dzname]= (bosshealth-33).."% ("..bosshealth.."%)"
-				elseif bosshealth >= 0 then
-					lines[dzname]= bosshealth.."%"
-				end
+				insertline(dzname, bosshealth)
 				break
 			end				
 		end
@@ -619,20 +629,13 @@ local function updateFallenProtectorsHealth()
 		for i = 1, 5 do
 			if UnitName("boss"..i) == msname then
 				bosshealth = math.floor(UnitHealth("boss"..i) / UnitHealthMax("boss"..i) * 100)
-				if bosshealth >= 66 then
-					lines[msname]= (bosshealth-66).."% ("..bosshealth.."%)"
-				elseif bosshealth >= 33 then
-					lines[msname]= (bosshealth-33).."% ("..bosshealth.."%)"
-				elseif bosshealth >= 0 then
-					lines[msname]= bosshealth.."%"
-				end
+				insertline(msname, bosshealth)
 				break
 			end			
 		end
 	end
-	updateLines()
+	updateNotsortLines()
 end
-
 --BH ADD END
 
 local function updatePlayerAggro()
