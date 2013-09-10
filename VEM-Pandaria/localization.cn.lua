@@ -57,6 +57,10 @@ L:SetOptionLocalization({
 	BeaconArrow				= "VEM箭头：$spell:144473"
 })
 
+L:SetMiscLocalization({
+	Victory					= "Your hope shines brightly, and even more brightly when you work together to overcome. It will ever light your way in even the darkest of places."
+})
+
 ------------------------------
 -- Yu'lon, The Jade Serpent --
 ------------------------------
@@ -84,6 +88,10 @@ L= VEM:GetModLocalization(860)
 L:SetOptionLocalization({
 	SoundWOP				= "语音警告：重要技能",
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(3, 144642)
+})
+
+L:SetMiscLocalization({
+	Victory					= "You are strong, stronger even than you realize. Carry this thought with you into the darkness ahead, and let it shield you."
 })
 
 ------------------------------------

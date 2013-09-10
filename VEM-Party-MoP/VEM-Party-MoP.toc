@@ -1,8 +1,8 @@
 ﻿## Interface: 50300
 ## X-Min-Interface: 50001
 ## Title:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0Party-MoP|r
-## Title-zhCN:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf05队伍首领 (潘达利亚)|r
-## Title-zhTW:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf05隊伍首領 (潘達利亞)|r
+## Title-zhCN:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0队伍首领 (熊猫人之谜)|r
+## Title-zhTW:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0隊伍首領 (潘達利亞)|r
 ## LoadOnDemand: 1
 ## RequiredDeps: VEM-Core
 ## SavedVariablesPerCharacter: VEMPartyMoP_SavedVars, VEMPartyMoP_SavedStats
@@ -13,7 +13,7 @@
 ## X-VEM-Mod-SubCategoriesID: 960, 961, 959, 962, 994, 1011, 1007, 1001, 1004
 ## X-VEM-Mod-Name: Party (MoP)
 ## X-VEM-Mod-Name-zhTW: 隊伍首領 (潘達利亞)
-## X-VEM-Mod-Name-zhCN: 队伍首领 (潘达利亚)
+## X-VEM-Mod-Name-zhCN: 队伍首领 (熊猫人之谜)
 ## X-VEM-Mod-Sort: 25
 ## X-VEM-Mod-MapID: 960,961,959,962,994,1011,1007,1001,1004
 localization.en.lua

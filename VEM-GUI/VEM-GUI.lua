@@ -12,12 +12,16 @@
 --    * enGB/enUS: Tandanu				http://www.deadlybossmods.com
 --    * deDE: Tandanu					http://www.deadlybossmods.com
 --    * zhCN: Diablohu					http://www.dreamgen.cn | diablohudream@gmail.com
---    * ruRU: BootWin					bootwin@gmail.com
---    * ruRU: Vampik					admin@vampik.ru
+--    * ruRU: Swix						stalker.kgv@gmail.com
+--    * ruRU: TOM_RUS
 --    * zhTW: Hman						herman_c1@hotmail.com
 --    * zhTW: Azael/kc10577				paul.poon.kw@gmail.com
 --    * koKR: nBlueWiz					everfinale@gmail.com
 --    * esES: Snamor/1nn7erpLaY      	romanscat@hotmail.com
+--
+-- The ex-translators:
+--    * ruRU: BootWin					bootwin@gmail.com
+--    * ruRU: Vampik					admin@vampik.ru
 --
 -- Special thanks to:
 --    * Arta
@@ -40,7 +44,7 @@
 
 
 
-local revision =("$Revision: 10041 $"):sub(12, -3)
+local revision =("$Revision: 10235 $"):sub(12, -3)
 local FrameTitle = "VEM_GUI_Option_"	-- all GUI frames get automatically a name FrameTitle..ID
 local fixeditframe = false
 
@@ -88,7 +92,7 @@ do
 	--  arg1 = Text for the UI Button
 	--  arg2 = nil or ("option" or 2)  ... nil will place as a Boss Mod, otherwise as a Option Tab
 	--
-	function VEM_GUI:CreateNewPanel(FrameName, FrameTyp, showsub, sortID)
+	function VEM_GUI:CreateNewPanel(FrameName, FrameTyp, showsub, sortID, DisplayName)
 		local panel = CreateFrame('Frame', FrameTitle..self:GetNewID(), VEM_GUI_OptionsFramePanelContainer)
 		panel.mytype = "panel"
 		panel.sortID = self:GetCurrentID()
@@ -97,6 +101,7 @@ do
 		panel:SetPoint("TOPLEFT", VEM_GUI_OptionsFramePanelContainer, "TOPLEFT")
 
 		panel.name = FrameName
+		panel.displayname = DisplayName or FrameName
 		panel.showsub = (showsub or showsub == nil)
 
 		if (sortID or 0) > 0 then
@@ -385,7 +390,7 @@ do
 			return
 		end
 		if type(name) == "number" then
-			return VEM:AddMsg("CreateCheckButton: error: expected string, received number. You probably called mod:NewTimer(optionId) with a spell id.")
+			return VEM:AddMsg("CreateCheckButton: error: expected string, received number:\""..name.."\".You probably called mod:NewTimer(optionId) with a spell id.")
 		end
 		local button = CreateFrame('CheckButton', FrameTitle..self:GetNewID(), self.frame, 'OptionsCheckButtonTemplate')
 		local buttonName = button:GetName()
@@ -419,7 +424,7 @@ do
 			textbeside = dropdown
 			textpad = 35
 		end
-		if dropdown or (name and name:find("|H")) then -- ...and replace it with a SimpleHTML frame
+		if name then -- switch all checkbutton frame to SimpleHTML frame (auto wrap)
 			_G[buttonName.."Text"] = CreateFrame("SimpleHTML", buttonName.."Text", button)
 			html = _G[buttonName.."Text"]
 			html:SetFontObject("GameFontNormal")
@@ -968,7 +973,7 @@ do
 			button.toggle:Hide()
 		end
 
-		button.text:SetText(element.name)
+		button.text:SetText(element.displayname)
 		button.text:Show()
 	end
 
@@ -1056,7 +1061,7 @@ do
 		end
 		container.displayedFrame = frame
 
-		VEM_GUI_OptionsFramePanelContainerHeaderText:SetText( frame.name )
+		VEM_GUI_OptionsFramePanelContainerHeaderText:SetText( frame.displayname )
 
 		local mymax = (frame.actualHeight or frame:GetHeight()) - container:GetHeight()
 
@@ -1382,7 +1387,7 @@ local function CreateOptionsMenu()
 		end)
 		local SetPlayerRole				= generaloptions:CreateCheckButton(L.SetPlayerRole, true, nil, "SetPlayerRole")
 		local UseMasterVolume			= generaloptions:CreateCheckButton(L.UseMasterVolume, true, nil, "UseMasterVolume")
-		local EnableReadyCheckSound		= generaloptions:CreateCheckButton(L.EnableReadyCheckSound, true, nil, "EnableReadyCheckSound")
+		local LFDEnhance				= generaloptions:CreateCheckButton(L.LFDEnhance, true, nil, "LFDEnhance")
 		local AutologBosses				= generaloptions:CreateCheckButton(L.AutologBosses, true, nil, "AutologBosses")
 		local AdvancedAutologBosses
 		if Transcriptor then
@@ -1391,7 +1396,7 @@ local function CreateOptionsMenu()
 		local LogOnlyRaidBosses = generaloptions:CreateCheckButton(L.LogOnlyRaidBosses, true, nil, "LogOnlyRaidBosses")
 
 		local bmrange  = generaloptions:CreateButton(L.Button_RangeFrame)
-		bmrange:SetPoint('TOPLEFT', LogOnlyRaidBosses, "BOTTOMLEFT", 0, 0)
+		bmrange:SetPoint('TOPLEFT', LogOnlyRaidBosses, "BOTTOMLEFT", 0, -5)
 		bmrange:SetScript("OnClick", function(self)
 			if VEM.RangeCheck:IsShown() then
 				VEM.RangeCheck:Hide()
@@ -1567,7 +1572,6 @@ local function CreateOptionsMenu()
 
 		local countSounds = {
 			{	text	= L.sst,	value 	= "sst"},
-			{	text	= L.stephanie,	value 	= "stephanie"},
 			{	text	= L.yike,	value 	= "Mosh"},
 			{	text	= L.yun,	value 	= "yun"},
 			{	text	= VEM_CORE_SOUNDGRIL_CUSTOM,	value 	= "other"},
@@ -1741,7 +1745,7 @@ local function CreateOptionsMenu()
 		end
 
 		local iconleft = BarSetup:CreateCheckButton(L.BarIconLeft, nil, nil, nil, "IconLeft")
-		local iconright = BarSetup:CreateCheckButton(L.BarIconRight, nil, true, nil, "IconRight")
+		local iconright = BarSetup:CreateCheckButton(L.BarIconRight, nil, nil, nil, "IconRight")
 		iconleft:SetPoint('BOTTOMRIGHT', maindummybar.frame, "TOPLEFT", -5, 5)
 		iconright:SetPoint('BOTTOMLEFT', maindummybar.frame, "TOPRIGHT", 5, 5)
 
@@ -1942,7 +1946,7 @@ local function CreateOptionsMenu()
 		movemebutton:SetScript("OnClick", function() VEM:MoveSpecialWarning() end)
 
 		local color0 = specArea:CreateColorSelect(64)
-		color0:SetPoint('TOPLEFT', specArea.frame, "TOPLEFT", 20, -105)
+		color0:SetPoint('TOPLEFT', specArea.frame, "TOPLEFT", 20, -110)
 		local color0text = specArea:CreateText(L.SpecWarn_FontColor, 80)
 		color0text:SetPoint("BOTTOM", color0, "TOP", 5, 4)
 		local color0reset = specArea:CreateButton(L.Reset, 64, 10, nil, GameFontNormalSmall)
@@ -1986,7 +1990,7 @@ local function CreateOptionsMenu()
 				VEM:ShowTestSpecialWarning(nil, 1)
 			end
 		)
-		FontDropDown:SetPoint("TOPLEFT", specArea.frame, "TOPLEFT", 130, -100)
+		FontDropDown:SetPoint("TOPLEFT", specArea.frame, "TOPLEFT", 130, -105)
 
 		local fontSizeSlider = specArea:CreateSlider(L.SpecWarn_FontSize, 16, 60, 1, 200)
 		fontSizeSlider:SetPoint('TOPLEFT', FontDropDown, "TOPLEFT", 20, -45)
@@ -2102,9 +2106,9 @@ local function CreateOptionsMenu()
 			{	text	= L.NoSound,		value	= "" },
 			{	text	= "Default",		value 	= "Sound\\Spells\\PVPFlagTaken.ogg", 		sound=true },
 			{	text	= "Blizzard",		value 	= "Sound\\interface\\UI_RaidBossWhisperWarning.ogg", 		sound=true },
-			{	text	= "Beware!",		value 	= "Sound\\Creature\\AlgalonTheObserver\\UR_Algalon_BHole01.ogg", 		sound=true },--Great sound, short and to the point. Best pick for a secondary default!
+			{	text	= "Beware!",		value 	= "Sound\\Creature\\AlgalonTheObserver\\UR_Algalon_BHole01.ogg", 		sound=true },
 			{	text	= "Destruction",	value 	= "Sound\\Creature\\KilJaeden\\KILJAEDEN02.ogg", 		sound=true },
-			{	text	= "NotPrepared",	value 	= "Sound\\Creature\\Illidan\\BLACK_Illidan_04.ogg", 		sound=true },--Maybe a bit long? wouldn't recommend it as a default, but good for customizing.
+			{	text	= "NotPrepared",	value 	= "Sound\\Creature\\Illidan\\BLACK_Illidan_04.ogg", 		sound=true },
 			{	text	= "NightElfBell",	value 	= "Sound\\Doodad\\BellTollNightElf.ogg", 	sound=true }
 		})
 
@@ -2113,7 +2117,7 @@ local function CreateOptionsMenu()
 				VEM.Options.SpecialWarningSound = value
 			end
 		)
-		SpecialWarnSoundDropDown:SetPoint("TOPLEFT", specArea.frame, "TOPLEFT", 130, -205)
+		SpecialWarnSoundDropDown:SetPoint("TOPLEFT", specArea.frame, "TOPLEFT", 130, -210)
 
 		local flashdurSlider = specArea:CreateSlider(L.SpecWarn_FlashDur, 0.2, 2, 0.2, 120)   -- (text , min_value , max_value , step , width)
 		flashdurSlider:SetPoint('TOPLEFT', SpecialWarnSoundDropDown, "TOPLEFT", 20, -45)
@@ -2152,7 +2156,7 @@ local function CreateOptionsMenu()
 				VEM.Options.SpecialWarningSound2 = value
 			end
 		)
-		SpecialWarnSoundDropDown2:SetPoint("TOPLEFT", specArea.frame, "TOPLEFT", 130, -310)
+		SpecialWarnSoundDropDown2:SetPoint("TOPLEFT", specArea.frame, "TOPLEFT", 130, -315)
 
 		local flashdurSlider2 = specArea:CreateSlider(L.SpecWarn_FlashDur, 0.2, 2, 0.2, 120)   -- (text , min_value , max_value , step , width)
 		flashdurSlider2:SetPoint('TOPLEFT', SpecialWarnSoundDropDown2, "TOPLEFT", 20, -45)
@@ -2280,6 +2284,104 @@ local function CreateOptionsMenu()
 	end
 
 	do
+		local specPanel = VEM_GUI_Frame:CreateNewPanel(L.Panel_LTSpecWarnFrame, "option")
+		local specArea = specPanel:CreateArea(L.Area_LTSpecWarn, nil, 300, true)
+		local check1 = specArea:CreateCheckButton(L.LTSpecWarn_Enabled, true, nil, "ShowLTSpecialWarnings")
+
+		local showbutton = specArea:CreateButton(L.SpecWarn_DemoButton, 120, 16)
+		showbutton:SetPoint('TOPRIGHT', specArea.frame, "TOPRIGHT", -5, -5)
+		showbutton:SetNormalFontObject(GameFontNormalSmall)
+		showbutton:SetHighlightFontObject(GameFontNormalSmall)
+		showbutton:SetScript("OnClick", function() VEM:ShowTestLTSpecialWarning() end)
+
+		local movemebutton = specArea:CreateButton(L.SpecWarn_MoveMe, 120, 16)
+		movemebutton:SetPoint('TOPRIGHT', showbutton, "BOTTOMRIGHT", 0, -5)
+		movemebutton:SetNormalFontObject(GameFontNormalSmall)
+		movemebutton:SetHighlightFontObject(GameFontNormalSmall)
+		movemebutton:SetScript("OnClick", function() VEM:MoveLTSpecialWarning() end)
+
+		local color0 = specArea:CreateColorSelect(64)
+		color0:SetPoint('TOPLEFT', specArea.frame, "TOPLEFT", 20, -105)
+		local color0text = specArea:CreateText(L.SpecWarn_FontColor, 80)
+		color0text:SetPoint("BOTTOM", color0, "TOP", 5, 4)
+		local color0reset = specArea:CreateButton(L.Reset, 64, 10, nil, GameFontNormalSmall)
+		color0reset:SetPoint('TOP', color0, "BOTTOM", 5, -10)
+		color0reset:SetScript("OnClick", function(self)
+				VEM.Options.LTSpecialWarningFontColor[1] = VEM.DefaultOptions.LTSpecialWarningFontColor[1]
+				VEM.Options.LTSpecialWarningFontColor[2] = VEM.DefaultOptions.LTSpecialWarningFontColor[2]
+				VEM.Options.LTSpecialWarningFontColor[3] = VEM.DefaultOptions.LTSpecialWarningFontColor[3]
+				color0:SetColorRGB(VEM.Options.LTSpecialWarningFontColor[1], VEM.Options.LTSpecialWarningFontColor[2], VEM.Options.LTSpecialWarningFontColor[3])
+				VEM:UpdateLTSpecialWarningOptions()
+				VEM:ShowTestLTSpecialWarning()
+		end)
+		do
+			local firstshow = true
+			color0:SetScript("OnShow", function(self)
+					firstshow = true
+					self:SetColorRGB(VEM.Options.LTSpecialWarningFontColor[1], VEM.Options.LTSpecialWarningFontColor[2], VEM.Options.LTSpecialWarningFontColor[3])
+			end)
+			color0:SetScript("OnColorSelect", function(self)
+					if firstshow then firstshow = false return end
+					VEM.Options.LTSpecialWarningFontColor[1] = select(1, self:GetColorRGB())
+					VEM.Options.LTSpecialWarningFontColor[2] = select(2, self:GetColorRGB())
+					VEM.Options.LTSpecialWarningFontColor[3] = select(3, self:GetColorRGB())
+					color0text:SetTextColor(self:GetColorRGB())
+					VEM:UpdateLTSpecialWarningOptions()
+					VEM:ShowTestLTSpecialWarning()
+			end)
+		end
+		
+		local Fonts = MixinSharedMedia3("font", {
+			{	text	= "Default",		value 	= STANDARD_TEXT_FONT,			font = STANDARD_TEXT_FONT		},
+			{	text	= "Arial",			value 	= "Fonts\\ARIALN.TTF",			font = "Fonts\\ARIALN.TTF"		},
+			{	text	= "Skurri",			value 	= "Fonts\\skurri.ttf",			font = "Fonts\\skurri.ttf"		},
+			{	text	= "Morpheus",		value 	= "Fonts\\MORPHEUS.ttf",		font = "Fonts\\MORPHEUS.ttf"	}
+		})
+
+		local FontDropDown = specArea:CreateDropdown(L.SpecWarn_FontType, Fonts, VEM.Options.LTSpecialWarningFont,
+			function(value)
+				VEM.Options.LTSpecialWarningFont = value
+				VEM:UpdateLTSpecialWarningOptions()
+				VEM:ShowTestLTSpecialWarning()
+			end
+		)
+		FontDropDown:SetPoint("TOPLEFT", specArea.frame, "TOPLEFT", 130, -100)
+
+		local fontSizeSlider = specArea:CreateSlider(L.SpecWarn_FontSize, 16, 60, 1, 200)
+		fontSizeSlider:SetPoint('TOPLEFT', FontDropDown, "TOPLEFT", 20, -45)
+		do
+			local firstshow = true
+			fontSizeSlider:SetScript("OnShow", function(self)
+				firstshow = true
+				self:SetValue(VEM.Options.LTSpecialWarningFontSize)
+			end)
+			fontSizeSlider:HookScript("OnValueChanged", function(self)
+				if firstshow then firstshow = false return end
+				VEM.Options.LTSpecialWarningFontSize = self:GetValue()
+				VEM:UpdateLTSpecialWarningOptions()
+				VEM:ShowTestLTSpecialWarning()
+			end)
+		end
+		local resetbutton = specArea:CreateButton(L.SpecWarn_ResetMe, 120, 16)
+		resetbutton:SetPoint('BOTTOMRIGHT', specArea.frame, "BOTTOMRIGHT", -5, 5)
+		resetbutton:SetNormalFontObject(GameFontNormalSmall)
+		resetbutton:SetHighlightFontObject(GameFontNormalSmall)
+		resetbutton:SetScript("OnClick", function()
+				VEM.Options.ShowLTSpecialWarnings = VEM.DefaultOptions.ShowLTSpecialWarnings
+				VEM.Options.LTSpecialWarningFont = VEM.DefaultOptions.LTSpecialWarningFont
+				VEM.Options.LTSpecialWarningFontSize = VEM.DefaultOptions.LTSpecialWarningFontSize
+				VEM.Options.LTSpecialWarningPoint = VEM.DefaultOptions.LTSpecialWarningPoint
+				VEM.Options.LTSpecialWarningX = VEM.DefaultOptions.LTSpecialWarningX
+				VEM.Options.LTSpecialWarningY = VEM.DefaultOptions.LTSpecialWarningY
+				check1:SetChecked(VEM.Options.ShowLTSpecialWarnings)
+				FontDropDown:SetSelectedValue(VEM.Options.LTSpecialWarningFont)
+				fontSizeSlider:SetValue(VEM.DefaultOptions.LTSpecialWarningFontSize)
+				VEM:UpdateLTSpecialWarningOptions()
+		end)
+		specPanel:SetMyOwnHeight()
+	end	
+	
+	do
 		local hpPanel = VEM_GUI_Frame:CreateNewPanel(L.Panel_HPFrame, "option")
 		local hpArea = hpPanel:CreateArea(L.Area_HPFrame, nil, 150, true)
 		local alwaysbttn = hpArea:CreateCheckButton(L.HP_Enabled, true, nil, "AlwaysShowHealthFrame")
@@ -2346,11 +2448,18 @@ local function CreateOptionsMenu()
 			spamArea:CreateCheckButton(L.ShowBigBrotherOnCombatStart, true, nil, "ShowBigBrotherOnCombatStart")
 			spamArea:CreateCheckButton(L.BigBrotherAnnounceToRaid, true, nil, "BigBrotherAnnounceToRaid")
 		end
-		local spamPTArea = spamPanel:CreateArea(L.Area_PullTimer, nil, 135, true)
+		local spamPTArea = spamPanel:CreateArea(L.Area_PullTimer, nil, 160, true)
+		spamPTArea:CreateCheckButton(L.DontShowPTNoID, true, nil, "DontShowPTNoID")
 		spamPTArea:CreateCheckButton(L.DontShowPT, true, nil, "DontShowPT")
-		spamPTArea:CreateCheckButton(L.DontShowPTCountdownText, true, nil, "DontShowPTCountdownText")
-		spamPTArea:CreateCheckButton(L.DontPlayPTCountdown, true, nil, "DontPlayPTCountdown")
 		spamPTArea:CreateCheckButton(L.DontShowPTText, true, nil, "DontShowPTText")
+		spamPTArea:CreateCheckButton(L.DontPlayPTCountdown, true, nil, "DontPlayPTCountdown")
+		local SPTCDT = spamPTArea:CreateCheckButton(L.DontShowPTCountdownText, true, nil, "DontShowPTCountdownText")
+		
+		local PTSlider = spamPTArea:CreateSlider(L.PT_Threshold, 3, 30, 1, 300)   -- (text , min_value , max_value , step , width)
+		PTSlider:SetPoint('TOPLEFT', SPTCDT, "TOPLEFT", 62, -40)--Position seems based on text size so on diff locals it'll actually be in different places :\
+		PTSlider:HookScript("OnShow", function(self) self:SetValue(VEM.Options.PTCountThreshold) end)
+		PTSlider:HookScript("OnValueChanged", function(self) VEM.Options.PTCountThreshold = self:GetValue() end)
+		
 		spamPTArea:AutoSetDimension()
 		spamArea:AutoSetDimension()
 		spamOutArea:AutoSetDimension()
@@ -2721,6 +2830,7 @@ do
 	end
 
 	local Categories = {}
+	local subTabId = 0
 	function VEM_GUI:UpdateModList()
 		for k,addon in ipairs(VEM.AddOns) do
 			if not Categories[addon.category] then
@@ -2743,7 +2853,7 @@ do
 
 			if not addon.panel then
 				-- Create a Panel for "Naxxramas" "Eye of Eternity" ...
-				addon.panel = Categories[addon.category]:CreateNewPanel(addon.name or "Error: X-VEM-Mod-Name", nil, false)
+				addon.panel = Categories[addon.category]:CreateNewPanel(addon.modId or "Error: No-modId", nil, false, nil, addon.name)
 
 				if not IsAddOnLoaded(addon.modId) then
 					local button = addon.panel:CreateButton(L.Button_LoadMod, 200, 30)
@@ -2765,7 +2875,8 @@ do
 
 				for k,v in pairs(addon.subTabs) do
 					if not addon.subPanels[k] then
-						addon.subPanels[k] = addon.panel:CreateNewPanel(v or "Error: X-VEM-Mod-Name", nil, false)
+						subTabId = subTabId + 1
+						addon.subPanels[k] = addon.panel:CreateNewPanel("SubTab"..subTabId, nil, false, nil, v)
 						CreateBossModTab(addon, addon.subPanels[k], k)
 					end
 				end
@@ -2776,9 +2887,9 @@ do
 				if mod.modId == addon.modId then
 					if not mod.panel and (not addon.subTabs or (addon.subPanels and addon.subPanels[mod.subTab])) then
 						if addon.subTabs and addon.subPanels[mod.subTab] then
-							mod.panel = addon.subPanels[mod.subTab]:CreateNewPanel(mod.localization.general.name or "Error: VEM.Mods")
+							mod.panel = addon.subPanels[mod.subTab]:CreateNewPanel(mod.id or "Error: VEM.Mods", nil, nil, nil, mod.localization.general.name)
 						else
-							mod.panel = addon.panel:CreateNewPanel(mod.localization.general.name or "Error: VEM.Mods")
+							mod.panel = addon.panel:CreateNewPanel(mod.id or "Error: VEM.Mods", nil, nil, nil, mod.localization.general.name)
 						end
 						VEM_GUI:CreateBossModPanel(mod)
 					end
@@ -2821,12 +2932,6 @@ do
 			elseif	i == 8 then		icon:SetTexCoord(0.75,	1,		0.25,	0.5)
 			end
 		end
-		
-		--[[IsQuestFlaggedCompleted() is throttled by the server and will only get a response every 2-3 minutes.
-		It's cached internally by the client during that time.
-		If you reload, the client probably loses its cache and is unable to refresh it for a few minutes
-		In other words, if you reloadui often or log in and out a bunch, the checks will be all wrong.
-		--]]
 		if mod.questId then
 			local icon = panel.frame:CreateTexture()
 			if IsQuestFlaggedCompleted(mod.questId) then
@@ -2838,6 +2943,7 @@ do
 			icon:SetWidth(16)
 			icon:SetHeight(16)
 		end
+
 		local reset  = panel:CreateButton(L.Mod_Reset, 150, nil, nil, GameFontNormalSmall)
 		reset:SetPoint('TOPRIGHT', panel.frame, "TOPRIGHT", -14, -2)
 		reset:SetScript("OnClick", function(self)
@@ -2926,6 +3032,9 @@ do
 					end)
 					button:SetScript("OnTextChanged", function(self)
 						mod.Options[v] = self:GetText()
+					end)
+					button:SetScript("OnEditFocusLost", function(self)
+						if mod.optionFuncs and mod.optionFuncs[v] then mod.optionFuncs[v]() end
 					end)
 				end
 			end
