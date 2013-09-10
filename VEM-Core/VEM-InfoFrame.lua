@@ -1,5 +1,4 @@
-﻿-- ********************************************
--- **             VEM Info Frame             **
+﻿-- **             VEM Info Frame             **
 -- **     http://www.deadlybossmods.com      **
 -- ********************************************
 --
@@ -58,6 +57,7 @@ local dropdownFrame
 local initializeDropdown
 local maxlines
 local infoFrameThreshold
+local infoFrameSpellName
 local pIndex
 local extraPIndex
 local lowestFirst
@@ -218,7 +218,17 @@ local function updateNamesortLines()
 		sortedLines[#sortedLines + 1] = i
 	end
 	table.sort(sortedLines, namesortFuncAsc)
-		for i, v in ipairs(updateCallbacks) do
+	for i, v in ipairs(updateCallbacks) do
+		v(sortedLines)
+	end
+end
+
+local function updateNotsortLines()
+	table.wipe(sortedLines)
+	for i in pairs(lines) do
+		sortedLines[#sortedLines + 1] = i
+	end
+	for i, v in ipairs(updateCallbacks) do
 		v(sortedLines)
 	end
 end
@@ -279,27 +289,27 @@ end
 local function updateNazgrimPower()
 	table.wipe(lines)	
 	if UnitPower("boss1") < 50 then
-		lines["|cFF088A08"..GetSpellInfo(143500).."|r"] = UnitPower("boss"..i)
-		lines[GetSpellInfo(143536)] = "50"
-		lines[GetSpellInfo(143872)] = "70"
-		lines[GetSpellInfo(143503)] = "100"
+		lines["|cFF088A08"..GetSpellInfo(143500).."|r"] = UnitPower("boss1")
+		lines[GetSpellInfo(143536)] = 50
+		lines[GetSpellInfo(143503)] = 70
+		lines[GetSpellInfo(143872)] = 100
 	elseif UnitPower("boss1") < 70 then
-		lines[GetSpellInfo(143500)] = UnitPower("boss"..i)
-		lines["|cFF088A08"..GetSpellInfo(143536).."|r"] = UnitPower("boss"..i)
-		lines[GetSpellInfo(143872)] = "70"
-		lines[GetSpellInfo(143503)] = "100"
+		lines[GetSpellInfo(143500)] = 25
+		lines["|cFF088A08"..GetSpellInfo(143536).."|r"] = UnitPower("boss1")
+		lines[GetSpellInfo(143503)] = 70
+		lines[GetSpellInfo(143872)] = 100
 	elseif UnitPower("boss1") < 100 then
-		lines[GetSpellInfo(143500)] = UnitPower("boss"..i)
-		lines[GetSpellInfo(143536)] = "50"
-		lines["|cFF088A08"..GetSpellInfo(143872).."|r"] = UnitPower("boss"..i)
-		lines[GetSpellInfo(143503)] = "100"
+		lines[GetSpellInfo(143500)] = 25
+		lines[GetSpellInfo(143536)] = 50
+		lines["|cFF088A08"..GetSpellInfo(143503).."|r"] = UnitPower("boss1")
+		lines[GetSpellInfo(143872)] = 100
 	elseif UnitPower("boss1") == 100 then
-		lines[GetSpellInfo(143500)] = UnitPower("boss"..i)
-		lines[GetSpellInfo(143536)] = "50"
-		lines[GetSpellInfo(143872)] = "70"
-		lines["|cFF088A08"..GetSpellInfo(143503).."|r"] = UnitPower("boss"..i)
+		lines[GetSpellInfo(143500)] = 25
+		lines[GetSpellInfo(143536)] = 50
+		lines[GetSpellInfo(143503)] = 70
+		lines["|cFF088A08"..GetSpellInfo(143872).."|r"] = UnitPower("boss1")
 	end
-	updateLines()
+	updateNotsortLines()
 end
 
 
@@ -375,7 +385,7 @@ end
 local function updatePlayerBuffs()
 	table.wipe(lines)
 	for uId in VEM:GetGroupMembers() do
-		if not UnitBuff(uId, GetSpellInfo(infoFrameThreshold)) and not UnitIsDeadOrGhost(uId) then
+		if not UnitBuff(uId, infoFrameSpellName) and not UnitIsDeadOrGhost(uId) then
 			lines[UnitName(uId)] = ""
 		end
 	end
@@ -387,9 +397,12 @@ end
 local function updateGoodPlayerDebuffs()
 	table.wipe(lines)
 	for uId in VEM:GetGroupMembers() do
-		if tankIgnored and (UnitGroupRolesAssigned(uId) == "TANK" or GetPartyAssignment("MAINTANK", uId, 1)) then break end
-		if not UnitDebuff(uId, GetSpellInfo(infoFrameThreshold)) and not UnitIsDeadOrGhost(uId) then
-			lines[UnitName(uId)] = ""
+		if tankIgnored and UnitGroupRolesAssigned(uId) == "TANK" or GetPartyAssignment("MAINTANK", uId, 1) then
+		
+		else
+			if not UnitDebuff(uId, infoFrameSpellName) and not UnitIsDeadOrGhost(uId) then
+				lines[UnitName(uId)] = ""
+			end
 		end
 	end
 	updateLines()
@@ -399,13 +412,16 @@ end
 --Debuffs that are bad to have, therefor it is bad to have them.
 local function updateBadPlayerDebuffs()
 	table.wipe(lines)
-	for uId, i in VEM:GetGroupMembers() do
-		if tankIgnored and (UnitGroupRolesAssigned(uId) == "TANK" or GetPartyAssignment("MAINTANK", uId, 1)) then break end
-		if UnitDebuff(uId, GetSpellInfo(infoFrameThreshold)) and not UnitIsDeadOrGhost(uId) then
-			if UnitGroupRolesAssigned(uId) == "HEALER" then
-				lines[UnitName(uId)] = _G["HEALER"]
-			else
-				lines[UnitName(uId)] = ""
+	for uId in VEM:GetGroupMembers() do
+		if tankIgnored and UnitGroupRolesAssigned(uId) == "TANK" or GetPartyAssignment("MAINTANK", uId, 1) then
+		
+		else
+			if UnitDebuff(uId, infoFrameSpellName) and not UnitIsDeadOrGhost(uId) then
+				if UnitGroupRolesAssigned(uId) == "HEALER" then
+					lines[UnitName(uId)] = _G["HEALER"]
+				else
+					lines[UnitName(uId)] = ""
+				end
 			end
 		end
 	end
@@ -417,9 +433,12 @@ end
 local function updateReverseBadPlayerDebuffs()
 	table.wipe(lines)
 	for uId, i in VEM:GetGroupMembers() do
-		if tankIgnored and (UnitGroupRolesAssigned(uId) == "TANK" or GetPartyAssignment("MAINTANK", uId, 1)) then break end
-		if not UnitDebuff(uId, GetSpellInfo(infoFrameThreshold)) and not UnitIsDeadOrGhost(uId) then
-			lines[UnitName(uId)] = i
+		if tankIgnored and UnitGroupRolesAssigned(uId) == "TANK" or GetPartyAssignment("MAINTANK", uId, 1) then
+		
+		else
+			if not UnitDebuff(uId, infoFrameSpellName) and not UnitIsDeadOrGhost(uId) and not UnitDebuff(uId, GetSpellInfo(27827)) then--27827 Spirit of Redemption. This particular info frame wants to ignore this
+				lines[UnitName(uId)] = i
+			end
 		end
 	end
 	updateLines()
@@ -430,8 +449,8 @@ local function updatePlayerBuffStacks()
 	table.wipe(lines)
 	updateIcons()	-- update Icons first in case of an "icon modifier"
 	for uId in VEM:GetGroupMembers() do
-		if UnitBuff(uId, GetSpellInfo(infoFrameThreshold)) then
-			lines[UnitName(uId)] = select(4, UnitBuff(uId, GetSpellInfo(infoFrameThreshold)))
+		if UnitBuff(uId, infoFrameSpellName) then
+			lines[UnitName(uId)] = select(4, UnitBuff(uId, infoFrameSpellName))
 		elseif UnitBuff(uId, GetSpellInfo(pIndex)) then
 			lines[UnitName(uId)] = lastStacks[UnitName(uId)] or 0			-- is always 0 ?
 			if iconModifier then
@@ -450,10 +469,9 @@ end
 
 local function updatePlayerDebuffStacks()
 	table.wipe(lines)
-	local spell = GetSpellInfo(infoFrameThreshold)
 	for uId in VEM:GetGroupMembers() do
-		if UnitDebuff(uId, spell) then
-			lines[UnitName(uId)] = select(4, UnitDebuff(uId, spell))
+		if UnitDebuff(uId, infoFrameSpellName) then
+			lines[UnitName(uId)] = select(4, UnitDebuff(uId, infoFrameSpellName))
 		end
 	end
 	updateIcons()
@@ -476,6 +494,23 @@ local function updateBossDebuffStacks()
 		end			
 	end
 	updateLines()
+end
+
+local function updateSomePlayerDebuffs()
+	table.wipe(lines)
+	for uId, i in VEM:GetGroupMembers() do
+		if (UnitDebuff(uId, GetSpellInfo(infoFrameThreshold)) or UnitDebuff(uId, GetSpellInfo(pIndex)) or UnitDebuff(uId, GetSpellInfo(iconModifier))) and not UnitIsDeadOrGhost(uId) then
+			if UnitGroupRolesAssigned(uId) == "HEALER" then
+				lines[UnitName(uId)] = _G["HEALER"]
+			elseif UnitGroupRolesAssigned(uId) == "TANK" then
+				lines[UnitName(uId)] = _G["TANK"]
+			else
+				lines[UnitName(uId)] = ""
+			end
+		end
+	end
+	updateLines()
+	updateIcons()
 end
 
 local function updatePlayerDebuffStacksTime()
@@ -512,7 +547,7 @@ local function updateOther()
 	if lowestF then
 		lines[lowestF]= lowestT
 	end
-	updateLines()
+	updateNotsortLines()
 end
 
 local function updateTime()
@@ -541,6 +576,66 @@ local function updateTime()
 	end
 	updateLines()
 end
+
+local function updateFallenProtectorsHealth()
+	table.wipe(lines)
+	local bosshealth,findws,finddz,findms
+	local wsname = EJ_GetSectionInfo(7885)
+	local dzname = EJ_GetSectionInfo(7889)
+	local msname = EJ_GetSectionInfo(7904)
+	findws,finddz,findms = false,false,false
+	for i = 1, 5 do
+		if UnitName("boss"..i) == wsname then findws = true end
+		if UnitName("boss"..i) == dzname then finddz = true end
+		if UnitName("boss"..i) == msname then findms = true end
+	end
+	if (not findws) and (not finddz) and (not findms) then return end
+	
+	local function insertline(name, health)
+		if health >= 66 then
+			lines[name]= "|cFFFF0000"..(health-66).."%|r"
+		elseif health >= 33 then
+			lines[name]= "|cFFFFFF00"..(health-33).."%|r"
+		elseif health >= 0 then
+			lines[name]= "|cFF00FF00"..health.."%|r"
+		end
+	end
+	
+	if not findws then
+		lines[wsname]= GetSpellInfo(65294)
+	else
+		for i = 1, 5 do
+			if UnitName("boss"..i) == wsname then
+				bosshealth = math.floor(UnitHealth("boss"..i) / UnitHealthMax("boss"..i) * 100)
+				insertline(wsname, bosshealth)
+				break
+			end
+		end
+	end
+	if not finddz then
+		lines[dzname]= GetSpellInfo(65294)
+	else
+		for i = 1, 5 do
+			if UnitName("boss"..i) == dzname then
+				bosshealth = math.floor(UnitHealth("boss"..i) / UnitHealthMax("boss"..i) * 100)
+				insertline(dzname, bosshealth)
+				break
+			end				
+		end
+	end
+	if not findms then
+		lines[msname]= GetSpellInfo(65294)
+	else
+		for i = 1, 5 do
+			if UnitName("boss"..i) == msname then
+				bosshealth = math.floor(UnitHealth("boss"..i) / UnitHealthMax("boss"..i) * 100)
+				insertline(msname, bosshealth)
+				break
+			end			
+		end
+	end
+	updateNotsortLines()
+end
 --BH ADD END
 
 local function updatePlayerAggro()
@@ -558,6 +653,7 @@ local function getUnitCreatureId(uId)
 	local guid = UnitGUID(uId)
 	return (guid and (tonumber(guid:sub(6, 10), 16))) or 0
 end
+
 local function updatePlayerTargets()
 	table.wipe(lines)
 	for uId, i in VEM:GetGroupMembers() do
@@ -607,12 +703,16 @@ function onUpdate(self, elapsed)
 		updateNazgrimPower()
 	elseif currentEvent == "playerdebuffstackstime" then
 		updatePlayerDebuffStacksTime()
+	elseif currentEvent == "playersomedebuffs" then
+		updateSomePlayerDebuffs()
 	elseif currentEvent == "bossdebuffstacks" then
 		updateBossDebuffStacks()
 	elseif currentEvent == "other" then
 		updateOther()
 	elseif currentEvent == "time" then
 		updateTime()
+	elseif currentEvent == "FPHealth" then
+		updateFallenProtectorsHealth()
 	end
 --	updateIcons()
 	local linesShown = 0
@@ -664,7 +764,7 @@ function infoFrame:Show(maxLines, event, threshold, powerIndex, iconMod, extraPo
 	currentMapName = GetMapNameByID(currentMapId)
 	if VEM.Options.DontShowInfoFrame and (event or 0) ~= "test" then return end
 	maxLines = maxLines or 5
-	
+
 	infoFrameThreshold = threshold
 	maxlines = maxLines
 	pIndex = powerIndex		-- used as 'filter' for player buff stacks
@@ -688,33 +788,44 @@ function infoFrame:Show(maxLines, event, threshold, powerIndex, iconMod, extraPo
 	elseif event == "enemypower" then
 		updateEnemyPower()
 	elseif event == "playerbuff" then
+		infoFrameSpellName = GetSpellInfo(infoFrameThreshold)
 		updatePlayerBuffs()
 	elseif event == "playergooddebuff" then
+		infoFrameSpellName = GetSpellInfo(infoFrameThreshold)
 		updateGoodPlayerDebuffs()
 	elseif event == "playerbaddebuff" then
+		infoFrameSpellName = GetSpellInfo(infoFrameThreshold)
 		updateBadPlayerDebuffs()
 	elseif currentEvent == "reverseplayerbaddebuff" then
+		infoFrameSpellName = GetSpellInfo(infoFrameThreshold)
 		updateReverseBadPlayerDebuffs()
 	elseif currentEvent == "playeraggro" then
 		updatePlayerAggro()
 	elseif currentEvent == "playerbuffstacks" then
+		infoFrameSpellName = GetSpellInfo(infoFrameThreshold)
 		updatePlayerBuffStacks()
 	elseif currentEvent == "playerdebuffstacks" then
+		infoFrameSpellName = GetSpellInfo(infoFrameThreshold)
 		updatePlayerDebuffStacks()
 	elseif currentEvent == "playertargets" then
 		updatePlayerTargets()
 	elseif currentEvent == "cobalypower" then
 		updateCobalyPower()
 	elseif currentEvent == "nazgrimpower" then
+		sortingAsc = true
 		updateNazgrimPower()
 	elseif currentEvent == "playerdebuffstackstime" then
 		updatePlayerDebuffStacksTime()
+	elseif currentEvent == "playersomedebuffs" then
+		updateSomePlayerDebuffs()
 	elseif currentEvent == "bossdebuffstacks" then
 		updateBossDebuffStacks()
 	elseif currentEvent == "other" then
 		updateOther()
 	elseif currentEvent == "time" then
 		updateTime()
+	elseif currentEvent == "FPHealth" then
+		updateFallenProtectorsHealth()
 	elseif currentEvent == "test" then
 	else
 		error("VEM-InfoFrame: Unsupported event", 2)
@@ -758,12 +869,16 @@ function infoFrame:Update(event)
 		updateNazgrimPower()
 	elseif event == "playerdebuffstackstime" then
 		updatePlayerDebuffStacksTime()
+	elseif event == "playersomedebuffs" then
+		updateSomePlayerDebuffs()
 	elseif event == "bossdebuffstacks" then
 		updateBossDebuffStacks()
 	elseif event == "other" then
 		updateOther()
 	elseif event == "time" then
 		updateTime()
+	elseif event == "FPHealth" then
+		updateFallenProtectorsHealth()
 	else
 		error("VEM-InfoFrame: Unsupported event", 2)
 	end
@@ -776,6 +891,7 @@ function infoFrame:Hide()
 	headerText = "VEM Info Frame"
 	sortingAsc = false
 	infoFrameThreshold = nil
+	infoFrameSpellName = nil
 	pIndex = nil
 	currentEvent = nil
 	maxlines = nil

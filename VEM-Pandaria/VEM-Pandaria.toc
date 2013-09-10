@@ -13,6 +13,7 @@
 ## X-VEM-Mod-Has-Single-Format: 1
 ## X-VEM-Mod-Sort: 6
 ## X-VEM-Mod-MapID: 870,1064
+## X-VEM-Mod-LoadCID: 62346,60491,69161,69099,71952,71954,72057,71953,71955
 localization.en.lua
 localization.tw.lua
 localization.cn.lua

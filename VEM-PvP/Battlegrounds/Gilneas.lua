@@ -1,7 +1,7 @@
 local mod		= VEM:NewMod("z761", "VEM-PvP", 2)
 local L			= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 3 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 4 $"):sub(12, -3))
 mod:SetZone(VEM_DISABLE_ZONE_DETECTION)
 
 mod:RegisterEvents(
@@ -12,6 +12,7 @@ local winTimer 		= mod:NewTimer(30, "TimerWin", "Interface\\Icons\\INV_Misc_Pock
 local capTimer 		= mod:NewTimer(63, "TimerCap", "Interface\\Icons\\Spell_Misc_HellifrePVPHonorHoldFavor")
 
 local bgzone = false
+local GetMapLandmarkInfo, GetNumMapLandmarks = GetMapLandmarkInfo, GetNumMapLandmarks
 mod:AddBoolOption("ShowGilneasEstimatedPoints", true, nil, function()
 	if mod.Options.ShowGilneasEstimatedPoints and bgzone then
 		mod:ShowEstimatedPoints()
