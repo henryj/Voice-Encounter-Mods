@@ -49,6 +49,7 @@ L:SetMiscLocalization({
 L= VEM:GetModLocalization(814)
 
 L:SetOptionLocalization({
+	SoundWOP 			= "voice warning: important skills",
 	RangeFrame			= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(10, 136340)
 })
 
@@ -62,6 +63,7 @@ L:SetMiscLocalization({
 L= VEM:GetModLocalization(857)
 
 L:SetOptionLocalization({
+	SoundWOP 			= "voice warning: important skills",
 	SetIconOnBeacon			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(144473),
 	BeaconArrow				= "Show VEM Arrow when someone is affected by $spell:144473"
 })
@@ -77,6 +79,7 @@ L:SetMiscLocalization({
 L= VEM:GetModLocalization(858)
 
 L:SetOptionLocalization({
+	SoundWOP 				= "voice warning: important skills",
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(11, 144532)
 })
 
@@ -92,6 +95,10 @@ L:SetMiscLocalization({
 --------------------------
 L= VEM:GetModLocalization(859)
 
+L:SetOptionLocalization({
+	SoundWOP 				= "voice warning: important skills"
+})
+
 L:SetMiscLocalization({
 	Pull					= "We shall see.",
 --	Victory					= "",
@@ -104,6 +111,7 @@ L:SetMiscLocalization({
 L= VEM:GetModLocalization(860)
 
 L:SetOptionLocalization({
+	SoundWOP 				= "voice warning: important skills",
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(3, 144642)
 })
 

@@ -149,12 +149,12 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	timerAssaultModeCD		= VEM_CORE_AUTO_TIMER_OPTIONS.next:format("ej8177"),
-	timerSiegeModeCD		= VEM_CORE_AUTO_TIMER_OPTIONS.next:format("ej8178"),
 })
 
 L:SetOptionLocalization({
 	SoundWOP				= "语音警告：重要技能",
+	timerAssaultModeCD		= VEM_CORE_AUTO_TIMER_OPTIONS.next:format("ej8177"),
+	timerSiegeModeCD		= VEM_CORE_AUTO_TIMER_OPTIONS.next:format("ej8178"),
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(6, 144154),
 	dr						= "减伤提示：$spell:144485 [此顺序每次强攻阶段都会重置]",
 	dr1						= "$spell:144485 1",
@@ -179,12 +179,12 @@ L:SetWarningLocalization({
 L:SetOptionLocalization({
 	SoundWOP				= "语音警告：重要技能",
 	dr						= "减伤提示[警报会在撞击前4秒提示]",
-	dr1						= "$spell:143973 1",
-	dr2						= "$spell:143973 2",
-	dr3						= "$spell:143973 3",
-	dr4						= "$spell:143973 4",
-	dr5						= "$spell:143973 5",
-	dr6						= "$spell:143973 6",
+	dr1						= "$spell:143973 1/6",
+	dr2						= "$spell:143973 2/6",
+	dr3						= "$spell:143973 3/6",
+	dr4						= "$spell:143973 4/6",
+	dr5						= "$spell:143973 5/6",
+	dr6						= "$spell:143973 6/6",
 	SetIconOnToxicMists		= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(144089),
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(4, 143990)
 })
@@ -255,6 +255,7 @@ L:SetMiscLocalization({
 L= VEM:GetModLocalization(851)
 
 L:SetWarningLocalization({
+	specWarnDevotion		= "%s 开启了虔诚光环"
 })
 
 L:SetTimerLocalization({
@@ -263,6 +264,7 @@ L:SetTimerLocalization({
 L:SetOptionLocalization({
 	SoundWOP				= "语音警告：重要技能",
 	SoundPX					= "倒计时：$spell:143343",
+	specWarnDevotion		= "特殊警告：$spell:31821",
 	RangeFrame				= "距离监视(10码)：动态",
 	FixateIcon				= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(143445)
 })
@@ -286,6 +288,26 @@ L:SetOptionLocalization({
 	CSA						= "传送带一组",
 	CSB						= "传送带二组",
 	none					= "我不去",
+	optCSKILL1				= "击杀提示：第1轮",
+	optCSKILL2				= "第2轮",
+	optCSKILL3				= "第3轮",
+	optCSKILL4				= "第4轮",
+	optCSKILL5				= "第5轮",
+	optCSKILL6				= "第6轮",
+	optCSKILL7				= "第7轮",
+	optCSKILL8				= "第8轮",
+	optCSKILL9				= "第9轮",
+	optCSKILL10				= "第10轮",
+	optCSKILL11				= "第11轮",
+	optCSKILL12				= "第12轮",
+	optCSKILL13				= "第13轮",
+	optCSKILL14				= "第14轮",
+	optCSKILL15				= "第15轮",
+	killdl					= "地雷",
+	killfd					= "飞弹",
+	killjg					= "激光",
+	killdc					= "电磁铁",
+	killnone				= "未设置"
 })
 
 L:SetMiscLocalization({
@@ -360,7 +382,7 @@ L:SetMiscLocalization({
 -------------
 --  Trash  --
 -------------
-L = VEM:GetModLocalization("FoOTrash")
+L = VEM:GetModLocalization("SoOTrash")
 
 L:SetGeneralLocalization({
 	name =	"奥格瑞玛杂兵"

@@ -4,7 +4,7 @@ local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 local sndCQ		= mod:NewSound(nil, "SoundCQ", true)
 
-mod:SetRevision(("$Revision: 9863 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10106 $"):sub(12, -3))
 mod:SetCreatureID(69427)
 mod:SetQuestID(32752)
 mod:SetZone()
@@ -292,7 +292,9 @@ function mod:RAID_BOSS_WHISPER(msg, npc)
 		if self:AntiSpam(3, 1) then--This actually doesn't spam, but we ues same antispam here so that the MOVE warning doesn't fire at same time unless you fail to move for 2 seconds
 			specWarnCrimsonWakeYou:Show()
 		end
-		yellCrimsonWake:Yell()
+		if not self:IsDifficulty("lfr25") then
+			yellCrimsonWake:Yell()
+		end
 ----BH DELETE	soundCrimsonWake:Play()
 		VEM.Flash:Shake(1, 0, 0)
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\justrun.mp3")  --快跑

@@ -1,11 +1,9 @@
-﻿if GetBuildInfo() ~= "5.4.0" then return end
-local mod	= VEM:NewMod(861, "VEM-Pandaria", nil, 322)
+﻿local mod	= VEM:NewMod(861, "VEM-Pandaria", nil, 322)
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 10106 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10266 $"):sub(12, -3))
 mod:SetCreatureID(72057)
---mod:SetQuestID(32519)
 mod:SetZone()
 mod:SetUsedIcons(8)
 

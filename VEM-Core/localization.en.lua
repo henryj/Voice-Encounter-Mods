@@ -321,5 +321,5 @@ VEM_CORE_SOUNDGRIL_TEXT_YIKE		= "    Yike Xia, nickname coco-superwoman, girl, r
 VEM_CORE_SOUNDGRIL_NAME_YUN			= "Xiaoyun Zhi"
 VEM_CORE_SOUNDGRIL_TEXT_YUN			= "    Xiaoyun Zhi, WOW player from Taiwan, beautiful girl. Human DK from Black Hand Village @ TW-World Tree"
 
-VEM_CORE_SOUNDGRIL_NAME_SST			= "Iceoven"
-VEM_CORE_SOUNDGRIL_TEXT_SST			= "    All Voice generated via VoiceRss TTS (Text To Speech), API by Iceoven (Worgen Mage from Ancient Ones @ US-Dath'Remar)."
+VEM_CORE_SOUNDGRIL_NAME_SST			= "Default"
+VEM_CORE_SOUNDGRIL_TEXT_SST			= "    High-Quality British English Female Text-To-Speech. Chouu is a pro resto druid. Healing is a therapeutic activity for him."

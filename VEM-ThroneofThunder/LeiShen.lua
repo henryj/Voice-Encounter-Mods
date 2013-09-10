@@ -314,7 +314,7 @@ function mod:SPELL_CAST_START(args)
 		timerFussionSlashCD:Start()
 		if UnitName("boss1target") == UnitName("player") then
 			VEM.Flash:Shake(1, 0, 0)
-			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_xxjf.mp3") --小心擊飛
+			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\carefly.mp3") --小心擊飛
 		elseif mod:IsTank() or mod:IsHealer() then
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_jlz.mp3") --巨雷斬
 		end
@@ -500,6 +500,7 @@ function mod:SPELL_AURA_APPLIED(args)
 				--BH MODIFY
 				if inRange and inRange < 30 then
 					specWarnHelmOfCommandOther:Show(args.destName)
+					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\didi.mp3")
 				end
 			end
 		end
@@ -671,7 +672,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, target)
 			if eastDestroyed then
 				timerDiffusionChainCD:Start(14)
 				specWarnDiffusionChainSoon:Schedule(10)
-				sndWOP:Schedule(10, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_sdls.mp3")--注意分散
+				sndWOP:Schedule(10, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_sdls.mp3")
 				self:Schedule(11, warnSpellReflection)
 			end
 			if southDestroyed then

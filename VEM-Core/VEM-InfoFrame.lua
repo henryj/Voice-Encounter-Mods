@@ -225,8 +225,8 @@ end
 
 local function updateNotsortLines()
 	table.wipe(sortedLines)
-	for i in pairs(lines) do
-		sortedLines[#sortedLines + 1] = i
+	for i, v in ipairs(lines) do
+		sortedLines[#sortedLines + 1] = v
 	end
 	for i, v in ipairs(updateCallbacks) do
 		v(sortedLines)
@@ -309,7 +309,7 @@ local function updateNazgrimPower()
 		lines[GetSpellInfo(143503)] = 70
 		lines["|cFF088A08"..GetSpellInfo(143872).."|r"] = UnitPower("boss1")
 	end
-	updateNotsortLines()
+	updateLines()
 end
 
 
@@ -538,14 +538,18 @@ end
 local function updateOther()
 	table.wipe(lines)
 	lines[pIndex]= infoFrameThreshold
+	lines[1]= pIndex
 	if extraPIndex then
 		lines[extraPIndex]= iconModifier
+		lines[2]= extraPIndex
 	end
 	if tankIgnored then
 		lines[tankIgnored]= lowestFirst
+		lines[3]= tankIgnored
 	end
 	if lowestF then
 		lines[lowestF]= lowestT
+		lines[4]= lowestF
 	end
 	updateNotsortLines()
 end
@@ -634,6 +638,9 @@ local function updateFallenProtectorsHealth()
 			end			
 		end
 	end
+	lines[1]= wsname
+	lines[2]= dzname
+	lines[3]= msname
 	updateNotsortLines()
 end
 --BH ADD END

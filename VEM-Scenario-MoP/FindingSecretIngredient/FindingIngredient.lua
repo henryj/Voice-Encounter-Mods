@@ -1,8 +1,7 @@
-if GetBuildInfo() ~= "5.4.0" then return end
 local mod	= VEM:NewMod("d745", "VEM-Scenario-MoP")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 9996 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10266 $"):sub(12, -3))
 mod:SetZone()
 
 mod:RegisterCombat("scenario", 1157)

@@ -24,6 +24,8 @@ mod:RegisterEventsInCombat(
 	"UNIT_DIED",
 	"SWING_DAMAGE",
 	"SWING_MISSED",
+	"SPELL_DAMAGE",
+	"SPELL_MISSED",
 	"UNIT_POWER"
 )
 
@@ -79,6 +81,7 @@ local timerTitanGas				= mod:NewBuffActiveTimer(30, 116779)
 local timerTitanGasCD			= mod:NewNextCountTimer(150, 116779)
 
 local berserkTimer				= mod:NewBerserkTimer(780)
+local dao = 0
 
 for i = 1, 5 do
 	mod:AddBoolOption("ragebomb"..i, false, "sound")
@@ -411,6 +414,7 @@ function mod:UNIT_POWER(uId)
 		comboWarned = true
 		specWarnCombo:Show()		
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_mop_zbbyz.mp3") --準備半月斬
+		dao = 0
 	elseif (self:GetUnitCreatureId(uId) == 60399 or self:GetUnitCreatureId(uId) == 60400) and UnitPower(uId) == 1 then
 		comboWarned = false
 		comboCount = 0
@@ -426,3 +430,12 @@ function mod:SWING_DAMAGE(sourceGUID, _, _, _, destGUID)
 	end
 end
 mod.SWING_MISSED = mod.SWING_DAMAGE
+
+--[[achi only 
+function mod:SPELL_DAMAGE(_, sourceNAME, _, _, destGUID, _, _, _, spellId)
+	if spellId == 116809 then
+		dao = dao+1
+		SendChatMessage(dao..":"..sourceNAME, "SAY")
+	end
+end
+mod.SPELL_MISSED = mod.SPELL_DAMAGE]]

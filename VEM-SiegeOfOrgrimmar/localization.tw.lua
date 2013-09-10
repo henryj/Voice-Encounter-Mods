@@ -117,7 +117,7 @@ L:SetMiscLocalization({
 L= VEM:GetModLocalization(868)
 
 L:SetTimerLocalization({
-	timerAddsCD		= "下一波小怪",
+	timerAddsCD		= "下一波小兵",
 	timerTowerCD	= "下一個塔樓攻破"
 })
 
@@ -150,12 +150,12 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	timerAssaultModeCD		= VEM_CORE_AUTO_TIMER_OPTIONS.next:format("ej8177"),
-	timerSiegeModeCD		= VEM_CORE_AUTO_TIMER_OPTIONS.next:format("ej8178"),
 })
 
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
+	timerAssaultModeCD		= VEM_CORE_AUTO_TIMER_OPTIONS.next:format("ej8177"),
+	timerSiegeModeCD		= VEM_CORE_AUTO_TIMER_OPTIONS.next:format("ej8178"),
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(6, 144154),
 	dr						= "減傷提示：$spell:144485 [此順序每次攻城階段都會重置]",
 	dr1						= "$spell:144485 1",
@@ -180,12 +180,12 @@ L:SetWarningLocalization({
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
 	dr						= "減傷提示[警報會在撞擊前4秒提示]",
-	dr1						= "$spell:143973 1",
-	dr2						= "$spell:143973 2",
-	dr3						= "$spell:143973 3",
-	dr4						= "$spell:143973 4",
-	dr5						= "$spell:143973 5",
-	dr6						= "$spell:143973 6",
+	dr1						= "$spell:143973 1/6",
+	dr2						= "$spell:143973 2/6",
+	dr3						= "$spell:143973 3/6",
+	dr4						= "$spell:143973 4/6",
+	dr5						= "$spell:143973 5/6",
+	dr6						= "$spell:143973 6/6",
 	SetIconOnToxicMists		= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(144089),
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(4, 143990)
 })
@@ -261,6 +261,7 @@ L:SetMiscLocalization({
 L= VEM:GetModLocalization(851)
 
 L:SetWarningLocalization({
+	specWarnDevotion		= "%s 開啓了虔誠光環"
 })
 
 L:SetTimerLocalization({
@@ -269,6 +270,7 @@ L:SetTimerLocalization({
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
 	SoundPX					= "倒计时：$spell:143343",
+	specWarnDevotion		= "特別警告：$spell:31821",
 	RangeFrame				= "距離監視(10碼)：動態",
 	FixateIcon				= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(143445)
 })
@@ -292,6 +294,26 @@ L:SetOptionLocalization({
 	CSA						= "傳送帶一組",
 	CSB						= "傳送帶二組",
 	none					= "我不去",
+	optCSKILL1				= "擊殺提示：第1輪",
+	optCSKILL2				= "第2輪",
+	optCSKILL3				= "第3輪",
+	optCSKILL4				= "第4輪",
+	optCSKILL5				= "第5輪",
+	optCSKILL6				= "第6輪",
+	optCSKILL7				= "第7輪",
+	optCSKILL8				= "第8輪",
+	optCSKILL9				= "第9輪",
+	optCSKILL10				= "第10輪",
+	optCSKILL11				= "第11輪",
+	optCSKILL12				= "第12輪",
+	optCSKILL13				= "第13輪",
+	optCSKILL14				= "第14輪",
+	optCSKILL15				= "第15輪",
+	killdl					= "地雷",
+	killfd					= "飛彈",
+	killjg					= "激光",
+	killdc					= "電磁鐵",
+	killnone				= "未設置"
 })
 
 L:SetMiscLocalization({
@@ -331,21 +353,21 @@ L:SetMiscLocalization({
 	four				= "四",
 	five				= "五",
 	BossSpellInfo		= "首領技能分析",
-	LF					= "掠風者",
-	LFspell				= "鑿擊/旋風",
+	LF					= "奪風者",
+	LFspell				= "鑿擊/躲紅圈",
 	DX					= "毒心者",
 	DXspell				= "毒素技能",
 	CZ					= "操縱者",
-	CZspell				= "吃人蟲",
-	ZZ					= "至尊者",
+	CZspell				= "吃人蟲連線",
+	ZZ					= "至高者",
 	ZZspell				= "盾擊/琥珀",
-	MC					= "明澈者",
+	MC					= "思緒者",
 	MCspell				= "火線",
-	BS					= "暴食蝗",
-	BSspell				= "黃水/衝鋒",
+	BS					= "暴虐蝗",
+	BSspell				= "丟黃水/衝鋒",
 	MX					= "覓血者",
-	MXspell				= "軟泥",
-	QG					= "切割者",
+	MXspell				= "打軟泥",
+	QG					= "開膛手",
 	QGspell				= "寄生蟲/蠍子",
 	CQ					= "蟲群衛士",
 	CQspell				= "分擔音波",
@@ -366,7 +388,7 @@ L:SetMiscLocalization({
 -------------
 --  Trash  --
 -------------
-L = VEM:GetModLocalization("FoOTrash")
+L = VEM:GetModLocalization("SoOTrash")
 
 L:SetGeneralLocalization({
 	name =	"奧格瑪雜兵"

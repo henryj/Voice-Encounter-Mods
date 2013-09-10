@@ -34,4 +34,4 @@ ThokTheBloodthirsty.lua
 SiegecrafterBlackfuse.lua
 ParagonsOfTheKlaxxi.lua
 GarroshHellscream.lua
-FoOTrash.lua
+SoOTrash.lua

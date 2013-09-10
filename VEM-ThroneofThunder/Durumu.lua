@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 --BH ADD
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 9938 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10152 $"):sub(12, -3))
 mod:SetCreatureID(68036)--Crimson Fog 69050, 
 mod:SetQuestID(32750)
 mod:SetZone()
@@ -367,7 +367,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 			end
 		else
 			if not self:IsDifficulty("lfr25") then
-				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_tt_xxjf.mp3") --小心擊飛
+				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\carefly.mp3") --小心擊飛
 			end
 			local uId = VEM:GetRaidUnitId(args.destName)
 			if uId then

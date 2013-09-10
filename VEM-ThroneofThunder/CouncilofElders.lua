@@ -6,7 +6,7 @@ local sndSpirit	= mod:NewSound(nil, "Soundspirit", true)
 local sndLS		= mod:NewSound(nil, "SoundLs", false)
 local sndHS		= mod:NewSound(nil, "SoundHs", false)
 
-mod:SetRevision(("$Revision: 9928 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10106 $"):sub(12, -3))
 mod:SetCreatureID(69078, 69132, 69134, 69131)--69078 Sul the Sandcrawler, 69132 High Prestess Mar'li, 69131 Frost King Malakk, 69134 Kazra'jin --Adds: 69548 Shadowed Loa Spirit,
 mod:SetQuestID(32746)
 mod:SetZone()

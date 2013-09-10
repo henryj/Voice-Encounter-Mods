@@ -219,6 +219,7 @@ function mod:SPELL_CAST_START(args)
 			sndWOP:Schedule(29.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
 			sndWOP:Schedule(30.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 		end
+		if ashCount == 6 then ashCount = 0 end
 	elseif args.spellId == 144330 then
 		warnIronPrison:Show()
 		timerIronPrisonCD:Start()

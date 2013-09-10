@@ -66,6 +66,8 @@ local specWarnBurningBlood			= mod:NewSpecialWarningYou(143783)
 local specWarnBurningBloodMove		= mod:NewSpecialWarningMove(143784)
 local yellBurningBlood				= mod:NewYell(143783, nil, false)
 
+local specWarnDevotion				= mod:NewSpecialWarning("specWarnDevotion") --BH ADD
+
 --Stage 1: A Cry in the Darkness
 local timerFearsomeRoar			= mod:NewTargetTimer(30, 143766, nil, mod:IsTank() or mod:IsHealer())
 local timerFearsomeRoarCD		= mod:NewCDTimer(11, 143766, nil, mod:IsTank())
@@ -85,6 +87,8 @@ local timerFrostBreathCD		= mod:NewCDTimer(9.5, 143773, nil, mod:IsTank())
 local timerScorchingBreath		= mod:NewTargetTimer(30, 143767, nil, mod:IsTank() or mod:IsHealer())
 local timerScorchingBreathCD	= mod:NewCDTimer(11, 143767, nil, mod:IsTank())--Often 12, but sometimes 11
 local timerBurningBloodCD		= mod:NewCDTimer(3.5, 143783, nil, false)--cast often, but someone might want to show it
+
+local timerDevotion				= mod:NewBuffActiveTimer(14, 31821)
 
 local berserkTimer				= mod:NewBerserkTimer(600)
 
@@ -218,6 +222,12 @@ function mod:SPELL_CAST_SUCCESS(args)
 	elseif args.spellId == 143428 then
 		warnTailLash:Show()
 		timerTailLashCD:Start()
+	elseif args.spellId == 31821 then --BH ADD
+		specWarnDevotion:Show(args.sourceName)
+		timerDevotion:Start()
+		if mod:IsManaUser() then
+			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_qcgh.mp3") --虔誠光環
+		end
 	end
 end
 

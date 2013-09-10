@@ -327,5 +327,5 @@ VEM_CORE_SOUNDGRIL_TEXT_YIKE		= "    夏一可，又名可可超人，女，真�
 VEM_CORE_SOUNDGRIL_NAME_YUN			= "芷小芸"
 VEM_CORE_SOUNDGRIL_TEXT_YUN			= "    芷小芸，來自中國台灣省的魔獸世界美女玩家，現為台服世界之樹《黑手之鄉》公會人類死亡騎士。"
 
-VEM_CORE_SOUNDGRIL_NAME_SST			= "Iceoven"
-VEM_CORE_SOUNDGRIL_TEXT_SST			= "    All Voice generated via VoiceRss TTS (Text To Speech), API by Iceoven (Worgen Mage from Ancient Ones @ US-Dath'Remar)."
+VEM_CORE_SOUNDGRIL_NAME_SST			= "Default"
+VEM_CORE_SOUNDGRIL_TEXT_SST			= "    High-Quality British English Female Text-To-Speech. Chouu is a pro resto druid. Healing is a therapeutic activity for him."

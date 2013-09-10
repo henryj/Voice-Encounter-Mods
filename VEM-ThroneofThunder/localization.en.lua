@@ -327,7 +327,7 @@ L:SetMiscLocalization({
 L= VEM:GetModLocalization(820)
 
 L:SetWarningLocalization({
-	warnDebuffCount				= "Too many mutations: % good & % bad",
+	warnDebuffCount				= "Too many mutations: %d/5 good & %d bad",
 })
 
 L:SetOptionLocalization({

@@ -2,7 +2,7 @@
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 10226 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10264 $"):sub(12, -3))
 mod:SetCreatureID(71152, 71153, 71154, 71155, 71156, 71157, 71158, 71160, 71161)
 mod:SetZone()
 mod:SetUsedIcons(1)
@@ -66,6 +66,7 @@ local warnInjection					= mod:NewStackAnnounce(143339)--Triggers 143340 at 10 st
 local warnMutate					= mod:NewTargetAnnounce(143337, 3)
 --Hisek the Swarmkeeper
 local warnAim						= mod:NewTargetAnnounce(142948, 4)--Maybe wrong debuff id, maybe 144759 instead
+local warnRapidFire					= mod:NewSpellAnnounce(143243, 3)
 
 --All
 --NOTE, this is purely off assumption the ones that make you vunerable to eachother don't spawn at same time.
@@ -132,6 +133,7 @@ local specWarnParasiteFixate		= mod:NewSpecialWarningYou(143358)
 local specWarnAim					= mod:NewSpecialWarningYou(142948)
 local yellAim						= mod:NewYell(142948)
 local specWarnAimOther				= mod:NewSpecialWarningTarget(142948)
+local specWarnRapidFire				= mod:NewSpecialWarningSpell(143243, nil, nil, nil, 2)
 
 local timerJumpToCenter				= mod:NewCastTimer(5, 143545)
 --Kil'ruk the Wind-Reaver
@@ -149,12 +151,18 @@ local timerInsaneCalculationCD		= mod:NewCDTimer(25, 142416)--25 is minimum but 
 --Ka'roz the Locust
 local timerFlashCD					= mod:NewCDTimer(62, 143709)
 local timerWhirling					= mod:NewBuffFadesTimer(5, 143701)
+local timerHurlAmberCD				= mod:NewCDTimer(62, 143759)--TODO< verify cd on spell itself. in my logs he died after only casting it once every time.
 --Skeer the Bloodseeker
---local timerBloodlettingCD			= mod:NewCDTimer(35, 143280)--Still need more data for this one
+local timerBloodlettingCD			= mod:NewCDTimer(35, 143280)--35-65 variable. most of the time it's around 42 range
 --Rik'kal the Dissector
 local timerMutate					= mod:NewBuffFadesTimer(20, 143337)
+local timerMutateCD					= mod:NewCDTimer(45, 143337)
 --Hisek the Swarmkeeper
 local timerAim						= mod:NewTargetTimer(5, 142948)--or is it 7, conflicting tooltips
+local timerAimCD					= mod:NewCDTimer(42, 142948)
+--local timerRapidFireCD			= mod:NewCDTimer(30, 143243)--Heroic, unknown Cd
+
+local berserkTimer					= mod:NewBerserkTimer(720)
 
 --local countdownEncaseInAmber		= mod:NewCountdown(30, 142564)--Probably switch to secondary countdown if one of his other abilities proves to have priority
 
@@ -180,6 +188,7 @@ local CFMarkers={}
 
 local activatedTargets = {}--A table, for the 3 on pull
 local whirlingTargets = {}
+local mutateTargets = {}
 local activeBossGUIDS = {}
 local UnitDebuff = UnitDebuff
 local GetSpellInfo = GetSpellInfo
@@ -187,6 +196,12 @@ local calculatedShape = nil
 local calculatedNumber = nil
 local calculatedColor = nil
 local calculatingDude = EJ_GetSectionInfo(8012)
+local readyToFight = GetSpellInfo(143542)
+
+local activenum = 0
+local deadnum = 0
+local bosstype = 0
+
 local bossspellinfo = {}
 
 local winderlive = false
@@ -256,10 +271,131 @@ local function showspellinfo()
 	end
 end
 
+local function soundkillboss(cid, dcid)
+	--[[ 不對啊 哀綠醬坑死我了 =ω= 為什麼第二輪刷出的是暴食皇-至尊-明澈的順序啊
+	if cid then activenum = activenum + 1 end
+	if dcid then deadnum = deadnum + 1 end
+	if cid == 71154 and bosstype == 1 then bosstype = 2 end
+	if cid == 71153 and bosstype == 3 then bosstype = 4 end
+	if cid == 71154 and bosstype == 5 then bosstype = 6 end
+	if bosstype == 1 then
+		if activenum == 1 then
+			print("『毒化心智』")
+		end
+		if deadnum == 1 then
+			print("『奪風者』")
+		elseif deadnum == 2 then
+			print("『開膛手』")
+		elseif deadnum == 3 then
+			print("『覓血者』")
+		elseif deadnum == 4 then
+			print("『操縱者』")
+		elseif deadnum == 5 then
+			print("『思緒清晰』")
+		elseif deadnum == 6 then
+			print("『至高者』")
+		elseif deadnum == 7 then
+			print("『暴虐蝗蟲』")
+		elseif deadnum == 8 then
+			print("『蟲群守護者』")
+		end
+	elseif bosstype == 2 then
+		if deadnum == 2 then
+			print("『思緒清晰』")
+		elseif deadnum == 3 then
+			print("『至高者』")
+		elseif deadnum == 4 then
+			print("『暴虐蝗蟲』")
+		elseif deadnum == 5 then
+			print("『開膛手』")
+		elseif deadnum == 6 then
+			print("『覓血者』")
+		elseif deadnum == 7 then
+			print("『操縱者』")
+		elseif deadnum == 8 then
+			print("『蟲群守護者』")
+		end
+	elseif bosstype == 3 then
+		if activenum == 1 then
+			print("『至高者』")
+		end
+		if deadnum == 1 then
+			print("『暴虐蝗蟲』")
+		elseif deadnum == 2 then
+			print("『毒化心智』")
+		elseif deadnum == 3 then
+			print("『思緒清晰』")
+		elseif deadnum == 4 then
+			print("『奪風者』")
+		elseif deadnum == 5 then
+			print("『開膛手』")
+		elseif deadnum == 6 then
+			print("『覓血者』")
+		elseif deadnum == 7 then
+			print("『操縱者』")
+		elseif deadnum == 8 then
+			print("『蟲群守護者』")
+		end
+	elseif bosstype == 4 then
+		if deadnum == 2 then
+			print("『開膛手』")
+		elseif deadnum == 3 then
+			print("『覓血者』")
+		elseif deadnum == 4 then
+			print("『毒化心智』")
+		elseif deadnum == 5 then
+			print("『思緒清晰』")
+		elseif deadnum == 6 then
+			print("『奪風者』")
+		elseif deadnum == 7 then
+			print("『操縱者』")
+		elseif deadnum == 8 then
+			print("『蟲群守護者』")
+		end
+	elseif bosstype == 5 then
+		if activenum == 1 then
+			print("『開膛手』")
+		end
+		if deadnum == 1 then
+			print("『覓血者』")
+		elseif deadnum == 2 then
+			print("『毒化心智』")
+		elseif deadnum == 3 then
+			print("『奪風者』")
+		elseif deadnum == 4 then
+			print("『操縱者』")
+		elseif deadnum == 5 then
+			print("『思緒清晰』")
+		elseif deadnum == 6 then
+			print("『至高者』")
+		elseif deadnum == 7 then
+			print("『暴虐蝗蟲』")
+		elseif deadnum == 8 then
+			print("『蟲群守護者』")
+		end
+	elseif bosstype == 6 then
+		if deadnum == 2 then
+			print("『暴虐蝗蟲』")
+		elseif deadnum == 3 then
+			print("『至高者』")
+		elseif deadnum == 4 then
+			print("『毒化心智』")
+		elseif deadnum == 5 then
+			print("『思緒清晰』")
+		elseif deadnum == 6 then
+			print("『奪風者』")
+		elseif deadnum == 7 then
+			print("『操縱者』")
+		elseif deadnum == 8 then
+			print("『蟲群守護者』")
+		end
+	end]]
+end
+
 local function warnActivatedTargets(vulnerable)
 	if #activatedTargets > 1 then
 		warnActivated:Show(table.concat(activatedTargets, "<, >"))
-		specWarnActivated:Show(table.concat(activatedTargets, ", "))
+--		specWarnActivated:Show(table.concat(activatedTargets, ", "))
 	else
 		warnActivated:Show(activatedTargets[1])
 		if vulnerable and mod:IsTank() then
@@ -274,6 +410,12 @@ end
 local function warnWhirlingTargets()
 	warnWhirling:Show(table.concat(whirlingTargets, "<, >"))
 	twipe(whirlingTargets)
+end
+
+local function warnMutatedTargets()
+	warnMutate:Show(table.concat(mutateTargets, "<, >"))
+	timerMutateCD:Start()
+	twipe(mutateTargets)
 end
 
 local function hideRangeFrame()
@@ -319,71 +461,84 @@ local function CheckBosses(GUID)
 	local vulnerable = false
 	for i = 1, 5 do
 		local unitID = "boss"..i
-		--"<0.0 19:23:10> [INSTANCE_ENCOUNTER_ENGAGE_UNIT] Fake Args:#1#1#Xaril the Poisoned Mind#0xF13115F500000294#elite#228971920#1#1#Kaz'tik the Manipulator#0xF13115F400000293#elite#183177232#1#1#Hisek the Swarmkeeper#0xF13115F100000290
-		--"<7.4 19:23:17> [INSTANCE_ENCOUNTER_ENGAGE_UNIT] Fake Args:#1#1#Kaz'tik the Manipulator#0xF13115F400000293#elite#183177232#1#1#Xaril the Poisoned Mind#0xF13115F500000294#elite#228971920#1#1#Kil'ruk the Wind-Reaver#0xF13115F900000297#elite#261682208#1#1#Hisek the Swarmkeeper
-		--Only 3 bosses activate, but for some reason inactive bosses are sometimes firing IEEU, all I can do now is try to fix it using UnitAffectingCombat
-		if UnitExists(unitID) and not activeBossGUIDS[UnitGUID(unitID)] and UnitAffectingCombat(unitID) then--Check if new units exist we haven't detected and added yet.
+		--Only 3 bosses activate on pull, however now the inactive or (next boss to activate) also fires IEEU. As such, we have to filter that boss by scaning for readytofight. Works well though.
+		if UnitExists(unitID) and not activeBossGUIDS[UnitGUID(unitID)] and not UnitBuff(unitID, readyToFight) then--Check if new units exist we haven't detected and added yet.
+			local activetime = GetTime() - mod.combatInfo.pull
 			activeBossGUIDS[UnitGUID(unitID)] = true
 			activatedTargets[#activatedTargets + 1] = UnitName(unitID)
 			--Activation Controller
 			local cid = mod:GetCIDFromGUID(UnitGUID(unitID))
 			if cid == 71161 then--Kil'ruk the Wind-Reaver
-				mod:Schedule(24, DFAScan)--Not a large sample size, data shows it happen 29-30 seconds after IEEU fires on two different pulls. Although 2 is a poor sample
+				mod:Schedule(23, DFAScan)--Not a large sample size, data shows it happen 29-30 seconds after IEEU fires on two different pulls. Although 2 is a poor sample
 				if UnitDebuff("player", GetSpellInfo(142929)) then vulnerable = true end
-				if GetTime() - mod.combatInfo.pull >= 5 then
-					--sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_lfz.mp3") --掠風者參戰
+				if activetime >= 15 then
+					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_lfz.mp3") --掠風者參戰
 				end
+				if activetime < 10 then bosstype = 1 end
 				if mod.Options.RangeFrame then
 					winderlive = true
 					if not locustlive then
 						VEM.RangeCheck:Show(5)
 					end
 				end
+				soundkillboss(cid)
 			elseif cid == 71157 then--Xaril the Poisoned-Mind
 				if UnitDebuff("player", GetSpellInfo(142931)) then vulnerable = true end
-				if GetTime() - mod.combatInfo.pull >= 5 then
-					--sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_dxz.mp3") --毒心者參戰
+				if activetime >= 15 then
+					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_dxz.mp3") --毒心者參戰
 				end
+				soundkillboss(cid)
 			elseif cid == 71156 then--Kaz'tik the Manipulator
-				if GetTime() - mod.combatInfo.pull >= 5 then
-					--sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_czz.mp3") --操縱者參戰
+				if activetime >= 15 then
+					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_czz.mp3") --操縱者參戰
 				end
-		
+				soundkillboss(cid)
 			elseif cid == 71155 then--Korven the Prime
---				timerShieldBashCD:Start(25)
-				if GetTime() - mod.combatInfo.pull >= 5 then
-					--sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_zzz.mp3") --至尊者參戰
+				timerShieldBashCD:Start(19)--20seconds from jump to center and REAL IEEU. question is whether or not filtering readyToFight will ignore the bad IEEU that come earlier
+				if activetime >= 15 then
+					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_zzz.mp3") --至尊者參戰
 				end
+				if activetime < 10 then bosstype = 3 end
+				soundkillboss(cid)
 			elseif cid == 71160 then--Iyyokuk the Lucid
---				timerInsaneCalculationCD:Start()
-				if GetTime() - mod.combatInfo.pull >= 5 then
-					--sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_mcz.mp3") --明澈者參戰
+				timerInsaneCalculationCD:Start()
+				if activetime >= 15 then
+					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_mcz.mp3") --明澈者參戰
 				end
+				soundkillboss(cid)
 			elseif cid == 71154 then--Ka'roz the Locust
---				timerFlashCD:Start(15)
-				if GetTime() - mod.combatInfo.pull >= 5 then
-					--sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_bsh.mp3") --暴食蝗參戰
+				timerFlashCD:Start(14)--In final LFR test, he didn't cast this for 20 seconds. TODO check this change
+				timerHurlAmberCD:Start(44)
+				if activetime >= 15 then
+					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_bsh.mp3") --暴食蝗參戰
 				end
 				if mod.Options.RangeFrame then
 					locustlive = true
 					VEM.RangeCheck:Show(6)					
 				end
+				soundkillboss(cid)
 			elseif cid == 71152 then--Skeer the Bloodseeker
-				--timerBloodlettingCD:Start()
+				timerBloodlettingCD:Start(9)
 				if UnitDebuff("player", GetSpellInfo(143279)) then vulnerable = true end
-				if GetTime() - mod.combatInfo.pull >= 5 then
-					--sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_nxz.mp3") --覓血者參戰
+				if activetime >= 15 then
+					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_nxz.mp3") --覓血者參戰
 				end
+				if activetime < 10 then bosstype = 5 end
+				soundkillboss(cid)
 			elseif cid == 71158 then--Rik'kal the Dissector
+				timerMutateCD:Start(34)
 				if UnitDebuff("player", GetSpellInfo(143275)) then vulnerable = true end
-				if GetTime() - mod.combatInfo.pull >= 5 then
-					--sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_qgz.mp3") --切割者參戰
+				if activetime >= 15 then
+					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_qgz.mp3") --切割者參戰					
 				end
+				soundkillboss(cid)
 			elseif cid == 71153 then--Hisek the Swarmkeeper
-				if GetTime() - mod.combatInfo.pull >= 5 then
-					--sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_cqws.mp3") --蟲群衛士參戰
+				timerAimCD:Start(37)--Might be 32 now with the UnitBuff filter, so pay attention to that and adjust as needed
+				--timerRapidFireCD:Start()
+				if activetime >= 15 then
+					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_cqws.mp3") --蟲群衛士參戰
 				end
-		
+				soundkillboss(cid)
 			end
 		end
 	end
@@ -397,6 +552,7 @@ function mod:OnCombatStart(delay)
 	twipe(activeBossGUIDS)
 	twipe(activatedTargets)
 	twipe(whirlingTargets)
+	twipe(mutateTargets)
 	twipe(RedMarkers)
 	twipe(BlueMarkers)
 	twipe(YellowMarkers)
@@ -405,10 +561,13 @@ function mod:OnCombatStart(delay)
 	calculatedShape = nil
 	calculatedNumber = nil
 	calculatedColor = nil
+	activenum = 0
+	deadnum = 0
 	self:RegisterShortTermEvents(
 		"INSTANCE_ENCOUNTER_ENGAGE_UNIT"--We register here to make sure we wipe variables on pull
 	)
-	timerJumpToCenter:Start()
+	timerJumpToCenter:Start(-delay)
+	berserkTimer:Start(-delay)
 end
 
 function mod:OnCombatEnd()
@@ -428,7 +587,7 @@ end
 --^don't let above fool you, not all of the paragons fire this spell!!! that is why we MUST use IEEU
 function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
 	self:Unschedule(CheckBosses)
-	self:Schedule(0.5, CheckBosses)--Delay check to make sure we run function only once on pull
+	self:Schedule(1, CheckBosses)--Delay check to make sure we run function only once on pull
 end
 
 function mod:SPELL_CAST_START(args)
@@ -463,7 +622,7 @@ function mod:SPELL_CAST_START(args)
 			if self.Options.yellToxicCatalyst then
 				yellCatalystRed:Yell()
 			end
-			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\scattersoon.mp3") --注意分散
+			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runout.mp3") --離開人群
 		else
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_hsch.mp3") --紅色催化
 			if self.Options.HudMAP then
@@ -545,7 +704,7 @@ function mod:SPELL_CAST_START(args)
 		warnFlash:Show()
 		specWarnFlash:Show()
 		timerFlashCD:Start()
-		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\carecharge.mp3") --小心衝鋒
+		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\chargemove.mp3") --衝鋒快躲
 --[[DELETE		if self.Options.RangeFrame then
 			VEM.RangeCheck:Show(6)--Range assumed, spell tooltips not informative enough
 			self:Schedule(5, hideRangeFrame)
@@ -563,7 +722,7 @@ function mod:SPELL_CAST_START(args)
 	elseif args.spellId == 143280 then
 		warnBloodletting:Show()
 		specWarnBloodletting:Show()
---		timerBloodlettingCD:Start()
+		timerBloodlettingCD:Start()
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_rnkd.mp3") --软泥快打
 	elseif args.spellId == 143974 then
 		warnShieldBash:Show()
@@ -576,6 +735,10 @@ function mod:SPELL_CAST_START(args)
 				specWarnCausticBlood:Show()--So show tank warning
 			end
 		end
+	elseif args.spellId == 143243 then
+		warnRapidFire:Show()
+		specWarnRapidFire:Show()
+		--timerRapidFireCD:Start()
 	end
 end
 
@@ -692,13 +855,16 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif args.spellId == 143759 then
 		warnHurlAmber:Show()
 		specWarnHurlAmber:Show()
+		timerHurlAmberCD:Start()
 	elseif args.spellId == 143337 then
-		warnMutate:Show(args.destName)
+		mutateTargets[#mutateTargets + 1] = args.destName
 		if args.IsPlayer() then
 			specWarnMutate:Show()
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_bsjx.mp3") --變身巨蠍
 			timerMutate:Start()
 		end
+		self:Unschedule(warnMutatedTargets)
+		self:Schedule(0.5, warnMutatedTargets)
 	elseif args.spellId == 143358 then
 		if args.IsPlayer() then
 			specWarnParasiteFixate:Show()
@@ -706,6 +872,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif args.spellId == 142948 then
 		warnAim:Show(args.destName)
 		timerAim:Start(args.destName)
+		timerAimCD:Start()
 		if args.IsPlayer() then
 			specWarnAim:Show()
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_nbmz.mp3") --你被瞄準
@@ -777,28 +944,41 @@ function mod:UNIT_DIED(args)
 				VEM.RangeCheck:Hide()
 			end					
 		end
+		soundkillboss(nil, cid)
 	elseif cid == 71157 then--Xaril the Poisoned-Mind
 		timerToxicCatalystCD:Cancel()
+		soundkillboss(nil, cid)
 	elseif cid == 71156 then--Kaz'tik the Manipulator
+		soundkillboss(nil, cid)
 	elseif cid == 71155 then--Korven the Prime
 		timerShieldBashCD:Cancel()
 		timerEncaseInAmberCD:Cancel()
 --		countdownEncaseInAmber:Cancel()
+		soundkillboss(nil, cid)
 	elseif cid == 71160 then--Iyyokuk the Lucid
 		timerInsaneCalculationCD:Cancel()
+		soundkillboss(nil, cid)
 	elseif cid == 71154 then--Ka'roz the Locust
 		timerFlashCD:Cancel()
+		timerHurlAmberCD:Cancel()
 		if mod.Options.RangeFrame then
 			if not winderlive then
 				VEM.RangeCheck:Hide()
 			else
 				VEM.RangeCheck:Show(5)
 			end
-		end	
+		end
+		soundkillboss(nil, cid)
 	elseif cid == 71152 then--Skeer the Bloodseeker
---		timerBloodlettingCD:Cancel()
+		timerBloodlettingCD:Cancel()
+		soundkillboss(nil, cid)
 	elseif cid == 71158 then--Rik'kal the Dissector
+		timerMutateCD:Cancel()
+		soundkillboss(nil, cid)
 	elseif cid == 71153 then--Hisek the Swarmkeeper
+		timerAimCD:Cancel()
+		--timerRapidFireCD:Cancel()
+		soundkillboss(nil, cid)
 	end
 end
 
@@ -902,7 +1082,6 @@ end
 
 local function delayMonsterEmote(target)
 	--Because now the raid boss emotes fire AFTER this and we need them first
-	target = VEM:GetFullNameByShortName(target)
 	warnCalculated:Show(target)
 	timerCalculated:Start()
 	timerInsaneCalculationCD:Start()
@@ -1012,8 +1191,9 @@ local function delayMonsterEmote(target)
 end
 
 function mod:CHAT_MSG_MONSTER_EMOTE(msg, npc, _, _, target)
+	local targetname = VEM:GetUnitFullName(target)
 	if npc == calculatingDude then
 		self:Unschedule(delayMonsterEmote)
-		self:Schedule(0.5, delayMonsterEmote, target)
+		self:Schedule(0.5, delayMonsterEmote, targetname)
 	end
 end

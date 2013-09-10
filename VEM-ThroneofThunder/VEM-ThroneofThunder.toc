@@ -1,9 +1,9 @@
-﻿## Interface: 50300
+﻿## Interface: 50400
 ## X-Min-Interface: 50200
 ## Title:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0Throne of Thunder|r
 
 ## Title-zhCN:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0雷电王座|r
-## Title-zhTW:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0雷霆王座  (ToT)|r
+## Title-zhTW:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0雷霆王座(ToT)|r
 ## Author: MysticalOS
 ## LoadOnDemand: 1
 ## RequiredDeps: VEM-Core

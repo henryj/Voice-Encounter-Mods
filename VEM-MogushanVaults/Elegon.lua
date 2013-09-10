@@ -4,7 +4,7 @@ local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 local sndCC	= mod:NewSound(nil, "SoundCC", true)
 local sndDD = mod:NewSound(nil, "SoundDD", false)
 
-mod:SetRevision(("$Revision: 9683 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10185 $"):sub(12, -3))
 mod:SetCreatureID(60410)--Energy Charge (60913), Emphyreal Focus (60776), Cosmic Spark (62618), Celestial Protector (60793)
 mod:SetZone()
 mod:SetUsedIcons(8, 7, 6)
@@ -37,14 +37,14 @@ local warnRadiatingEnergies			= mod:NewSpellAnnounce(118310, 4)
 local warnCoresLeft				= mod:NewAddsLeftAnnounce("ej6193", 2, 117878)
 
 local specWarnOvercharged			= mod:NewSpecialWarningStack(117878, nil, 6)
-local specWarnTotalAnnihilation		= mod:NewSpecialWarningSpell(129711, nil, nil, nil, true)
+local specWarnTotalAnnihilation		= mod:NewSpecialWarningSpell(129711, nil, nil, nil, 2)
 local specWarnProtector				= mod:NewSpecialWarning("specWarnProtector")
 local specWarnCharge				= mod:NewSpecialWarning("specWarnCharge")
 local specWarnCore					= mod:NewSpecialWarningSwitch("ej6193")
 local specWarnClosedCircuit			= mod:NewSpecialWarningDispel(117949, false)--Probably a spammy mess if this hits a few at once. But here in case someone likes spam.
 local specWarnDrawPower				= mod:NewSpecialWarningStack(119387, nil, 1)
-local specWarnDespawnFloor			= mod:NewSpecialWarning("specWarnDespawnFloor", nil, nil, nil, true)
-local specWarnRadiatingEnergies		= mod:NewSpecialWarningSpell(118310, nil, nil, nil, true)
+local specWarnDespawnFloor			= mod:NewSpecialWarning("specWarnDespawnFloor", nil, nil, nil, 3)
+local specWarnRadiatingEnergies		= mod:NewSpecialWarningSpell(118310, nil, nil, nil, 2)
 
 local specwarnYB			= mod:NewSpecialWarning("specwarnYB")
 

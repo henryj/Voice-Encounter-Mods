@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 local sndQS		= mod:NewSound(nil, "SoundQS", mod:IsHealer())
 
-mod:SetRevision(("$Revision: 10182 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10250 $"):sub(12, -3))
 mod:SetCreatureID(71734)
 mod:SetZone()
 mod:SetUsedIcons(8, 7, 6, 5, 4, 3, 2, 1)
@@ -220,7 +220,7 @@ function mod:OnCombatStart(delay)
 	sndWOP:Schedule(20-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 	timerCorruptedPrisonCD:Start(-delay)
 	sndWOP:Schedule(35-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\readyrescue.mp3") --準備救人
-	timerManifestationCD:Start(-delay)	
+	timerManifestationCD:Start(-delay)
 	sndWOP:Schedule(46-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmobsoon.mp3") --準備大怪
 	specWarnManifestation:Schedule(50-delay)
 	if mod:IsDps() then

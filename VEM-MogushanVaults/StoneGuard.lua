@@ -2,7 +2,7 @@
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 9656 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10151 $"):sub(12, -3))
 mod:SetCreatureID(60051, 60043, 59915, 60047)--Cobalt: 60051, Jade: 60043, Jasper: 59915, Amethyst: 60047
 mod:SetZone()
 
@@ -66,7 +66,6 @@ local Overload = {
 	["Jasper"] = GetSpellInfo(115843),
 	["Amethyst"] = GetSpellInfo(115844)
 }
---local scansDone = 0
 local activePetrification = nil
 local playerHasChains = false
 local jasperChainsTargets = {}
@@ -251,11 +250,14 @@ end
 
 function mod:OnCombatStart(delay)
 	activePetrification = nil
---	scansDone = 0
 	playerHasChains = false
 	table.wipe(jasperChainsTargets)
 	table.wipe(amethystPoolTargets)
-	berserkTimer:Start()--7 min berserk on heroic 10 and 25 at least, unsure about normal/LFR, since i've never seen a log reach 7 min yet in LFR or normal
+	if self:IsDifficulty("heroic10", "heroic25") then
+		berserkTimer:Start(-delay)
+	else
+		berserkTimer:Start(485-delay)
+	end
 	if self:IsDifficulty("normal25", "heroic25") then
 		timerCobaltMineCD:Start(-delay)
 		timerJadeShardsCD:Start(-delay)
@@ -399,7 +401,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		else
 			ChecknextOverload()
 		end
-	elseif args:IsSpellID(116223) then
+	elseif args.spellId == 116223 then
 		warnJadeShards:Show()
 		timerJadeShardsCD:Start()
 	elseif args:IsSpellID(116235, 130774) then--is 116235 still used? my logs show ONLY 130774 being used.

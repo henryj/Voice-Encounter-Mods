@@ -121,9 +121,9 @@ L.RaidWarnMessage 			= "感谢您使用Voice Encounter Mods"
 L.BarWhileMove 				= "可移动团队警报"
 L.RaidWarnSound				= "发出团队警报时播放声音"
 L.CountdownVoice			= "设置语音包"
-L.SpecialWarnSound			= "针对你或你的角色发出特殊警报时播放声音"
+L.SpecialWarnSound			= "针对你的角色发出特殊警报时播放声音"
 L.SpecialWarnSound2			= "针对所有人发出特殊警报时播放声音"
-L.SpecialWarnSound3			= "针对非常重要事件的特殊警报播放声音，这些事件若不注意往往会造成灭团"
+L.SpecialWarnSound3			= "针对毁灭性技能的特殊警报播放声音"
 
 -- Tab: Generalwarnings
 L.Tab_GeneralMessages 		= "综合信息"
@@ -165,7 +165,7 @@ L.ClickThrough				= "禁用鼠标点击事件（允许你点击计时条后面�
 L.Panel_SpecWarnFrame		= "特殊警报"
 L.Area_SpecWarn				= "特殊警报设置"
 L.SpecWarn_Enabled			= "显示首领技能特殊警报"
-L.SpecWarn_FlashFrame		= "特殊警报时屏幕边缘泛光"
+L.SpecWarn_FlashFrame		= "特殊警报屏幕边缘泛光"
 L.SpecWarn_ShakeFrame		= "为毁灭性的技能闪烁屏幕"
 L.SpecWarn_AdSound		= "启用特别警告高级声音选项（需要UI重载）"
 L.SpecWarn_FlashColor		= "泛光顏色 (%d)"
@@ -230,6 +230,6 @@ L.Always					= "总是跳过"
 -- Misc
 L.FontHeight	= 20
 
-L.sst = "Iceoven(EN)"
+L.sst = "Default(EN)"
 L.yike = "夏一可(CN)"
 L.yun =  "芷小芸(TW)"

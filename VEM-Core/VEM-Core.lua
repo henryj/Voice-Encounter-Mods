@@ -6,7 +6,7 @@
 -- This addon is written and copyrighted by:
 --    * Paul Emmerich (Tandanu @ EU-Aegwynn) (VEM-Core)
 --    * Martin Verges (Nitram @ EU-Azshara) (VEM-GUI)
---    * Adam Williams (Omegal @ US-Whisperwind) (Primary boss mod author) Contact: Twitter @MysticalOS)
+--    * Adam Williams (Omegal @ US-Whisperwind) (Primary boss mod author & VEM maintainer) Contact: Twitter @MysticalOS)
 --
 -- The localizations are written by:
 --    * enGB/enUS: Tandanu & Omegal		http://www.deadlybossmods.com
@@ -50,10 +50,10 @@
 --  Globals/Default Options  --
 -------------------------------
 VEM = {
-	Revision = tonumber(("$Revision: 10248 $"):sub(12, -3)),
-	DisplayVersion = "(VEM) 5.3.7", -- the string that is shown as version
-	DisplayReleaseVersion = "5.3.6", -- Needed to work around bigwigs sending improper version information
-	ReleaseRevision = 10174 -- the revision of the latest stable version that is available
+	Revision = tonumber(("$Revision: 10269 $"):sub(12, -3)),
+	DisplayVersion = "(VEM) 5.4.1", -- the string that is shown as version
+	DisplayReleaseVersion = "5.4.0", -- Needed to work around bigwigs sending improper version information
+	ReleaseRevision = 10267 -- the revision of the latest stable version that is available
 }
 
 -- Legacy crap; that stupid "Version" field was never a good idea.
@@ -175,7 +175,7 @@ VEM.DefaultOptions = {
 	DontShowPTText = false,
 	DontShowPTNoID = false,
 	DontShowCTCount = false,
-	PTCountThreshold = 5,
+	PTCountThreshold = 10,
 	LatencyThreshold = 250,
 	BigBrotherAnnounceToRaid = false,
 	SettingsMessageShown = false,
@@ -1943,9 +1943,11 @@ do
 	end
 end
 
+local lastLFGAlert = 0
 function VEM:LFG_ROLE_CHECK_SHOW()
-	if not UnitIsGroupLeader("player") and VEM.Options.LFDEnhance then
+	if not UnitIsGroupLeader("player") and VEM.Options.LFDEnhance and GetTime() - lastLFGAlert > 5 then
 		PlaySoundFile("Sound\\interface\\levelup2.ogg", "Master")--Because regular sound uses SFX channel which is too low of volume most of time
+		lastLFGAlert = GetTime()
 	end
 end
 
@@ -5874,7 +5876,7 @@ do
 	end
 	
 	function VEM:ShowLTSpecialWarning(text)
-		if not text then return end
+		if (not VEM.Options.ShowLTSpecialWarnings) or (not text) then return end
 		if not frame then
 			createFrame()
 		end
@@ -5895,10 +5897,10 @@ do
 			createFrame()
 		end		
 		frame:RegisterForDrag("LeftButton")
-		frame:SetScript("OnMouseDown", function(self)
+		frame:SetScript("OnDragStart", function(self)
 			frame:StartMoving()
 		end)
-		frame:SetScript("OnMouseUp", function(self)
+		frame:SetScript("OnDragStop", function(self)
 			frame:StopMovingOrSizing()
 			local point, _, _, x, y = self:GetPoint(1)
 			VEM.Options.LTSpecialWarningPoint = point
@@ -6281,13 +6283,13 @@ do
 
 	function enragePrototype:Cancel()
 		self.owner:Unschedule(self.Start, self)
-		if warning1 then
+		if self.warning1 then
 			self.warning1:Cancel()
 		end
-		if warning2 then
+		if self.warning2 then
 			self.warning2:Cancel()
 		end
-		if countdown then
+		if self.countdown then
 			VEM:Unschedule(countDownTextDelay)
 			self.countdown:Cancel()
 			TimerTracker_OnEvent(TimerTracker, "PLAYER_ENTERING_WORLD")
