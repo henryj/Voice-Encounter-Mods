@@ -25,7 +25,8 @@ L:SetOptionLocalization({
 
 L:SetMiscLocalization({
 	kill					= "Killed",
-	clean					= "Purified"
+	clean					= "Purified",
+	Victory			= "Ah, you have done it! The waters are pure once more."
 })
 
 ---------------------------
@@ -100,7 +101,7 @@ L:SetOptionLocalization({
 	HudMAPCP				= "HUD MAP: $spell:144574",
 	HudMAPAoP				= "HUD MAP: $spell:146817",
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(5, 146817),
-	SetIconOnMark			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(144351),
+	SetIconOnMark		= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(144351),
 	InfoFrame			= "Show info frame for $journal:8255",
 	dr1						= "Defensive Warning: $spell:144400 1/3",
 	dr2						= "Defensive Warning: $spell:144400 2/3",
@@ -335,14 +336,14 @@ L:SetOptionLocalization({
 	InfoFrame				= "Info Frame: Next Klaxxi Paragon",
 	HudMAP					= "HUD MAP: $spell:142726 / $spell:142727",
 	HudMAPMZ				= "HUD MAP: $journal:8073",
-	warnToxicCatalyst			= VEM_CORE_AUTO_ANNOUNCE_OPTIONS.spell:format("ej8036"),
+	warnToxicCatalyst				= VEM_CORE_AUTO_ANNOUNCE_OPTIONS.spell:format("ej8036"),
 	specWarnToxicInjection			= VEM_CORE_AUTO_SPEC_WARN_OPTIONS.you:format(142528),
 	specWarnToxicCatalyst			= VEM_CORE_AUTO_SPEC_WARN_OPTIONS.you:format("ej8036"),
 	specWarnActivatedVulnerable		= "Show special warning when you are vulnerable to activating paragons",
 	specWarnCriteriaLinked			= "Show special warning when you are linked to $spell:144095",
-	SetIconOnAim				= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(142948),
-	yellToxicCatalyst			= VEM_CORE_AUTO_YELL_OPTION_TEXT:format("ej8036"),
-	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT_SHORT:format("6/5")
+	SetIconOnAim					= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(142948),
+	yellToxicCatalyst				= VEM_CORE_AUTO_YELL_OPTION_TEXT:format("ej8036"),
+	RangeFrame						= VEM_CORE_AUTO_RANGE_OPTION_TEXT_SHORT:format("6/5")
 })
 
 L:SetMiscLocalization({

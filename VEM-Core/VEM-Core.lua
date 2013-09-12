@@ -50,7 +50,7 @@
 --  Globals/Default Options  --
 -------------------------------
 VEM = {
-	Revision = tonumber(("$Revision: 10269 $"):sub(12, -3)),
+	Revision = tonumber(("$Revision: 10277 $"):sub(12, -3)),
 	DisplayVersion = "(VEM) 5.4.1", -- the string that is shown as version
 	DisplayReleaseVersion = "5.4.0", -- Needed to work around bigwigs sending improper version information
 	ReleaseRevision = 10267 -- the revision of the latest stable version that is available
@@ -81,7 +81,7 @@ VEM.DefaultOptions = {
 	SpecialWarningSound3 = "Sound\\Spells\\PVPFlagTaken.ogg",
 	ModelSoundValue = "Short",
 	ChallengeBest = "Realm",
-	CountdownVoice = "",
+	CountdownVoice = "sst",
 	CountdownVoice2 = "sst",
 	ShowCountdownText = false,
 	RaidWarningPosition = {
@@ -286,6 +286,7 @@ local UnitGroupRolesAssigned = UnitGroupRolesAssigned
 local LoadAddOn = LoadAddOn
 local IsEncounterInProgress = IsEncounterInProgress
 local InCombatLockdown = InCombatLockdown
+local GetAddOnInfo = GetAddOnInfo
 
 -- for Phanx' Class Colors
 local RAID_CLASS_COLORS = CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS
@@ -1139,8 +1140,7 @@ SlashCmdList["VOICEENCOUNTERMODS"] = function(msg)
 			return VEM:AddMsg(VEM_ERROR_NO_PERMISSION)
 		end
 		local timer = tonumber(cmd:sub(5)) or 10
---		sendSync("PT", timer.."\t"..LastInstanceMapID)--Temp disable until 5.4 release
-		sendSync("PT", timer)
+		sendSync("PT", timer.."\t"..LastInstanceMapID)
 	elseif cmd:sub(1, 5) == "cpull" then
 		if VEM:GetRaidRank() == 0 or IsEncounterInProgress() then
 			return VEM:AddMsg(VEM_ERROR_NO_PERMISSION)
@@ -1696,12 +1696,6 @@ do
 		self:Schedule(1.5, updateAllRoster)
 	end
 
---[[
-	function VEM:INSTANCE_GROUP_SIZE_CHANGED()
-		I don't feel this will really be needed. we'll update size on combatstart. unless someone leaving group in middle of boss fight updates boss scaling WHILE ENGAGED, this is probably not nessesary but we'll see.
-	end
---]]
-
 	function VEM:IsInRaid()
 		return inRaid
 	end
@@ -2013,7 +2007,8 @@ function VEM:UPDATE_MOUSEOVER_UNIT()
 	if guid and (bit.band(guid:sub(1, 5), 0x00F) == 3 or bit.band(guid:sub(1, 5), 0x00F) == 5) then
 		local cId = tonumber(guid:sub(6, 10), 16)
 		for bosscId, addon in pairs(loadcIds) do
-			if cId and bosscId and cId == bosscId and not IsAddOnLoaded(addon) then
+			local _, _, _, enabled = GetAddOnInfo(addon)
+			if cId and bosscId and cId == bosscId and not IsAddOnLoaded(addon) and enabled then
 				for i, v in ipairs(VEM.AddOns) do
 					if v.modId == addon then
 						self:LoadMod(v)
@@ -2031,7 +2026,8 @@ function VEM:PLAYER_TARGET_CHANGED()
 	if guid and (bit.band(guid:sub(1, 5), 0x00F) == 3 or bit.band(guid:sub(1, 5), 0x00F) == 5) then
 		local cId = tonumber(guid:sub(6, 10), 16)
 		for bosscId, addon in pairs(loadcIds) do
-			if cId and bosscId and cId == bosscId and not IsAddOnLoaded(addon) then
+			local _, _, _, enabled = GetAddOnInfo(addon)
+			if cId and bosscId and cId == bosscId and not IsAddOnLoaded(addon) and enabled then
 				for i, v in ipairs(VEM.AddOns) do
 					if v.modId == addon then
 						self:LoadMod(v)
@@ -2047,6 +2043,7 @@ function VEM:CINEMATIC_START(...)
 	if VEM.Options.MovieFilter == "Never" then return end
 	SetMapToCurrentZone()
 	local currentMapID = GetCurrentMapAreaID()
+	if currentMapID == 993 then return end--It bugs out in SoO and just skips all movies :\
 	local currentFloor = GetCurrentMapDungeonLevel() or 0
 	if VEM.Options.MovieFilter == "Block" or VEM.Options.MovieFilter == "AfterFirst" and VEM.Options.MoviesSeen[currentMapID..currentFloor] then
 		CinematicFrame_CancelCinematic()
@@ -2118,7 +2115,8 @@ do
 	function VEM:LoadModsOnDemand(checkTable, checkValue)
 		for i, v in ipairs(VEM.AddOns) do
 			local modTable = v[checkTable]
-			if not IsAddOnLoaded(v.modId) and modTable and checkEntry(modTable, checkValue) then
+			local _, _, _, enabled = GetAddOnInfo(v.modId)
+			if enabled and not IsAddOnLoaded(v.modId) and modTable and checkEntry(modTable, checkValue) then
 				if self:LoadMod(v) and v.type == "SCENARIO" then
 					VEM:InstanceCheck()
 				end
@@ -2156,10 +2154,6 @@ function VEM:LoadMod(mod)
 			loadDelay = mod
 		end
 		return
-	end
-	local _, _, _, enabled = GetAddOnInfo(mod.modId)
-	if not enabled then
-		EnableAddOn(mod.modId)
 	end
 
 	local loaded, reason = LoadAddOn(mod.modId)

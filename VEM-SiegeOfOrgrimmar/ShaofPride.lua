@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 local sndQS		= mod:NewSound(nil, "SoundQS", mod:IsHealer())
 
-mod:SetRevision(("$Revision: 10250 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10275 $"):sub(12, -3))
 mod:SetCreatureID(71734)
 mod:SetZone()
 mod:SetUsedIcons(8, 7, 6, 5, 4, 3, 2, 1)
@@ -65,20 +65,20 @@ local specWarnMockingBlast		= mod:NewSpecialWarningInterrupt(144379)
 
 --Sha of Pride
 local timerGiftOfTitansCD		= mod:NewNextTimer(25.5, 144359)--NOT cast or tied or boss, on it's own
---These abilitie timings are all based on boss1 UNIT_POWER. All timers have a 1 second variance (ie 20-21, 43-44, 48-49, etc)
+--These abilitie timings are all based on boss1 UNIT_POWER. All timers have a 1 second variance
 local timerMarkCD				= mod:NewNextTimer(20.5, 144351, nil, mod:IsHealer())
-local timerSelfReflectionCD		= mod:NewNextTimer(20.5, 144800)
-local timerWoundedPrideCD		= mod:NewNextTimer(26, 144358, nil, mod:IsTank())--A tricky on that is based off unit power but with variable timings, but easily workable with an 11, 26 rule
-local timerCorruptedPrisonCD	= mod:NewNextTimer(42, 144574)--Technically 40 for Imprison base cast, but this is timer til debuffs go out.
-local timerManifestationCD		= mod:NewNextTimer(48, "ej8262", nil, nil, nil, "Interface\\Icons\\achievement_raid_terraceofendlessspring04")
-local timerSwellingPrideCD		= mod:NewNextTimer(60.5, 144400)--Energy based, like sha of fear breath, is it also 33?
+local timerSelfReflectionCD		= mod:NewNextTimer(25, 144800)
+local timerWoundedPrideCD		= mod:NewNextTimer(30, 144358, nil, mod:IsTank())--A tricky on that is based off unit power but with variable timings, but easily workable with an 11, 26 rule
+local timerCorruptedPrisonCD	= mod:NewNextTimer(53, 144574)--Technically 51 for Imprison base cast, but this is timer til debuffs go out.
+local timerManifestationCD		= mod:NewNextTimer(60, "ej8262", nil, nil, nil, "Interface\\Icons\\achievement_raid_terraceofendlessspring04")
+local timerSwellingPrideCD		= mod:NewNextTimer(75.5, 144400)
 local timerWeakenedResolve		= mod:NewBuffFadesTimer(60, 147207, nil, false)
 --Pride
 local timerBurstingPride		= mod:NewCastTimer(3, 144911)
 local timerProjection			= mod:NewCastTimer(6, 146822)
 
---local countdownSwellingPride	= mod:NewCountdown(60.5, 144400)
---local countdownReflection		= mod:NewCountdown(20.5, 144800, false, nil, nil, nil, true)
+--local countdownSwellingPride	= mod:NewCountdown(75.5, 144400)
+--local countdownReflection		= mod:NewCountdown(25, 144800, false, nil, nil, nil, true)
 
 mod:AddBoolOption("InfoFrame")
 mod:AddBoolOption("SetIconOnMark", false)
@@ -214,26 +214,26 @@ function mod:OnCombatStart(delay)
 	timerWoundedPrideCD:Start(10-delay)
 	timerSelfReflectionCD:Start(-delay)
 --	countdownReflection:Start(-delay)
-	sndWOP:Schedule(17-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3") --準備小怪
-	sndWOP:Schedule(18-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-	sndWOP:Schedule(19-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-	sndWOP:Schedule(20-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+	sndWOP:Schedule(21-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3") --準備小怪
+	sndWOP:Schedule(22.5-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+	sndWOP:Schedule(23.5-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
+	sndWOP:Schedule(24.5-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 	timerCorruptedPrisonCD:Start(-delay)
-	sndWOP:Schedule(35-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\readyrescue.mp3") --準備救人
+	sndWOP:Schedule(40-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\readyrescue.mp3") --準備救人
 	timerManifestationCD:Start(-delay)
-	sndWOP:Schedule(46-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmobsoon.mp3") --準備大怪
-	specWarnManifestation:Schedule(50-delay)
+	sndWOP:Schedule(58-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmobsoon.mp3") --準備大怪
+	specWarnManifestation:Schedule(62-delay)
 	if mod:IsDps() then
-		sndWOP:Schedule(50-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\killbigmob.mp3")--大怪快打
+		sndWOP:Schedule(62-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\killbigmob.mp3")--大怪快打
 	else
-		sndWOP:Schedule(50-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmob.mp3")--大怪出現
+		sndWOP:Schedule(62-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmob.mp3")--大怪出現
 	end
 	timerSwellingPrideCD:Start(-delay)
 --	countdownSwellingPride:Start(-delay)
-	sndWOP:Schedule(57-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\aesoon.mp3") --準備AOE
-	sndWOP:Schedule(58-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-	sndWOP:Schedule(59-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-	sndWOP:Schedule(60-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+	sndWOP:Schedule(72.5-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\aesoon.mp3") --準備AOE
+	sndWOP:Schedule(73.5-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+	sndWOP:Schedule(74.5-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
+	sndWOP:Schedule(75.5-delay, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 	firstWound = false
 	drcount = 0
 	UnleashedCast = false
@@ -281,13 +281,23 @@ function mod:SPELL_CAST_START(args)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\kickcast.mp3") --快打斷
 		end
 	elseif args.spellId == 144832 then
+		--These abilitie cd reset on CAST_START not finish and cause a desync from energy
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ptwo.mp3") --P2
-		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3")
+		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\aesoon.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		timerWoundedPrideCD:Start(11.5) --BH FIXED
+		timerSelfReflectionCD:Start()
+--		countdownReflection:Start()
+		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3")
+		sndWOP:Schedule(21, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3") --準備小怪
+		sndWOP:Schedule(22.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+		sndWOP:Schedule(23.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
+		sndWOP:Schedule(24.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		timerCorruptedPrisonCD:Start()
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\readyrescue.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\aesoon.mp3")
+		sndWOP:Schedule(40, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\readyrescue.mp3") --準備救人			
 	end
 end
 
@@ -295,29 +305,29 @@ function mod:SPELL_CAST_SUCCESS(args)
 	if args.spellId == 144400 then--Swelling Pride Cast END
 		firstWound = false
 		--Since we register this event anyways for bursting, might as well start cd bars here instead
-		timerWoundedPrideCD:Start(11)
 		timerSelfReflectionCD:Start()
 --		countdownReflection:Start()
-		sndWOP:Schedule(17, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3") --準備小怪
-		sndWOP:Schedule(18, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOP:Schedule(19, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Schedule(20, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndWOP:Schedule(21, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3") --準備小怪
+		sndWOP:Schedule(22.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+		sndWOP:Schedule(23.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
+		sndWOP:Schedule(24.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 		timerCorruptedPrisonCD:Start()
-		sndWOP:Schedule(35, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\readyrescue.mp3") --準備救人
+		sndWOP:Schedule(40, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\readyrescue.mp3") --準備救人
+		timerWoundedPrideCD:Start(11.5)		
 		timerManifestationCD:Start()
-		sndWOP:Schedule(46, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmobsoon.mp3") --準備大怪
-		specWarnManifestation:Schedule(50)
+		sndWOP:Schedule(58, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmobsoon.mp3") --準備大怪
+		specWarnManifestation:Schedule(62)
 		if mod:IsDps() then
-			sndWOP:Schedule(50, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\killbigmob.mp3")--大怪快打
+			sndWOP:Schedule(62, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\killbigmob.mp3")--大怪快打
 		else
-			sndWOP:Schedule(50, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmob.mp3")--大怪出現
-		end
+			sndWOP:Schedule(62, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmob.mp3")--大怪出現
+		end		
 		timerSwellingPrideCD:Start()
 --		countdownSwellingPride:Start()
-		sndWOP:Schedule(57, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\aesoon.mp3") --準備AOE
-		sndWOP:Schedule(58, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOP:Schedule(59, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Schedule(60, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndWOP:Schedule(72.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\aesoon.mp3") --準備AOE
+		sndWOP:Schedule(73.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+		sndWOP:Schedule(74.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
+		sndWOP:Schedule(75.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 		--This is done here because a lot can change during a cast, and we need to know players energy when cast ends, i.e. this event
 		for uId in VEM:GetGroupMembers() do
 			local maxPower = UnitPowerMax(uId, ALTERNATE_POWER_INDEX)
@@ -355,39 +365,30 @@ function mod:SPELL_CAST_SUCCESS(args)
 		end
 	elseif args.spellId == 144832 then
 		warnUnleashed:Show()
-		specWarnManifestation:Cancel()
-		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\phasechange.mp3") --階段轉換
-		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmobsoon.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\killbigmob.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmob.mp3")	
+		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\phasechange.mp3") --階段轉換		
 		timerGiftOfTitansCD:Cancel()
 --		countdownSwellingPride:Cancel()
 --		countdownReflection:Cancel()
 		firstWound = false
 		UnleashedCast = true
-		timerWoundedPrideCD:Start()--The Same
-		timerSelfReflectionCD:Start(11.5)--Altered (because this cd resets on cast start not cast finished, bug?)
-		sndWOP:Schedule(8, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3") --準備小怪
-		sndWOP:Schedule(9, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOP:Schedule(10, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Schedule(11, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
---		countdownReflection:Start(11.5)--Altered (because this cd resets on cast start not cast finished, bug?)
-		timerCorruptedPrisonCD:Start(34)--Altered (because this cd resets on cast start not cast finished, bug?)
-		sndWOP:Schedule(27, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\readyrescue.mp3") --準備救人
 		timerManifestationCD:Start()--Not yet verified if altered or not
-		sndWOP:Schedule(46, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmobsoon.mp3") --準備大怪
-		specWarnManifestation:Schedule(50)
+		specWarnManifestation:Cancel()
+		specWarnManifestation:Schedule(62)
+		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmobsoon.mp3")		
+		sndWOP:Schedule(58, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmobsoon.mp3") --準備大怪		
 		if mod:IsDps() then
-			sndWOP:Schedule(50, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\killbigmob.mp3")--大怪快打
+			sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\killbigmob.mp3")
+			sndWOP:Schedule(62, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\killbigmob.mp3")--大怪快打
 		else
-			sndWOP:Schedule(50, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmob.mp3")--大怪出現
+			sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmob.mp3")
+			sndWOP:Schedule(62, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bigmob.mp3")--大怪出現
 		end
-		timerSwellingPrideCD:Start(62)--Not yet verified if altered or not (it would be 62 instead of 60 though since we'd be starting at 0 energy instead of cast finish of last swelling)
---		countdownSwellingPride:Start(62)--Not yet verified if altered or not (it would be 62 instead of 60 though since we'd be starting at 0 energy instead of cast finish of last swelling)
-		sndWOP:Schedule(57, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\aesoon.mp3") --準備AOE
-		sndWOP:Schedule(58, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOP:Schedule(59, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Schedule(60, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		timerSwellingPrideCD:Start(75)--Not yet verified if altered or not (it would be 62 instead of 60 though since we'd be starting at 0 energy instead of cast finish of last swelling)
+--		countdownSwellingPride:Start(75)--Not yet verified if altered or not (it would be 62 instead of 60 though since we'd be starting at 0 energy instead of cast finish of last swelling)
+		sndWOP:Schedule(72, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\aesoon.mp3") --準備AOE
+		sndWOP:Schedule(73, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+		sndWOP:Schedule(74, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
+		sndWOP:Schedule(75, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 	elseif args.spellId == 144800 then
 		warnSelfReflection:Show()
 		specWarnSelfReflection:Show()

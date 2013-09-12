@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 local sndPZ		= mod:NewSound(nil, "SoundPZ", true)
 
-mod:SetRevision(("$Revision: 10180 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10274 $"):sub(12, -3))
 mod:SetCreatureID(71543)--Doesn't die, will need kill detection
 mod:SetReCombatTime(45)--Lets just assume he has same bug as tsulong in advance and avoid problems
 mod:SetZone()
@@ -21,7 +21,8 @@ mod:RegisterEventsInCombat(
 	"SPELL_PERIODIC_DAMAGE",
 	"SPELL_PERIODIC_MISSED",
 	"UNIT_SPELLCAST_SUCCEEDED boss1",
-	"CHAT_MSG_RAID_BOSS_EMOTE"
+	"CHAT_MSG_RAID_BOSS_EMOTE",
+	"CHAT_MSG_MONSTER_YELL"
 )
 
 local warnBreath					= mod:NewSpellAnnounce(143436, 3, nil, mod:IsTank() or mod:IsHealer())
@@ -135,18 +136,21 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif args.spellId == 143297 and args:IsPlayer() and self:AntiSpam(2, 1) then
 		specWarnShaSplash:Show()
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
-	elseif args:IsSpellID(117878) and args:IsPlayer() then
-		if (args.amount or 1) >= 3 then
-			needwarnsafe = true
-			specWarnSwellingCorruption:Show(args.amount)
-			sndPZ:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\stopatk.mp3") --注意停手
-		end
 	elseif args.spellId == 143523 then
 		cleancount = cleancount + 1
 		updateInfoFrame()
 	end
 end
-mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
+
+function mod:SPELL_AURA_APPLIED_DOSE(args)
+	if args:IsSpellID(117878) and args:IsPlayer() then
+		if (args.amount or 1) >= 3 then
+			needwarnsafe = true
+			specWarnSwellingCorruption:Show(args.amount)
+			sndPZ:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\stopatk.mp3") --注意停手
+		end
+	end
+end
 
 function mod:SPELL_AURA_REMOVED(args)
 	if args.spellId == 143459 and args:IsPlayer() then
@@ -235,6 +239,18 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, target)
 --[[		if self:IsDifficulty("heroic10", "heroic25") then
 			timerSwellingCorruptionCD:Start(12.5)
 		end--]]
+	end
+end
+
+function mod:CHAT_MSG_MONSTER_YELL(msg)
+	if msg == L.Victory then
+		self:SendSync("Victory")
+	end
+end
+
+function mod:OnSync(msg)
+	if msg == "Victory" and self:IsInCombat() then
+		VEM:EndCombat(self)
 	end
 end
 

@@ -26,7 +26,8 @@ L:SetOptionLocalization({
 
 L:SetMiscLocalization({
 	kill					= "擊殺",
-	clean					= "淨化"
+	clean					= "淨化",
+	Victory			= "啊，你成功了!水又再次純淨了。"
 })
 
 ---------------------------

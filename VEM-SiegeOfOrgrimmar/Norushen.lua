@@ -2,7 +2,7 @@
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 10211 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10275 $"):sub(12, -3))
 mod:SetCreatureID(72276)
 mod:SetZone()
 
@@ -75,7 +75,7 @@ local timerTitanicSmashCD				= mod:NewCDTimer(14.5, 144628)--14-17sec variation
 local timerPiercingCorruptionCD			= mod:NewCDTimer(14, 144657)--14-17sec variation
 local timerHurlCorruptionCD				= mod:NewNextTimer(20, 144649)
 
-local berserkTimer						= mod:NewBerserkTimer(600)
+local berserkTimer						= mod:NewBerserkTimer(420)
 
 local countdownLookWithin				= mod:NewCountdownFades(59, "ej8220")
 --local countdownLingeringCorruption	= mod:NewCountdown(15.5, 144514, mod:IsHealer(), nil, nil, nil, true)
@@ -122,8 +122,8 @@ function mod:OnCombatStart(delay)
 			sndWOP:Schedule(3, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 		end
 	end)
-	if self:IsDifficulty("lfr25") then
-		berserkTimer:Start(413-delay)--Still true?
+	if self:IsDifficulty("lfr25") then--Might also be flex as well
+		berserkTimer:Start(600-delay)--Still true?
 	else
 		berserkTimer:Start(-delay)
 	end
@@ -166,7 +166,7 @@ function mod:SPELL_CAST_START(args)
 		timerTitanicSmashCD:Start()
 	elseif args.spellId == 144649 then
 		warnHurlCorruption:Show()
-		specWarnHurlCorruption:Show()
+		specWarnHurlCorruption:Show(args.sourceName)
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
