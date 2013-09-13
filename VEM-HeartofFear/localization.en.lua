@@ -50,7 +50,7 @@ L:SetMiscLocalization({
 L:SetWarningLocalization({
 	specwarnPlatform	= "Combat zone changed",
 	specwarnAttenuationL	= "LEFT!",
-	specwarnAttenuationR	= "RIGHR!",
+	specwarnAttenuationR	= "RIGHT!",
 	specwarnExhale		= "Exhale[%d] : %s",
 	specwarnDR			= ">>Damage reduction skill!<<",
 	specwarnExhaleB		= "Next: >>%d<< Exhale"
