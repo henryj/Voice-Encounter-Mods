@@ -136,7 +136,6 @@ VEM_ERROR_NO_PERMISSION				= "無權進行此操作。"
 
 VEM_CORE_BOSSHEALTH_HIDE_FRAME		= "關閉血量框架"
 
-VEM_CORE_WORLD_BOSS					= "世界首領"
 VEM_CORE_UNKNOWN					= "未知"
 VEM_CORE_LEFT						= "左"
 VEM_CORE_RIGHT						= "右"

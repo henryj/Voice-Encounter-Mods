@@ -134,7 +134,6 @@ VEM_ERROR_NO_PERMISSION				= "You don't have the required permission to do this.
 
 VEM_CORE_BOSSHEALTH_HIDE_FRAME		= "Close health frame"
 
-VEM_CORE_WORLD_BOSS					= "World Boss"
 VEM_CORE_UNKNOWN					= "unknown"--UNKNOWN which is "Unknown" (does u vs U matter?)
 VEM_CORE_LEFT						= "Left"
 VEM_CORE_RIGHT						= "Right"
