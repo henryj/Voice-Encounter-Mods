@@ -247,6 +247,7 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
+	RangeFrame	= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(10, 145987),
 	Filterarea				= "Other: Use stricter way to tell the area"
 })
 
