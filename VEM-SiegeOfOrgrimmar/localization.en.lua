@@ -394,7 +394,7 @@ L:SetOptionLocalization({
 	alldd					= "Always (If he's your target or focus)",
 	DD1						= "Odd number",
 	DD2						= "Even number",
-	nodd					= "None"
+	nodd					= "None",
 	SetIconOnShaman			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format("ej8294"),
 })
 
