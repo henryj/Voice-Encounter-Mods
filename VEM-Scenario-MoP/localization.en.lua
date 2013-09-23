@@ -180,3 +180,12 @@ L:SetOptionLocalization{
 L:SetMiscLocalization{
 	LostSouls				= "Face the souls of those your kind doomed to perish, Warlock!"
 }
+
+-------------------------------
+-- Finding Secret Ingredient --
+-------------------------------
+L= VEM:GetModLocalization("745")
+
+L:SetMiscLocalization{
+	Clear		= "Well done!"
+}

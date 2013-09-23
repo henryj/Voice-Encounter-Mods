@@ -195,6 +195,8 @@ L:SetOptionLocalization({
 	dr4						= "$spell:143973 4/6",
 	dr5						= "$spell:143973 5/6",
 	dr6						= "$spell:143973 6/6",
+	SoundEle				= "Special: Enable Wavebinder Kardris ability warnings",
+	SoundEnh				= "Special: Enable Earthbreaker Haromm ability warnings",
 	SetIconOnToxicMists		= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(144089),
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(4, 143990)
 })

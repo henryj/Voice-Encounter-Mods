@@ -196,6 +196,8 @@ L:SetOptionLocalization({
 	dr4						= "$spell:143973 4/6",
 	dr5						= "$spell:143973 5/6",
 	dr6						= "$spell:143973 6/6",
+	SoundEle				= "特殊：啟用[元素薩滿]技能提示",
+	SoundEnh				= "特殊：啟用[增強薩滿]技能提示",
 	SetIconOnToxicMists		= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(144089),
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(4, 143990)
 })
