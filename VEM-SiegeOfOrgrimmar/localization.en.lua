@@ -42,6 +42,7 @@ L:SetTimerLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
+	InfoFrame				= "Info Frame: Boss Health Monitor",
 	SoundBD					= "Voice Warning: Dispel $spell:143434",
 	dr1						= "Defensive warning: $spell:143491 1/4",
 	dr2						= "Defensive warning: $spell:143491 2/4",
@@ -55,6 +56,13 @@ L:SetOptionLocalization({
 	fift					= "15",
 	twty					= "20",
 	none					= "Never",
+	optDD					= "Embodied Gloom Interrupt Warning",
+	alldd					= "Always (If he's your target or focus)",
+	DD1						= "Interrupt 1",
+	DD2						= "Interrupt 2",
+	DD3						= "Interrupt 3",
+	nodd					= "None",
+	SetIconOnStrike			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(143962)
 })
 
 L:SetMiscLocalization({
@@ -133,6 +141,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
+	Pull		= "Dragonmaw clan, retake the docks and push them into the sea!  In the name of Hellscream and the True Horde!",
 	newForces1	= "Here they come!",--Jaina's line, alliance
 	newForces1H	= "Bring her down quick so i can wrap my fingers around her neck.",--Sylva's line, horde
 	newForces2	= "Dragonmaw, advance!",
@@ -207,6 +216,7 @@ L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
 	SoundTT					= "Voice Warning: Kill $spell:143474",
 	InfoFrame				= "Info Frame: Rage Monitor",	
+	SetIconOnAdds			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format("ej7920"),
 	warnDefensiveStanceSoon			= "Pre-warning: $spell:143593 (5 seconds before)"
 })
 
@@ -231,10 +241,8 @@ L:SetWarningLocalization({
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
 	HudMAP					= "HUD MAP: $spell:142913",
-})
-
-L:SetMiscLocalization({
-	bloodRageEnds	= "subsides!"
+	SetIconOnDisplacedEnergy= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(142913),
+	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT_SHORT:format("8/5")
 })
 
 ------------------------
@@ -387,6 +395,7 @@ L:SetOptionLocalization({
 	DD1						= "Odd number",
 	DD2						= "Even number",
 	nodd					= "None"
+	SetIconOnShaman			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format("ej8294"),
 })
 
 -------------

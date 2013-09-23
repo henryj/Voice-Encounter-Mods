@@ -126,6 +126,12 @@ L:SetMiscLocalization({
 L= VEM:GetModLocalization(861)
 
 L:SetOptionLocalization({
+	SoundWOP 				= "voice warning: important skills",
+	HudMAP					= "HUDMAP£º$spell:144689",
 	SetIconOnBurningSoul	= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(144689),
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(8, 144689)
+})
+
+L:SetMiscLocalization({
+	Pull					= "You will take my place on the eternal brazier."
 })

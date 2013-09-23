@@ -298,15 +298,30 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnSetToBlowYou:Show()
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runout.mp3") --離開人群
 --			countdownSetToBlow:Start()
-			timerSetToBlow:Start()
-			specWarnSetToBlow:Schedule(26)
-			sndWOP:Schedule(26, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bombnow.mp3") --準備爆炸
-			sndWOP:Schedule(27, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-			sndWOP:Schedule(28, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-			sndWOP:Schedule(29, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
-			if self.Options.RangeFrame then
-				VEM.RangeCheck:Show(10)--Range assumed, spell tooltips not informative enough
-				self:Schedule(32, hideRangeFrame)
+			if self:IsDifficulty("heroic10", "heroic25") then	
+				timerSetToBlow:Start(15)
+				specWarnSetToBlow:Schedule(10)
+				sndWOP:Schedule(10, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bombnow.mp3") --準備爆炸
+				sndWOP:Schedule(11, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
+				sndWOP:Schedule(12, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+				sndWOP:Schedule(13, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
+				sndWOP:Schedule(14, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+				if self.Options.RangeFrame then
+					VEM.RangeCheck:Show(10)--Range assumed, spell tooltips not informative enough
+					self:Schedule(16, hideRangeFrame)
+				end
+			else
+				timerSetToBlow:Start()
+				specWarnSetToBlow:Schedule(25)
+				sndWOP:Schedule(25, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bombnow.mp3") --準備爆炸
+				sndWOP:Schedule(26, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
+				sndWOP:Schedule(27, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+				sndWOP:Schedule(28, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
+				sndWOP:Schedule(29, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+				if self.Options.RangeFrame then
+					VEM.RangeCheck:Show(10)--Range assumed, spell tooltips not informative enough
+					self:Schedule(32, hideRangeFrame)
+				end
 			end
 		end
 	elseif args.spellId == 145692 and checkTankDistance(args.sourceGUID) then
@@ -332,6 +347,7 @@ function mod:SPELL_AURA_REMOVED(args)
 		timerSetToBlow:Cancel()
 		specWarnSetToBlow:Cancel()
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\bombnow.mp3")
+		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")

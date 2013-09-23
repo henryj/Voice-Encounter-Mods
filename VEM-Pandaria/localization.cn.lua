@@ -105,3 +105,7 @@ L:SetOptionLocalization({
 	SetIconOnBurningSoul	= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(144689),
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(8, 144689)
 })
+
+L:SetMiscLocalization({
+	Pull					= "你將代替我永恆地燃燒!"
+})

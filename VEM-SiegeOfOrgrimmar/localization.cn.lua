@@ -43,6 +43,7 @@ L:SetTimerLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "语音警告：重要技能",
+	InfoFrame				= "信息框：首领血量监视",
 	SoundBD					= "语音警告：驱散$spell:143434",
 	dr1						= "减伤提示：$spell:143491 1/4",
 	dr2						= "减伤提示：$spell:143491 2/4",
@@ -56,6 +57,13 @@ L:SetOptionLocalization({
 	fift					= "15层",
 	twty					= "20层",
 	none					= "从不提示",
+	optDD					= "武僧分身打断提示",
+	alldd					= "总是提示(如果你选他為目标或焦点)",
+	DD1						= "打断1",
+	DD2						= "打断2",
+	DD3						= "打断3",
+	nodd					= "不提示",
+	SetIconOnStrike			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(143962)
 })
 
 L:SetMiscLocalization({
@@ -206,6 +214,7 @@ L:SetOptionLocalization({
 	SoundWOP				= "语音警告：重要技能",
 	SoundTT					= "语音警告：$spell:143474",
 	InfoFrame				= "信息框：怒气监视器",
+	SetIconOnAdds			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format("ej7920"),
 	warnDefensiveStanceSoon			= "预先警告：$spell:143593 (5秒前)"
 })
 
@@ -229,6 +238,8 @@ L:SetWarningLocalization({
 L:SetOptionLocalization({
 	SoundWOP				= "语音警告：重要技能",
 	HudMAP					= "高级定位监视(HUD)：$spell:142913",
+	SetIconOnDisplacedEnergy= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(142913),
+	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT_SHORT:format("8/5")
 })
 
 ------------------------
@@ -380,7 +391,8 @@ L:SetOptionLocalization({
 	alldd					= "总是提示(如果你选他為目标或焦点)",
 	DD1						= "单数提示",
 	DD2						= "双数提示",
-	nodd					= "不提示"
+	nodd					= "不提示",
+	SetIconOnShaman			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format("ej8294"),
 })
 
 -------------

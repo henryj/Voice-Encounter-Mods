@@ -211,7 +211,6 @@ local function updateLines()
 	end
 end
 
---namesort add start
 local function updateNamesortLines()
 	table.wipe(sortedLines)
 	for i in pairs(lines) do
@@ -232,7 +231,6 @@ local function updateNotsortLines()
 		v(sortedLines)
 	end
 end
---add end
 
 local function updateIcons()
 	table.wipe(icons)

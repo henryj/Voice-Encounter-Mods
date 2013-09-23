@@ -43,6 +43,7 @@ L:SetTimerLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
+	InfoFrame				= "資訊框：首領血量監視",
 	SoundBD					= "語音警告：驅散$spell:143434",
 	dr1						= "減傷提示：$spell:143491 1/4",
 	dr2						= "減傷提示：$spell:143491 2/4",
@@ -56,6 +57,13 @@ L:SetOptionLocalization({
 	fift					= "15層",
 	twty					= "20層",
 	none					= "從不提示",
+	optDD					= "武僧分身打斷提示",
+	alldd					= "總是提示(如果你選他為目標或焦點)",
+	DD1						= "打斷1",
+	DD2						= "打斷2",
+	DD3						= "打斷3",
+	nodd					= "不提示",
+	SetIconOnStrike			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(143962)
 })
 
 L:SetMiscLocalization({
@@ -134,6 +142,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
+	Pull		= "龍喉氏族，奪回碼頭，把他們推進海裡!以地獄吼及正統部落之名!",
 	newForces1	= "他們來了!",
 	newForces1H	= "趕快把她弄下來，讓我用手掐死她。",
 	newForces2	= "龍喉氏族，前進!",
@@ -208,6 +217,7 @@ L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
 	SoundTT					= "語音警告：$spell:143474",
 	InfoFrame				= "資訊框：怒氣監視器",
+	SetIconOnAdds			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format("ej7920"),
 	warnDefensiveStanceSoon			= "預先警告：$spell:143593 (5秒前)"
 })
 
@@ -232,10 +242,8 @@ L:SetWarningLocalization({
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
 	HudMAP					= "高級定位監視(HUD)：$spell:142913",
-})
-
-L:SetMiscLocalization({
-	bloodRageEnds	= "subsides!"
+	SetIconOnDisplacedEnergy= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(142913),
+	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT_SHORT:format("8/5")
 })
 
 ------------------------
@@ -387,7 +395,8 @@ L:SetOptionLocalization({
 	alldd					= "總是提示(如果你選他為目標或焦點)",
 	DD1						= "單數提示",
 	DD2						= "雙數提示",
-	nodd					= "不提示"
+	nodd					= "不提示",
+	SetIconOnShaman			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format("ej8294"),
 })
 
 -------------

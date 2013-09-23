@@ -4,7 +4,7 @@ local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 local sndZQ		= mod:NewSound(nil, "SoundZQ", true)
 local sndTT		= mod:NewSound(nil, "SoundTT", true)
 
-mod:SetRevision(("$Revision: 10327 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10362 $"):sub(12, -3))
 mod:SetCreatureID(72311, 72560, 72249, 73910, 72302)--Boss needs to engage off friendly NCPS, not the boss. I include the boss too so we don't detect a win off losing varian. :)
 mod:SetReCombatTime(120)--fix combat re-starts after killed. Same issue as tsulong. Fires TONS of IEEU for like 1-2 minutes after fight ends.
 mod:SetMainBossID(72249)
@@ -12,6 +12,10 @@ mod:SetZone()
 mod:SetUsedIcons(8)
 
 mod:RegisterCombat("combat")
+
+mod:RegisterEvents(
+	"CHAT_MSG_MONSTER_YELL"
+)
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START",
@@ -25,7 +29,6 @@ mod:RegisterEventsInCombat(
 	"SPELL_MISSED",
 	"UNIT_DIED",
 	"UNIT_SPELLCAST_SUCCEEDED",
-	"CHAT_MSG_MONSTER_YELL",
 	"CHAT_MSG_RAID_BOSS_EMOTE"
 )
 
@@ -78,7 +81,7 @@ local specWarnFlamesofGalakrondTank	= mod:NewSpecialWarningStack(147029, mod:IsT
 local specWarnFlamesofGalakrondOther= mod:NewSpecialWarningTarget(147029, mod:IsTank())
 
 --Stage 2: Bring Her Down!
-local timerAddsCD					= mod:NewNextTimer(55, "ej8553", nil, nil, nil, 2457)
+local timerAddsCD					= mod:NewNextCountTimer(55, "ej8553", nil, nil, nil, 2457)
 local timerTowerCD					= mod:NewTimer(151, "timerTowerCD", 88852)
 local timerDemolisherCD				= mod:NewNextTimer(20, "ej8562", nil, nil, nil, 116040)--EJ is just not complete yet, shouldn't need localizing
 local timerProtoCD					= mod:NewNextTimer(55, "ej8587", nil, nil, nil, 59961)
@@ -95,7 +98,7 @@ mod:AddBoolOption("FixateIcon", true)
 local addsCount = 0
 local firstTower = false
 local flamesCount = 0
-
+local combat = false
 mod:AddEditBoxOption("flamecount", 50, "", "sound", 
 function()
 	if mod.Options.flamecount == "" then return end
@@ -122,12 +125,19 @@ function mod:OnCombatStart(delay)
 	addsCount = 1
 	firstTower = false
 	flamesCount = 0
-	timerAddsCD:Start(60-delay) --BH FIX
-	timerTowerCD:Start(116.5-delay)
+	timerAddsCD:Start(60-delay, 2) --BH FIX
+	if not self:IsDifficulty("heroic10", "heroic25") then
+		timerTowerCD:Start(116.5-delay)
+	end
+	combat = true
+end
+
+function mod:OnCombatEnd()
+	combat = false
 end
 
 function mod:SPELL_CAST_START(args)
-	if args.spellId == 147688 and self:checkTankDistance(args.sourceGUID, 40) then--Might be an applied event instead
+	if args.spellId == 147688 and self:checkTankDistance(args.sourceGUID, 40) then
 		warnArcingSmash:Show()
 		specWarnArcingSmash:Show()
 		if self:AntiSpam(10, 4) then
@@ -201,11 +211,6 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnPoisonCloud:Show()
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
 		end
-	elseif args.spellId == 146765 then
-		if args:IsPlayer() and self:AntiSpam(2, 2) then
-			specWarnFlameArrow:Show()
-			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
-		end
 	elseif args.spellId == 147711 then
 		warnCurseVenom:Show()
 		specWarnCurseVenom:Show()
@@ -251,9 +256,6 @@ function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, destName, _, _, spellId
 	if spellId == 147705 and destGUID == UnitGUID("player") and self:AntiSpam(2, 1) then
 		specWarnPoisonCloud:Show()
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
-	elseif spellId == 146765 and destGUID == UnitGUID("player") and self:AntiSpam(2, 1) then
-		specWarnFlameArrow:Show()
-		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
 	end
 end
 mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
@@ -286,7 +288,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		timerAddsCD:Cancel()
 		warnPhase2:Show()
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ptwo.mp3") -- 2階段
-		timerFlamesofGalakrondCD:Start(18.6)--TODO, verify consistency since this timing may depend on where drake lands and time it takes to get picked up.
+		timerFlamesofGalakrondCD:Start(18.6, 1)--TODO, verify consistency since this timing may depend on where drake lands and time it takes to get picked up.
 	end
 end
 
@@ -304,7 +306,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 	elseif msg:find(L.tower) then
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_ptkf.mp3") --炮塔攻破
 		timerDemolisherCD:Start()
-		if not firstTower then
+		if not firstTower and not self:IsDifficulty("heroic10", "heroic25") then
 			firstTower = true
 			timerTowerCD:Start()
 		end
@@ -313,14 +315,18 @@ end
 
 function mod:OnSync(msg)
 	if msg == "Adds" and self:AntiSpam(10, 4) then
+		if not combat then return end
 		addsCount = addsCount + 1
 		if addsCount == 1 then
-			timerAddsCD:Start(48)
-		elseif addsCount == 3 then
+			timerAddsCD:Cancel()
+			timerAddsCD:Start(48, addsCount + 1)
+		elseif addsCount == 3 or addsCount == 7 or addsCount == 11 then--Verified. Every 4th wave gets a proto. IE waves 4, 8, 12
 			timerProtoCD:Start()
-			timerAddsCD:Start(110)
+			timerAddsCD:Cancel()
+			timerAddsCD:Start(110, addsCount + 1)
 		else
-			timerAddsCD:Start()
+			timerAddsCD:Cancel()
+			timerAddsCD:Start(55, addsCount + 1)
 		end
 	end
 end
