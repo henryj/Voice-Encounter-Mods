@@ -184,7 +184,7 @@ L:SetMiscLocalization{
 -------------------------------
 -- Finding Secret Ingredient --
 -------------------------------
-L= VEM:GetModLocalization("745")
+L= VEM:GetModLocalization("d745")
 
 L:SetMiscLocalization{
 	Clear		= "Well done!"

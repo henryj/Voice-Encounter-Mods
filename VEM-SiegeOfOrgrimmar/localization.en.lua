@@ -62,7 +62,8 @@ L:SetOptionLocalization({
 	DD2						= "Interrupt 2",
 	DD3						= "Interrupt 3",
 	nodd					= "None",
-	SetIconOnStrike			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(143962)
+	SetIconOnStrike			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(143962),
+	RangeFrame			= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(5, 143423)--For heroic. Need to chage smart range frame?
 })
 
 L:SetMiscLocalization({
@@ -216,7 +217,9 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
-	SoundTT					= "Voice Warning: Kill $spell:143474",
+	SoundDS					= "Voice Warning: Dispel $spell:143475",
+	SoundIFS				= "Voice Warning: Interrupt $journal:7923",
+	SoundISM				= "Voice Warning: Interrupt $journal:7925",
 	InfoFrame				= "Info Frame: Rage Monitor",	
 	SetIconOnAdds			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format("ej7920"),
 	warnDefensiveStanceSoon			= "Pre-warning: $spell:143593 (5 seconds before)"
@@ -242,10 +245,16 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
+	Malhelper				= "===Special: Enable $spell:142842 graph assist (/mal)===",
+	MalhelperSend			= "===Assist Graph: Enable manual adjust mode===",
 	HudMAP					= "HUD MAP: $spell:142913",
 	SetIconOnDisplacedEnergy= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(142913),
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT_SHORT:format("8/5")
 })
+
+MHExRTL = {}
+MHExRTL.panelbossmodsmalkorokdanger ="! Danger !"
+MHExRTL.sendnote ="Open manually modify the map, left click to select, right to cancel, your changes will be synchronized to the whole group, please use caution!"
 
 ------------------------
 -- Spoils of Pandaria --

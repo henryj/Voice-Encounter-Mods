@@ -1,9 +1,8 @@
 ﻿local mod	= VEM:NewMod(850, "VEM-SiegeOfOrgrimmar", nil, 369)
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
-local sndTT		= mod:NewSound(nil, "SoundTT", true)
 
-mod:SetRevision(("$Revision: 10363 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10416 $"):sub(12, -3))
 mod:SetCreatureID(71515)
 mod:SetZone()
 mod:SetUsedIcons(8, 7, 6, 4, 2, 1)
@@ -64,6 +63,8 @@ local specWarnMagistrike			= mod:NewSpecialWarningInterrupt(143431, false)--Spam
 local specWarnEmpoweredChainHeal	= mod:NewSpecialWarningInterrupt(143473)--Concerns everyone, if not interrupted will heal boss for a TON
 local specWarnAssassinsMark			= mod:NewSpecialWarningYou(143480)
 local yellAssassinsMark				= mod:NewYell(143480)
+local specWarnHunterMark			= mod:NewSpecialWarningYou(143882)
+local yellHunterMark				= mod:NewYell(143882)
 local specWarnAssassinsMarkOther	= mod:NewSpecialWarningTarget(143480, false)
 local specWarnEarthShield			= mod:NewSpecialWarningDispel(143475, mod:IsMagicDispeller())
 local specWarnHealingTideTotem		= mod:NewSpecialWarningSwitch(143474, false)--Not everyone needs to switch, should be turned on by assigned totem mashing people.
@@ -96,6 +97,10 @@ local adds = {}
 local scanLimiter = 0
 
 mod:AddBoolOption("InfoFrame", true, "sound")
+local sndDS		= mod:NewSound(nil, "SoundDS", mod:IsMagicDispeller())
+local sndIFS	= mod:NewSound(nil, "SoundIFS", true)
+local sndISM	= mod:NewSound(nil, "SoundISM", true)
+
 
 local function warnBoneTargets()
 	warnBonecracker:Show(table.concat(boneTargets, "<, >"))
@@ -142,6 +147,7 @@ function mod:OnCombatStart(delay)
 	table.wipe(boneTargets)
 	timerAddsCD:Start(-delay, 1)
 	sndWOP:Schedule(40, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3") --準備小怪
+	sndWOP:Schedule(41, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 --	countdownAdds:Start()
 	berserkTimer:Start(-delay)
 end
@@ -175,23 +181,21 @@ function mod:SPELL_CAST_START(args)
 		if source == UnitName("target") or source == UnitName("focus") then
 			warnMagistrike:Show()
 			specWarnMagistrike:Show(source)
-			if mod:IsMelee() then
-				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\kickcast.mp3") --快打斷
-			end
+			sndIFS:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\kickcast.mp3") --快打斷
 		end
 	elseif args.spellId == 143432 then
 		local source = args.sourceName
-		if source == UnitName("target") or source == UnitName("focus") then 
+		if source == UnitName("target") or source == UnitName("focus") then
 			warnArcaneShock:Show()
 			specWarnArcaneShock:Show(source)
-			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\kickcast.mp3") --快打斷
+			sndIFS:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\kickcast.mp3") --快打斷			
 		end
 	elseif args.spellId == 143473 then
 		local source = args.sourceName
 		warnEmpoweredChainHeal:Show()
 		if source == UnitName("target") or source == UnitName("focus") then
 			specWarnEmpoweredChainHeal:Show(source)
-			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\kickcast.mp3") --快打斷
+			sndISM:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\kickcast.mp3") --快打斷
 			timerEmpoweredChainHealCD:Start(source, args.sourceGUID)
 		end
 	elseif args.spellId == 143502 then
@@ -264,7 +268,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 	elseif args.spellId == 143474 then
 		warnHealingTideTotem:Show()
 		specWarnHealingTideTotem:Show()
-		sndTT:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_ttkd.mp3") --圖騰快打
+		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_ttkd.mp3") --圖騰快打
 	elseif args.spellId == 143494 then--Because it can miss, we start CD here instead of APPLIED
 		timerSunderCD:Start()
 	end
@@ -276,12 +280,12 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnSunder:Show(args.destName, amount)
 		timerSunder:Start(args.destName)
 		if args:IsPlayer() then
-			if amount >= 4 then--At this point the other tank SHOULD be clear.
+			if amount >= 3 then--At this point the other tank SHOULD be clear.
 				specWarnSunder:Show(amount)
 				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\sunderhigh.mp3") --破甲過高
 			end
 		else--Taunt as soon as stacks are clear, regardless of stack count.
-			if amount >= 3 and not UnitDebuff("player", GetSpellInfo(143494)) and not UnitIsDeadOrGhost("player") then
+			if amount >= 2 and not UnitDebuff("player", GetSpellInfo(143494)) and not UnitIsDeadOrGhost("player") then
 				specWarnSunderOther:Show(args.destName)
 				if mod:IsTank() then
 					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\changemt.mp3") --換坦嘲諷
@@ -299,18 +303,23 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif args.spellId == 143480 then
 		warnAssasinsMark:Show(args.destName)
 		if args:IsPlayer() then
-			specWarnAssassinsMark:Show()
-			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_ckkp.mp3") --快跑 刺客點你
+			specWarnAssassinsMark:Schedule(1)			
 			yellAssassinsMark:Yell()
+			sndWOP:Schedule(1, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_ckkp.mp3") --快跑 刺客點你
 		else
 			specWarnAssassinsMarkOther:Show(args.destName)
+		end
+	elseif args.spellId == 143882 then
+		if args:IsPlayer() then
+			specWarnHunterMark:Schedule(1)			
+			yellHunterMark:Yell()
+			sndWOP:Schedule(1, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runout.mp3") --離開人群
+			sndWOP:Schedule(2, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runout.mp3")
 		end
 	elseif args.spellId == 143475 and not args:IsDestTypePlayer() then
 		warnEarthShield:Show(args.destName)
 		specWarnEarthShield:Show(args.destName)
-		if mod:IsMagicDispeller() then
-			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_dun.mp3") --驅散大地盾
-		end
+		sndDS:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_dun.mp3") --驅散大地盾
 	elseif args.spellId == 143638 then
 		boneTargets[#boneTargets + 1] = args.destName
 		self:Unschedule(warnBoneTargets)
@@ -338,10 +347,7 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 		warnAdds:Show(addsCount)
 		specWarnAdds:Show(addsCount)
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3")
-		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\killmob.mp3") --小怪快打
-		self:Schedule(1, function()
-			VEM:PlayCountSound(addsCount)
-		end)
+--		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\killmob.mp3") --小怪快打
 		sndWOP:Schedule(39, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3")
 		timerAddsCD:Start(nil, addsCount+1)
 --		countdownAdds:Start()

@@ -4,9 +4,9 @@ local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 local sndZQ		= mod:NewSound(nil, "SoundZQ", true)
 local sndTT		= mod:NewSound(nil, "SoundTT", true)
 
-mod:SetRevision(("$Revision: 10377 $"):sub(12, -3))
-mod:SetCreatureID(72311, 72560, 72249, 73910, 72302)--Boss needs to engage off friendly NCPS, not the boss. I include the boss too so we don't detect a win off losing varian. :)
-mod:SetReCombatTime(120, 15)--fix combat re-starts after killed. Same issue as tsulong. Fires TONS of IEEU for like 1-2 minutes after fight ends.
+mod:SetRevision(("$Revision: 10406 $"):sub(12, -3))
+mod:SetCreatureID(72311, 72560, 72249, 73910, 72302, 72561, 73909)--Boss needs to engage off friendly NCPS, not the boss. I include the boss too so we don't detect a win off losing varian. :)
+mod:SetReCombatTime(180, 15)--fix combat re-starts after killed. Same issue as tsulong. Fires TONS of IEEU for like 1-2 minutes after fight ends.
 mod:SetMainBossID(72249)
 mod:SetZone()
 mod:SetUsedIcons(8)
@@ -170,6 +170,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 147068 then
 		flamesCount = flamesCount + 1
 		warnFlamesofGalakrondTarget:Show(args.destName)
+		timerFlamesofGalakrondCD:Cancel(flamesCount)
 		timerFlamesofGalakrondCD:Start(nil, flamesCount+1)
 		if args:IsPlayer() then
 			specWarnFlamesofGalakrondYou:Show()
@@ -301,7 +302,11 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 		timerDemolisherCD:Start()
 		if not firstTower and not self:IsDifficulty("heroic10", "heroic25") then
 			firstTower = true
-			timerTowerCD:Start()
+			if self:IsDifficulty("lfr25") then
+				timerTowerCD:Start(166)
+			else
+				timerTowerCD:Start()
+			end
 		end
 	end
 end

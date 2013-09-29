@@ -50,10 +50,10 @@
 --  Globals/Default Options  --
 -------------------------------
 VEM = {
-	Revision = tonumber(("$Revision: 10377 $"):sub(12, -3)),
-	DisplayVersion = "(VEM) 5.4.1", -- the string that is shown as version
-	DisplayReleaseVersion = "5.4.1", -- Needed to work around bigwigs sending improper version information
-	ReleaseRevision = 10320 -- the revision of the latest stable version that is available
+	Revision = tonumber(("$Revision: 10415 $"):sub(12, -3)),
+	DisplayVersion = "(VEM) 5.4.2", -- the string that is shown as version
+	DisplayReleaseVersion = "5.4.2", -- Needed to work around bigwigs sending improper version information
+	ReleaseRevision = 10395 -- the revision of the latest stable version that is available
 }
 
 -- Legacy crap; that stupid "Version" field was never a good idea.
@@ -213,6 +213,8 @@ local enabled = true
 local blockEnable = false
 local lastCombatStarted = GetTime()
 local loadcIds = {}
+local forceloadmapIds = {}
+local blockMovieSkipItems = {}
 local inCombat = {}
 local combatInfo = {}
 local bossIds = {}
@@ -808,9 +810,21 @@ do
 							end
 						end
 						if GetAddOnMetadata(i, "X-VEM-Mod-LoadCID") then
-							local cIdTable = {strsplit(",", GetAddOnMetadata(i, "X-VEM-Mod-LoadCID"))}
-							for i = 1, #cIdTable do
-								loadcIds[tonumber(cIdTable[i]) or ""] = addonName
+							local idTable = {strsplit(",", GetAddOnMetadata(i, "X-VEM-Mod-LoadCID"))}
+							for i = 1, #idTable do
+								loadcIds[tonumber(idTable[i]) or ""] = addonName
+							end
+						end
+						if GetAddOnMetadata(i, "X-VEM-Mod-ForceLoad-MapID") then
+							local idTable = {strsplit(",", GetAddOnMetadata(i, "X-VEM-Mod-ForceLoad-MapID"))}
+							for i = 1, #idTable do
+								forceloadmapIds[tonumber(idTable[i]) or ""] = true
+							end
+						end
+						if GetAddOnMetadata(i, "X-VEM-Mod-Block-Movie-Skip-ItemID") then
+							local idTable = {strsplit(",", GetAddOnMetadata(i, "X-VEM-Mod-Block-Movie-Skip-ItemID"))}
+							for i = 1, #idTable do
+								blockMovieSkipItems[tonumber(idTable[i]) or ""] = tonumber(mapIdTable[1])
 							end
 						end
 					end
@@ -1290,7 +1304,6 @@ do
 	end
 end
 
-
 do
 	local sortLag = {}
 	local nolagResponse = {}
@@ -1321,7 +1334,6 @@ do
 		end
 	end
 end
-
 
 -------------------
 --  Pizza Timer  --
@@ -2072,13 +2084,13 @@ function VEM:PLAYER_TARGET_CHANGED()
 	end
 end
 
-function VEM:CINEMATIC_START(...)
+function VEM:CINEMATIC_START()
 	if VEM.Options.MovieFilter == "Never" then return end
 	SetMapToCurrentZone()
-	local currentMapID = GetCurrentMapAreaID()
-	if currentMapID == 953 then--Siege of Org
-		for i = 105930, 105935 do--Scan items that trigger movies
-			if select(3,GetItemCooldown(i)) > 0 then return end--Prevent movie skip if we detect any of them on cooldown (ie it was JUST used)
+	local _, _, _, _, _, _, _, currentMapID = GetInstanceInfo()
+	for itemId, mapId in pairs(blockMovieSkipItems) do
+		if mapId == currentMapID then
+			if select(3, GetItemCooldown(itemId)) > 0 then return end
 		end
 	end
 	local currentFloor = GetCurrentMapDungeonLevel() or 0
@@ -2138,11 +2150,8 @@ do
 	local function FixForShittyComputers()
 		local _, instanceType, _, _, _, _, _, mapID = GetInstanceInfo()
 		LastInstanceMapID = mapID
-		if instanceType == "none" and (mapID ~= 369) and (mapID ~= 1043) and (mapID ~= 974) then return end -- instance type of brawlers guild and DMF are none
+		if instanceType == "none" and not forceloadmapIds[mapID] then return end
 		VEM:LoadModsOnDemand("mapId", mapID)
-		if instanceType == "scenario" and (mapID ~= 1148) and VEM:GetModByName("d511") then--mod already loaded (Filter 1148, which is proving grounds)
-			VEM:InstanceCheck()
-		end
 	end
 	--Faster and more accurate loading for instances, but useless outside of them
 	function VEM:LOADING_SCREEN_DISABLED()
@@ -2154,16 +2163,15 @@ do
 			local modTable = v[checkTable]
 			local _, _, _, enabled = GetAddOnInfo(v.modId)
 			if enabled and not IsAddOnLoaded(v.modId) and modTable and checkEntry(modTable, checkValue) then
-				if self:LoadMod(v) and v.type == "SCENARIO" then
-					VEM:InstanceCheck()
-				end
+				self:LoadMod(v)
 			end
 		end
+		VEM:ScenarioCheck()--Do not filter. Because ScenarioCheck function includes filter.
 	end
 end
 
 --Scenario mods
-function VEM:InstanceCheck()
+function VEM:ScenarioCheck()
 	if combatInfo[LastInstanceMapID] then
 		for i, v in ipairs(combatInfo[LastInstanceMapID]) do
 			if (v.type == "scenario") and checkEntry(v.msgs, LastInstanceMapID) then
@@ -2224,7 +2232,7 @@ function VEM:LoadMod(mod)
 			RequestChallengeModeMapInfo()
 			RequestChallengeModeLeaders(mapID)
 		end
-		if instanceType == "pvp" and IsAddOnLoaded("VEM-PVP") then--Is a battleground and pvp mods are installed
+		if instanceType == "pvp" and IsAddOnLoaded("VEM-PvP") then--Is a battleground and pvp mods are installed
 			if VEM:GetModByName("z30") and VEM:GetModByName("z30").revision >= 3 then--They are loaded and correct revision
 				--Do nothing
 			else--They either aren't loaded or are wrong revision. in either case, it means they have old pvp mods installed that don't load correctly or are out of date
@@ -2448,7 +2456,7 @@ do
 							other = i
 						end
 					end
-					if found then
+					if found then--Only requires 2 for update notification (maybe also make 3?)
 						showedUpdateReminder = true
 						if not VEM.Options.BlockVersionUpdateNotice or revDifference > 333 then
 							VEM:ShowUpdateReminder(displayVersion, version)
@@ -2457,12 +2465,10 @@ do
 							VEM:AddMsg(VEM_CORE_UPDATEREMINDER_HEADER:match("\n(.*)"):format(displayVersion, version))
 							VEM:AddMsg(("|HVEM:update:%s:%s|h|cff3588ff[https://github.com/henryj/Voice-Encounter-Mods]"):format(displayVersion, version))
 						end
-						if GetLocale() ~= "deDE" then--the following code give players the power to disable a mod of another player by spoofing the revision -> not acceptable for deDE
-							--The following code requires at least THREE people to send that higher revision (I just upped it from 2). That should be more than adaquate, especially since there is also a display version validator now too (that had to be writen when bigwigs was sending bad revisions few versions back)
-							if secondfound and revDifference > 400 then--WTF? Sorry but your VEM is being turned off until you update. Grossly out of date mods cause fps loss, freezes, lua error spam, or just very bad information, if mod is not up to date with latest changes. All around undesirable experience to put yourself or other raid mates through
-								VEM:AddMsg(VEM_CORE_UPDATEREMINDER_DISABLE:format(revDifference))
-								VEM:Disable(true)
-							end
+						--The following code requires at least THREE people to send that higher revision (I just upped it from 2). That should be more than adaquate, especially since there is also a display version validator now too (that had to be writen when bigwigs was sending bad revisions few versions back)
+						if secondfound and revDifference > 400 then--WTF? Sorry but your VEM is being turned off until you update. Grossly out of date mods cause fps loss, freezes, lua error spam, or just very bad information, if mod is not up to date with latest changes. All around undesirable experience to put yourself or other raid mates through
+							VEM:AddMsg(VEM_CORE_UPDATEREMINDER_DISABLE:format(revDifference))
+							VEM:Disable(true)
 						end
 					end
 				end
@@ -2483,7 +2489,6 @@ do
 					end
 					if found then--Running alpha version that's out of date
 						showedUpdateReminder = true
-						--Bug happened again, but this print NEVER happened?? In fact, everyone in raid got the bug to happen, and suspiciously after several people in raid turned bigwigs on....
 						VEM:AddMsg(VEM_CORE_UPDATEREMINDER_HEADER_ALPHA:format(revDifference))
 					end
 				end
@@ -2493,7 +2498,8 @@ do
 	end
 
 	syncHandlers["L"] = function(sender)
-		sendSync("LAG", ("%d\t%d"):format(select(3, GetNetStats()), select(4, GetNetStats())))
+		local _, _, home, world = GetNetStats()
+		sendSync("LAG", ("%d\t%d"):format(home, world))
 	end
 	
 	syncHandlers["LAG"] = function(sender, homelag, worldlag)
@@ -2503,7 +2509,7 @@ do
 			raid[sender].worldlag = worldlag
 		end
 	end
-	
+
 	syncHandlers["U"] = function(sender, time, text)
 		if select(2, IsInInstance()) == "pvp" then return end -- no pizza timers in battlegrounds
 		if VEM:GetRaidRank(sender) == 0 then return end
@@ -3465,15 +3471,12 @@ end
 function VEM:EndCombat(mod, wipe)
 	if removeEntry(inCombat, mod) then
 		local scenario = mod.type == "SCENARIO"
-		if not wipe then
-			mod.lastKillTime = GetTime()
-			if mod.inCombatOnlyEvents and mod.inCombatOnlyEventsRegistered then
-				-- unregister all events except for SPELL_AURA_REMOVED events (might still be needed to remove icons etc...)
-				mod:UnregisterInCombatEvents("SPELL_AURA_REMOVED")
-				self:Schedule(2, mod.UnregisterInCombatEvents, mod) -- 2 seconds should be enough for all auras to fade
-				self:Schedule(2.1, mod.Stop, mod) -- Remove accident started timers.
-				mod.inCombatOnlyEventsRegistered = nil
-			end
+		if mod.inCombatOnlyEvents and mod.inCombatOnlyEventsRegistered then
+			-- unregister all events except for SPELL_AURA_REMOVED events (might still be needed to remove icons etc...)
+			mod:UnregisterInCombatEvents("SPELL_AURA_REMOVED")
+			self:Schedule(2, mod.UnregisterInCombatEvents, mod) -- 2 seconds should be enough for all auras to fade
+			self:Schedule(2.1, mod.Stop, mod) -- Remove accident started timers.
+			mod.inCombatOnlyEventsRegistered = nil
 		end
 		mod:Stop()
 		mod.inCombat = false
@@ -3550,6 +3553,7 @@ function VEM:EndCombat(mod, wipe)
 			end
 			fireEvent("wipe", mod)
 		else
+			mod.lastKillTime = GetTime()
 			local thisTime = GetTime() - mod.combatInfo.pull
 			local lastTime = (savedDifficulty == "lfr25" and mod.stats.lfr25LastTime) or ((savedDifficulty == "heroic5" or savedDifficulty == "heroic10") and mod.stats.heroicLastTime) or (savedDifficulty == "challenge5" and mod.stats.challengeLastTime) or (savedDifficulty == "flex" and mod.stats.flexLastTime) or (savedDifficulty == "normal25" and mod.stats.normal25LastTime) or (savedDifficulty == "heroic25" and mod.stats.heroic25LastTime) or ((savedDifficulty == "normal5" or savedDifficulty == "normal10" or savedDifficulty == "worldboss") and mod.stats.normalLastTime) or nil
 			local bestTime = (savedDifficulty == "lfr25" and mod.stats.lfr25BestTime) or ((savedDifficulty == "heroic5" or savedDifficulty == "heroic10") and mod.stats.heroicBestTime) or (savedDifficulty == "challenge5" and mod.stats.challengeBestTime) or (savedDifficulty == "flex" and mod.stats.flexBestTime) or (savedDifficulty == "normal25" and mod.stats.normal25BestTime) or (savedDifficulty == "heroic25" and mod.stats.heroic25BestTime) or ((savedDifficulty == "normal5" or savedDifficulty == "normal10" or savedDifficulty == "worldboss") and mod.stats.normalBestTime) or nil
@@ -4304,7 +4308,8 @@ function VEM:RoleCheck()
 	local role = GetSpecializationRole(spec)
 	local specID = GetLootSpecialization()
 	local _, _, _, _, _, lootrole = GetSpecializationInfoByID(specID)
-	if VEM.Options.SetPlayerRole and not InCombatLockdown() and IsInGroup() and not IsPartyLFG() then
+	local _, _, diff = GetInstanceInfo()
+	if VEM.Options.SetPlayerRole and not InCombatLockdown() and IsInGroup() and ((IsPartyLFG() and diff == 14) or not IsPartyLFG()) then
 		if UnitGroupRolesAssigned("player") ~= role then
 			UnitSetRole("player", role)
 		end
@@ -4432,7 +4437,7 @@ do
 	local modsById = setmetatable({}, {__mode = "v"})
 	local mt = {__index = bossModPrototype}
 
-	function VEM:NewMod(name, modId, modSubTab, instanceId)
+	function VEM:NewMod(name, modId, modSubTab, instanceId, creatureInfoId)
 		name = tostring(name) -- the name should never be a number of something as it confuses sync handlers that just receive some string and try to get the mod from it
 		if modsById[name] then error("VEM:NewMod(): Mod names are used as IDs and must therefore be unique.", 2) end
 		local obj = setmetatable(
@@ -4467,7 +4472,16 @@ do
 		end
 
 		if tonumber(name) then
-			local t = EJ_GetEncounterInfo(tonumber(name))
+			local t = ""
+			if type(creatureInfoId) == "number" then
+				t = select(2, EJ_GetCreatureInfo(creatureInfoId, tonumber(name)))
+			else
+				t = EJ_GetEncounterInfo(tonumber(name))
+			end
+			obj.localization.general.name = string.split(",", t or name)
+			obj.modelId = select(4, EJ_GetCreatureInfo(1, tonumber(name)))
+		elseif name:match("z%d+") then
+			local t = EJ_GetCreatureInfo(1, 817)(tonumber(name))
 			obj.localization.general.name = string.split(",", t or name)
 			obj.modelId = select(4, EJ_GetCreatureInfo(1, tonumber(name)))
 		elseif name:match("z%d+") then
@@ -4695,16 +4709,10 @@ function bossModPrototype:checkTankDistance(guid, distance)
 	local distance = distance or 40
 	local _, uId, mobuId = self:GetBossTarget(guid)
 	if mobuId and (not uId or (uId and (uId == "boss1" or uId == "boss2" or uId == "boss3" or uId == "boss4" or uId == "boss5"))) then--Mob has no target, or is targeting a UnitID we cannot range check
-		if IsInRaid() then
-			for i = 1, GetNumGroupMembers() do
-				if UnitDetailedThreatSituation("raid"..i, mobuId) == 3 then uId = "raid"..i end--Found highest threat target, make them uId
-				break
-			end
-		elseif IsInGroup() then
-			for i = 1, GetNumSubgroupMembers() do
-				if UnitDetailedThreatSituation("party"..i, mobuId) == 3 then uId = "party"..i end
-				break
-			end
+		local unitID = (IsInRaid() and "raid") or (IsInGroup() and "party") or "player"
+		for i = 1, VEM:GetNumGroupMembers() do
+			if UnitDetailedThreatSituation(unitID..i, mobuId) == 3 then uId = unitID..i end--Found highest threat target, make their uId
+			break
 		end
 	end
 	if uId then--Now we know who mob is targeting (or highest threat is)
@@ -5113,17 +5121,17 @@ do
 		)
 		if optionName then
 			obj.option = optionName
-			self:AddBoolOption(optionName, optionDefault, "announce")
+			self:AddBoolOption(obj.option, optionDefault, "announce")
 		elseif not (optionName == false) then
 			obj.option = text
-			self:AddBoolOption(text, optionDefault, "announce")
+			self:AddBoolOption(obj.option, optionDefault, "announce")
 		end
 		tinsert(self.announces, obj)
 		return obj
 	end
 
 	-- new constructor (auto-localized warnings and options, yay!)
-	local function newAnnounce(self, announceType, spellId, color, icon, optionDefault, optionName, castTime, preWarnTime, noSound)
+	local function newAnnounce(self, announceType, spellId, color, icon, optionDefault, optionName, castTime, preWarnTime, noSound, optionSaveVar)
 		if not spellId then
 			error("newAnnounce: you must provide spellId", 2)
 			return
@@ -5166,11 +5174,11 @@ do
 		)
 		if optionName then
 			obj.option = optionName
-			self:AddBoolOption(optionName, optionDefault, "announce")
+			self:AddBoolOption(obj.option, optionDefault, "announce")
 		elseif not (optionName == false) then
-			obj.option = "Announce"..unparsedId..announceType
-			self:AddBoolOption("Announce"..unparsedId..announceType, optionDefault, "announce")
-			self.localization.options["Announce"..unparsedId..announceType] = VEM_CORE_AUTO_ANNOUNCE_OPTIONS[announceType]:format(unparsedId)
+			obj.option = "Announce"..unparsedId..announceType..(optionSaveVar or "")
+			self:AddBoolOption(obj.option, optionDefault, "announce")
+			self.localization.options[obj.option] = VEM_CORE_AUTO_ANNOUNCE_OPTIONS[announceType]:format(unparsedId)
 		end
 		tinsert(self.announces, obj)
 		return obj
@@ -5236,7 +5244,7 @@ end
 do
 	local soundPrototype = {}
 	local mt = { __index = soundPrototype }
-	function bossModPrototype:NewSound(spellId, optionName, optionDefault)
+	function bossModPrototype:NewSound(spellId, optionName, optionDefault, optionSaveVar)
 		if not spellId and not optionName then
 			error("NewSound: you must provide either spellId or optionName", 2)
 			return
@@ -5252,9 +5260,9 @@ do
 			obj.option = optionName
 			self:AddBoolOption(optionName, optionDefault, "sound")
 		elseif not (optionName == false) then
-			obj.option = "Sound"..spellId
-			self:AddBoolOption("Sound"..spellId, optionDefault, "sound")
-			self.localization.options["Sound"..spellId] = VEM_CORE_AUTO_SOUND_OPTION_TEXT:format(spellId)
+			obj.option = "Sound"..spellId..(optionSaveVar or "")
+			self:AddBoolOption(obj.option, optionDefault, "sound")
+			self.localization.options[obj.option] = VEM_CORE_AUTO_SOUND_OPTION_TEXT:format(spellId)
 		end
 		return obj
 	end
@@ -5363,7 +5371,7 @@ do
 	end
 	countdownProtoType.Stop = countdownProtoType.Cancel
 
-	function bossModPrototype:NewCountdown(timer, spellId, optionDefault, optionName, count, textDisabled, altVoice)
+	function bossModPrototype:NewCountdown(timer, spellId, optionDefault, optionName, count, textDisabled, altVoice, optionSaveVar)
 		if not spellId and not optionName then
 			error("NewCountdown: you must provide either spellId or optionName", 2)
 			return
@@ -5378,7 +5386,7 @@ do
 		spellId = spellId or 39505
 		local obj = setmetatable(
 			{
-				id = optionName or "Countdown"..spellId,
+				id = optionName or "Countdown"..spellId..(optionSaveVar or ""),
 				sound1 = sound1,
 				sound2 = sound2,
 				sound3 = sound3,
@@ -5392,19 +5400,17 @@ do
 			},
 			mt
 		)
+		obj.option = obj.id
+		self:AddBoolOption(obj.option, optionDefault, "sound")
 		if optionName then
-			obj.option = obj.id
-			self:AddBoolOption(optionName, optionDefault, "sound")
 		elseif not (optionName == false) then
-			obj.option = obj.id
-			self:AddBoolOption(obj.id, optionDefault, "sound")
-			self.localization.options[obj.id] = VEM_CORE_AUTO_COUNTDOWN_OPTION_TEXT:format(spellId)
+			self.localization.options[obj.option] = VEM_CORE_AUTO_COUNTDOWN_OPTION_TEXT:format(spellId)
 		end
 		tinsert(self.countdowns, obj)
 		return obj
 	end
 
-	function bossModPrototype:NewCountdownFades(timer, spellId, optionDefault, optionName, count, textDisabled, altVoice)
+	function bossModPrototype:NewCountdownFades(timer, spellId, optionDefault, optionName, count, textDisabled, altVoice, optionSaveVar)
 		if not spellId and not optionName then
 			error("NewCountdownFades: you must provide either spellId or optionName", 2)
 			return
@@ -5419,7 +5425,7 @@ do
 		spellId = spellId or 39505
 		local obj = setmetatable(
 			{
-				id = optionName or "CountdownFades"..spellId,
+				id = optionName or "CountdownFades"..spellId..(optionSaveVar or ""),
 				sound1 = sound1,
 				sound2 = sound2,
 				sound3 = sound3,
@@ -5433,13 +5439,12 @@ do
 			},
 			mt
 		)
+		obj.option = obj.id
+		self:AddBoolOption(obj.option, optionDefault, "sound")
 		if optionName then
-			obj.option = obj.id
-			self:AddBoolOption(optionName, optionDefault, "sound")
 		elseif not (optionName == false) then
 			obj.option = obj.id
-			self:AddBoolOption(obj.id, optionDefault, "sound")
-			self.localization.options[obj.id] = VEM_CORE_AUTO_COUNTDOWN_OPTION_TEXT2:format(spellId)
+			self.localization.options[obj.option] = VEM_CORE_AUTO_COUNTDOWN_OPTION_TEXT2:format(spellId)
 		end
 		tinsert(self.countdowns, obj)
 		return obj
@@ -5502,7 +5507,7 @@ do
 	end
 	countoutProtoType.Stop = countoutProtoType.Cancel
 
-	function bossModPrototype:NewCountout(timer, spellId, optionDefault, optionName)
+	function bossModPrototype:NewCountout(timer, spellId, optionDefault, optionName, optionSaveVar)
 		if not spellId and not optionName then
 			error("NewCountout: you must provide either spellId or optionName", 2)
 			return
@@ -5530,9 +5535,9 @@ do
 			obj.option = optionName
 			self:AddBoolOption(optionName, optionDefault, "sound")
 		elseif not (optionName == false) then
-			obj.option = "Countout"..spellId
-			self:AddBoolOption("Countout"..spellId, optionDefault, "sound")
-			self.localization.options["Countout"..spellId] = VEM_CORE_AUTO_COUNTOUT_OPTION_TEXT:format(spellId)
+			obj.option = "Countout"..spellId..(optionSaveVar or "")
+			self:AddBoolOption(obj.option, optionDefault, "sound")
+			self.localization.options[obj.option] = VEM_CORE_AUTO_COUNTOUT_OPTION_TEXT:format(spellId)
 		end
 		return obj
 	end
@@ -5544,7 +5549,7 @@ end
 do
 	local yellPrototype = {}
 	local mt = { __index = yellPrototype }
-	function bossModPrototype:NewYell(spellId, yellText, optionDefault, optionName, chatType)
+	function bossModPrototype:NewYell(spellId, yellText, optionDefault, optionName, chatType, optionSaveVar)
 		if not spellId and not yellText then
 			error("NewYell: you must provide either spellId or yellText", 2)
 			return
@@ -5569,9 +5574,9 @@ do
 			obj.option = optionName
 			self:AddBoolOption(optionName, optionDefault, "misc")
 		elseif not (optionName == false) then
-			obj.option = "Yell"..(yellText or spellId)
-			self:AddBoolOption("Yell"..(yellText or spellId), optionDefault, "misc")
-			self.localization.options["Yell"..(yellText or spellId)] = VEM_CORE_AUTO_YELL_OPTION_TEXT:format(spellId)
+			obj.option = "Yell"..(spellId or yellText)..(optionSaveVar or "")
+			self:AddBoolOption(obj.option, optionDefault, "misc")
+			self.localization.options[obj.option] = VEM_CORE_AUTO_YELL_OPTION_TEXT:format(spellId)
 		end
 		return obj
 	end
@@ -5710,7 +5715,7 @@ do
 		return obj
 	end
 
-	local function newSpecialWarning(self, announceType, spellId, stacks, optionDefault, optionName, noSound, runSound)
+	local function newSpecialWarning(self, announceType, spellId, stacks, optionDefault, optionName, noSound, runSound, optionSaveVar)
 		if not spellId then
 			error("newSpecialWarning: you must provide spellId", 2)
 			return
@@ -5747,21 +5752,20 @@ do
 			},
 			mt
 		)
-		local optionId = optionName or (optionName ~= false) and "SpecWarn"..spellId..announceType
 		if optionName then
 			obj.option = optionName
 		elseif not (optionName == false) then
-			obj.option = "SpecWarn"..spellId..announceType
+			obj.option = "SpecWarn"..spellId..announceType..(optionSaveVar or "")
 			if announceType == "stack" then
-				self.localization.options["SpecWarn"..spellId..announceType] = VEM_CORE_AUTO_SPEC_WARN_OPTIONS[announceType]:format(stacks or 3, spellId)
+				self.localization.options[obj.option] = VEM_CORE_AUTO_SPEC_WARN_OPTIONS[announceType]:format(stacks or 3, spellId)
 			elseif announceType == "prewarn" then
-				self.localization.options["SpecWarn"..spellId..announceType] = VEM_CORE_AUTO_SPEC_WARN_OPTIONS[announceType]:format(stacks or 5, spellId)
+				self.localization.options[obj.option] = VEM_CORE_AUTO_SPEC_WARN_OPTIONS[announceType]:format(stacks or 5, spellId)
 			else
-				self.localization.options["SpecWarn"..spellId..announceType] = VEM_CORE_AUTO_SPEC_WARN_OPTIONS[announceType]:format(spellId)
+				self.localization.options[obj.option] = VEM_CORE_AUTO_SPEC_WARN_OPTIONS[announceType]:format(spellId)
 			end
 		end
-		if optionId then
-			self:AddSpecialWarningOption(optionId, optionDefault, runSound, "specannounce")
+		if obj.option then
+			self:AddSpecialWarningOption(obj.option, optionDefault, runSound, "specannounce")
 		end
 		tinsert(self.specwarns, obj)
 		return obj
@@ -6235,7 +6239,7 @@ do
 	-- todo: disable the timer if the player already has the achievement and when the ACHIEVEMENT_EARNED event is fired
 	-- problem: heroic/normal achievements :[
 	-- local achievementTimers = {}
-	local function newTimer(self, timerType, timer, spellId, timerText, optionDefault, optionName, texture, r, g, b, countdownDefault)--countdownDefault should be a number, such as 5 or 10 hard coded in boss mod to say "audio countdown is on by default for this timer and default count start point is 5 or 10
+	local function newTimer(self, timerType, timer, spellId, timerText, optionDefault, optionName, texture, r, g, b, countdownDefault, optionSaveVar)--countdownDefault should be a number, such as 5 or 10 hard coded in boss mod to say "audio countdown is on by default for this timer and default count start point is 5 or 10
 		-- new argument timerText is optional (usually only required for achievement timers as they have looooong names)
 		if type(timerText) == "boolean" or type(optionDefault) == "string" then -- check if the argument was skipped
 			return newTimer(self, timerType, timer, spellId, nil, timerText, optionDefault, optionName, texture, r, g, b, countdownDefault)
@@ -6262,7 +6266,7 @@ do
 			end
 		end
 		spellName = spellName or tostring(spellId)
-		local id = "Timer"..(spellId or 0)..self.id..#self.timers
+		local id = "Timer"..(spellId or 0)..timerType..(optionSaveVar or "")
 		local obj = setmetatable(
 			{
 				text = self.localization.timers[timerText],
@@ -6438,7 +6442,7 @@ do
 	function bossModPrototype:NewCombatTimer(timer, text, barText, barIcon)
 		timer = timer or 10
 		local bar = self:NewTimer(timer, barText or VEM_CORE_GENERIC_TIMER_COMBAT, barIcon or 2457, nil, "timer_combat")
-		local countdown = self:NewCountdown(0, 0, nil, false, nil, true)
+		local countdown = self:NewCountdown(0, 0, nil, VEM_CORE_GENERIC_TIMER_COMBAT, nil, true)
 		local obj = setmetatable(
 			{
 				bar = bar,
@@ -6750,7 +6754,7 @@ function bossModPrototype:SendSync(event, ...)
 	local time = GetTime()
 	--Mod syncs are more strict and enforce latency threshold always.
 	--Do not put latency check in main sendSync local function (line 313) though as we still want to get version information, etc from these users.
-	if select(4, GetNetStats()) < VEM.Options.LatencyThreshold and (not modSyncSpam[spamId] or (time - modSyncSpam[spamId]) > 8) then
+	if not modSyncSpam[spamId] or (time - modSyncSpam[spamId]) > 8 then
 		self:ReceiveSync(event, nil, self.revision or 0, tostringall(...))
 		sendSync("M", str)
 	end
@@ -6937,9 +6941,7 @@ do
 		}, returnKey)
 	}
 	local defaultMiscLocalization = {
-		__index = function(t, k)
-			return t.misc.general[k] or t.misc.options[k] or t.misc.warnings[k] or t.misc.timers[k] or t.misc.cats[k] or k
-		end
+		__index = {}
 	}
 
 	function modLocalizationPrototype:SetGeneralLocalization(t)
@@ -6988,7 +6990,6 @@ do
 			miscStrings = setmetatable({}, defaultMiscLocalization),
 			cats = setmetatable({}, defaultCatLocalization),
 		}
-		obj.miscStrings.misc = obj
 		setmetatable(obj, mt)
 		modLocalizations[name] = obj
 		return obj

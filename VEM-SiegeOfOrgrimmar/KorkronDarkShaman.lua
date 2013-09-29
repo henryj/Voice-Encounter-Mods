@@ -2,7 +2,7 @@
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 10365 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10415 $"):sub(12, -3))
 mod:SetCreatureID(71859, 71858)--haromm, Kardris
 mod:SetZone()
 mod:SetUsedIcons(5, 4, 3, 2, 1)
@@ -36,7 +36,7 @@ local warnIronTomb					= mod:NewSpellAnnounce(144328, 3)
 local warnFrostStormBolt			= mod:NewSpellAnnounce(144214, 2, nil, mod:IsTank())
 local warnToxicStorm				= mod:NewSpellAnnounce(144005, 3)
 local warnFoulGeyser				= mod:NewTargetAnnounce(143990, 4)
-local warnFallingAsh				= mod:NewSpellAnnounce(143973, 3)
+local warnFallingAsh				= mod:NewCastAnnounce(143973, 3, 15)
 local warnIronPrison				= mod:NewTargetAnnounce(144330, 3)
 
 --Earthbreaker Haromm
@@ -50,8 +50,8 @@ local specWarnAshenWall				= mod:NewSpecialWarningSpell(144070, nil, nil, nil, 2
 local specWarnIronTomb				= mod:NewSpecialWarningSpell(144328, nil, nil, nil, 2)
 --Wavebinder Kardris
 local specWarnFrostStormBolt		= mod:NewSpecialWarningSpell(144214, false)--spammy, but useful for a tank if they want to time active mitigation around it.
-local specWarnToxicStormFix			= mod:NewSpecialWarningSpell(144005) --BH FIX
-local specWarnToxicStormNear		= mod:NewSpecialWarningTarget(144005)
+local specWarnToxicStormFix			= mod:NewSpecialWarningSpell(144017) --BH FIX
+local specWarnToxicStormNear		= mod:NewSpecialWarningClose(144005)
 local yellToxicStorm				= mod:NewYell(144005)
 local specWarnFoulGeyser			= mod:NewSpecialWarningSpell(143990)
 local yellFoulGeyser				= mod:NewYell(143990)

@@ -63,7 +63,8 @@ L:SetOptionLocalization({
 	DD2						= "打斷2",
 	DD3						= "打斷3",
 	nodd					= "不提示",
-	SetIconOnStrike			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(143962)
+	SetIconOnStrike			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(143962),
+	RangeFrame			= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(5, 143423)--For heroic. Need to chage smart range frame?
 })
 
 L:SetMiscLocalization({
@@ -217,7 +218,9 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
-	SoundTT					= "語音警告：$spell:143474",
+	SoundDS					= "語音警告：驅散$spell:143475",
+	SoundIFS				= "語音警告：打斷$journal:7923",
+	SoundISM				= "語音警告：打斷$journal:7925",
 	InfoFrame				= "資訊框：怒氣監視器",
 	SetIconOnAdds			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format("ej7920"),
 	warnDefensiveStanceSoon			= "預先警告：$spell:143593 (5秒前)"
@@ -243,10 +246,15 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "語音警告：重要技能",
+	Malhelper				= "===特殊：開啟亞煞極之息輔助圖示 (/mal)===",
+	MalhelperSend			= "===輔助圖示：啟用手動修正模式===",
 	HudMAP					= "高級定位監視(HUD)：$spell:142913",
 	SetIconOnDisplacedEnergy= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(142913),
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT_SHORT:format("8/5")
 })
+
+MHExRTL.panelbossmodsmalkorokdanger ="! 危險 !"
+MHExRTL.sendnote ="開啟手動修改圖示，左鍵選擇，右鍵取消，你的修改會被同步給全團，請謹慎使用！！！"
 
 ------------------------
 -- Spoils of Pandaria --

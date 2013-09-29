@@ -143,13 +143,13 @@ local function checknexttouchOfYShaarj(spell)
 	local _, _, touchtime = timerTouchOfYShaarjCD:GetTime()
 	local _, _, whirlingtime = timerWhirlingCorruptionCD:GetTime()
 	local _, _, desecratetime = timerWhirlingCorruptionCD:GetTime()
-	if spell == "desecrate" and ((touchtime ~= 0) and (whirlingtime ~= 0)) then
+	if (spell == "desecrate") and (touchtime ~= 0) and (whirlingtime ~= 0) then
 		if touchtime < whirlingtime then
 			print("test: 下一個技能是心控")
 		else
 			print("test: 下一個技能是旋風")
 		end
-	elseif spell == "whirling" and ((touchtime ~= 0) and (desecratetime ~= 0)) then
+	elseif (spell == "whirling") and (touchtime ~= 0) and (desecratetime ~= 0) then
 		if touchtime < desecratetime then
 			print("test: 下一個技能是心控")
 		else

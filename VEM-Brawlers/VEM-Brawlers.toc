@@ -16,6 +16,7 @@
 ## X-VEM-Mod-Name-zhTW: 鬥陣俱樂部
 ## X-VEM-Mod-Sort: 35
 ## X-VEM-Mod-MapID: 369,1043
+## X-VEM-Mod-ForceLoad-MapID: 396,1043
 localization.en.lua
 localization.cn.lua
 localization.tw.lua

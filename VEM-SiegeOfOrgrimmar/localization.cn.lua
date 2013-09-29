@@ -63,7 +63,8 @@ L:SetOptionLocalization({
 	DD2						= "打断2",
 	DD3						= "打断3",
 	nodd					= "不提示",
-	SetIconOnStrike			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(143962)
+	SetIconOnStrike			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(143962),
+	RangeFrame			= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(5, 143423)--For heroic. Need to chage smart range frame?
 })
 
 L:SetMiscLocalization({
@@ -214,7 +215,9 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "语音警告：重要技能",
-	SoundTT					= "语音警告：$spell:143474",
+	SoundDS					= "语音警告：驱散$spell:143475",
+	SoundIFS				= "语音警告：打断$journal:7923",
+	SoundISM				= "语音警告：打断$journal:7925",
 	InfoFrame				= "信息框：怒气监视器",
 	SetIconOnAdds			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format("ej7920"),
 	warnDefensiveStanceSoon			= "预先警告：$spell:143593 (5秒前)"
@@ -223,10 +226,10 @@ L:SetOptionLocalization({
 L:SetMiscLocalization({
 	newForces1				= "战士们，快过来！",
 	newForces2				= "守住大门！",
-	newForces3				= "Rally the forces!",
+	newForces3				= "重新整队！",
 	newForces4				= "库卡隆，支援我！",
 	newForces5				= "下一队，冲上去！",
-	allForces				= "All Kor'kron... under my command... kill them... NOW!"
+	allForces				= "库卡隆，听我的命令，杀了他们！"
 })
 
 -----------------
@@ -239,10 +242,15 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "语音警告：重要技能",
+	Malhelper				= "===特殊：开啟亚煞极之息辅助图示 (/mal)===",
+	MalhelperSend			= "===辅助图示：启用手动修正模式===",
 	HudMAP					= "高级定位监视(HUD)：$spell:142913",
 	SetIconOnDisplacedEnergy= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(142913),
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT_SHORT:format("8/5")
 })
+
+MHExRTL.panelbossmodsmalkorokdanger ="! 危险 !"
+MHExRTL.sendnote ="开啟手动修改图示，左键选择，右键取消，你的修改会被同步给全团，请谨慎使用！！！"
 
 ------------------------
 -- Spoils of Pandaria --

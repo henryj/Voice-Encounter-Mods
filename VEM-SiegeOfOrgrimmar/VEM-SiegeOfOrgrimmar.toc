@@ -6,7 +6,7 @@
 ## Author: MysticalOS
 ## LoadOnDemand: 1
 ## RequiredDeps: VEM-Core
-## SavedVariablesPerCharacter: VEMSiegeOfOrgrimmar_SavedVars, VEMSiegeOfOrgrimmar_SavedStats
+## SavedVariablesPerCharacter: VEMSiegeOfOrgrimmar_SavedVars, VEMSiegeOfOrgrimmar_SavedStats, ExRT
 ## X-VEM-Mod-Name: Siege of Orgrimmar
 ## X-VEM-Mod-Name-zhTW: 圍攻奧格瑪 (SoO)
 ## X-VEM-Mod-Name-zhCN: 决战奥格瑞玛
@@ -17,6 +17,7 @@
 ## X-VEM-Mod-Has-Flex : 1
 ## X-VEM-Mod-Sort: 1
 ## X-VEM-Mod-MapID: 1136
+## X-VEM-Mod-Block-Movie-Skip-ItemID: 105930,105931,105932,105933,105934,105935
 localization.en.lua
 localization.tw.lua
 localization.cn.lua
@@ -29,6 +30,7 @@ IronJuggernaut.lua
 KorkronDarkShaman.lua
 GeneralNazgrim.lua
 Malkorok.lua
+#Malkorokhelper.lua
 SpoilsOfPandria.lua
 ThokTheBloodthirsty.lua
 SiegecrafterBlackfuse.lua
