@@ -58,16 +58,16 @@ mod:AddBoolOption("RangeFrame", true)--Various things
 mod:AddBoolOption("SetIconOnDisplacedEnergy", false)
 mod:AddBoolOption("HudMAP", false, "sound")
 
--- mod:AddBoolOption("Malhelper", true, "sound")
--- mod:AddBoolOption("MalhelperSend", false, "sound", 
--- function()
-	-- if mod.Options.MalhelperSend then
-		-- VEM.MalHelperEnabled = true
-		-- VEM:AddMsg("|cFFFA6BC1"..MHExRTL.sendnote.."|r")
-	-- else
-		-- VEM.MalHelperEnabled = false
-	-- end
--- end)
+mod:AddBoolOption("Malhelper", true, "sound")
+mod:AddBoolOption("MalhelperSend", false, "sound", 
+function()
+	if mod.Options.MalhelperSend then
+		VEM.MalHelperEnabled = true
+		VEM:AddMsg("|cFFFA6BC1"..MHExRTL.sendnote.."|r")
+	else
+		VEM.MalHelperEnabled = false
+	end
+end)
 
 local VEMHudMap = VEMHudMap
 local free = VEMHudMap.free
@@ -154,18 +154,18 @@ function mod:OnCombatStart(delay)
 	if self.Options.RangeFrame then
 		VEM.RangeCheck:Show(5)
 	end
-	-- if self.Options.Malhelper then
-		-- if self:IsDifficulty("normal25", "heroic25") then
-			-- ExRT:MalkorokAILoad()
-		-- else
-			-- ExRT:MalkorokLoad()
-		-- end
-		-- if self.Options.MalhelperSend then
-			-- VEM.MalHelperEnabled = true
-		-- else
-			-- VEM.MalHelperEnabled = false
-		-- end
-	-- end
+	if self.Options.Malhelper then
+		if self:IsDifficulty("normal25", "heroic25") then
+			ExRT:MalkorokAILoad()
+		else
+			ExRT:MalkorokLoad()
+		end
+		if self.Options.MalhelperSend then
+			VEM.MalHelperEnabled = true
+		else
+			VEM.MalHelperEnabled = false
+		end
+	end
 end
 
 function mod:OnCombatEnd()
@@ -175,9 +175,9 @@ function mod:OnCombatEnd()
 	if self.Options.HudMAP then
 		VEMHudMap:FreeEncounterMarkers()
 	end
-	-- if self.Options.Malhelper then
-		-- ExRT:ExBossmodsCloseAll()
-	-- end
+	if self.Options.Malhelper then
+		ExRT:ExBossmodsCloseAll()
+	end
 end
 
 function mod:SPELL_CAST_START(args)

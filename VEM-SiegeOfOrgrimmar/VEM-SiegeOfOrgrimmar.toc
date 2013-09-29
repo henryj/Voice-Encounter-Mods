@@ -30,7 +30,7 @@ IronJuggernaut.lua
 KorkronDarkShaman.lua
 GeneralNazgrim.lua
 Malkorok.lua
-#Malkorokhelper.lua
+Malkorokhelper.lua
 SpoilsOfPandria.lua
 ThokTheBloodthirsty.lua
 SiegecrafterBlackfuse.lua
