@@ -147,10 +147,8 @@ function mod:FoulStreamTarget(targetname, uId)
 			yellFoulStream:Yell()
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_xxsl.mp3")
 		else
-			if self:checkTankDistance(71859) then
-				specWarnFoulStream:Show()
-				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_xxsl.mp3") --小心水流
-			end
+			specWarnFoulStream:Show()
+			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_xxsl.mp3") --小心水流
 		end
 	end
 end
@@ -194,30 +192,17 @@ function mod:SPELL_CAST_START(args)
 		timerToxicStormCD:Start()
 		specWarnToxicStormFix:Show()
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\wwsoon.mp3") --準備旋風
---[[elseif args.spellId == 144214 then
-		for i = 1, 2 do
-			local bossUnitID = "boss"..i
-			if UnitExists(bossUnitID) and UnitGUID(bossUnitID) == args.sourceGUID and UnitDetailedThreatSituation("player", bossUnitID) then--We are highest threat target
-				warnFrostStormBolt:Show()
-				specWarnFrostStormBolt:Show()
-				timerFrostStormBoltCD:Start()
-			end
-		end--]]
 	elseif args.spellId == 144090 and mod.Options.SoundEnh then
 		self:BossTargetScanner(71859, "FoulStreamTarget", 0.05, 16)
 	elseif args.spellId == 143990 and mod.Options.SoundEle then
 		timerFoulGeyserCD:Start()
-		if self:checkTankDistance(args:GetSrcCreatureID()) then
---			specWarnFoulGeyser:Show()
---			countdownFoulGeyser:Start()
-		end
+		specWarnFoulGeyser:Show()
+		countdownFoulGeyser:Start()
 	elseif args.spellId == 144070 and mod.Options.SoundEnh then
 		warnAshenWall:Show()
 		timerAshenWallCD:Start()
-		if self:checkTankDistance(args:GetSrcCreatureID()) then--Now we know who is tanking that boss
-			specWarnAshenWall:Show()--Give special warning cause this ability concerns you
-			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_yszq.mp3") --元素之牆
-		end
+		specWarnAshenWall:Show()--Give special warning cause this ability concerns you
+		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_yszq.mp3") --元素之牆
 	elseif args.spellId == 143973 then
 		ashCount = ashCount + 1
 		warnFallingAsh:Show()
@@ -261,14 +246,6 @@ function mod:SPELL_CAST_SUCCESS(args)
 	elseif args.spellId == 144291 and self:AntiSpam() then
 		warnRustedIronTotem:Show()
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_xttt.mp3") --鏽鐵圖騰
---[[elseif args.spellId == 144215 and args.sourceName == UnitName("target") then
-		for i = 1, 2 do
-			local bossUnitID = "boss"..i
-			if UnitExists(bossUnitID) and UnitGUID(bossUnitID) == args.sourceGUID and UnitDetailedThreatSituation("player", bossUnitID) then--We are highest threat target
-				specWarnFroststormStrikeCast:Schedule(4)
-				timerFroststormStrikeCD:Start()
-			end
-		end--]]
 	elseif args.spellId == 143990 and mod.Options.SoundEle then
 		warnFoulGeyser:Show(args.destName)
 		if args:IsPlayer() then
@@ -276,21 +253,10 @@ function mod:SPELL_CAST_SUCCESS(args)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_rnkd.mp3") --软泥快打
 			sndWOP:Schedule(28, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_zbrn.mp3") --準備軟泥
 		else
-			local uId = VEM:GetRaidUnitId(args.destName)
-			if uId then
-				local x, y = GetPlayerMapPosition(uId)
-				if x == 0 and y == 0 then
-					SetMapToCurrentZone()
-					x, y = GetPlayerMapPosition(uId)
-				end
-				local inRange = VEM.RangeCheck:GetDistance("player", x, y)
-				if inRange and inRange < 60 then
-					if not mod:IsMeleeDps() then
-						specWarnFoulGeyser:Show()
-						sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_rnkd.mp3")
-						sndWOP:Schedule(28, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_zbrn.mp3")
-					end
-				end
+			if not mod:IsMeleeDps() then
+				specWarnFoulGeyser:Show()
+				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_rnkd.mp3")
+				sndWOP:Schedule(28, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_zbrn.mp3")
 			end
 		end
 	end

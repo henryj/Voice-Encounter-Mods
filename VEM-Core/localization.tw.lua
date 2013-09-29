@@ -129,6 +129,7 @@ VEM_CORE_SLASHCMD_HELP				= {
 	"/vem pull <秒數>: 開始備戰計時器<秒數>。向所有團隊成員發送一個VEM備戰計時器（需要團隊隊長或助理權限）。",
 	"/vem arrow: 顯示VEM箭頭, 輸入 /vem arrow help 獲得更多訊息。",
 	"/vem lockout: 向團隊成員請求他們當前的團隊副本鎖定訊息(鎖定訊息、副本id) (需要團隊隊長或助理權限)。",
+	"/vem lag: 進行團隊範圍內的網路延遲檢測。",
 	"/vem help：顯示可用命令的說明。"
 }
 
@@ -265,6 +266,7 @@ VEM_CORE_AUTO_TIMER_OPTIONS = {
 
 
 VEM_CORE_AUTO_ICONS_OPTION_TEXT			= "為$spell:%s的目標設置團隊標記"
+VEM_CORE_AUTO_ICONS_OPTION_TEXT2		= "為$spell:%s設置團隊標記"
 VEM_CORE_AUTO_SOUND_OPTION_TEXT			= "語音警告：當你中了$spell:%s時"
 VEM_CORE_AUTO_COUNTDOWN_OPTION_TEXT		= "倒計時：$spell:%s的冷卻時間"
 VEM_CORE_AUTO_COUNTDOWN_OPTION_TEXT2		= "倒計時：$spell:%s的消散時間"
@@ -273,7 +275,8 @@ VEM_CORE_AUTO_YELL_OPTION_TEXT			= "自動喊話：當你中了$spell:%s時"
 VEM_CORE_AUTO_YELL_ANNOUNCE_TEXT		= "" .. UnitName("player") .. "中了%s!"
 VEM_CORE_AUTO_RANGE_OPTION_TEXT			= "距離監視(%s)：$spell:%s"
 VEM_CORE_AUTO_RANGE_OPTION_TEXT_SHORT		= "距離監視(%s)"
-
+VEM_CORE_AUTO_INFO_FRAME_OPTION_TEXT		= "資訊框：$spell:%s"
+VEM_CORE_AUTO_READY_CHECK_OPTION_TEXT		= "當首領開打時撥放準備檢查的音效(即使沒有選定目標)"
 
 -- New special warnings
 VEM_CORE_MOVE_SPECIAL_WARNING_BAR	= "可拖動的特別警告"

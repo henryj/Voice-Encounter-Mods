@@ -50,8 +50,8 @@
 --  Globals/Default Options  --
 -------------------------------
 VEM = {
-	Revision = tonumber(("$Revision: 10415 $"):sub(12, -3)),
-	DisplayVersion = "(VEM) 5.4.2", -- the string that is shown as version
+	Revision = tonumber(("$Revision: 10460 $"):sub(12, -3)),
+	DisplayVersion = "(VEM) 5.4.3", -- the string that is shown as version
 	DisplayReleaseVersion = "5.4.2", -- Needed to work around bigwigs sending improper version information
 	ReleaseRevision = 10395 -- the revision of the latest stable version that is available
 }
@@ -186,6 +186,7 @@ VEM.DefaultOptions = {
 	MovieFilter = "Never",
 	LastRevision = 0,
 	FilterSayAndYell = false,
+	DebugMode = false,
 	ChatFrame = "DEFAULT_CHAT_FRAME",
 	
 	ShowLTSpecialWarnings = true,
@@ -289,6 +290,8 @@ local LoadAddOn = LoadAddOn
 local IsEncounterInProgress = IsEncounterInProgress
 local InCombatLockdown = InCombatLockdown
 local GetAddOnInfo = GetAddOnInfo
+local PlaySoundFile = PlaySoundFile
+local PlaySound = PlaySound
 
 -- for Phanx' Class Colors
 local RAID_CLASS_COLORS = CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS
@@ -1225,6 +1228,9 @@ SlashCmdList["VOICEENCOUNTERMODS"] = function(msg)
 			return VEM:AddMsg(VEM_ERROR_NO_RAID)
 		end
 		VEM:RequestInstanceInfo()
+	elseif cmd:sub(1, 5) == "debug" then
+		VEM.Options.DebugMode = VEM.Options.DebugMode == false and true or false
+		VEM:AddMsg("DebugMode : " .. (VEM.Options.DebugMode and "true" or "false"))
 	else
 		VEM:LoadGUI()
 	end
@@ -1925,8 +1931,10 @@ do
 	function loadModOptions(modId)
 		local savedOptions = _G[modId:gsub("-", "").."_SavedVars"] or {}
 		local savedStats = _G[modId:gsub("-", "").."_SavedStats"] or {}
+		local existId = {}
 		for i, v in ipairs(VEM.Mods) do
 			if v.modId == modId then
+				existId[v.id] = true
 				-- import old options from mods that were using the encounter ID as number as id
 				-- this was changed to use the string for compatibility reasons (see issues with sync),
 				-- but a user might still have saved options or stats that still use the old id as number
@@ -1946,6 +1954,12 @@ do
 					v.DefaultOptions[option] = optionValue
 					if savedOptions[v.id][option] == nil then
 						savedOptions[v.id][option] = optionValue
+					end
+				end
+				--clean unused savedvariables
+				for option, optionValue in pairs(savedOptions[v.id]) do
+					if v.DefaultOptions[option] == nil then
+						savedOptions[v.id][option] = nil
 					end
 				end
 				v.Options = savedOptions[v.id] or {}
@@ -1975,6 +1989,17 @@ do
 						break
 					end
 				end
+			end
+		end
+		--clean unused savedvariables
+		for id, table in pairs(savedOptions) do
+			if existId[id] == nil then
+				savedOptions[id] = nil
+			end
+		end
+		for id, table in pairs(savedStats) do
+			if existId[id] == nil then
+				savedStats[id] = nil
 			end
 		end
 		_G[modId:gsub("-", "").."_SavedVars"] = savedOptions
@@ -2175,7 +2200,7 @@ function VEM:ScenarioCheck()
 	if combatInfo[LastInstanceMapID] then
 		for i, v in ipairs(combatInfo[LastInstanceMapID]) do
 			if (v.type == "scenario") and checkEntry(v.msgs, LastInstanceMapID) then
-				VEM:StartCombat(v.mod, 0)
+				VEM:StartCombat(v.mod, 0, nil, nil, nil, nil, "LOADING_SCREEN_DIASBLED")
 			end
 		end
 	end
@@ -2303,7 +2328,7 @@ do
 		revision = tonumber(revision or 0) or 0
 		startHp = tonumber(startHp or -1) or -1
 		if mod and delay and (not mod.zones or mod.zones[LastInstanceMapID]) and (not mod.minSyncRevision or revision >= mod.minSyncRevision) then
-			VEM:StartCombat(mod, delay + lag, true, startHp)
+			VEM:StartCombat(mod, delay + lag, true, startHp, nil, nil, "SYNC from - ", sender)
 		end
 	end
 
@@ -3123,8 +3148,12 @@ do
 	local function scanForCombat(mod, mob, delay)
 		if not checkEntry(inCombat, mod) then
 			buildTargetList()
-			if targetList[mob] and UnitAffectingCombat(targetList[mob]) then
-				VEM:StartCombat(mod, delay or 3)
+			if targetList[mob] then
+				if delay > 0 and UnitAffectingCombat(targetList[mob]) then
+					VEM:StartCombat(mod, delay, nil, nil, nil, nil, "PLAYER_TARGET")
+				elseif select(2, GetInstanceInfo()) == "none" then
+					VEM:StartCombat(mod, 0, nil, nil, nil, true, "PLAYER_TARGET_AND_YELL")
+				end
 			end
 			clearTargetList()
 		end
@@ -3148,7 +3177,7 @@ do
 		if not combatInitialized then return end
 		if combatInfo[LastInstanceMapID] then
 			for i, v in ipairs(combatInfo[LastInstanceMapID]) do
-				if v.type == "combat" then
+				if v.type == "combat" or v.type == "combat_yell" or v.type == "combat_emote" or v.type == "combat_say" then--this will be faster than string.find
 					if v.multiMobPullDetection then
 						for _, mob in ipairs(v.multiMobPullDetection) do
 							if checkForPull(mob, v) then
@@ -3183,14 +3212,11 @@ do
 		if combatInfo[LastInstanceMapID] then
 			for i, v in ipairs(combatInfo[LastInstanceMapID]) do
 				if v.type == "combat" and isBossEngaged(v.multiMobPullDetection or v.mob) then
-					self:StartCombat(v.mod, 0)
+					self:StartCombat(v.mod, 0, nil, nil, nil, nil, "IEEU")
 				end
 			end
 		end
 	end
-end
-
-do
 
 	local function checkExpressionList(exp, str)
 		for i, v in ipairs(exp) do
@@ -3206,9 +3232,10 @@ do
 		-- pull detection
 		if combatInfo[LastInstanceMapID] then
 			for i, v in ipairs(combatInfo[LastInstanceMapID]) do
-				if v.type == type and checkEntry(v.msgs, msg)
-				or v.type == type .. "_regex" and checkExpressionList(v.msgs, msg) then
-					VEM:StartCombat(v.mod, 0)
+				if v.type == type and checkEntry(v.msgs, msg) or v.type == type .. "_regex" and checkExpressionList(v.msgs, msg) then
+					VEM:StartCombat(v.mod, 0, nil, nil, nil, nil, "MONSTER_MESSAGE")
+				elseif v.type == "combat_" .. type and checkEntry(v.msgs, msg) then
+					scanForCombat(v.mod, v.mob, 0)
 				end
 			end
 		end
@@ -3295,11 +3322,18 @@ function checkWipe(confirm)
 	end
 end
 
-function VEM:StartCombat(mod, delay, synced, syncedStartHp, noKillRecord)
+function VEM:StartCombat(mod, delay, synced, syncedStartHp, noKillRecord, triggered, event, sender)
+	if VEM.Options.DebugMode then
+		if event then
+			print("VEM:StartCombat called by : "..event..(sender or ""))
+		else
+			print("VEM:StartCombat called by individual mod or unknown reason.")
+		end
+	end
 	if not checkEntry(inCombat, mod) then
 		if not mod.Options.Enabled then return end
 		-- HACK: makes sure that we don't detect a false pull if the event fires again when the boss dies...
-		if mod.lastKillTime and GetTime() - mod.lastKillTime < (mod.reCombatTime or 20) then return end
+		if mod.lastKillTime and GetTime() - mod.lastKillTime < (mod.reCombatTime or 120) then return end
 		if mod.lastWipeTime and GetTime() - mod.lastWipeTime < (mod.reCombatTime2 or 20) then return end
 		if not mod.combatInfo then return end
 		if mod.combatInfo.noCombatInVehicle and UnitInVehicle("player") then -- HACK
@@ -3384,7 +3418,9 @@ function VEM:StartCombat(mod, delay, synced, syncedStartHp, noKillRecord)
 				speedTimer:Start()
 			end
 		end
-		if mod.OnCombatStart and not mod.ignoreBestkill then mod:OnCombatStart(delay or 0) end
+		if mod.OnCombatStart and not mod.ignoreBestkill then
+			mod:OnCombatStart(delay or 0, triggered)
+		end
 		if not synced then
 			sendSync("C", (delay or 0).."\t"..mod.id.."\t"..(mod.revision or 0).."\t"..startHp)
 		end
@@ -3425,7 +3461,7 @@ function VEM:UNIT_HEALTH(uId)
 		if combatInfo[LastInstanceMapID] then
 			for i, v in ipairs(combatInfo[LastInstanceMapID]) do
 				if not v.mod.disableHealthCombat and (v.type == "combat" and v.multiMobPullDetection and checkEntry(v.multiMobPullDetection, cId) or v.mob == cId) then
-					self:StartCombat(v.mod, health > 0.97 and 0.5 or mmin(20, (lastCombatStarted and GetTime() - lastCombatStarted) or 2.1), nil, health, health < 0.90) -- Above 97%, boss pulled during combat, set min delay (0.5) / Below 97%, combat enter detection failure, use normal delay (max 20s) / Do not record kill time below 90% (late combat detection)
+					self:StartCombat(v.mod, health > 0.97 and 0.5 or mmin(20, (lastCombatStarted and GetTime() - lastCombatStarted) or 2.1), nil, health, health < 0.90, nil, "UNIT_HEALTH") -- Above 97%, boss pulled during combat, set min delay (0.5) / Below 97%, combat enter detection failure, use normal delay (max 20s) / Do not record kill time below 90% (late combat detection)
 				end
 			end
 		end
@@ -4186,10 +4222,12 @@ function VEM:ToggleRaidBossEmoteFrame(toggle, custom)
 		unRegistered = true
 		RaidBossEmoteFrame:UnregisterEvent("RAID_BOSS_EMOTE")
 		RaidBossEmoteFrame:UnregisterEvent("RAID_BOSS_WHISPER")
+		RaidBossEmoteFrame:UnregisterEvent("CLEAR_BOSS_EMOTES")
 	elseif toggle == 0 and unRegistered then
 		unRegistered = false
 		RaidBossEmoteFrame:RegisterEvent("RAID_BOSS_EMOTE")
 		RaidBossEmoteFrame:RegisterEvent("RAID_BOSS_WHISPER")
+		RaidBossEmoteFrame:RegisterEvent("CLEAR_BOSS_EMOTES")
 	end
 end
 
@@ -4387,7 +4425,6 @@ function VEM:UpdateMapSizes()
 	local dims = VEM.MapSizes[mapName] and VEM.MapSizes[mapName][floor]
 	if dims then
 		currentSizes = dims
---		print(VEM.MapSizes[mapName][floor][1], VEM.MapSizes[mapName][floor][2])
 		return
 	end 
 
@@ -4399,7 +4436,6 @@ function VEM:UpdateMapSizes()
 
 	if not (a1 and b1 and c1 and d1) then return end
 	currentSizes = {abs(c1-a1), abs(d1-b1)}
---	print(abs(c1-a1), abs(d1-b1))
 end
 
 function VEM:GetMapSizes()
@@ -4480,7 +4516,7 @@ do
 			end
 			obj.localization.general.name = string.split(",", t or name)
 			obj.modelId = select(4, EJ_GetCreatureInfo(1, tonumber(name)))
-		elseif name:match("z%d+") then
+		elseif name:match("z%d+") and modId ~= "VEM-PvP" then
 			local t = EJ_GetCreatureInfo(1, 817)(tonumber(name))
 			obj.localization.general.name = string.split(",", t or name)
 			obj.modelId = select(4, EJ_GetCreatureInfo(1, tonumber(name)))
@@ -4645,7 +4681,7 @@ function bossModPrototype:GetBossTarget(cid)
 		if self:GetUnitCreatureId(uId) == cid or UnitGUID(uId) == cid then--Accepts CID or GUID
 			bossuid = uId
 			name = VEM:GetUnitFullName(uId.."target")
-			uid = VEM:GetRaidUnitId(name) or uId.."target"--overrride target uid because uid+"target" is variable uid.
+			uid = VEM:GetRaidUnitId(name) or (UnitExists(uId.."target") and uId.."target")--overrride target uid because uid+"target" is variable uid.
 			break
 		end
 	end
@@ -4656,7 +4692,7 @@ function bossModPrototype:GetBossTarget(cid)
 			if self:GetUnitCreatureId("raid"..i.."target") == cid or UnitGUID("raid"..i.."target") == cid then
 				bossuid = "raid"..i.."target"
 				name = VEM:GetUnitFullName("raid"..i.."targettarget")
-				uid = VEM:GetRaidUnitId(name) or "raid"..i.."targettarget"--overrride target uid because uid+"target" is variable uid.
+				uid = VEM:GetRaidUnitId(name) or (UnitExists("raid"..i.."targettarget") and "raid"..i.."targettarget")--overrride target uid because uid+"target" is variable uid.
 				break
 			end
 		end
@@ -4665,7 +4701,7 @@ function bossModPrototype:GetBossTarget(cid)
 			if self:GetUnitCreatureId("party"..i.."target") == cid or UnitGUID("party"..i.."target") == cid then
 				bossuid = "party"..i.."target"
 				name = VEM:GetUnitFullName("party"..i.."targettarget")
-				uid = VEM:GetRaidUnitId(name) or "party"..i.."targettarget"--overrride target uid because uid+"target" is variable uid.
+				uid = VEM:GetRaidUnitId(name) or (UnitExists("party"..i.."targettarget") and "party"..i.."targettarget")--overrride target uid because uid+"target" is variable uid.
 				break
 			end
 		end
@@ -4704,18 +4740,30 @@ function bossModPrototype:BossTargetScanner(cid, returnFunc, scanInterval, scanT
 	end
 end
 
-function bossModPrototype:checkTankDistance(guid, distance)
-	local guid = guid or self.creatureId--CID fallback since GetBossTarget should sort it out (supports GUID or CID)
+--Now this function works perfectly. But have some limitation due to VEM.RangeCheck:GetDistance() function.
+--Unfortunely, VEM.RangeCheck:GetDistance() function cannot reflects altitude difference. This makes range unreliable.
+--So, we need to cafefully check range in difference altitude (Espcially, tower top and bottom)
+function bossModPrototype:CheckTankDistance(cid, distance, defaultReturn)
+	local cid = cid or self.creatureId--GetBossTarget supports GUID or CID and it will automatically return correct values with EITHER ONE
 	local distance = distance or 40
-	local _, uId, mobuId = self:GetBossTarget(guid)
-	if mobuId and (not uId or (uId and (uId == "boss1" or uId == "boss2" or uId == "boss3" or uId == "boss4" or uId == "boss5"))) then--Mob has no target, or is targeting a UnitID we cannot range check
-		local unitID = (IsInRaid() and "raid") or (IsInGroup() and "party") or "player"
-		for i = 1, VEM:GetNumGroupMembers() do
-			if UnitDetailedThreatSituation(unitID..i, mobuId) == 3 then uId = unitID..i end--Found highest threat target, make their uId
-			break
+	local uId
+	local _, fallbackuId, mobuId = self:GetBossTarget(cid)
+	if mobuId then--Have a valid mob unit ID
+		--First, use trust threat more than fallbackuId and see what we pull from it first.
+		--This is because for CheckTankDistance we want to know who is tanking it, not who it's targeting it.
+		local unitId = (IsInRaid() and "raid") or "party"
+		for i = 0, GetNumGroupMembers() do
+			local id = (i == 0 and "target") or unitId..i
+			local tanking, status = UnitDetailedThreatSituation(id, mobuId)--Tanking may return 0 if npc is temporarily looking at an NPC (IE fracture) but status will still be 3 on true tank
+			if tanking or (status == 3) then uId = id end--Found highest threat target, make them uId
+			if uId then break end
+		end
+		--Did not get anything useful from threat, so use who the boss was looking at, at time of cast (ie fallbackuId)
+		if fallbackuId and not uId then
+			uId = fallbackuId
 		end
 	end
-	if uId then--Now we know who mob is targeting (or highest threat is)
+	if uId then--Now we have a valid uId
 		if UnitIsUnit("player", uId) then return true end--If "player" is target, avoid doing any complicated stuff
 		local x, y = GetPlayerMapPosition(uId)
 		if x == 0 and y == 0 then
@@ -4724,6 +4772,8 @@ function bossModPrototype:checkTankDistance(guid, distance)
 		end
 		if x == 0 and y == 0 then--Failed to pull coords. This is likely a pet or a guardian or an NPC.
 			local inRange2, checkedRange = UnitInRange(uId)--Use an API that works on pets and some NPCS (npcs that get a party/raid/pet ID)
+			if inRange2 and checkedRange then
+			end
 			if checkedRange and not inRange2 then--checkedRange only returns true if api worked, so if we get false, true then we are not near npc
 				return false
 			else--Its probably a totem or just something we can't assess. Fall back to no filtering
@@ -4734,8 +4784,10 @@ function bossModPrototype:checkTankDistance(guid, distance)
 		if inRange and (inRange > distance) then--You are not near the person tanking boss
 			return false
 		end
+		--Tank in range, return true.
+		return true
 	end
-	return true--When we simply can't figure anything out, always return true and allow warnings using this filter to fire
+	return (defaultReturn == nil) or defaultReturn--When we simply can't figure anything out, return true and allow warnings using this filter to fire. But some spells will prefer not to fire(i.e : Galakras tower spell), we can define it on this function calling. 
 end
 
 function bossModPrototype:Stop(cid)
@@ -5047,12 +5099,23 @@ do
 		if not self.option or self.mod.Options[self.option] then
 			if VEM.Options.DontShowBossAnnounces then return end	-- don't show the announces if the spam filter option is set
 			local colorCode = ("|cff%.2x%.2x%.2x"):format(self.color.r * 255, self.color.g * 255, self.color.b * 255)
-			local text = ("%s%s%s|r%s"):format(
-				(VEM.Options.WarningIconLeft and self.icon and textureCode:format(self.icon)) or "",
-				colorCode,
-				pformat(self.text, ...),
-				(VEM.Options.WarningIconRight and self.icon and textureCode:format(self.icon)) or ""
-			)
+			local text
+			if #self.combinedtext > 0 then
+				text = ("%s%s%s|r%s"):format(
+					(VEM.Options.WarningIconLeft and self.icon and textureCode:format(self.icon)) or "",
+					colorCode,
+					pformat(self.text, table.concat(self.combinedtext, "<, >")),
+					(VEM.Options.WarningIconRight and self.icon and textureCode:format(self.icon)) or ""
+				)
+			else
+				text = ("%s%s%s|r%s"):format(
+					(VEM.Options.WarningIconLeft and self.icon and textureCode:format(self.icon)) or "",
+					colorCode,
+					pformat(self.text, ...),
+					(VEM.Options.WarningIconRight and self.icon and textureCode:format(self.icon)) or ""
+				)
+			end
+			table.wipe(self.combinedtext)
 			if not cachedColorFunctions[self.color] then
 				local color = self.color -- upvalue for the function to colorize names, accessing self in the colorize closure is not safe as the color of the announce object might change (it would also prevent the announce from being garbage-collected but announce objects are never destroyed)
 				cachedColorFunctions[color] = function(cap)
@@ -5095,6 +5158,12 @@ do
 		end
 	end
 
+	function announcePrototype:CombinedShow(delay, text, ...)
+		self.combinedtext[#self.combinedtext + 1] = text or ""
+		unschedule(self.Show, self.mod, self)
+		schedule(delay or 0.5, self.Show, self.mod, self, ...)
+	end
+
 	function announcePrototype:Schedule(t, ...)
 		return schedule(t, self.Show, self.mod, self, ...)
 	end
@@ -5112,6 +5181,7 @@ do
 		local obj = setmetatable(
 			{
 				text = self.localization.warnings[text],
+				combinedtext = {},
 				color = VEM.Options.WarningColors[color or 1] or VEM.Options.WarningColors[1],
 				sound = not noSound,
 				mod = self,
@@ -5164,6 +5234,7 @@ do
 		local obj = setmetatable( -- todo: fix duplicate code
 			{
 				text = text,
+				combinedtext = {},
 				announceType = announceType,
 				color = VEM.Options.WarningColors[color or 1] or VEM.Options.WarningColors[1],
 				mod = self,
@@ -5258,7 +5329,7 @@ do
 		)
 		if optionName then
 			obj.option = optionName
-			self:AddBoolOption(optionName, optionDefault, "sound")
+			self:AddBoolOption(obj.option, optionDefault, "sound")
 		elseif not (optionName == false) then
 			obj.option = "Sound"..spellId..(optionSaveVar or "")
 			self:AddBoolOption(obj.option, optionDefault, "sound")
@@ -5308,7 +5379,7 @@ do
 			timer = timer < 2 and self.timer or timer
 			count = count or self.count or 5
 			if timer <= count then count = floor(timer) end
-			if VEM.Options.ShowCountdownText and not self.textDisabled then
+			if VEM.Options.ShowCountdownText and not (self.textDisabled or self.alternateVoice) then
 				if timer >= count then 
 					VEM:Schedule(timer-count, showCountdown, count)
 				else
@@ -5401,9 +5472,10 @@ do
 			mt
 		)
 		obj.option = obj.id
-		self:AddBoolOption(obj.option, optionDefault, "sound")
 		if optionName then
+			self:AddBoolOption(obj.option, optionDefault, "sound")
 		elseif not (optionName == false) then
+			self:AddBoolOption(obj.option, optionDefault, "sound")
 			self.localization.options[obj.option] = VEM_CORE_AUTO_COUNTDOWN_OPTION_TEXT:format(spellId)
 		end
 		tinsert(self.countdowns, obj)
@@ -5440,10 +5512,10 @@ do
 			mt
 		)
 		obj.option = obj.id
-		self:AddBoolOption(obj.option, optionDefault, "sound")
 		if optionName then
+			self:AddBoolOption(obj.option, optionDefault, "sound")
 		elseif not (optionName == false) then
-			obj.option = obj.id
+			self:AddBoolOption(obj.option, optionDefault, "sound")
 			self.localization.options[obj.option] = VEM_CORE_AUTO_COUNTDOWN_OPTION_TEXT2:format(spellId)
 		end
 		tinsert(self.countdowns, obj)
@@ -5533,7 +5605,7 @@ do
 		)
 		if optionName then
 			obj.option = optionName
-			self:AddBoolOption(optionName, optionDefault, "sound")
+			self:AddBoolOption(obj.option, optionDefault, "sound")
 		elseif not (optionName == false) then
 			obj.option = "Countout"..spellId..(optionSaveVar or "")
 			self:AddBoolOption(obj.option, optionDefault, "sound")
@@ -5572,7 +5644,7 @@ do
 		)
 		if optionName then
 			obj.option = optionName
-			self:AddBoolOption(optionName, optionDefault, "misc")
+			self:AddBoolOption(obj.option, optionDefault, "misc")
 		elseif not (optionName == false) then
 			obj.option = "Yell"..(spellId or yellText)..(optionSaveVar or "")
 			self:AddBoolOption(obj.option, optionDefault, "misc")
@@ -5676,6 +5748,11 @@ do
 				VEM:PlaySpecialWarningSound(soundId or 1)
 			end
 		end
+	end
+
+	function specialWarningPrototype:DelayedShow(delay, ...)
+		unschedule(self.Show, self.mod, self, ...)
+		schedule(delay or 0.5, self.Show, self.mod, self, ...)
 	end
 
 	function specialWarningPrototype:Schedule(t, ...)
@@ -6119,6 +6196,12 @@ do
 	end
 	timerPrototype.Show = timerPrototype.Start
 
+	function timerPrototype:DelayedStart(delay, ...)
+		unschedule(self.Start, self.mod, self, ...)
+		schedule(delay or 0.5, self.Start, self.mod, self, ...)
+	end
+	timerPrototype.DelayedShow = timerPrototype.DelayedStart
+
 	function timerPrototype:Schedule(t, ...)
 		return schedule(t, self.Start, self.mod, self, ...)
 	end
@@ -6548,6 +6631,39 @@ function bossModPrototype:AddSpecialWarningOption(name, default, defaultSound, c
 	self:SetOptionCategory(name, cat)
 end
 
+function bossModPrototype:AddSetIconOption(name, spellId, default, isHostile)
+	self.Options[name] = (default == nil) or default
+	self:SetOptionCategory(name, "misc")
+	if isHostile then
+		self.localization.options[name] = VEM_CORE_AUTO_ICONS_OPTION_TEXT2:format(spellId)
+	else
+		self.localization.options[name] = VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(spellId)
+	end
+end
+
+function bossModPrototype:AddRangeFrameOption(range, spellId, default)
+	self.Options["RangeFrame"] = (default == nil) or default
+	self:SetOptionCategory("RangeFrame", "misc")
+	if spellId then
+		self.localization.options["RangeFrame"] = VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(range, spellId)
+	else
+		self.localization.options["RangeFrame"] = VEM_CORE_AUTO_RANGE_OPTION_TEXT_SHORT:format(range)
+	end
+end
+
+function bossModPrototype:AddInfoFrameOption(spellId, default)
+	self.Options["InfoFrame"] = (default == nil) or default
+	self:SetOptionCategory("InfoFrame", "misc")
+	self.localization.options["InfoFrame"] = VEM_CORE_AUTO_INFO_FRAME_OPTION_TEXT:format(spellId)
+end
+
+function bossModPrototype:AddReadyCheckOption(questId, default)
+	self.readyCheckQuestId = questId
+	self.Options["ReadyCheck"] = (default == nil) or default
+	self.localization.options["ReadyCheck"] = VEM_CORE_AUTO_READY_CHECK_OPTION_TEXT
+	self:SetOptionCategory("ReadyCheck", "misc")
+end
+
 function bossModPrototype:AddSliderOption(name, minValue, maxValue, valueStep, default, cat, func)
 	cat = cat or "misc"
 	self.Options[name] = default or 0
@@ -6832,6 +6948,54 @@ function bossModPrototype:SetIcon(target, icon, timer)
 		if oldIcon then
 			self:ScheduleMethod(timer + 1, "SetIcon", target, oldIcon)
 		end
+	end
+end
+
+local iconSortTable = {}
+local iconSet = 0
+
+local function sort_by_group(v1, v2)
+	return VEM:GetRaidSubgroup(VEM:GetUnitFullName(v1)) < VEM:GetRaidSubgroup(VEM:GetUnitFullName(v2))
+end
+
+local function clearSortTable()
+	table.wipe(iconSortTable)
+	iconSet = 0
+end
+
+function bossModPrototype:SetIconBySortedTable(startIcon, reverseIcon, returnFunc)
+	table.sort(iconSortTable, sort_by_group)
+	local icon = startIcon or 1
+	for i, v in ipairs(iconSortTable) do
+		SetRaidTarget(v, icon)--do not use SetIcon function again. It already checked in SetSortedIcon function.
+		if reverseIcon then
+			icon = icon - 1
+		else
+			icon = icon + 1
+		end
+		if returnFunc then
+			self:ScheduleMethod(0, returnFunc, v, icon)--Send icon and target to returnFunc. (Generally used by announce icon targets to raid chat feature)
+		end
+	end
+	self:Schedule(1.5, clearSortTable)--Table wipe delay so if icons go out too early do to low fps or bad latency, when they get new target on table, resort and reapplying should auto correct teh icon within .2-.4 seconds at most.
+end
+
+function bossModPrototype:SetSortedIcon(delay, target, startIcon, maxIcon, reverseIcon, returnFunc)
+	if not target then return end
+	if VEM.Options.DontSetIcons or not enableIcons or (VEM:GetRaidRank(playerName) == 0 and IsInGroup()) then
+		return
+	end
+	if not startIcon then startIcon = 1 end
+	startIcon = startIcon and startIcon >= 0 and startIcon <= 8 and startIcon or 8
+	local uId = VEM:GetRaidUnitId(target)
+	if not uId then uId = target end
+	iconSet = iconSet + 1
+	table.insert(iconSortTable, uId)
+	self:UnscheduleMethod("SetIconBySortedTable")
+	if maxIcon and iconSet == maxIcon then
+		self:SetIconBySortedTable(startIcon, reverseIcon, returnFunc)
+	elseif self:LatencyCheck() then--lag can fail the icons so we check it before allowing.
+		self:ScheduleMethod(delay or 0.5, "SetIconBySortedTable", startIcon, maxIcon, returnFunc)
 	end
 end
 

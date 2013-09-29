@@ -11,7 +11,7 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "语音警告：重要技能",
-	SoundPZ					= "語音警告：当$spell:117878叠加超过三层时提示注意停手",
+	SoundPZD				= "語音警告：当$spell:143579叠加超过三层时提示注意停手",
 	InfoFrame				= "信息框：显示击杀和净化的软泥怪数量",
 	dr						= "减伤提示[警报会在第一个软泥怪撞击到本体时提示]",
 	dr1						= "$spell:143469 1",
@@ -229,7 +229,11 @@ L:SetMiscLocalization({
 	newForces3				= "重新整队！",
 	newForces4				= "库卡隆，支援我！",
 	newForces5				= "下一队，冲上去！",
-	allForces				= "库卡隆，听我的命令，杀了他们！"
+	allForces				= "库卡隆，听我的命令，杀了他们！",
+	Handslipped1			= "不好意思，手滑打了下BOSS",
+	Handslipped2			= "哎呀，手又滑了",
+	Handslipped3			= "难道我这只手是肥皂做的?",
+	Handslipped4			= "请斩断我这只罪恶之手吧！我居然完全忘了要停手！"
 })
 
 -----------------
@@ -244,6 +248,19 @@ L:SetOptionLocalization({
 	SoundWOP				= "语音警告：重要技能",
 	Malhelper				= "===特殊：开啟亚煞极之息辅助图示 (/mal)===",
 	MalhelperSend			= "===辅助图示：启用手动修正模式===",
+	dr						= "减伤提示：$spell:142986 (爆炸前提示)",
+	dr1						= "$spell:142986 1",
+	dr2						= "$spell:142986 2",
+	dr3						= "$spell:142986 3",
+	dr4						= "$spell:142986 4",
+	dr5						= "$spell:142986 5",
+	dr6						= "$spell:142986 6",
+	dr7						= "$spell:142986 7",
+	dr8						= "$spell:142986 8",
+	dr9						= "$spell:142986 9",
+	dr10					= "$spell:142986 10",
+	dr11					= "$spell:142986 11",
+	dr12					= "$spell:142986 12",
 	HudMAP					= "高级定位监视(HUD)：$spell:142913",
 	SetIconOnDisplacedEnergy= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(142913),
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT_SHORT:format("8/5")

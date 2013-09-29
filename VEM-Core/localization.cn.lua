@@ -282,6 +282,7 @@ VEM_CORE_AUTO_TIMER_OPTIONS = {
 
 
 VEM_CORE_AUTO_ICONS_OPTION_TEXT			= "为$spell:%s的目标添加团队标记"
+VEM_CORE_AUTO_ICONS_OPTION_TEXT2		= "为$spell:%s添加团队标记"
 VEM_CORE_AUTO_SOUND_OPTION_TEXT			= "声音警报（快跑啊）：$spell:%s"
 VEM_CORE_AUTO_COUNTDOWN_OPTION_TEXT		= "倒计时：$spell:%s(冷却)"
 VEM_CORE_AUTO_COUNTDOWN_OPTION_TEXT2	= "倒计时：$spell:%s(消散)"
@@ -290,7 +291,8 @@ VEM_CORE_AUTO_YELL_OPTION_TEXT			= "当你受到$spell:%s影响时时大喊"
 VEM_CORE_AUTO_YELL_ANNOUNCE_TEXT		= "" .. UnitName("player") .. "中了%s！"
 VEM_CORE_AUTO_RANGE_OPTION_TEXT			= "距离监视(%s)：$spell:%s"--string used for range so we can use things like "5/2" as a value for that field
 VEM_CORE_AUTO_RANGE_OPTION_TEXT_SHORT		= "距离监视(%s)"--For when a range frame is just used for more than one thing
-
+VEM_CORE_AUTO_INFO_FRAME_OPTION_TEXT		= "信息框：$spell:%s"
+VEM_CORE_AUTO_READY_CHECK_OPTION_TEXT		= "当首领开打时拨放准备检查的音效（即使没有选定目标）"
 
 -- New special warnings
 VEM_CORE_MOVE_SPECIAL_WARNING_BAR		= "可拖动的特别警报"

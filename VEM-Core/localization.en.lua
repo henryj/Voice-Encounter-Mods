@@ -125,8 +125,9 @@ VEM_CORE_SLASHCMD_HELP				= {
 	"/vem broadcast timer <x> <text>: Broadcasts a <x> second VEM Timer with the name <text> to the raid (requires leader/promoted status).",
 	"/vem break <min>: Starts a break timer for <min> minutes. Gives all raid members with VEM a break timer (requires leader/promoted status).",
 	"/vem pull <sec>: Starts a pull timer for <sec> seconds. Gives all raid members with VEM a pull timer (requires leader/promoted status).",
-	"/vem arrow: shows the VEM arrow, see /vem arrow help for details.",
-	"/vem lockout: asks raid members for their current raid instance lockouts (aliases: lockouts, ids) (requires leader/promoted status).",
+	"/vem arrow: Shows the VEM arrow, see /vem arrow help for details.",
+	"/vem lockout: Asks raid members for their current raid instance lockouts (aliases: lockouts, ids) (requires leader/promoted status).",
+	"/vem lag: Performs a raid-wide latency check.",
 	"/vem help: Shows this message."
 }
 
@@ -263,6 +264,7 @@ VEM_CORE_AUTO_TIMER_OPTIONS = {
 
 
 VEM_CORE_AUTO_ICONS_OPTION_TEXT			= "Set icons on $spell:%s targets"
+VEM_CORE_AUTO_ICONS_OPTION_TEXT2		= "Set icons on $spell:%s"
 VEM_CORE_AUTO_SOUND_OPTION_TEXT			= "Play \"run away\" sound for $spell:%s"
 VEM_CORE_AUTO_COUNTDOWN_OPTION_TEXT		= "Play countdown sound for $spell:%s cooldown"
 VEM_CORE_AUTO_COUNTDOWN_OPTION_TEXT2	= "Play countdown sound for when $spell:%s fades"
@@ -271,7 +273,8 @@ VEM_CORE_AUTO_YELL_OPTION_TEXT			= "Yell when you are affected by $spell:%s"
 VEM_CORE_AUTO_YELL_ANNOUNCE_TEXT		= "%s on " .. UnitName("player") .. "!"
 VEM_CORE_AUTO_RANGE_OPTION_TEXT			= "Show range frame (%s) for $spell:%s"--string used for range so we can use things like "5/2" as a value for that field
 VEM_CORE_AUTO_RANGE_OPTION_TEXT_SHORT	= "Show range frame (%s)"--For when a range frame is just used for more than one thing
-
+VEM_CORE_AUTO_INFO_FRAME_OPTION_TEXT	= "Show info frame for $spell:%s"
+VEM_CORE_AUTO_READY_CHECK_OPTION_TEXT	= "Play ready check sound when boss is pulled (even if it's not targeted)"
 
 -- New special warnings
 VEM_CORE_MOVE_SPECIAL_WARNING_BAR	= "Special warning movable"

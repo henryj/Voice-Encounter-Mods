@@ -69,6 +69,11 @@ function()
 	end
 end)
 
+mod:AddBoolOption("dr", true, "sound")
+for i = 1, 12 do
+	mod:AddBoolOption("dr"..i, false, "sound")
+end
+
 local VEMHudMap = VEMHudMap
 local free = VEMHudMap.free
 local function register(e)	
@@ -84,9 +89,17 @@ local playerDebuffs = 0
 local breathCast = 0
 local arcingSmashCount = 0
 local seismicSlamCount = 0
+local ieCount = 0
 local displacedCast = false
 local UnitDebuff = UnitDebuff
 local UnitIsDeadOrGhost = UnitIsDeadOrGhost
+
+local function MyJS()
+	if mod.Options["dr"..ieCount] then
+		return true
+	end
+	return false
+end
 
 local debuffFilter
 do
@@ -138,6 +151,7 @@ function mod:OnCombatStart(delay)
 	breathCast = 0
 	arcingSmashCount = 0
 	seismicSlamCount = 0
+	ieCount = 0
 	timerSeismicSlamCD:Start(5-delay, 1)
 	timerArcingSmashCD:Start(11-delay, 1)
 	timerBreathofYShaarjCD:Start(-delay, 1)
@@ -154,7 +168,7 @@ function mod:OnCombatStart(delay)
 	if self.Options.RangeFrame then
 		VEM.RangeCheck:Show(5)
 	end
-	if self.Options.Malhelper then
+	if self.Options.Malhelper and (not IsAddOnLoaded("Malkorok")) then
 		if self:IsDifficulty("normal25", "heroic25") then
 			ExRT:MalkorokAILoad()
 		else
@@ -175,7 +189,7 @@ function mod:OnCombatEnd()
 	if self.Options.HudMAP then
 		VEMHudMap:FreeEncounterMarkers()
 	end
-	if self.Options.Malhelper then
+	if self.Options.Malhelper and (not IsAddOnLoaded("Malkorok")) then
 		ExRT:ExBossmodsCloseAll()
 	end
 end
@@ -324,6 +338,7 @@ end
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 142898 then--Faster than combat log
 		arcingSmashCount = arcingSmashCount + 1
+		ieCount = ieCount + 1
 		warnArcingSmash:Show(arcingSmashCount)
 		specWarnArcingSmash:Show(arcingSmashCount)
 		timerImplodingEnergy:Start()
@@ -331,6 +346,10 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		specWarnImplodingEnergySoon:Schedule(5)
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_yhz.mp3") --圓弧斬快躲
 		sndWOP:Schedule(5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_fscq.mp3") --分散踩圈
+		if MyJS() then
+			sndWOP:Schedule(5.8, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
+			sndWOP:Schedule(6.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\defensive.mp3")
+		end
 		if arcingSmashCount < 3 then
 			timerArcingSmashCD:Start(nil, arcingSmashCount+1)
 		end

@@ -10,7 +10,7 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
-	SoundPZ					= "Voice Warning: When $spell:117878 stacks more than 3 warn you to stop attack",
+	SoundPZ					= "Voice Warning: When $spell:143579 stacks more than 3 warn you to stop attack",
 	InfoFrame				= "Info Frame: Track how many puddles have been killed or purified",
 	dr						= "Defensive warning[Warning will be showed at $spell:143020, but you should use your defensive cooldowns before contact]",
 	dr1						= "$spell:143020 1",
@@ -232,6 +232,10 @@ L:SetMiscLocalization({
 	newForces4				= "Kor'kron, at my side!",
 	newForces5				= "Next squad, to the front!",
 	allForces				= "All Kor'kron... under my command... kill them... NOW!"
+	Handslipped1			= "不好意思，手滑打了下BOSS",
+	Handslipped2			= "哎呀，手又滑了",
+	Handslipped3			= "難道我這隻手是肥皂做的?",
+	Handslipped4			= "請斬斷我這隻罪惡之手吧！我居然完全忘了要停手！"
 })
 
 
@@ -247,12 +251,24 @@ L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
 	Malhelper				= "===Special: Enable $spell:142842 graph assist (/mal)===",
 	MalhelperSend			= "===Assist Graph: Enable manual adjust mode===",
+	dr						= "減傷提示：$spell:142986 (爆炸前提示)",
+	dr1						= "$spell:142986 1",
+	dr2						= "$spell:142986 2",
+	dr3						= "$spell:142986 3",
+	dr4						= "$spell:142986 4",
+	dr5						= "$spell:142986 5",
+	dr6						= "$spell:142986 6",
+	dr7						= "$spell:142986 7",
+	dr8						= "$spell:142986 8",
+	dr9						= "$spell:142986 9",
+	dr10					= "$spell:142986 10",
+	dr11					= "$spell:142986 11",
+	dr12					= "$spell:142986 12",
 	HudMAP					= "HUD MAP: $spell:142913",
 	SetIconOnDisplacedEnergy= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(142913),
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT_SHORT:format("8/5")
 })
 
-MHExRTL = {}
 MHExRTL.panelbossmodsmalkorokdanger ="! Danger !"
 MHExRTL.sendnote ="Open manually modify the map, left click to select, right to cancel, your changes will be synchronized to the whole group, please use caution!"
 

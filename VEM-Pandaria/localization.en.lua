@@ -102,7 +102,7 @@ L:SetOptionLocalization({
 
 L:SetMiscLocalization({
 	Pull					= "We shall see.",
---	Victory					= "",
+	Victory					= "SOME RANDOM BLAH BLAH BLAH",
 	VictoryDem				= "Rakkas shi alar re pathrebosh il zila rethule kiel shi shi belaros rikk kanrethad adare revos shi xi thorje Rukadare zila te lok zekul melar "--Cover all bases and all
 })
 

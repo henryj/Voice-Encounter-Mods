@@ -119,7 +119,7 @@ function mod:SPELL_CAST_START(args)
 		warnSeismicActivity:Show()
 		timerShockPulseCD:Start(nil, 1)
 		if self:IsDifficulty("heroic10", "heroic25") then
-			timerMortarBarrageCD:Start(15)
+			timerMortarBarrageCD:Start(20)
 		end
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_qgzb.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
@@ -249,9 +249,6 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 			sndWOP:Schedule(115, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 			siegeMode = false
 		end
---[[		if self.Options.RangeFrame then
-			VEM.RangeCheck:Show(8)
-		end]]
 	elseif spellId == 144555 then
 		warnMortarBarrage:Show()
 		specWarnMortarBarrage:Show()
