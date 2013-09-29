@@ -232,10 +232,10 @@ L:SetMiscLocalization({
 	newForces4				= "Kor'kron, at my side!",
 	newForces5				= "Next squad, to the front!",
 	allForces				= "All Kor'kron... under my command... kill them... NOW!"
-	Handslipped1			= "不好意思，手滑打了下BOSS",
-	Handslipped2			= "哎呀，手又滑了",
-	Handslipped3			= "難道我這隻手是肥皂做的?",
-	Handslipped4			= "請斬斷我這隻罪惡之手吧！我居然完全忘了要停手！"
+	Handslipped1			= "Sorry, my fingers slipped and hit the boss",
+	Handslipped2			= "ouch, slipped again",
+	Handslipped3			= "I guess my fingers are made with soap?",
+	Handslipped4			= "Please cut my evil fingers off! I forgot to stop dps at all!"
 })
 
 
@@ -251,7 +251,7 @@ L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
 	Malhelper				= "===Special: Enable $spell:142842 graph assist (/mal)===",
 	MalhelperSend			= "===Assist Graph: Enable manual adjust mode===",
-	dr						= "減傷提示：$spell:142986 (爆炸前提示)",
+	dr						= "Defensive Warning：$spell:142986 (before explode)",
 	dr1						= "$spell:142986 1",
 	dr2						= "$spell:142986 2",
 	dr3						= "$spell:142986 3",
