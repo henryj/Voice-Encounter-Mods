@@ -251,7 +251,7 @@ L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
 	Malhelper				= "===Special: Enable $spell:142842 graph assist (/mal)===",
 	MalhelperSend			= "===Assist Graph: Enable manual adjust mode===",
-	dr						= "Defensive Warning��$spell:142986 (before explode)",
+	dr						= "Defensive Warning: $spell:142986 (before explode)",
 	dr1						= "$spell:142986 1",
 	dr2						= "$spell:142986 2",
 	dr3						= "$spell:142986 3",
