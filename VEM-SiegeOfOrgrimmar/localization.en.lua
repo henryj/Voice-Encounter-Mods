@@ -271,6 +271,7 @@ L:SetOptionLocalization({
 	RangeFrame				= VEM_CORE_AUTO_RANGE_OPTION_TEXT_SHORT:format("8/5")
 })
 
+MHExRTL = {}
 MHExRTL.panelbossmodsmalkorokdanger ="! Danger !"
 MHExRTL.sendnote ="Open manually modify the map, left click to select, right to cancel, your changes will be synchronized to the whole group, please use caution!"
 
