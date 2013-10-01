@@ -39,7 +39,7 @@ local specWarnBreathofYShaarj			= mod:NewSpecialWarningCount(142842, nil, nil, n
 local specWarnFatalStrike				= mod:NewSpecialWarningStack(142990, mod:IsTank(), 12)--stack guessed, based on CD
 local specWarnFatalStrikeOther			= mod:NewSpecialWarningTarget(142990, mod:IsTank())
 
-local timerBloodRage					= mod:NewBuffActiveTimer(22.5, 142879)--2.5sec cast plus 20 second duration
+local timerBloodRage					= mod:NewBuffActiveTimer(20.5, 142879)--2.5sec cast plus 20 second duration
 local timerDisplacedEnergyCD			= mod:NewNextTimer(11, 142913)
 local timerBloodRageCD					= mod:NewNextTimer(124.7, 142879)
 --Might of the Kor'kron
@@ -54,10 +54,6 @@ local berserkTimer						= mod:NewBerserkTimer(360)
 --local countdownImplodingEnergy			= mod:NewCountdown(10, 142986)
 --local soundDisplacedEnergy				= mod:NewSound(142913)
 
-mod:AddBoolOption("RangeFrame", true)--Various things
-mod:AddBoolOption("SetIconOnDisplacedEnergy", false)
-mod:AddBoolOption("HudMAP", false, "sound")
-
 mod:AddBoolOption("Malhelper", true, "sound")
 mod:AddBoolOption("MalhelperSend", false, "sound", 
 function()
@@ -68,6 +64,10 @@ function()
 		VEM.MalHelperEnabled = false
 	end
 end)
+
+mod:AddBoolOption("RangeFrame", true)--Various things
+mod:AddBoolOption("SetIconOnDisplacedEnergy", false)
+mod:AddBoolOption("HudMAP", false, "sound")
 
 mod:AddBoolOption("dr", true, "sound")
 for i = 1, 12 do
@@ -200,7 +200,7 @@ function mod:SPELL_CAST_START(args)
 		warnBloodRage:Show()
 		specWarnBloodRage:Show()
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\gather.mp3")--快集合
-		timerBloodRage:Start()
+--		timerBloodRage:Start()
 		timerDisplacedEnergyCD:Start(3.5)
 	elseif args.spellId == 142842 then
 		breathCast = breathCast + 1
@@ -251,6 +251,8 @@ function mod:SPELL_CAST_SUCCESS(args)
 			local elapsed, total = timerBloodRageCD:GetTime()
 			timerBloodRageCD:Update(elapsed+2.5, total)
 		end
+	elseif args.spellId == 142879 then
+		timerBloodRage:Start()
 	end
 end
 

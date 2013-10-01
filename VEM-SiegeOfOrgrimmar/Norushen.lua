@@ -99,12 +99,12 @@ function()
 	local checkname = mod.Options.prevplayer
 	local uId = VEM:GetRaidUnitId(checkname)
 	if uId then
-		VEM:AddMsg("["..L.name.."]".."|cFF00FF00"..mod.localization.options["prevplayer"]..VEM_CORE_SETTO..checkname.."|r")
-		SendChatMessage("["..L.name.."]"..VEM_CORE_SETWISP, "WHISPER", nil, checkname)
+		VEM:AddMsg("["..L.nameset.."]".."|cFF00FF00"..mod.localization.options["prevplayer"]..VEM_CORE_SETTO..checkname.."|r")
+		SendChatMessage("["..L.nameset.."]"..VEM_CORE_SETWISP, "WHISPER", nil, checkname)
 	else
-		VEM:AddMsg("["..L.name.."]"..VEM_CORE_WRONGSET.."\""..mod.Options.prevplayer.."\"")
-		VEM:AddMsg("["..L.name.."]"..VEM_CORE_WRONGSET.."\""..mod.Options.prevplayer.."\"")
-		VEM:AddMsg("["..L.name.."]"..VEM_CORE_WRONGSET.."\""..mod.Options.prevplayer.."\"")
+		VEM:AddMsg("["..L.nameset.."]"..VEM_CORE_WRONGSET.."\""..mod.Options.prevplayer.."\"")
+		VEM:AddMsg("["..L.nameset.."]"..VEM_CORE_WRONGSET.."\""..mod.Options.prevplayer.."\"")
+		VEM:AddMsg("["..L.nameset.."]"..VEM_CORE_WRONGSET.."\""..mod.Options.prevplayer.."\"")
 	end
 end)
 

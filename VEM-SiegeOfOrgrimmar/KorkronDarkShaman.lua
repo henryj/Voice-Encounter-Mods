@@ -197,7 +197,7 @@ function mod:SPELL_CAST_START(args)
 	elseif args.spellId == 143990 and mod.Options.SoundEle then
 		timerFoulGeyserCD:Start()
 		specWarnFoulGeyser:Show()
-		countdownFoulGeyser:Start()
+--		countdownFoulGeyser:Start()
 	elseif args.spellId == 144070 and mod.Options.SoundEnh then
 		warnAshenWall:Show()
 		timerAshenWallCD:Start()

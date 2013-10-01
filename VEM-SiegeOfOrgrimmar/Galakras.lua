@@ -105,11 +105,11 @@ function()
 	if mod.Options.flamecount == "" then return end
 	local checknum = tonumber(mod.Options.flamecount)	
 	if type(checknum) == "number" then
-		VEM:AddMsg("["..L.name.."]".."|cFF00FF00"..mod.localization.options["flamecount"]..VEM_CORE_SETTO..checknum.."|r")
+		VEM:AddMsg("["..L.nameset.."]".."|cFF00FF00"..mod.localization.options["flamecount"]..VEM_CORE_SETTO..checknum.."|r")
 	else
-		VEM:AddMsg("["..L.name.."]"..VEM_CORE_WRONGSET.."\""..mod.Options.flamecount.."\"")
-		VEM:AddMsg("["..L.name.."]"..VEM_CORE_WRONGSET.."\""..mod.Options.flamecount.."\"")
-		VEM:AddMsg("["..L.name.."]"..VEM_CORE_WRONGSET.."\""..mod.Options.flamecount.."\"")
+		VEM:AddMsg("["..L.nameset.."]"..VEM_CORE_WRONGSET.."\""..mod.Options.flamecount.."\"")
+		VEM:AddMsg("["..L.nameset.."]"..VEM_CORE_WRONGSET.."\""..mod.Options.flamecount.."\"")
+		VEM:AddMsg("["..L.nameset.."]"..VEM_CORE_WRONGSET.."\""..mod.Options.flamecount.."\"")
 	end
 end)
 

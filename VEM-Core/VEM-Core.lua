@@ -50,7 +50,7 @@
 --  Globals/Default Options  --
 -------------------------------
 VEM = {
-	Revision = tonumber(("$Revision: 10460 $"):sub(12, -3)),
+	Revision = tonumber(("$Revision: 10490 $"):sub(12, -3)),
 	DisplayVersion = "(VEM) 5.4.3", -- the string that is shown as version
 	DisplayReleaseVersion = "5.4.2", -- Needed to work around bigwigs sending improper version information
 	ReleaseRevision = 10395 -- the revision of the latest stable version that is available
@@ -2200,7 +2200,7 @@ function VEM:ScenarioCheck()
 	if combatInfo[LastInstanceMapID] then
 		for i, v in ipairs(combatInfo[LastInstanceMapID]) do
 			if (v.type == "scenario") and checkEntry(v.msgs, LastInstanceMapID) then
-				VEM:StartCombat(v.mod, 0, nil, nil, nil, nil, "LOADING_SCREEN_DIASBLED")
+				VEM:StartCombat(v.mod, 0, "LOADING_SCREEN_DIASBLED")
 			end
 		end
 	end
@@ -2318,17 +2318,20 @@ do
 		end
 	end
 
-	syncHandlers["C"] = function(sender, delay, mod, revision, startHp)
+	syncHandlers["C"] = function(sender, delay, mod, modRevision, startHp, vemRevision)
 		local _, instanceType = GetInstanceInfo()
+		if sender == playerName then return end
 		if instanceType == "pvp" then return end
 		if not IsEncounterInProgress() and instanceType == "raid" and IsPartyLFG() then return end--Ignore syncs if we cannot validate IsEncounterInProgress as true
 		local lag = select(4, GetNetStats()) / 1000
 		delay = tonumber(delay or 0) or 0
 		mod = VEM:GetModByName(mod or "")
-		revision = tonumber(revision or 0) or 0
+		modRevision = tonumber(modRevision or 0) or 0
+		vemRevision = tonumber(vemRevision or 0) or 0
 		startHp = tonumber(startHp or -1) or -1
-		if mod and delay and (not mod.zones or mod.zones[LastInstanceMapID]) and (not mod.minSyncRevision or revision >= mod.minSyncRevision) then
-			VEM:StartCombat(mod, delay + lag, true, startHp, nil, nil, "SYNC from - ", sender)
+		if vemRevision < 10481 then return end
+		if mod and delay and (not mod.zones or mod.zones[LastInstanceMapID]) and (not mod.minSyncRevision or modRevision >= mod.minSyncRevision) then
+			VEM:StartCombat(mod, delay + lag, "SYNC from - "..sender, true, startHp)
 		end
 	end
 
@@ -2552,7 +2555,7 @@ do
 		local accessList = {}
 		local savedSender
 
-		local inspopup = CreateFrame("Frame", "VEMINSTANCEPOPUP", UIParent)
+		local inspopup = CreateFrame("Frame", "VEMPopupLockout", UIParent)
 		inspopup:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
 			edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
 			tile = true, tileSize = 16, edgeSize = 16,
@@ -2648,11 +2651,11 @@ do
 		end
 
 		syncHandlers["IRE"] = function(sender)
-			local popup = VEMINSTANCEPOPUP:IsShown()
+			local popup = inspopup:IsShown()
 			if popup and savedSender == sender then -- found the popup with the correct data
 				savedSender = nil
 				VEM:Unschedule(autoDecline)
-				VEMINSTANCEPOPUP:Hide()
+				inspopup:Hide()
 			end
 		end
 
@@ -3150,9 +3153,9 @@ do
 			buildTargetList()
 			if targetList[mob] then
 				if delay > 0 and UnitAffectingCombat(targetList[mob]) then
-					VEM:StartCombat(mod, delay, nil, nil, nil, nil, "PLAYER_TARGET")
-				elseif select(2, GetInstanceInfo()) == "none" then
-					VEM:StartCombat(mod, 0, nil, nil, nil, true, "PLAYER_TARGET_AND_YELL")
+					VEM:StartCombat(mod, delay, "PLAYER_TARGET")
+				elseif (delay == 0) and select(2, GetInstanceInfo()) == "none" then
+					VEM:StartCombat(mod, 0, "PLAYER_TARGET_AND_YELL")
 				end
 			end
 			clearTargetList()
@@ -3193,8 +3196,8 @@ do
 	end
 
 	local function isBossEngaged(cId)
-		-- note that this is designed to work with any number of bosses, but it might be sufficient to check the first 4 unit ids
-		-- TODO: check if the client supports more than 4 boss unit IDs...just because the default boss health frame is limited to 4 doesn't mean there can't be more
+		-- note that this is designed to work with any number of bosses, but it might be sufficient to check the first 5 unit ids
+		-- TODO: check if the client supports more than 5 boss unit IDs...just because the default boss health frame is limited to 5 doesn't mean there can't be more
 		local i = 1
 		repeat
 			local bossUnitId = "boss"..i
@@ -3212,7 +3215,7 @@ do
 		if combatInfo[LastInstanceMapID] then
 			for i, v in ipairs(combatInfo[LastInstanceMapID]) do
 				if v.type == "combat" and isBossEngaged(v.multiMobPullDetection or v.mob) then
-					self:StartCombat(v.mod, 0, nil, nil, nil, nil, "IEEU")
+					self:StartCombat(v.mod, 0, "IEEU")
 				end
 			end
 		end
@@ -3233,7 +3236,7 @@ do
 		if combatInfo[LastInstanceMapID] then
 			for i, v in ipairs(combatInfo[LastInstanceMapID]) do
 				if v.type == type and checkEntry(v.msgs, msg) or v.type == type .. "_regex" and checkExpressionList(v.msgs, msg) then
-					VEM:StartCombat(v.mod, 0, nil, nil, nil, nil, "MONSTER_MESSAGE")
+					VEM:StartCombat(v.mod, 0, "MONSTER_MESSAGE")
 				elseif v.type == "combat_" .. type and checkEntry(v.msgs, msg) then
 					scanForCombat(v.mod, v.mob, 0)
 				end
@@ -3282,50 +3285,63 @@ local savedDifficulty
 local difficultyText
 local flexSize
 
-function checkWipe(confirm)
+function checkWipe(isIEEU, confirm)
 	if #inCombat > 0 then
 		if not savedDifficulty or not difficultyText then--prevent error if savedDifficulty or difficultyText is nil
 			savedDifficulty, difficultyText = VEM:GetCurrentInstanceDifficulty()
 		end
-		local wipe = true
+		local wipe = 1 -- 0: no wipe, 1: normal wipe, 2: wipe by UnitExists check.
 		if IsInScenarioGroup() then -- do not wipe in Scenario Group even player is ghost.
-			wipe = false
+			wipe = 0
 		elseif IsEncounterInProgress() then
-			wipe = false
+			wipe = 0
 		elseif InCombatLockdown() then
-			wipe = false
+			wipe = 0
+			if isIEEU then--Due to SoO combat locking on bug, do one more step on wipe check.
+				wipe = 2
+				for i = 1, 5 do
+					if UnitExists("boss"..i) then
+						wipe = 0 
+						break
+					end
+				end
+			end
 		elseif savedDifficulty == "worldboss" and UnitIsDeadOrGhost("player") then -- do not wipe on player dead or ghost while worldboss encounter.
-			wipe = false
+			wipe = 0
 		else
 			local uId = (IsInRaid() and "raid") or "party"
 			for i = 0, GetNumGroupMembers() do
 				local id = (i == 0 and "player") or uId..i
 				if UnitAffectingCombat(id) and not UnitIsDeadOrGhost(id) then
-					wipe = false
+					wipe = 0
 					break
 				end
 			end
 		end
-		if not wipe then
-			VEM:Schedule(3, checkWipe)
+		if wipe == 0 then
+			VEM:Schedule(3, checkWipe, isIEEU)
 		elseif confirm then
 			for i = #inCombat, 1, -1 do
+				if VEM.Options.DebugMode then
+					local reason = (wipe == 1 and "Normal Wipe" or "Cannot found BossN uId")
+					print("You wiped. Reason : "..reason)
+				end
 				VEM:EndCombat(inCombat[i], true)
 			end
 		else
-			local maxDelayTime = (savedDifficulty == "worldboss" and 30) or 5 --wait 25s more on worldboss do actual wipe.
+			local maxDelayTime = (savedDifficulty == "worldboss" and 30) or (wipe == 2 and 20) or 5 --wait 25s more on worldboss do actual wipe, 15 sec more for UnitExists check.
 			for i, v in ipairs(inCombat) do
 				maxDelayTime = v.combatInfo and v.combatInfo.wipeTimer and v.combatInfo.wipeTimer > maxDelayTime and v.combatInfo.wipeTimer or maxDelayTime
 			end
-			VEM:Schedule(maxDelayTime, checkWipe, true)
+			VEM:Schedule(maxDelayTime, checkWipe, isIEEU, true)
 		end
 	end
 end
 
-function VEM:StartCombat(mod, delay, synced, syncedStartHp, noKillRecord, triggered, event, sender)
+function VEM:StartCombat(mod, delay, event, synced, syncedStartHp)
 	if VEM.Options.DebugMode then
 		if event then
-			print("VEM:StartCombat called by : "..event..(sender or ""))
+			print("VEM:StartCombat called by : "..event)
 		else
 			print("VEM:StartCombat called by individual mod or unknown reason.")
 		end
@@ -3379,7 +3395,7 @@ function VEM:StartCombat(mod, delay, synced, syncedStartHp, noKillRecord, trigge
 		mod.inCombat = true
 		mod.blockSyncs = nil
 		mod.combatInfo.pull = GetTime() - (delay or 0)
-		self:Schedule(mod.minCombatTime or 3, checkWipe)
+		self:Schedule(mod.minCombatTime or 3, checkWipe, (event or "") == "IEEU")
 		if (VEM.Options.AlwaysShowHealthFrame or mod.Options.HealthFrame) and not mod.inScenario then
 			VEM.BossHealth:Show(mod.localization.general.name)
 			if mod.bossHealthInfo then
@@ -3390,8 +3406,8 @@ function VEM:StartCombat(mod, delay, synced, syncedStartHp, noKillRecord, trigge
 				VEM.BossHealth:AddBoss(mod.combatInfo.mob, mod.localization.general.name)
 			end
 		end
-		local startHp = mod:GetBossHP(mod.mainBossId or mod.combatInfo.mob) or ((tonumber(syncedStartHp) or 1) < 1 and syncedStartHp) or -1
-		if (mod:IsDifficulty("worldboss") and startHp < 0.98) or noKillRecord then--Boss was not full health when engaged, disable combat start timer and kill record
+		local startHp = (syncedStartHp and (tonumber(syncedStartHp))) or mod:GetBossHP(mod.mainBossId or mod.combatInfo.mob) or -1
+		if (mod:IsDifficulty("worldboss") and startHp < 0.98) or (event == "UNIT_HEALTH" and startHp < 0.90) then--Boss was not full health when engaged, disable combat start timer and kill record
 			mod.ignoreBestkill = true
 		else--Reset ignoreBestkill after wipe
 			mod.ignoreBestkill = false
@@ -3419,10 +3435,10 @@ function VEM:StartCombat(mod, delay, synced, syncedStartHp, noKillRecord, trigge
 			end
 		end
 		if mod.OnCombatStart and not mod.ignoreBestkill then
-			mod:OnCombatStart(delay or 0, triggered)
+			mod:OnCombatStart(delay or 0, event == "PLAYER_TARGET_AND_YELL")
 		end
 		if not synced then
-			sendSync("C", (delay or 0).."\t"..mod.id.."\t"..(mod.revision or 0).."\t"..startHp)
+			sendSync("C", (delay or 0).."\t"..mod.id.."\t"..(mod.revision or 0).."\t"..startHp.."\t"..VEM.Revision)
 		end
 		fireEvent("pull", mod, delay, synced, startHp)
 		self:ToggleRaidBossEmoteFrame(1)
@@ -3461,7 +3477,7 @@ function VEM:UNIT_HEALTH(uId)
 		if combatInfo[LastInstanceMapID] then
 			for i, v in ipairs(combatInfo[LastInstanceMapID]) do
 				if not v.mod.disableHealthCombat and (v.type == "combat" and v.multiMobPullDetection and checkEntry(v.multiMobPullDetection, cId) or v.mob == cId) then
-					self:StartCombat(v.mod, health > 0.97 and 0.5 or mmin(20, (lastCombatStarted and GetTime() - lastCombatStarted) or 2.1), nil, health, health < 0.90, nil, "UNIT_HEALTH") -- Above 97%, boss pulled during combat, set min delay (0.5) / Below 97%, combat enter detection failure, use normal delay (max 20s) / Do not record kill time below 90% (late combat detection)
+					self:StartCombat(v.mod, health > 0.97 and 0.5 or mmin(20, (lastCombatStarted and GetTime() - lastCombatStarted) or 2.1), "UNIT_HEALTH", nil, health) -- Above 97%, boss pulled during combat, set min delay (0.5) / Below 97%, combat enter detection failure, use normal delay (max 20s)
 				end
 			end
 		end
@@ -3903,10 +3919,18 @@ do
 			mod.inCombat = true
 			mod.blockSyncs = nil
 			mod.combatInfo.pull = GetTime() - time + lag
+			local isIEEU
+			--Hack for wipe function working correctly on timer recovery.
+			for i = 1, 5 do
+				if UnitExists("boss"..i) then
+					isIEEU = true
+					break
+				end
+			end
 			if mod.minCombatTime then
-				self:Schedule(mmax((mod.minCombatTime - time - lag), 3), checkWipe)
+				self:Schedule(mmax((mod.minCombatTime - time - lag), 3), checkWipe, isIEEU)
 			else
-				self:Schedule(3, checkWipe)
+				self:Schedule(3, checkWipe, isIEEU)
 			end
 			if (VEM.Options.AlwaysShowHealthFrame or mod.Options.HealthFrame) and not mod.inSecnario then
 				VEM.BossHealth:Show(mod.localization.general.name)
@@ -4473,7 +4497,7 @@ do
 	local modsById = setmetatable({}, {__mode = "v"})
 	local mt = {__index = bossModPrototype}
 
-	function VEM:NewMod(name, modId, modSubTab, instanceId, creatureInfoId)
+	function VEM:NewMod(name, modId, modSubTab, instanceId, nameModifier)
 		name = tostring(name) -- the name should never be a number of something as it confuses sync handlers that just receive some string and try to get the mod from it
 		if modsById[name] then error("VEM:NewMod(): Mod names are used as IDs and must therefore be unique.", 2) end
 		local obj = setmetatable(
@@ -4508,28 +4532,34 @@ do
 		end
 
 		if tonumber(name) then
-			local t = ""
-			if type(creatureInfoId) == "number" then
-				t = select(2, EJ_GetCreatureInfo(creatureInfoId, tonumber(name)))
-			else
-				t = EJ_GetEncounterInfo(tonumber(name))
+			local t = EJ_GetEncounterInfo(tonumber(name))
+			if type(nameModifier) == "number" then--Get name form EJ_GetCreatureInfo
+				t = select(2, EJ_GetCreatureInfo(nameModifier, tonumber(name)))
+			elseif type(nameModifier) == "function" then--custom name modifiy function
+				t = nameModifier(t or name)
+			else--default name modify
+				t = string.split(",", t or name)
 			end
-			obj.localization.general.name = string.split(",", t or name)
-			obj.modelId = select(4, EJ_GetCreatureInfo(1, tonumber(name)))
-		elseif name:match("z%d+") and modId ~= "VEM-PvP" then
-			local t = EJ_GetCreatureInfo(1, 817)(tonumber(name))
-			obj.localization.general.name = string.split(",", t or name)
+			obj.localization.general.name = t
 			obj.modelId = select(4, EJ_GetCreatureInfo(1, tonumber(name)))
 		elseif name:match("z%d+") then
 			local t = GetRealZoneText(string.sub(name, 2))
-			obj.localization.general.name = string.split(",", t or name)
+			if type(nameModifier) == "number" then--do nothing
+			elseif type(nameModifier) == "function" then--custom name modifiy function
+				t = nameModifier(t or name)
+			else--default name modify
+				t = string.split(",", t or name)
+			end
+			obj.localization.general.name = t
 		elseif name:match("d%d+") then
 			local t = GetDungeonInfo(string.sub(name, 2))
-			if modId == "VEM-ProvingGrounds-MoP" then
-				obj.localization.general.name = select(2, string.split(":", t or name))
-			else
-				obj.localization.general.name = string.split(",", t or name)
+			if type(nameModifier) == "number" then--do nothing
+			elseif type(nameModifier) == "function" then--custom name modifiy function
+				t = nameModifier(t or name)
+			else--default name modify
+				t = string.split(",", t or name)
 			end
+			obj.localization.general.name = t
 		end
 		tinsert(self.Mods, obj)
 		modsById[name] = obj
@@ -5101,10 +5131,17 @@ do
 			local colorCode = ("|cff%.2x%.2x%.2x"):format(self.color.r * 255, self.color.g * 255, self.color.b * 255)
 			local text
 			if #self.combinedtext > 0 then
+				--Throttle spam.
+				local displayText = table.concat(self.combinedtext, "<, >")
+				if self.combinedcount == 1 then
+					displayText = displayText.." "..VEM_CORE_GENERIC_WARNING_OTHERS
+				elseif self.combinedcount > 1 then 
+					displayText = displayText.." "..VEM_CORE_GENERIC_WARNING_OTHERS2:format(self.combinedcount) 
+				end
 				text = ("%s%s%s|r%s"):format(
 					(VEM.Options.WarningIconLeft and self.icon and textureCode:format(self.icon)) or "",
 					colorCode,
-					pformat(self.text, table.concat(self.combinedtext, "<, >")),
+					pformat(self.text, displayText),
 					(VEM.Options.WarningIconRight and self.icon and textureCode:format(self.icon)) or ""
 				)
 			else
@@ -5115,6 +5152,7 @@ do
 					(VEM.Options.WarningIconRight and self.icon and textureCode:format(self.icon)) or ""
 				)
 			end
+			self.combinedcount = 0
 			table.wipe(self.combinedtext)
 			if not cachedColorFunctions[self.color] then
 				local color = self.color -- upvalue for the function to colorize names, accessing self in the colorize closure is not safe as the color of the announce object might change (it would also prevent the announce from being garbage-collected but announce objects are never destroyed)
@@ -5159,7 +5197,11 @@ do
 	end
 
 	function announcePrototype:CombinedShow(delay, text, ...)
-		self.combinedtext[#self.combinedtext + 1] = text or ""
+		if #self.combinedtext < 8 then--Throttle spam. We may not need more than 9 targets..
+			self.combinedtext[#self.combinedtext + 1] = text or ""
+		else
+			self.combinedcount = self.combinedcount + 1
+		end
 		unschedule(self.Show, self.mod, self)
 		schedule(delay or 0.5, self.Show, self.mod, self, ...)
 	end
@@ -5182,6 +5224,7 @@ do
 			{
 				text = self.localization.warnings[text],
 				combinedtext = {},
+				combinedcount = 0,
 				color = VEM.Options.WarningColors[color or 1] or VEM.Options.WarningColors[1],
 				sound = not noSound,
 				mod = self,
@@ -5235,6 +5278,7 @@ do
 			{
 				text = text,
 				combinedtext = {},
+				combinedcount = 0,
 				announceType = announceType,
 				color = VEM.Options.WarningColors[color or 1] or VEM.Options.WarningColors[1],
 				mod = self,
@@ -5287,16 +5331,16 @@ do
 		return newAnnounce(self, "stack", spellId, color or 2, ...)
 	end
 
-	function bossModPrototype:NewCastAnnounce(spellId, color, castTime, icon, optionDefault, optionName)
-		return newAnnounce(self, "cast", spellId, color or 3, icon, optionDefault, optionName, castTime)
+	function bossModPrototype:NewCastAnnounce(spellId, color, castTime, icon, optionDefault, optionName, ...)
+		return newAnnounce(self, "cast", spellId, color or 3, icon, optionDefault, optionName, castTime, ...)
 	end
 
 	function bossModPrototype:NewSoonAnnounce(spellId, color, ...)
 		return newAnnounce(self, "soon", spellId, color or 1, ...)
 	end
 
-	function bossModPrototype:NewPreWarnAnnounce(spellId, time, color, icon, optionDefault, optionName)
-		return newAnnounce(self, "prewarn", spellId, color or 1, icon, optionDefault, optionName, nil, time)
+	function bossModPrototype:NewPreWarnAnnounce(spellId, time, color, icon, optionDefault, optionName, ...)
+		return newAnnounce(self, "prewarn", spellId, color or 1, icon, optionDefault, optionName, nil, time, ...)
 	end
 
 	function bossModPrototype:NewPhaseAnnounce(phase, color, icon, ...)
@@ -6075,7 +6119,7 @@ do
 		font:SetTextColor(unpack(VEM.Options.LTSpecialWarningFontColor))
 	end
 	
-	function VEM:ShowLTSpecialWarning(text)
+	function VEM:ShowLTSpecialWarning(text, r, g, b)
 		if (not VEM.Options.ShowLTSpecialWarnings) or (not text) then return end
 		if not frame then
 			createFrame()
@@ -6084,10 +6128,13 @@ do
 		moving = false
 		frame:EnableMouse(false)
 		font:SetText(text)
+		if r and g and b then
+			font:SetTextColor(r, g, b, 1)
+		end
 	end
 	
 	function VEM:HideLTSpecialWarning()
-		if frame:IsShown() then
+		if frame and frame:IsShown() then
 			frame:Hide()
 		end
 	end

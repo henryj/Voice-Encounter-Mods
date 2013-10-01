@@ -43,6 +43,8 @@ VEM_CORE_MIN_FMT					= "%d min"
 VEM_CORE_SEC						= "sec"
 VEM_CORE_SEC_FMT					= "%d sec"
 
+VEM_CORE_GENERIC_WARNING_OTHERS		= "and one other"
+VEM_CORE_GENERIC_WARNING_OTHERS2	= "and %d others"
 VEM_CORE_GENERIC_WARNING_DUPLICATE	= "One of the %s"
 VEM_CORE_GENERIC_WARNING_BERSERK	= "Berserk in %s %s"
 VEM_CORE_GENERIC_TIMER_BERSERK		= "Berserk"

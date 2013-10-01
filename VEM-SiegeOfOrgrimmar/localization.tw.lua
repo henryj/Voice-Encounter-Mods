@@ -93,6 +93,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
+	nameset				= "諾努衫內場監視",
 	wasteOfTime			= "很好，我會創造一個力場隔離你們的腐化。"
 })
 
@@ -143,6 +144,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
+	nameset		= "葛拉卡斯",
 	Pull		= "龍喉氏族，奪回碼頭，把他們推進海裡!以地獄吼及正統部落之名!",
 	newForces1	= "他們來了!",
 	newForces1H	= "趕快把她弄下來，讓我用手掐死她。",

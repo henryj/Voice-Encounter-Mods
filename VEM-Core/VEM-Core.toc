@@ -11,6 +11,7 @@
 ## X-Website: http://www.deadlybossmods.com
 
 embeds.xml
+Libs\LibChatAnims\LibChatAnims.xml
 
 localization.en.lua
 localization.cn.lua

@@ -93,6 +93,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
+	nameset					= "诺鲁什内场监视",
 	wasteOfTime				= "很好，我会制造一个空间来隔离你们的腐蚀。"
 })
 ------------------
@@ -142,6 +143,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
+	nameset		= "迦拉卡斯",
 	newForces1	= "Here they come!",--Jaina's line, horde may not be same
 	newForces2	= "龙喉氏族，前进！",
 	newForces3	= "为了地狱咆哮！",
