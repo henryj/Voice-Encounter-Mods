@@ -260,6 +260,10 @@ local function Malkoroktimerfunc(self,elapsed)
 				local name, _,subgroup,_,_,class = GetRaidRosterInfo(j)
 				if name ~= nil and subgroup <= 5 and UnitIsDeadOrGhost(name)~=1 then
 					local px, py = GetPlayerMapPosition(name)
+					if px == 0 and py == 0 then
+						SetMapToCurrentZone()
+						px, py = GetPlayerMapPosition(name)
+					end
 					if px >= malkorok_main_coord_top_x and px<=malkorok_main_coord_bot_x and py>=malkorok_main_coord_top_y and py<=malkorok_main_coord_bot_y then
 						local px1 = (px-malkorok_main_coord_top_x)/(malkorok_main_coord_bot_x-malkorok_main_coord_top_x)*(malkorok_width-20)+10-(16/2)
 						local py1 = (py-malkorok_main_coord_top_y)/(malkorok_main_coord_bot_y-malkorok_main_coord_top_y)*(malkorok_height-20)+10-(16/2)
@@ -577,6 +581,10 @@ local function MalkorokAItimerfunc_do(self,elapsed)
 				local name, _,subgroup = GetRaidRosterInfo(j)
 				if name ~= nil and subgroup <= 5 and UnitIsDeadOrGhost(name)~=1 then
 					local px, py = GetPlayerMapPosition(name)
+					if px == 0 and py == 0 then
+						SetMapToCurrentZone()
+						px, py = GetPlayerMapPosition(name)
+					end
 					if px >= malkorok_main_coord_top_x and px<=malkorok_main_coord_bot_x and py>=malkorok_main_coord_top_y and py<=malkorok_main_coord_bot_y then
 						local px1 = (px-malkorok_main_coord_top_x)/(malkorok_main_coord_bot_x-malkorok_main_coord_top_x)*(malkorok_width-20)+10-(malkorok_playericonsize/2)
 						local py1 = (py-malkorok_main_coord_top_y)/(malkorok_main_coord_bot_y-malkorok_main_coord_top_y)*(malkorok_height-20)+10-(malkorok_playericonsize/2)

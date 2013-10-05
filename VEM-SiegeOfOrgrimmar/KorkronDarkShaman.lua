@@ -1,6 +1,7 @@
 ﻿local mod	= VEM:NewMod(856, "VEM-SiegeOfOrgrimmar", nil, 369)
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
+local sndTL		= mod:NewSound(nil, "SoundTL", false)
 
 mod:SetRevision(("$Revision: 10415 $"):sub(12, -3))
 mod:SetCreatureID(71859, 71858)--haromm, Kardris
@@ -292,6 +293,9 @@ function mod:SPELL_AURA_APPLIED(args)
 			yellIronPrisonFades:Schedule(56, playerName, 4)
 			yellIronPrisonFades:Schedule(55, playerName, 5)
 			sndWOP:Schedule(55, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\holdit.mp3") --快開自保
+		end
+		if self:AntiSpam(5, 1) then
+			sndTL:Schedule(50, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_tentl.mp3") --10秒後鐵牢
 		end
 	elseif args.spellId == 144215 and mod.Options.SoundEnh then
 		local amount = args.amount or 1

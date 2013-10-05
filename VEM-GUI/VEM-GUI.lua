@@ -44,7 +44,7 @@
 
 
 
-local revision =("$Revision: 10249 $"):sub(12, -3)
+local revision =("$Revision: 10490 $"):sub(12, -3)
 local FrameTitle = "VEM_GUI_Option_"	-- all GUI frames get automatically a name FrameTitle..ID
 local fixeditframe = false
 
@@ -2558,7 +2558,7 @@ do
 		area.onshowcall = {}
 
 		for _, mod in ipairs(VEM.Mods) do
-			if mod.modId == addon.modId and (not subtab or subtab == mod.subTab) then
+			if mod.modId == addon.modId and (not subtab or subtab == mod.subTab) and not mod.isTrashMod and not mod.noStatistics then
 				local statsType = 0
 				bossstats = bossstats + 1
 				if not mod.stats then
