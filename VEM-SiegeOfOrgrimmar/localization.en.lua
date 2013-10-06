@@ -10,7 +10,7 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
-	SoundPZ					= "Voice Warning: When $spell:143579 stacks more than 3 warn you to stop attack",
+	SoundPZD				= "Voice Warning: When $spell:143579 stacks more than 3 warn you to stop attack",
 	InfoFrame				= "Info Frame: Track how many puddles have been killed or purified",
 	dr						= "Defensive warning[Warning will be showed at $spell:143020, but you should use your defensive cooldowns before contact]",
 	dr1						= "$spell:143020 1",
