@@ -2,7 +2,7 @@
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 10466 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10505 $"):sub(12, -3))
 mod:SetCreatureID(71953)
 mod:SetReCombatTime(20)
 mod:SetZone()
@@ -91,7 +91,7 @@ function mod:SPELL_AURA_APPLIED(args)
 				end
 			end
 		end
-	elseif args.spellId == 144631 and not args:IsDestTypePlayer() then
+	elseif args.spellId == 144631 and args:GetDestCreatureID() == 71953 then
 		warnAgility:Show(args.destName)
 		specWarnAgility:Show(args.destName)
 		if mod:IsMagicDispeller() then

@@ -287,6 +287,7 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
+	LTZD					= "Long Term Special Warning: $spell:145987 on you",
 	RangeFrame	= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(10, 145987),
 	Filterarea				= "Other: Use stricter way to tell the area"
 })
@@ -305,12 +306,15 @@ L:SetWarningLocalization({
 	specWarnDevotion		= "%s used Devotion Aura"
 })
 
-L:SetTimerLocalization({
-})
-
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
 	SoundPX					= "Countdown: $spell:143343",
+	LTRange					= "Long Term Special Warning: P1 $spell:143343 stacks/P2 Boss Range",
+	optDD					= "$spell:143791 dispel chain",
+	DD1						= "Dispel 1",
+	DD2						= "Dispel 2",
+	DD3						= "Dispel 3",
+	nodd					= "No Dispel",
 	dr						= "Defensive Warning: $spell:143343 (reset each transition)",
 	dr1						= "$spell:143343 1",
 	dr2						= "$spell:143343 2",
@@ -362,6 +366,7 @@ L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
 	SoundFMD				= "Voice Warning: Before $spell:144208 warn to attack Shredder",
 	SoundDL					= "Voice Warning: Mine sweeping",
+	LTFD					= "Long Term Special Warning: $spell:143266 and $spell:143828",
 	SoundCZ					= "Voice Warning: Shredders' $spell:145444 AOE pre-warning",
 	InfoFrame				= "Info Frame: $journal:8202",
 	optCS					= "Conveyor belt warning",

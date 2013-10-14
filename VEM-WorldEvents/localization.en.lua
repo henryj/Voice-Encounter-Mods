@@ -169,6 +169,25 @@ L:SetGeneralLocalization({
 	name = "Darkmoon Rabbit"
 })
 
+-------------------------
+--  Darkmoon Moonfang  --
+-------------------------
+L = VEM:GetModLocalization("Moonfang")
+
+L:SetGeneralLocalization({
+	name = "Moonfang"
+})
+
+L:SetWarningLocalization({
+	specWarnCallPack		= "Call the Pack - Run > 40 yards from Moonfang!",
+	specWarnMoonfangCurse	= "Moonfang's Curse - Run > 10 yards from Moonfang!"
+})
+
+L:SetOptionLocalization({
+	specWarnCallPack		= VEM_CORE_AUTO_SPEC_WARN_OPTIONS.run:format(144602),
+	specWarnMoonfangCurse	= VEM_CORE_AUTO_SPEC_WARN_OPTIONS.run:format(144590)
+})
+
 --------------------------
 --  Plants Vs. Zombies  --
 --------------------------

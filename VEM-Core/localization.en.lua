@@ -45,7 +45,6 @@ VEM_CORE_SEC_FMT					= "%d sec"
 
 VEM_CORE_GENERIC_WARNING_OTHERS		= "and one other"
 VEM_CORE_GENERIC_WARNING_OTHERS2	= "and %d others"
-VEM_CORE_GENERIC_WARNING_DUPLICATE	= "One of the %s"
 VEM_CORE_GENERIC_WARNING_BERSERK	= "Berserk in %s %s"
 VEM_CORE_GENERIC_TIMER_BERSERK		= "Berserk"
 VEM_CORE_OPTION_TIMER_BERSERK		= "Show timer for $spell:26662"
@@ -154,7 +153,7 @@ VEM_CORE_TIMER_BREAK				= "Break time!"
 VEM_CORE_ANNOUNCE_BREAK_OVER		= "Break time is over"
 
 VEM_CORE_TIMER_PULL					= "Pull in"
-VEM_CORE_ANNOUNCE_PULL				= "Pull in %d sec"
+VEM_CORE_ANNOUNCE_PULL				= "Pull in %d sec (Sent by %s)"
 VEM_CORE_ANNOUNCE_PULL_NOW			= "Pull now!"
 VEM_CORE_ANNOUNCE_PULL_CANCEL		= "Cancel Pull Countdown!"
 
@@ -314,10 +313,11 @@ VEM_INSTANCE_INFO_STATS_NO_RESPONSE	= "No recent VEM version installed: %s"
 VEM_INSTANCE_INFO_RESULTS			= "Instance ID scan results. Note that instances might show up more than once if there are players with localized WoW clients in your raid."
 VEM_INSTANCE_INFO_SHOW_RESULTS		= "Players yet to respond: %s\n|HVEM:showRaidIdResults|h|cff3588ff[Show results now]|r|h"
 
-VEM_CORE_LAG_CHECKING				= "Delayed check - 5 seconds later output results..."
-VEM_CORE_LAG_HEADER					= "Voice Encounter Mods - Delayed check"
-VEM_CORE_LAG_ENTRY					= "%s£ºWorld delay[%d ms] / Home delay[%d ms]"
-VEM_CORE_LAG_FOOTER					= "Without Member:%s"
+VEM_CORE_LAG_CHECKING				= "Checking raid Latency..."
+VEM_CORE_LAG_HEADER					= "Voice Encounter Mods - Latency Results"
+VEM_CORE_LAG_ENTRY					= "%s: World delay [%d ms] / Home delay [%d ms]"
+VEM_CORE_LAG_FOOTER					= "No Response: %s"
+
 
 VEM_CORE_SOUNDGRIL_NAME_YIKE		= "Yike Xia"
 VEM_CORE_SOUNDGRIL_TEXT_YIKE		= "    Yike Xia, nickname coco-superwoman, girl, realname unknown. Dubbed as the female mage Mei Lv in <My name is MT>. Well known WOW narrator, Horde obsessed. Southwest University of Science and Technology China, 2009. She made her name in senior high with Sing Azeroth."

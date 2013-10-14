@@ -155,7 +155,7 @@ VEM_CORE_TIMER_BREAK				= "休息時間!"
 VEM_CORE_ANNOUNCE_BREAK_OVER		= "休息時間已經結束"
 
 VEM_CORE_TIMER_PULL					= "戰鬥準備"
-VEM_CORE_ANNOUNCE_PULL				= "%d秒後拉怪"
+VEM_CORE_ANNOUNCE_PULL				= "%d秒後拉怪  (%s)"
 VEM_CORE_ANNOUNCE_PULL_NOW			= "拉怪囉!"
 VEM_CORE_ANNOUNCE_PULL_CANCEL		= "取消了戰鬥準備倒計時"
 
@@ -197,7 +197,7 @@ VEM_CORE_AUTO_ANNOUNCE_OPTIONS = {
 
 VEM_CORE_AUTO_SPEC_WARN_TEXTS = {
 	spell					= "%s!",
-	ends					= "%s 结束",
+	ends					= "%s 結束",
 	fades					= "%s 消失",
 	soon					= "%s 即将到来",
 	prewarn					= "%2$s後 %1$s",
@@ -218,7 +218,7 @@ VEM_CORE_AUTO_SPEC_WARN_TEXTS = {
 -- Auto-generated Special Warning Localizations
 VEM_CORE_AUTO_SPEC_WARN_OPTIONS = {
 	spell					= "特別警告：$spell:%s",
-	ends					= "特別警告：$spell:%s结束",
+	ends					= "特別警告：$spell:%s結束",
 	fades					= "特別警告：$spell:%s消失",
 	soon					= "特別警告：$spell:%s即将到来",
 	prewarn					= "特別警告：%d秒後$spell:%s",
