@@ -298,7 +298,7 @@
 "ex_so_xttt" => "Rusted Iron Totem",
 "ex_so_xw" => "Swirl",
 "ex_so_xwzb" => "Swirl incoming",
-"ex_so_xxhx" => "Fire beam",
+"ex_so_xxhx" => "Laser beam",
 "ex_so_xxsl" => "beware Foul steam",
 "ex_so_yhz" => "Arcing Smash",
 "ex_so_ysch" => "Catalyst Yellow",
