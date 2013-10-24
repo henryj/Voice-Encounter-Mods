@@ -86,7 +86,8 @@ VEM_CORE_UPDATEREMINDER_HEADER_ALPHA	= "Your alpha version of Voice Encounter Mo
 VEM_CORE_UPDATEREMINDER_FOOTER			= "Press " .. (IsMacClient() and "Cmd-C" or "Ctrl-C")  ..  " to copy the download link to your clipboard."
 VEM_CORE_UPDATEREMINDER_FOOTER_GENERIC	= "Press " .. (IsMacClient() and "Cmd-C" or "Ctrl-C")  ..  " to copy the link to your clipboard."
 VEM_CORE_UPDATEREMINDER_NOTAGAIN		= "Show popup when a new version is available"
-VEM_CORE_UPDATEREMINDER_DISABLE			= "WARNING: Do to your Voice Encounter Mods being drastically (%d revisions) out of date, it has been disabled until updated. This is to ensure old and incompatable code doesn't cause poor play experience for yourself or fellow raid members."
+VEM_CORE_UPDATEREMINDER_DISABLE			= "WARNING: Do to your Voice Encounter Mods being drastically out of date (%d revisions), it has been disabled until updated. This is to ensure old and incompatable code doesn't cause poor play experience for yourself or fellow raid members."
+VEM_CORE_UPDATEREMINDER_HOTFIX			= "Your version of VEM will have incorrect timers or warnings during this boss encounter. This is corrected in an upcoming release or can be corrected immediately by updating to latest alpha release."
 
 VEM_CORE_MOVABLE_BAR				= "Drag me!"
 

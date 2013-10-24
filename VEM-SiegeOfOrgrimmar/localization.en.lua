@@ -293,8 +293,9 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Module1 = "Module 1's all prepared for system reset.",
-	Victory	= "Module 2's all prepared for system reset"
+	wasteOfTime		= "Hey, we recording?  Yeah?  Okay.  Goblin-Titan control module starting up, please stand back.",
+	Module1 		= "Module 1's all prepared for system reset.",
+	Victory			= "Module 2's all prepared for system reset."
 })
 
 ---------------------------
@@ -360,6 +361,7 @@ L:SetMiscLocalization({
 L= VEM:GetModLocalization(865)
 
 L:SetWarningLocalization({
+	warnCC					= "%s's [%s] has broken %s's %s(First CC broken)¡£"
 })
 
 L:SetOptionLocalization({
@@ -367,7 +369,15 @@ L:SetOptionLocalization({
 	SoundFMD				= "Voice Warning: Before $spell:144208 warn to attack Shredder",
 	SoundDL					= "Voice Warning: Mine sweeping",
 	LTFD					= "Long Term Special Warning: $spell:143266 and $spell:143828",
+	LTHX					= "Long Term Special Warning: Show fire beam timer",
+	HudMAP					= "HUD MAP: $spell:143828",
 	SoundCZ					= "Voice Warning: Shredders' $spell:145444 AOE pre-warning",
+	SoundCZ4				= "Defensive Warning: Shredder 4th $spell:145444 (3 stacks buff)",
+	SoundCZ5				= "Defensive Warning: Shredder 5th $spell:145444 (4 stacks buff)",
+	SoundCS1				= "Voice Warning: conveyor belt group one 10 sec pre-warning",
+	SoundCS2				= "Voice Warning: conveyor belt group two 10 sec pre-warning",
+	ShowDps					= "Show your current group's dps on conveyor belt",
+	warnCC					= "Warning: Show Crawler Mines' CC broken info(only 1st per round)",
 	InfoFrame				= "Info Frame: $journal:8202",
 	optCS					= "Conveyor belt warning",
 	CSA						= "Conveyor belt 1",
@@ -389,7 +399,7 @@ L:SetOptionLocalization({
 	optCSKILL13				= "13th round",
 	optCSKILL14				= "14th round",
 	optCSKILL15				= "15th round",
-	killdl					= "Mine",
+	killdl					= "Crawler Mines",
 	killfd					= "Missile",
 	killjg					= "Laser",
 	killdc					= "Magnet",
@@ -465,6 +475,10 @@ L:SetOptionLocalization({
 	alldd					= "Always (If he's your target or focus)",
 	DD1						= "Odd number",
 	DD2						= "Even number",
+	DD1H					= "Interrupt 1(Heroic Mode, including chain lightning)",
+	DD2H					= "Interrupt 2(Heroic Mode, including chain lightning)",
+	DD3H					= "Interrupt 3(Heroic Mode, including chain lightning)",
+	DD4H					= "Interrupt 4(Heroic Mode, including chain lightning)",
 	nodd					= "None",
 	SetIconOnShaman			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format("ej8294"),
 })

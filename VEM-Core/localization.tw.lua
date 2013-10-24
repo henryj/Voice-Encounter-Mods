@@ -88,7 +88,8 @@ VEM_CORE_UPDATEREMINDER_HEADER_ALPHA	= "你的alpha版本Voice Encounter Mods已
 VEM_CORE_UPDATEREMINDER_FOOTER			= "按下" .. (IsMacClient() and "Cmd-C" or "Ctrl-C")  ..  "：複製下載網址到剪貼簿。"
 VEM_CORE_UPDATEREMINDER_FOOTER_GENERIC	= "按下" .. (IsMacClient() and "Cmd-C" or "Ctrl-C")  ..  "：複製網址到剪貼簿。"
 VEM_CORE_UPDATEREMINDER_NOTAGAIN		= "當有新版本時顯示彈出提示"
-VEM_CORE_UPDATEREMINDER_DISABLE			= "警告: 你的VEM版本已大幅度的過期(%d修訂版)，已禁用除非更新。這是為了確保舊而不相容的程式碼不會對你而團隊夥伴造成低落的遊戲體驗。"
+VEM_CORE_UPDATEREMINDER_DISABLE			= "警告: 你的VEM版本已大幅度的過期(%d修訂版)，已被禁用了除非更新至最新版本。這是為了確保舊而不相容的程式碼不會對你而團隊夥伴造成低落的遊戲體驗。"
+VEM_CORE_UPDATEREMINDER_HOTFIX			= "你的VEM版本會在這首領戰鬥有不準確的計時器或警告。這問題已被修正在下次正式版更新或可以更新至最新的alpha版本立即修正此問題。"
 
 VEM_CORE_MOVABLE_BAR				= "拖動我!"
 

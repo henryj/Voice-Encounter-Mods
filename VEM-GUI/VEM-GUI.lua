@@ -1549,6 +1549,7 @@ local function CreateOptionsMenu()
 		local raidwarnoptions = RaidWarningPanel:CreateArea(L.RaidWarning_Header, nil, 250, true)
 
 		local ShowWarningsInChat 	= raidwarnoptions:CreateCheckButton(L.ShowWarningsInChat, true, nil, "ShowWarningsInChat")
+		local ShowChatTime			= raidwarnoptions:CreateCheckButton(L.ShowChatTime, true, nil, "ShowChatTime")
 		local ShowFakedRaidWarnings = raidwarnoptions:CreateCheckButton(L.ShowFakedRaidWarnings,  true, nil, "ShowFakedRaidWarnings")
 		local WarningIconLeft		= raidwarnoptions:CreateCheckButton(L.WarningIconLeft,  true, nil, "WarningIconLeft")
 		local WarningIconRight 		= raidwarnoptions:CreateCheckButton(L.WarningIconRight,  true, nil, "WarningIconRight")
