@@ -46,7 +46,7 @@ Voice Encounter Mods
 <h6>List of custom voice packs:</h6>
 <p>Simply download one of them and replace the "VEM-Core\extrasounds\other" folder. After that launch the game, and you'll be able to switch to your new voice pack by /vem -> Options -> Raid Warnings -> Set Voice </p>
 <ul>
-<li><a href="https://github.com/henryj/VEM-Sounds-Voicerss/archive/master.zip">Default EN voice pack used before 5.4 by VoiceRss.org TTS service</a> (16/09/2013 updated, 5.4.4 compatible. In case some people are more used to the old version)</li>
+<li><a href="https://github.com/henryj/VEM-Sounds-Voicerss/archive/master.zip">Default EN voice pack used before 5.4 by VoiceRss.org TTS service</a> (5.4.4 compatible. In case some people are more used to the old version)</li>
 </ul>
 
 <h3>FAQ</h3>
