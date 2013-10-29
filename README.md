@@ -47,7 +47,9 @@ Voice Encounter Mods
 <p>Simply download one of them and replace the "VEM-Core\extrasounds\other" folder. After that launch the game, and you'll be able to switch to your new voice pack by /vem -> Options -> Raid Warnings -> Set Voice </p>
 <ul>
 <li><a href="https://github.com/henryj/VEM-Sounds-Voicerss/archive/master.zip">Default EN voice pack used before 5.4 by VoiceRss.org TTS service</a> (5.4.4 compatible. In case some people are more used to the old version)</li>
+<li><a href="https://github.com/henryj/VEM-Sounds-NeospeechPaul16/archive/master.zip">NeospeechPaul16 Male TTS</a> (5.4.4 compatible)</li>
 </ul>
+<p>Before each VEM upgrade you might want to backup this 'other' folder and restore after the process is done. We'll figure out a better way for custom voice pack in the future.</p>
 
 <h3>FAQ</h3>
 <p><b>Q: Do I need to install DBM or Hudmap or any other addons to make VEM work?</b></p>
