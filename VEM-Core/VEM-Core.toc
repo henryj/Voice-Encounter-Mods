@@ -12,6 +12,7 @@
 
 embeds.xml
 Libs\LibChatAnims\LibChatAnims.xml
+Libs\LibSharedMedia-3.0\lib.xml
 
 localization.en.lua
 localization.cn.lua

@@ -419,7 +419,17 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "语音警告：重要技能",
-	InfoFrame				= "信息框：英杰技能提示",
+	LTchong					= "图形冷却警告：$spell:143339",
+	LTIP					= "震动图标警告：重要技能",
+	dr						= "减伤提示：$spell:142416",
+	dr1						= "$spell:144095 1/6",
+	dr2						= "$spell:144095 2/6",
+	dr3						= "$spell:144095 3/6",
+	dr4						= "$spell:144095 4/6",
+	dr5						= "$spell:144095 5/6",
+	dr6						= "$spell:144095 6/6",
+	InfoFrame				= "资讯框：$spell:144286",
+	HudMAPDF				= "高级定位监视(HUD)：$spell:142232",
 	HudMAP					= "高级定位监视(HUD)：$spell:142726 / $spell:142727",
 	HudMAPMZ				= "高级定位监视(HUD)：$journal:8073",
 	warnToxicCatalyst			= VEM_CORE_AUTO_ANNOUNCE_OPTIONS.spell:format("ej8036"),

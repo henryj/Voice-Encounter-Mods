@@ -174,6 +174,7 @@ function mod:DeathFromAboveTarget(sGUID)
 	warnDeathFromAbove:Show(targetname)
 	if targetname == UnitName("player") then
 		specWarnDeathFromAbove:Show()
+		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_sctj.mp3") --死從
 	else
 		local uId = VEM:GetRaidUnitId(targetname)
 		if uId then
@@ -185,7 +186,7 @@ function mod:DeathFromAboveTarget(sGUID)
 			local inRange = VEM.RangeCheck:GetDistance("player", x, y)
 			if inRange and inRange < 20 then
 				specWarnDFANear:Show(targetname)
-				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_sctj.mp3")
 			end
 		end
 	end

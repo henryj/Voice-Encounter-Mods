@@ -2,7 +2,7 @@
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 10376 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10672 $"):sub(12, -3))
 mod:SetCreatureID(71152, 71153, 71154, 71155, 71156, 71157, 71158, 71160, 71161)
 mod:SetZone()
 mod:SetUsedIcons(1)
@@ -28,13 +28,11 @@ mod:RegisterEventsInCombat(
 --All
 local warnActivated					= mod:NewTargetAnnounce(118212, 3, 143542)
 --Kil'ruk the Wind-Reaver
-local warnExposedVeins				= mod:NewStackAnnounce(142931, 2, nil, false)
 local warnGouge						= mod:NewTargetAnnounce(143939, 3, nil, mod:IsTank() or mod:IsHealer())--Timing too variable for a CD
 local warnDeathFromAbove			= mod:NewTargetAnnounce(142232, 3)
 --Xaril the Poisoned-Mind
-local warnTenderizingStirkes		= mod:NewStackAnnounce(142929, 2, nil, false)
 local warnToxicInjection			= mod:NewSpellAnnounce(142528, 3)
-local warnCausticBlood				= mod:NewSpellAnnounce(142315, 4)
+local warnCausticBlood				= mod:NewSpellAnnounce(142315, 4, nil, mod:IsTank(), nil, nil, nil, nil, 2)
 mod:AddBoolOption("warnToxicCatalyst", true, "announce")
 local warnToxicCatalystBlue			= mod:NewCastAnnounce(142725, 4, nil, nil, nil, false)
 local warnToxicCatalystRed			= mod:NewCastAnnounce(142726, 4, nil, nil, nil, false)
@@ -55,13 +53,11 @@ local warnCalculated				= mod:NewTargetAnnounce(144095, 3)--Wild variation on ti
 local warnInsaneCalculationFire		= mod:NewCastAnnounce(142416, 4)--3 seconds after 144095
 --Ka'roz the Locust
 local warnFlash						= mod:NewCastAnnounce(143709, 3)--62-70
-local warnWhirling					= mod:NewTargetAnnounce(143701, 3)
+local warnWhirling					= mod:NewTargetAnnounce(143701, 3, nil, false, nil, nil, nil, nil, 2)--Spammy
 local warnHurlAmber					= mod:NewSpellAnnounce(143759, 3)
 --Skeer the Bloodseeker
-local warnHewn						= mod:NewStackAnnounce(143275, 2, nil, false)
 local warnBloodletting				= mod:NewSpellAnnounce(143280, 4)
 --Rik'kal the Dissector
-local warnGeneticAlteration			= mod:NewStackAnnounce(143279, 2, nil, false)
 local warnInjection					= mod:NewStackAnnounce(143339)
 local warnMutate					= mod:NewTargetAnnounce(143337, 3)
 
@@ -87,9 +83,9 @@ local specWarnCausticBlood			= mod:NewSpecialWarningSpell(142315, mod:IsTank())
 local specWarnToxicBlue				= mod:NewSpecialWarningYou(142532)
 local specWarnToxicRed				= mod:NewSpecialWarningYou(142533)
 local specWarnToxicYellow			= mod:NewSpecialWarningYou(142534)
-local specWarnToxicOrange			= mod:NewSpecialWarningYou(142547)--Heroic
-local specWarnToxicPurple			= mod:NewSpecialWarningYou(142548)--Heroic
-local specWarnToxicGreen			= mod:NewSpecialWarningYou(142549)--Heroic
+--local specWarnToxicOrange			= mod:NewSpecialWarningYou(142547)--Heroic
+--local specWarnToxicPurple			= mod:NewSpecialWarningYou(142548)--Heroic
+--local specWarnToxicGreen			= mod:NewSpecialWarningYou(142549)--Heroic
 local specWarnGas					= mod:NewSpecialWarningMove(142797)--BH ADD
 --local specWarnToxicWhite			= mod:NewSpecialWarningYou(142550)--Not in EJ
 local specWarnCatalystBlue			= mod:NewSpecialWarningYou(142725, nil, nil, nil, 3)
@@ -141,6 +137,7 @@ local specWarnRapidFire				= mod:NewSpecialWarningSpell(143243, nil, nil, nil, 2
 local timerJumpToCenter				= mod:NewCastTimer(5, 143545)
 --Kil'ruk the Wind-Reaver
 local timerGouge					= mod:NewTargetTimer(10, 143939, nil, mod:IsTank())
+local timerGougeCD					= mod:NewCDTimer(20, 143939)
 --Xaril the Poisoned-Mind
 local timerToxicCatalystCD			= mod:NewCDTimer(33, "ej8036")
 --Korven the Prime
@@ -159,12 +156,12 @@ local timerHurlAmberCD				= mod:NewCDTimer(62, 143759)--TODO< verify cd on spell
 local timerBloodlettingCD			= mod:NewCDTimer(35, 143280)--35-65 variable. most of the time it's around 42 range
 --Rik'kal the Dissector
 local timerMutate					= mod:NewBuffFadesTimer(20, 143337)
-local timerMutateCD					= mod:NewCDTimer(45, 143337)
-local timerInjectionCD				= mod:NewNextTimer(9.5, 143339, nil, mod:IsTank())
+local timerMutateCD					= mod:NewCDCountTimer(45, 143337)
+local timerInjectionCD				= mod:NewNextCountTimer(9.5, 143339, nil, mod:IsTank())
 --Hisek the Swarmkeeper
 local timerAim						= mod:NewTargetTimer(5, 142948)--or is it 7, conflicting tooltips
 local timerAimCD					= mod:NewCDTimer(42, 142948)
---local timerRapidFireCD			= mod:NewCDTimer(30, 143243)--Heroic, unknown Cd
+local timerRapidFireCD				= mod:NewCDTimer(47, 143243)--Heroic, unknown Cd
 
 local berserkTimer					= mod:NewBerserkTimer(720)
 
@@ -173,14 +170,35 @@ local berserkTimer					= mod:NewBerserkTimer(720)
 local twipe = table.wipe
 
 local chongnum = 0
+local firecount = 0
+local injcount = 0
+local mutatecount = 0
 local dissectorlive = true
+
+local showtank = false
+local xiezireset = 0
 
 mod:AddBoolOption("RangeFrame")
 mod:AddBoolOption("SetIconOnAim", true)--multi boss fight, will use star and avoid moving skull off a kill target
+mod:AddBoolOption("LTchong", mod:IsTank(), "sound")
 mod:AddBoolOption("InfoFrame", true, "sound")
+mod:AddBoolOption("LTIP", true, "sound")
 mod:AddBoolOption("HudMAP", true, "sound")
 mod:AddBoolOption("HudMAPMZ", true, "sound")
---mod:AddBoolOption("HudMAPCF", mod:IsRanged(), "sound")
+mod:AddBoolOption("HudMAPDF", true, "sound")
+
+mod:AddBoolOption("dr", true, "sound")
+for i = 1, 6 do
+	mod:AddBoolOption("dr"..i, false, "sound")
+end
+
+local function MyJS()
+	if (mod.Options.dr1 and firecount == 1) or (mod.Options.dr2 and firecount == 2) or (mod.Options.dr3 and firecount == 3) or (mod.Options.dr4 and firecount == 4) or (mod.Options.dr5 and firecount == 5) or (mod.Options.dr6 and firecount == 6) then
+		return true
+	end
+	return false
+end
+
 local VEMHudMap = VEMHudMap
 local free = VEMHudMap.free
 local function register(e)	
@@ -191,6 +209,7 @@ local RedMarkers={}
 local BlueMarkers={}
 local YellowMarkers={}
 local MZMarkers={}
+local DFMarker = nil
 
 local activatedTargets = {}--A table, for the 3 on pull
 local mutateTargets = {}
@@ -204,6 +223,8 @@ local calculatingDude = EJ_GetSectionInfo(8012)
 local readyToFight = GetSpellInfo(143542)
 
 local bossspellinfo = {}
+
+local xiezi = {}
 
 local ResultTargets = {}
 local ResultMeleeTargets = {}
@@ -221,6 +242,7 @@ EJ_GetSectionInfo(8015) 	--切割者 71158
 EJ_GetSectionInfo(8016) 	--虫群卫士 71153 ]]
 
 local function showspellinfo()
+	if mod:IsDifficulty("heroic25") then return end
 	if mod.Options.InfoFrame then
 		twipe(bossspellinfo)
 		local onlyactboss = 0
@@ -273,6 +295,28 @@ local function showspellinfo()
 	end
 end
 
+local function testinfo()
+	if not mod:IsDifficulty("heroic25") then return end
+	local showxiezi = {}
+	local xiezinum = 0
+	for k,v in pairs(xiezi) do
+		xiezinum = xiezinum + 1
+		showxiezi[xiezinum] = k
+	end
+	if mod.Options.InfoFrame then
+		VEM.InfoFrame:Hide()
+		VEM.InfoFrame:SetHeader(EJ_GetSectionInfo(8065).." : "..chongnum)
+		if showxiezi[3] then
+			VEM.InfoFrame:Show(3, "other", xiezi[showxiezi[1]], showxiezi[1], xiezi[showxiezi[2]], showxiezi[2], xiezi[showxiezi[3]], showxiezi[3])
+		end
+		if (not dissectorlive) and (chongnum == 0) then			
+			VEM.InfoFrame:Hide()
+		end
+	end	
+	twipe(showxiezi)
+	xiezinum = 0
+end
+
 local function warnActivatedTargets(vulnerable)
 	if #activatedTargets > 1 then
 		warnActivated:Show(table.concat(activatedTargets, "<, >"))
@@ -288,10 +332,27 @@ local function warnActivatedTargets(vulnerable)
 	twipe(activatedTargets)
 end
 
-local function warnMutatedTargets()
-	warnMutate:Show(table.concat(mutateTargets, "<, >"))
-	timerMutateCD:Start()
+local function warnMutatedTargets()	
+	warnMutate:Show(table.concat(mutateTargets, "<, >"))	
 	twipe(mutateTargets)
+	if mod:AntiSpam(5, 1) then
+		mutatecount = mutatecount + 1
+		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_tb.mp3") --突變
+		if mutatecount == 1 then
+			sndWOP:Schedule(0.6, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		elseif mutatecount == 2 then
+			sndWOP:Schedule(0.6, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
+		elseif mutatecount == 3 then
+			sndWOP:Schedule(0.6, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+		elseif mutatecount == 4 then
+			sndWOP:Schedule(0.6, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
+		elseif mutatecount == 5 then
+			sndWOP:Schedule(0.6, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
+		elseif mutatecount == 6 then
+			sndWOP:Schedule(0.6, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countsix.mp3")
+		end
+		timerMutateCD:Start(45, mutatecount+1)
+	end
 end
 
 local function hideRangeFrame()
@@ -325,8 +386,11 @@ local function DFAScan()
 						sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
 					end
 				end
+				if mod.Options.HudMAPDF then					
+					DFMarker = register(VEMHudMap:PlaceStaticMarkerOnPartyMember("highlight", targetname, 5, 3, 0, 1, 0, 0.8):Appear():RegisterForAlerts())
+				end
 			else
-				mod:Schedule(0.25, DFAScan)
+				mod:Schedule(0.2, DFAScan)
 			end
 			return--If we found the boss before hitting 5, want to fire this return to break checking other bosses needlessly
 		end
@@ -346,6 +410,7 @@ local function CheckBosses(GUID)
 			local cid = mod:GetCIDFromGUID(UnitGUID(unitID))
 			if cid == 71161 then--Kil'ruk the Wind-Reaver
 				mod:Schedule(23, DFAScan)--Not a large sample size, data shows it happen 29-30 seconds after IEEU fires on two different pulls. Although 2 is a poor sample
+				timerGougeCD:Start()
 				if UnitDebuff("player", GetSpellInfo(142929)) then vulnerable = true end
 				if activetime >= 15 then
 					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_lfz.mp3") --掠風者參戰
@@ -382,15 +447,19 @@ local function CheckBosses(GUID)
 					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_nxz.mp3") --覓血者參戰
 				end
 			elseif cid == 71158 then--Rik'kal the Dissector
-				timerInjectionCD:Start(14)
-				timerMutateCD:Start(34)
+				timerInjectionCD:Start(7.5, 1)
+				if mod.Options.LTchong then
+					VEM:ShowLTSpecialWarning("NEXT:1", 1, 0, 0, nil, 144286, nil, 7.5)
+					showtank = true
+				end
+				timerMutateCD:Start(34, 1)
 				if UnitDebuff("player", GetSpellInfo(143275)) then vulnerable = true end
 				if activetime >= 15 then
 					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_qgz.mp3") --切割者參戰					
 				end
 			elseif cid == 71153 then--Hisek the Swarmkeeper
 				timerAimCD:Start(37)--Might be 32 now with the UnitBuff filter, so pay attention to that and adjust as needed
-				--timerRapidFireCD:Start()
+				timerRapidFireCD:Start()
 				if activetime >= 15 then
 					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_cqws.mp3") --蟲群衛士參戰
 				end
@@ -412,20 +481,28 @@ function mod:OnCombatStart(delay)
 	twipe(YellowMarkers)
 	twipe(MZMarkers)
 	
+	twipe(xiezi)
+	
 	twipe(ResultTargets)
 	twipe(ResultMeleeTargets)
 	twipe(ResultRangedTargets)
 	twipe(ResultRangedDPSTargets)
+	DFMarker = nil
 	calculatedShape = nil
 	calculatedNumber = nil
 	calculatedColor = nil
 	chongnum = 0
+	firecount = 0
+	injcount = 0
+	mutatecount = 0
 	dissectorlive = true
 	self:RegisterShortTermEvents(
 		"INSTANCE_ENCOUNTER_ENGAGE_UNIT"--We register here to make sure we wipe variables on pull
 	)
 	timerJumpToCenter:Start(-delay)
 	berserkTimer:Start(-delay)
+	xiezireset = 0
+	showtank = false
 end
 
 function mod:OnCombatEnd()
@@ -436,8 +513,11 @@ function mod:OnCombatEnd()
 	if self.Options.InfoFrame then
 		VEM.InfoFrame:Hide()
 	end
-	if self.Options.HudMAP or self.Options.HudMAPMZ then
+	if self.Options.HudMAP or self.Options.HudMAPMZ or self.Options.HudMAPDF then
 		VEMHudMap:FreeEncounterMarkers()
+	end
+	if self.Options.LTchong or self.Options.LTIP then
+		VEM:HideLTSpecialWarning()
 	end
 end
 
@@ -462,13 +542,6 @@ function mod:SPELL_CAST_START(args)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_lsbz.mp3") --藍色爆炸準備
 		else
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_lsch.mp3") --藍色催化
---[[		if self.Options.HudMAP then
-				for i = 1, VEM:GetNumGroupMembers() do
-					if UnitDebuff("raid"..i, GetSpellInfo(142532)) then
-						BlueMarkers[UnitName("raid"..i)] = register(VEMHudMap:PlaceRangeMarkerOnPartyMember("timer", UnitName("raid"..i), 10, 3, 0, 0 ,1 ,0.8):Appear():RegisterForAlerts():Rotate(360, 3.2):SetAlertColor(1, 1, 1, 0.3))
-					end
-				end
-			end]]
 		end
 	elseif args.spellId == 142726 then
 		timerToxicCatalystCD:Start()
@@ -517,39 +590,51 @@ function mod:SPELL_CAST_START(args)
 		if self.Options.warnToxicCatalyst then
 			warnToxicCatalystOrange:Show()
 		end
-		if UnitDebuff("player", GetSpellInfo(142547)) or UnitDebuff("player", GetSpellInfo(142533)) or UnitDebuff("player", GetSpellInfo(142534)) then
+		if UnitDebuff("player", GetSpellInfo(142533)) or UnitDebuff("player", GetSpellInfo(142534)) then--Red or Yellow
 			specWarnCatalystOrange:Show()
 			if self.Options.yellToxicCatalyst then
 				yellCatalystOrange:Yell()
 			end
-			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\backward.mp3") --背對人群
-		else
-			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_csch.mp3") --橙色催化
+			if self.Options.LTIP then
+				VEM:ShowLTSpecialWarning(142728, 1, 0, 0, 1, 142728, 3)
+			end
 		end
+		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_csch.mp3") --橙色催化
+		sndWOP:Schedule(2, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_bzhh.mp3") --爆炸火環準備
+		sndWOP:Schedule(3.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+		sndWOP:Schedule(4.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
+		sndWOP:Schedule(5.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 	elseif args.spellId == 142729 then
 		timerToxicCatalystCD:Start()
 		if self.Options.warnToxicCatalyst then
 			warnToxicCatalystPurple:Show()
 		end
-		if UnitDebuff("player", GetSpellInfo(142548)) or UnitDebuff("player", GetSpellInfo(142533)) or UnitDebuff("player", GetSpellInfo(142532)) then
+		if UnitDebuff("player", GetSpellInfo(142533)) or UnitDebuff("player", GetSpellInfo(142532)) then--Red or Blue
 			specWarnCatalystPurple:Show()
 			if self.Options.yellToxicCatalyst then
 				yellCatalystPurple:Yell()
 			end
+			if self.Options.LTIP then
+				VEM:ShowLTSpecialWarning(142729, 1, 0, 0, 1, 142729, 3)
+			end
 		end
-		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_bzhh.mp3") --爆炸火環準備
+		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_zsch.mp3") --紫色催化
 	elseif args.spellId == 142730 then
 		timerToxicCatalystCD:Start()
 		if self.Options.warnToxicCatalyst then
 			warnToxicCatalystGreen:Show()
 		end
-		if UnitDebuff("player", GetSpellInfo(142549)) or UnitDebuff("player", GetSpellInfo(142534)) or UnitDebuff("player", GetSpellInfo(142532)) then
+		if UnitDebuff("player", GetSpellInfo(142534)) or UnitDebuff("player", GetSpellInfo(142532)) then--Yellow or Blue
 			specWarnCatalystGreen:Show()
 			if self.Options.yellToxicCatalyst then
 				yellCatalystGreen:Yell()
 			end
+			if self.Options.LTIP then
+				VEM:ShowLTSpecialWarning(142730, 1, 0, 0, 1, 142730, 3)
+			end
 		end
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_lvsch.mp3") --綠色催化
+		sndWOP:Schedule(1, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_xxls.mp3") --小心綠水
 	elseif args.spellId == 143765 then
 		warnSonicProjection:Show()
 	elseif args.spellId == 143666 then
@@ -558,6 +643,12 @@ function mod:SPELL_CAST_START(args)
 		warnInsaneCalculationFire:Show()
 		specWarnInsaneCalculationFire:Show()
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\linesoon.mp3") --準備連線
+		firecount = firecount + 1
+		if MyJS() then
+			sndWOP:Schedule(0.8, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
+			sndWOP:Schedule(1.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\defensive.mp3")
+		end
+		if firecount == 6 then firecount = 0 end
 	elseif args.spellId == 143709 then
 		warnFlash:Show()
 		specWarnFlash:Show()
@@ -567,6 +658,9 @@ function mod:SPELL_CAST_START(args)
 			VEM.RangeCheck:Show(6)--Range assumed, spell tooltips not informative enough
 			self:Schedule(5, hideRangeFrame)
 		end]]
+		if self.Options.LTIP and (not showtank) then
+			VEM:ShowLTSpecialWarning(143709, 1, 0, 0, 1, 143709, 2)
+		end
 	elseif args.spellId == 143280 then
 		warnBloodletting:Show()
 		specWarnBloodletting:Show()
@@ -588,15 +682,29 @@ function mod:SPELL_CAST_START(args)
 	elseif args.spellId == 143243 then
 		warnRapidFire:Show()
 		specWarnRapidFire:Show()
-		--timerRapidFireCD:Start()
+		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_mop_ybzb.mp3") --音波準備
+		if self.Options.LTIP and (not showtank) then
+			VEM:ShowLTSpecialWarning(143243, 1, 0, 0, 1, 143243, 2)
+		end
+		timerRapidFireCD:Start()
 	elseif args.spellId == 143339 then
+		injcount = injcount + 1
 		for i = 1, 5 do
 			local bossUnitID = "boss"..i
 			if UnitExists(bossUnitID) and UnitGUID(bossUnitID) == args.sourceGUID and UnitDetailedThreatSituation("player", bossUnitID) then
 				specWarnInjection:Show()
-				timerInjectionCD:Start()
 				break
 			end
+		end
+		timerInjectionCD:Start(9.5, injcount + 1)
+		if self.Options.LTchong then
+			self:Schedule(1, function()
+				if injcount == 7 then
+					VEM:ShowLTSpecialWarning("NEXT:"..(injcount + 1), 1, 0, 0, nil, 144286, nil, 8.5)
+				else
+					VEM:ShowLTSpecialWarning("NEXT:"..(injcount + 1), 0, 1, 0, nil, 143339, nil, 8.5)
+				end
+			end)			
 		end
 	end
 end
@@ -608,23 +716,16 @@ function mod:SPELL_CAST_SUCCESS(args)
 	elseif args.spellId == 142232 then
 		self:Unschedule(DFAScan)
 		self:Schedule(17, DFAScan)
+	elseif args.spellId == 144286 then
+		if xiezi[args.sourceName] then
+			xiezi[args.sourceName] = xiezi[args.sourceName] + 1
+			testinfo()
+		end
 	end
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args.spellId == 142931 then
-		local amount = args.amount or 1
-		warnExposedVeins:Show(args.destName, amount)
-	elseif args.spellId == 142929 then
-		local amount = args.amount or 1
-		warnTenderizingStirkes:Show(args.destName, amount)
-	elseif args.spellId == 143275 then
-		local amount = args.amount or 1
-		warnHewn:Show(args.destName, amount)
-	elseif args.spellId == 143279 then
-		local amount = args.amount or 1
-		warnGeneticAlteration:Show(args.destName, amount)
-	elseif args.spellId == 143339 then
+	if args.spellId == 143339 then
 		local amount = args.amount or 1
 		warnInjection:Show(args.destName, amount)
 	elseif args.spellId == 142532 and args:IsPlayer() then
@@ -636,15 +737,12 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif args.spellId == 142534 and args:IsPlayer() then
 		specWarnToxicYellow:Show()
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_huds.mp3") --黃色毒素
-	elseif args.spellId == 142547 and args:IsPlayer() then
+--[[	elseif args.spellId == 142547 and args:IsPlayer() then
 		specWarnToxicOrange:Show()
-		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_csds.mp3") --橙色毒素
 	elseif args.spellId == 142548 and args:IsPlayer() then
 		specWarnToxicPurple:Show()
-		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_zsds.mp3") --紫色毒素
 	elseif args.spellId == 142549 and args:IsPlayer() then
-		specWarnToxicGreen:Show()
-		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_lvds.mp3") --綠色毒素
+		specWarnToxicGreen:Show()--]]
 	elseif args.spellId == 142671 then
 		warnMesmerize:Show(args.destName)
 		if args.IsPlayer() then
@@ -663,11 +761,11 @@ function mod:SPELL_AURA_APPLIED(args)
 		timerEncaseInAmberCD:Start()
 		if self:IsDifficulty("heroic10", "heroic25") then
 --			countdownEncaseInAmber:Start()
-			--TODO
 		end
 	elseif args.spellId == 143939 then
 		warnGouge:Show(args.destName)
 		timerGouge:Start(args.destName)
+		timerGougeCD:Start()
 		if args.IsPlayer() then
 			specWarnGouge:Show()
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_zj.mp3") --鑿擊
@@ -714,6 +812,9 @@ function mod:SPELL_AURA_APPLIED(args)
 		specWarnHurlAmber:Show()
 		timerHurlAmberCD:Start()
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_tzhp.mp3") --投擲琥珀
+		if self.Options.LTIP and (not showtank) then
+			VEM:ShowLTSpecialWarning(143759, 1, 0, 0, 1, 143759, 2)
+		end
 	elseif args.spellId == 143337 then
 		mutateTargets[#mutateTargets + 1] = args.destName
 		if args.IsPlayer() then
@@ -723,6 +824,15 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 		self:Unschedule(warnMutatedTargets)
 		self:Schedule(0.5, warnMutatedTargets)
+		xiezireset = xiezireset + 1
+		if xiezireset == 4 then
+			twipe(xiezi)
+			xiezireset = 1
+		end
+		if not xiezi[args.destName] then
+			xiezi[args.destName] = 0
+			testinfo()
+		end
 	elseif args.spellId == 143358 then
 		if args.IsPlayer() then
 			specWarnParasiteFixate:Show()
@@ -743,7 +853,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			sndWOP:Schedule(3.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
 			sndWOP:Schedule(4.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 			if self.Options.HudMAPMZ then
-				MZMarkers[args.destName] = register(VEMHudMap:PlaceRangeMarkerOnPartyMember("timer", args.destName, 10, 10, 1, 1 ,1 ,0.8):Appear():RegisterForAlerts():Rotate(360, 5.2))
+				MZMarkers[args.destName] = register(VEMHudMap:PlaceRangeMarkerOnPartyMember("timer", args.destName, 5, 6, 1, 1 ,1 ,0.8):Appear():RegisterForAlerts():Rotate(360, 5.2))
 			end
 		end
 		if self.Options.RangeFrame then
@@ -779,9 +889,12 @@ function mod:SPELL_AURA_REMOVED(args)
 			MZMarkers[args.destName] = free(MZMarkers[args.destName])
 		end
 	elseif args.spellId == 143339 then
-		if dissectorlive then
-			chongnum = chongnum + 8
-		end		
+		self:Schedule(3, function()
+			if dissectorlive then
+				chongnum = chongnum + 8
+				testinfo()
+			end
+		end)
 	end
 end
 
@@ -800,6 +913,7 @@ function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if cid == 71161 then--Kil'ruk the Wind-Reaver
 		self:Unschedule(DFAScan)
+		timerGougeCD:Cancel()
 	elseif cid == 71157 then--Xaril the Poisoned-Mind
 		timerToxicCatalystCD:Cancel()
 	elseif cid == 71156 then--Kaz'tik the Manipulator
@@ -819,13 +933,16 @@ function mod:UNIT_DIED(args)
 		timerMutateCD:Cancel()
 		timerInjectionCD:Cancel()
 		dissectorlive = false
+		if self.Options.LTchong then
+			VEM:HideLTSpecialWarning()
+			showtank = false
+		end
 	elseif cid == 71153 then--Hisek the Swarmkeeper
 		timerAimCD:Cancel()
-		--timerRapidFireCD:Cancel()
-	elseif cid == 71578 then--chong
+		timerRapidFireCD:Cancel()
+	elseif cid == 71578 then--chong		
 		chongnum = chongnum - 1
-		if (not dissectorlive) and (chongnum == 0) then
-		end
+		testinfo()
 	end
 end
 
@@ -919,7 +1036,6 @@ function mod:CHAT_MSG_MONSTER_EMOTE(msg, npc, _, _, target)
 		timerInsaneCalculationCD:Start()
 		if target == UnitName("player") then
 			specWarnCalculated:Show()
---			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_lklx.mp3") --拉開連線
 			yellCalculated:Yell()
 		end
 		if self:IsDifficulty("heroic10", "heroic25") then
@@ -929,7 +1045,6 @@ function mod:CHAT_MSG_MONSTER_EMOTE(msg, npc, _, _, target)
 				if shape == resultshape or color == resultcolor or number == resultnumber then
 					if target ~= UnitName("player") then
 						specWarnCalculated:Show()
---						sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_lklx.mp3")
 						yellCalculated:Yell()
 					end
 				end

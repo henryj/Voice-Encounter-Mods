@@ -423,7 +423,17 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
+	LTchong					= "Graphic Cooldown Warning: $spell:143339",
+	LTIP					= "Icon Vibrate on Warning: Critical Ability",
+	dr						= "Defensive Warning: $spell:142416",
+	dr1						= "$spell:144095 1/6",
+	dr2						= "$spell:144095 2/6",
+	dr3						= "$spell:144095 3/6",
+	dr4						= "$spell:144095 4/6",
+	dr5						= "$spell:144095 5/6",
+	dr6						= "$spell:144095 6/6",
 	InfoFrame				= "Info Frame: Next Klaxxi Paragon",
+	HudMAPDF				= "HUD MAP: $spell:142232",
 	HudMAP					= "HUD MAP: $spell:142726 / $spell:142727",
 	HudMAPMZ				= "HUD MAP: $journal:8073",
 	warnToxicCatalyst				= VEM_CORE_AUTO_ANNOUNCE_OPTIONS.spell:format("ej8036"),
