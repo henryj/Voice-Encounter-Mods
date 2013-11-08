@@ -386,6 +386,8 @@ do
 	local mt = {__index = barPrototype}
 
 	function DBT:CreateBar(timer, id, icon, huge, small, color, isDummy)
+		text = id
+		id = 'VEM:'..id
 		if timer <= 0 then return end
 		if (self.numBars or 0) >= 15 and not isDummy then return end
 		local newBar = self:GetBar(id)
@@ -395,7 +397,7 @@ do
 			newBar:SetElapsed(0) -- same
 			if newBar.dead then return end
 			newBar:ApplyStyle()
-			newBar:SetText(id)
+			newBar:SetText(text)
 			newBar:SetIcon(icon)
 		else -- create a new one
 			newBar = next(unusedBarObjects, nil)
@@ -437,7 +439,7 @@ do
 			else
 				self.smallBars:Append(newBar)
 			end
-			newBar:SetText(id)
+			newBar:SetText(text)
 			newBar:SetIcon(icon)
 			newBar:SetPosition()
 			self.bars[newBar] = true
