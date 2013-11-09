@@ -376,7 +376,7 @@ do
 			frame = unusedBars[#unusedBars]
 			unusedBars[#unusedBars] = nil
 		else
-			frame = CreateFrame("Frame", "DBT_Bar_"..fCounter, self.mainAnchor, self.options.Template)
+			frame = CreateFrame("Frame", "VEM_DBT_Bar_"..fCounter, self.mainAnchor, self.options.Template)
 			setupHandlers(frame)
 			fCounter = fCounter + 1
 		end
