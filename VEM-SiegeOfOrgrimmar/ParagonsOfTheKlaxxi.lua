@@ -18,6 +18,8 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_REMOVED",
 	"SPELL_PERIODIC_DAMAGE",
 	"SPELL_PERIODIC_MISSED",
+	"SPELL_DAMAGE",
+	"SPELL_MISSED",
 	"CHAT_MSG_MONSTER_EMOTE",
 	"UNIT_DIED"
 )
@@ -122,6 +124,7 @@ local yellWhirling					= mod:NewYell(143701, nil, false)
 local specWarnWhirlingNear			= mod:NewSpecialWarningClose(143701)
 local specWarnHurlAmber				= mod:NewSpecialWarningSpell(143759, nil, nil, nil, 2)--I realize two abilities on same boss both using same sound is less than ideal, but user can change it now, and 1 or 3 feel appropriate for both of these
 local specWarnCausticAmber			= mod:NewSpecialWarningMove(143735)--Stuff on the ground
+local specWarnFireline				= mod:NewSpecialWarningMove(142808)
 --Skeer the Bloodseeker
 local specWarnBloodletting			= mod:NewSpecialWarningSwitch(143280, not mod:IsHealer())
 --Rik'kal the Dissector
@@ -177,6 +180,10 @@ local dissectorlive = true
 
 local showtank = false
 local xiezireset = 0
+
+local havecolor = false
+local caled = false
+local havedebuff = false
 
 mod:AddBoolOption("RangeFrame")
 mod:AddBoolOption("SetIconOnAim", true)--multi boss fight, will use star and avoid moving skull off a kill target
@@ -339,17 +346,17 @@ local function warnMutatedTargets()
 		mutatecount = mutatecount + 1
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_tb.mp3") --突變
 		if mutatecount == 1 then
-			sndWOP:Schedule(0.6, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			sndWOP:Schedule(0.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 		elseif mutatecount == 2 then
-			sndWOP:Schedule(0.6, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
+			sndWOP:Schedule(0.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
 		elseif mutatecount == 3 then
-			sndWOP:Schedule(0.6, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+			sndWOP:Schedule(0.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
 		elseif mutatecount == 4 then
-			sndWOP:Schedule(0.6, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
+			sndWOP:Schedule(0.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
 		elseif mutatecount == 5 then
-			sndWOP:Schedule(0.6, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
+			sndWOP:Schedule(0.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
 		elseif mutatecount == 6 then
-			sndWOP:Schedule(0.6, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countsix.mp3")
+			sndWOP:Schedule(0.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countsix.mp3")
 		end
 		timerMutateCD:Start(45, mutatecount+1)
 	end
@@ -503,6 +510,9 @@ function mod:OnCombatStart(delay)
 	berserkTimer:Start(-delay)
 	xiezireset = 0
 	showtank = false
+	havecolor = false
+	havedebuff = false
+	caled = false
 end
 
 function mod:OnCombatEnd()
@@ -600,10 +610,10 @@ function mod:SPELL_CAST_START(args)
 			end
 		end
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_csch.mp3") --橙色催化
-		sndWOP:Schedule(2, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_bzhh.mp3") --爆炸火環準備
-		sndWOP:Schedule(3.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOP:Schedule(4.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Schedule(5.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndWOP:Schedule(3, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_bzhh.mp3") --爆炸火環準備
+		sndWOP:Schedule(4, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+		sndWOP:Schedule(5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
+		sndWOP:Schedule(6, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
 	elseif args.spellId == 142729 then
 		timerToxicCatalystCD:Start()
 		if self.Options.warnToxicCatalyst then
@@ -634,7 +644,7 @@ function mod:SPELL_CAST_START(args)
 			end
 		end
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_lvsch.mp3") --綠色催化
-		sndWOP:Schedule(1, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_xxls.mp3") --小心綠水
+		sndWOP:Schedule(2, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_xxls.mp3") --小心綠水
 	elseif args.spellId == 143765 then
 		warnSonicProjection:Show()
 	elseif args.spellId == 143666 then
@@ -642,7 +652,12 @@ function mod:SPELL_CAST_START(args)
 	elseif args.spellId == 142416 then
 		warnInsaneCalculationFire:Show()
 		specWarnInsaneCalculationFire:Show()
-		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\linesoon.mp3") --準備連線
+		if caled then
+			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\linesoon.mp3") --準備連線
+			caled = false
+		else
+			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_yllx.mp3") --遠離連線
+		end
 		firecount = firecount + 1
 		if MyJS() then
 			sndWOP:Schedule(0.8, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
@@ -731,12 +746,15 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif args.spellId == 142532 and args:IsPlayer() then
 		specWarnToxicBlue:Show()
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_lsds.mp3") --藍色毒素
+		havecolor = true
 	elseif args.spellId == 142533 and args:IsPlayer() then
 		specWarnToxicRed:Show()
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_hsds.mp3") --紅色毒素
+		havecolor = true
 	elseif args.spellId == 142534 and args:IsPlayer() then
 		specWarnToxicYellow:Show()
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_huds.mp3") --黃色毒素
+		havecolor = true
 --[[	elseif args.spellId == 142547 and args:IsPlayer() then
 		specWarnToxicOrange:Show()
 	elseif args.spellId == 142548 and args:IsPlayer() then
@@ -937,6 +955,7 @@ function mod:UNIT_DIED(args)
 			VEM:HideLTSpecialWarning()
 			showtank = false
 		end
+		testinfo()
 	elseif cid == 71153 then--Hisek the Swarmkeeper
 		timerAimCD:Cancel()
 		timerRapidFireCD:Cancel()
@@ -1036,7 +1055,9 @@ function mod:CHAT_MSG_MONSTER_EMOTE(msg, npc, _, _, target)
 		timerInsaneCalculationCD:Start()
 		if target == UnitName("player") then
 			specWarnCalculated:Show()
+			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_lxdn.mp3") --連線點你
 			yellCalculated:Yell()
+			caled = true
 		end
 		if self:IsDifficulty("heroic10", "heroic25") then
 			local resultshape, resultcolor, resultnumber = parseDebuff(target)
@@ -1045,7 +1066,13 @@ function mod:CHAT_MSG_MONSTER_EMOTE(msg, npc, _, _, target)
 				if shape == resultshape or color == resultcolor or number == resultnumber then
 					if target ~= UnitName("player") then
 						specWarnCalculated:Show()
+						sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_lxdn.mp3")
 						yellCalculated:Yell()
+						caled = true
+					end
+				else
+					if target ~= UnitName("player") then
+						caled = false
 					end
 				end
 			end			
@@ -1084,3 +1111,17 @@ function mod:CHAT_MSG_MONSTER_EMOTE(msg, npc, _, _, target)
 		end		
 	end
 end
+
+function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
+	if spellId == 142809 and destGUID == UnitGUID("player") and self:AntiSpam(2, 3) then
+		if UnitDebuff("player", GetSpellInfo(142808)) then
+			havedebuff = true
+			self:Schedule(10, function() havedebuff = false end)
+		end
+		if (not havedebuff) then
+			specWarnFireline:Show()
+			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+		end
+	end
+end
+mod.SPELL_MISSED = mod.SPELL_DAMAGE

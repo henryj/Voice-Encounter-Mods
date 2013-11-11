@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 local sndGC		= mod:NewSound(nil, "SoundGC", mod:IsDps())
 
-mod:SetRevision(("$Revision: 10618 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10700 $"):sub(12, -3))
 mod:SetCreatureID(71865)
 mod:SetZone()
 mod:SetUsedIcons(8, 7)
@@ -34,14 +34,17 @@ local warnChainLightning			= mod:NewSpellAnnounce(144584, 3, nil, false)--Maybe 
 local warnYShaarjsProtection		= mod:NewTargetAnnounce(144945, 2)
 local warnAnnihilate				= mod:NewCastAnnounce(144969, 4)
 --Stage Two: Power of Y'Shaarj
+local warnPhase2					= mod:NewPhaseAnnounce(2)
 local warnWhirlingCorruption		= mod:NewCountAnnounce(144985, 3)
-local warnEmpWhirlingCorruption		= mod:NewSpellAnnounce(145037, 3)
 local warnTouchOfYShaarj			= mod:NewTargetAnnounce(145071, 3)
-local warnEmpTouchOfYShaarj			= mod:NewTargetAnnounce(145175, 3)
-local warnEmpDesecrate				= mod:NewSpellAnnounce(144749, 3)
 local warnGrippingDespair			= mod:NewStackAnnounce(145183, 2, nil, mod:IsTank())
-local warnEmpGrippingDespair		= mod:NewStackAnnounce(145195, 3, nil, mod:IsTank())--Distinction is not that important, may just remove for the tank warning.
 --Starge Three: MY WORLD
+local warnPhase3					= mod:NewPhaseAnnounce(3)
+local warnEmpWhirlingCorruption		= mod:NewSpellAnnounce(145037, 3)
+local warnEmpTouchOfYShaarj			= mod:NewTargetAnnounce(145175, 3)
+local warnEmpGrippingDespair		= mod:NewStackAnnounce(145195, 3, nil, mod:IsTank())--Distinction is not that important, may just remove for the tank warning.
+--Starge Four: Heroic Hidden Phase
+local warnPhase4					= mod:NewPhaseAnnounce(4)
 local warnMalice					= mod:NewTargetAnnounce(147209, 2)
 local warnBombardment				= mod:NewSpellAnnounce(147120, 3)
 local warnManifestRage				= mod:NewSpellAnnounce(147011, 4)

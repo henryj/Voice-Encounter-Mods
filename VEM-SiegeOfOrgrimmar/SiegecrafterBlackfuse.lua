@@ -329,10 +329,12 @@ function mod:SPELL_AURA_APPLIED(args)
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\speedup.mp3") --首領加速
 		end
 	elseif args.spellId == 143385 then
-		local amount = args.amount or 1
-		warnElectroStaticCharge:Show(args.destName, amount)
-		timerElectroStaticCharge:Start(args.destName)
-		timerElectroStaticChargeCD:Start()
+		if UnitIsPlayer(args.destName) == 1 then
+			local amount = args.amount or 1
+			warnElectroStaticCharge:Show(args.destName, amount)
+			timerElectroStaticCharge:Start(args.destName)
+			timerElectroStaticChargeCD:Start()
+		end
 	elseif args.spellId == 144210 and not args:IsDestTypePlayer() then
 		timerDeathFromAboveDebuff:Start(args.destName)
 	elseif args.spellId == 144236 and args:IsPlayer() then
