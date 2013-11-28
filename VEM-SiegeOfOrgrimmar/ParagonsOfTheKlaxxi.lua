@@ -32,6 +32,7 @@ local warnActivated					= mod:NewTargetAnnounce(118212, 3, 143542)
 --Kil'ruk the Wind-Reaver
 local warnGouge						= mod:NewTargetAnnounce(143939, 3, nil, mod:IsTank() or mod:IsHealer())--Timing too variable for a CD
 local warnDeathFromAbove			= mod:NewTargetAnnounce(142232, 3)
+local warnReave						= mod:NewCastAnnounce(148676, 3)
 --Xaril the Poisoned-Mind
 local warnToxicInjection			= mod:NewSpellAnnounce(142528, 3)
 local warnCausticBlood				= mod:NewSpellAnnounce(142315, 4, nil, mod:IsTank(), nil, nil, nil, nil, 2)
@@ -55,7 +56,7 @@ local warnCalculated				= mod:NewTargetAnnounce(144095, 3)--Wild variation on ti
 local warnInsaneCalculationFire		= mod:NewCastAnnounce(142416, 4)--3 seconds after 144095
 --Ka'roz the Locust
 local warnFlash						= mod:NewCastAnnounce(143709, 3)--62-70
-local warnWhirling					= mod:NewTargetAnnounce(143701, 3, nil, false, nil, nil, nil, nil, 2)--Spammy
+local warnWhirling					= mod:NewTargetAnnounce(143702, 3)
 local warnHurlAmber					= mod:NewSpellAnnounce(143759, 3)
 --Skeer the Bloodseeker
 local warnBloodletting				= mod:NewSpellAnnounce(143280, 4)
@@ -80,6 +81,7 @@ local specWarnGougeOther			= mod:NewSpecialWarningTarget(143939, mod:IsTank() or
 local specWarnDeathFromAbove		= mod:NewSpecialWarningYou(142232)
 local specWarnDeathFromAboveNear	= mod:NewSpecialWarningClose(142232)
 local yellDeathFromAbove			= mod:NewYell(142232)
+local specWarnReave					= mod:NewSpecialWarningSpell(148676, nil, nil, nil, 2)--Heroic
 --Xaril the Poisoned-Mind
 local specWarnCausticBlood			= mod:NewSpecialWarningSpell(142315, mod:IsTank())
 local specWarnToxicBlue				= mod:NewSpecialWarningYou(142532)
@@ -141,6 +143,7 @@ local timerJumpToCenter				= mod:NewCastTimer(5, 143545)
 --Kil'ruk the Wind-Reaver
 local timerGouge					= mod:NewTargetTimer(10, 143939, nil, mod:IsTank())
 local timerGougeCD					= mod:NewCDTimer(20, 143939)
+local timerReaveCD					= mod:NewCDTimer(33, 148676)
 --Xaril the Poisoned-Mind
 local timerToxicCatalystCD			= mod:NewCDTimer(33, "ej8036")
 --Korven the Prime
@@ -185,14 +188,14 @@ local havecolor = false
 local caled = false
 local havedebuff = false
 
+mod:AddBoolOption("LTIP", true, "sound")
 mod:AddBoolOption("RangeFrame")
 mod:AddBoolOption("SetIconOnAim", true)--multi boss fight, will use star and avoid moving skull off a kill target
 mod:AddBoolOption("LTchong", mod:IsTank(), "sound")
 mod:AddBoolOption("InfoFrame", true, "sound")
-mod:AddBoolOption("LTIP", true, "sound")
+mod:AddBoolOption("ShowGrouptarget", true, "sound")
 mod:AddBoolOption("HudMAP", true, "sound")
 mod:AddBoolOption("HudMAPMZ", true, "sound")
-mod:AddBoolOption("HudMAPDF", true, "sound")
 
 mod:AddBoolOption("dr", true, "sound")
 for i = 1, 6 do
@@ -216,7 +219,8 @@ local RedMarkers={}
 local BlueMarkers={}
 local YellowMarkers={}
 local MZMarkers={}
-local DFMarker = nil
+local DFMarker={}
+local CMMarkers={}
 
 local activatedTargets = {}--A table, for the 3 on pull
 local mutateTargets = {}
@@ -237,6 +241,11 @@ local ResultTargets = {}
 local ResultMeleeTargets = {}
 local ResultRangedTargets = {}
 local ResultRangedDPSTargets = {}
+local ResultGroupTargets = {}
+
+local myGroup = 0
+
+local ResultXFTargets = {}
 
 --[[EJ_GetSectionInfo(8004) --掠风者 71161
 EJ_GetSectionInfo(8009) 	--毒心者 71157
@@ -393,30 +402,58 @@ local function DFAScan()
 						sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
 					end
 				end
-				if mod.Options.HudMAPDF then					
-					DFMarker = register(VEMHudMap:PlaceStaticMarkerOnPartyMember("highlight", targetname, 5, 3, 0, 1, 0, 0.8):Appear():RegisterForAlerts())
+				if mod.Options.HudMAPMZ then					
+					DFMarker[targetname] = register(VEMHudMap:PlaceStaticMarkerOnPartyMember("highlight", targetname, 8, 3, 0, 1, 0, 0.8):Appear():RegisterForAlerts())
 				end
 			else
-				mod:Schedule(0.2, DFAScan)
+				mod:Schedule(0.25, DFAScan)
 			end
 			return--If we found the boss before hitting 5, want to fire this return to break checking other bosses needlessly
 		end
 	end
 end
 
-local function CheckBosses(GUID)
-	local vulnerable = false
+local function HeroicDFAScan()
 	for i = 1, 5 do
 		local unitID = "boss"..i
+		if UnitExists(unitID) and mod:GetCIDFromGUID(UnitGUID(unitID)) == 71161 then
+			if (not UnitExists(unitID.."target")) or not mod:IsTanking(unitID.."target", unitID) then
+				mod:Unschedule(HeroicDFAScan)
+				sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_sctj.mp3") --死從天降
+				for i = 1, VEM:GetNumGroupMembers() do
+					local _, class = UnitClass("raid"..i)
+					if (class == "DRUID" and UnitPowerMax("raid"..i) > 200000) or class == "HUNTER" or class == "PRIEST" or class == "MAGE" or class == "WARLOCK" or (class == "SHAMAN" and UnitPowerMax("raid"..i) > 200000) or (class == "PALADIN" and UnitPowerMax("raid"..i) > 200000) then
+						DFMarker[UnitName("raid"..i)] = register(VEMHudMap:PlaceStaticMarkerOnPartyMember("highlight", UnitName("raid"..i), 8, 3, 1, 1 ,1 ,0.4):Appear():RegisterForAlerts())
+					end
+				end
+			else
+				mod:Schedule(0.2, HeroicDFAScan)
+			end
+			return
+		end
+	end
+end
+
+local function CheckBosses()
+	local vulnerable = false
+	for i = 1, 3 do--Assume boss 4 is always the inactive one. Need to verify this works, because filtering by ready to fight causes start timers not to work
+		local unitID = "boss"..i
 		--Only 3 bosses activate on pull, however now the inactive or (next boss to activate) also fires IEEU. As such, we have to filter that boss by scaning for readytofight. Works well though.
-		if UnitExists(unitID) and not activeBossGUIDS[UnitGUID(unitID)] and not UnitBuff(unitID, readyToFight) then--Check if new units exist we haven't detected and added yet.
+		if UnitExists(unitID) and not activeBossGUIDS[UnitGUID(unitID)] then--Check if new units exist we haven't detected and added yet.
 			local activetime = GetTime() - mod.combatInfo.pull
 			activeBossGUIDS[UnitGUID(unitID)] = true
 			activatedTargets[#activatedTargets + 1] = UnitName(unitID)
 			--Activation Controller
 			local cid = mod:GetCIDFromGUID(UnitGUID(unitID))
 			if cid == 71161 then--Kil'ruk the Wind-Reaver
-				mod:Schedule(23, DFAScan)--Not a large sample size, data shows it happen 29-30 seconds after IEEU fires on two different pulls. Although 2 is a poor sample
+				if mod:IsDifficulty("heroic10", "heroic25") then
+					timerReaveCD:Start(38.5)
+				end
+				if mod:IsDifficulty("heroic10", "heroic25") then
+					mod:Schedule(15, HeroicDFAScan)--Not a large sample size, data shows it happen 29-30 seconds after IEEU fires on two different pulls. Although 2 is a poor sample
+				else
+					mod:Schedule(23, DFAScan)--Not a large sample size, data shows it happen 29-30 seconds after IEEU fires on two different pulls. Although 2 is a poor sample
+				end
 				timerGougeCD:Start()
 				if UnitDebuff("player", GetSpellInfo(142929)) then vulnerable = true end
 				if activetime >= 15 then
@@ -430,9 +467,10 @@ local function CheckBosses(GUID)
 			elseif cid == 71156 then--Kaz'tik the Manipulator
 				if activetime >= 15 then
 					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_czz.mp3") --操縱者參戰
+					sndWOP:Schedule(1, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_ylcz.mp3")
 				end
 			elseif cid == 71155 then--Korven the Prime
-				timerShieldBashCD:Start(19)--20seconds from jump to center and REAL IEEU. question is whether or not filtering readyToFight will ignore the bad IEEU that come earlier
+				timerShieldBashCD:Start(19)--20seconds from REAL IEEU
 				if activetime >= 15 then
 					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_zzz.mp3") --至尊者參戰
 				end
@@ -466,7 +504,9 @@ local function CheckBosses(GUID)
 				end
 			elseif cid == 71153 then--Hisek the Swarmkeeper
 				timerAimCD:Start(37)--Might be 32 now with the UnitBuff filter, so pay attention to that and adjust as needed
-				timerRapidFireCD:Start()
+				if mod:IsDifficulty("heroic10", "heroic25") then
+					timerRapidFireCD:Start(44.5)
+				end
 				if activetime >= 15 then
 					sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_cqws.mp3") --蟲群衛士參戰
 				end
@@ -487,14 +527,18 @@ function mod:OnCombatStart(delay)
 	twipe(BlueMarkers)
 	twipe(YellowMarkers)
 	twipe(MZMarkers)
+	twipe(CMMarkers)
+	twipe(DFMarker)
 	
 	twipe(xiezi)
+	twipe(ResultXFTargets)
 	
 	twipe(ResultTargets)
 	twipe(ResultMeleeTargets)
 	twipe(ResultRangedTargets)
 	twipe(ResultRangedDPSTargets)
-	DFMarker = nil
+	twipe(ResultGroupTargets)
+	
 	calculatedShape = nil
 	calculatedNumber = nil
 	calculatedColor = nil
@@ -516,6 +560,7 @@ function mod:OnCombatStart(delay)
 end
 
 function mod:OnCombatEnd()
+	warnWhirling:Show(table.concat(ResultXFTargets, "<, >"))
 	self:UnregisterShortTermEvents()
 	if self.Options.RangeFrame then
 		VEM.RangeCheck:Hide()
@@ -523,7 +568,7 @@ function mod:OnCombatEnd()
 	if self.Options.InfoFrame then
 		VEM.InfoFrame:Hide()
 	end
-	if self.Options.HudMAP or self.Options.HudMAPMZ or self.Options.HudMAPDF then
+	if self.Options.HudMAP or self.Options.HudMAPMZ then
 		VEMHudMap:FreeEncounterMarkers()
 	end
 	if self.Options.LTchong or self.Options.LTIP then
@@ -608,6 +653,18 @@ function mod:SPELL_CAST_START(args)
 			if self.Options.LTIP then
 				VEM:ShowLTSpecialWarning(142728, 1, 0, 0, 1, 142728, 3)
 			end
+			PlaySoundFile("Sound\\Creature\\HoodWolf\\HoodWolfTransformPlayer01.ogg", "Master")
+		else
+			if havecolor then
+				if self.Options.LTIP then
+					VEM:ShowLTSpecialWarning(_G["NO"], 1, 1, 1, nil, 142728, 2)
+				end
+			else
+				if self.Options.LTIP then
+					VEM:ShowLTSpecialWarning(GetSpellInfo(142728).."??", 1, 0, 0, 1, 142728, 2)
+				end
+				PlaySoundFile("Sound\\Creature\\HoodWolf\\HoodWolfTransformPlayer01.ogg", "Master")
+			end
 		end
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_csch.mp3") --橙色催化
 		sndWOP:Schedule(3, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_bzhh.mp3") --爆炸火環準備
@@ -627,6 +684,18 @@ function mod:SPELL_CAST_START(args)
 			if self.Options.LTIP then
 				VEM:ShowLTSpecialWarning(142729, 1, 0, 0, 1, 142729, 3)
 			end
+			PlaySoundFile("Sound\\Creature\\HoodWolf\\HoodWolfTransformPlayer01.ogg", "Master")
+		else			
+			if havecolor then
+				if self.Options.LTIP then
+					VEM:ShowLTSpecialWarning(_G["NO"], 1, 1, 1, nil, 142729, 2)
+				end
+			else
+				if self.Options.LTIP then
+					VEM:ShowLTSpecialWarning(GetSpellInfo(142729).."??", 1, 0, 0, 1, 142729, 2)
+				end
+				PlaySoundFile("Sound\\Creature\\HoodWolf\\HoodWolfTransformPlayer01.ogg", "Master")
+			end
 		end
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_zsch.mp3") --紫色催化
 	elseif args.spellId == 142730 then
@@ -641,6 +710,18 @@ function mod:SPELL_CAST_START(args)
 			end
 			if self.Options.LTIP then
 				VEM:ShowLTSpecialWarning(142730, 1, 0, 0, 1, 142730, 3)
+			end
+			PlaySoundFile("Sound\\Creature\\HoodWolf\\HoodWolfTransformPlayer01.ogg", "Master")
+		else
+			if havecolor then
+				if self.Options.LTIP then
+					VEM:ShowLTSpecialWarning(_G["NO"], 1, 1, 1, nil, 142730, 2)
+				end
+			else
+				if self.Options.LTIP then
+					VEM:ShowLTSpecialWarning(GetSpellInfo(142730).."??", 1, 0, 0, 1, 142730, 3)
+				end
+				PlaySoundFile("Sound\\Creature\\HoodWolf\\HoodWolfTransformPlayer01.ogg", "Master")
 			end
 		end
 		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_lvsch.mp3") --綠色催化
@@ -658,12 +739,6 @@ function mod:SPELL_CAST_START(args)
 		else
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_yllx.mp3") --遠離連線
 		end
-		firecount = firecount + 1
-		if MyJS() then
-			sndWOP:Schedule(0.8, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
-			sndWOP:Schedule(1.5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\defensive.mp3")
-		end
-		if firecount == 6 then firecount = 0 end
 	elseif args.spellId == 143709 then
 		warnFlash:Show()
 		specWarnFlash:Show()
@@ -703,7 +778,6 @@ function mod:SPELL_CAST_START(args)
 		end
 		timerRapidFireCD:Start()
 	elseif args.spellId == 143339 then
-		injcount = injcount + 1
 		for i = 1, 5 do
 			local bossUnitID = "boss"..i
 			if UnitExists(bossUnitID) and UnitGUID(bossUnitID) == args.sourceGUID and UnitDetailedThreatSituation("player", bossUnitID) then
@@ -711,6 +785,7 @@ function mod:SPELL_CAST_START(args)
 				break
 			end
 		end
+		injcount = injcount + 1
 		timerInjectionCD:Start(9.5, injcount + 1)
 		if self.Options.LTchong then
 			self:Schedule(1, function()
@@ -721,13 +796,20 @@ function mod:SPELL_CAST_START(args)
 				end
 			end)			
 		end
+	elseif args.spellId == 148676 then
+		warnReave:Show()
+		specWarnReave:Show()
+		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_xft.mp3") --旋風準備
+		timerReaveCD:Start()
+		self:Unschedule(HeroicDFAScan)
+		self:Schedule(15, HeroicDFAScan)		
 	end
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
 	if args.spellId == 142528 then
 		warnToxicInjection:Show()
-		timerToxicCatalystCD:Start()
+		timerToxicCatalystCD:Start(21)--21-23 variance observed on normal and heroic
 	elseif args.spellId == 142232 then
 		self:Unschedule(DFAScan)
 		self:Schedule(17, DFAScan)
@@ -736,6 +818,15 @@ function mod:SPELL_CAST_SUCCESS(args)
 			xiezi[args.sourceName] = xiezi[args.sourceName] + 1
 			testinfo()
 		end
+	elseif args.spellId == 142416 then
+		firecount = firecount + 1
+		if MyJS() then
+			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
+			sndWOP:Schedule(0.7, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\defensive.mp3")
+		else
+			VEM:PlayCountSound(firecount)
+		end
+		if firecount == 6 then firecount = 0 end
 	end
 end
 
@@ -770,6 +861,9 @@ function mod:SPELL_AURA_APPLIED(args)
 		else
 			specWarnKunchongs:Show()
 			sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\ex_so_czkd.mp3") --蟲子快打
+			if self.Options.HudMAPMZ then
+				CMMarkers[args.destName] = register(VEMHudMap:PlaceRangeMarkerOnPartyMember("highlight", args.destName, 5, 15, 1, 1 ,0 ,1):Pulse(0.5, 0.5))
+			end
 		end
 	elseif args.spellId == 142564 then
 		warnEncaseInAmber:Show(args.destName)
@@ -825,6 +919,9 @@ function mod:SPELL_AURA_APPLIED(args)
 				end
 			end
 		end
+		local xftime = GetTime() - mod.combatInfo.pull
+		xftime = ("%d:%0.2d"):format(xftime/60, math.fmod(xftime, 60))
+		ResultXFTargets[#ResultXFTargets + 1] = args.destName.."("..xftime..")"
 	elseif args.spellId == 143759 then
 		warnHurlAmber:Show()
 		specWarnHurlAmber:Show()
@@ -913,6 +1010,10 @@ function mod:SPELL_AURA_REMOVED(args)
 				testinfo()
 			end
 		end)
+	elseif args.spellId == 142671 then
+		if CMMarkers[args.destName] then
+			CMMarkers[args.destName] = free(CMMarkers[args.destName])
+		end
 	end
 end
 
@@ -930,7 +1031,12 @@ mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if cid == 71161 then--Kil'ruk the Wind-Reaver
-		self:Unschedule(DFAScan)
+		if mod:IsDifficulty("heroic10", "heroic25") then
+			self:Unschedule(HeroicDFAScan)
+		else
+			self:Unschedule(DFAScan)
+		end		
+		timerReaveCD:Cancel()
 		timerGougeCD:Cancel()
 	elseif cid == 71157 then--Xaril the Poisoned-Mind
 		timerToxicCatalystCD:Cancel()
@@ -966,7 +1072,7 @@ function mod:UNIT_DIED(args)
 end
 
 ------------------
---Normal Only?
+--Normal Only
 --143605 Red Sword
 --143606 Purple Sword
 --143607 Blue Sword
@@ -985,7 +1091,7 @@ end
 --143618 Green Bomb
 --143619 Yellow Bomb
 ----------------------
---25man Only?
+--25man Only
 --143620 Red Mantid
 --143621 Purple Mantid
 --143622 Blue Mantid
@@ -1077,25 +1183,53 @@ function mod:CHAT_MSG_MONSTER_EMOTE(msg, npc, _, _, target)
 				end
 			end			
 			twipe(ResultTargets)
+			twipe(ResultGroupTargets)
 			twipe(ResultMeleeTargets)
 			twipe(ResultRangedTargets)
 			twipe(ResultRangedDPSTargets)
+			local _, _, mysubgroup = GetRaidRosterInfo(UnitInRaid("player"))
+			myGroup = mysubgroup
 			for i = 1, VEM:GetNumGroupMembers() do
 				local shapecheck, colorcheck, numbercheck = parseDebuff(UnitName("raid"..i))
 				if shapecheck then
 					if shapecheck == resultshape or colorcheck == resultcolor or numbercheck == resultnumber then
-						ResultTargets[#ResultTargets + 1] = UnitName("raid"..i)
-						local _, class = UnitClass("raid"..i)
-						if (class == "DRUID" and UnitPowerMax("raid"..i) > 200000) or class == "HUNTER" or class == "PRIEST" or class == "MAGE" or class == "WARLOCK" or (class == "SHAMAN" and UnitPowerMax("raid"..i) > 200000) or (class == "PALADIN" and UnitPowerMax("raid"..i) > 200000) then
-							ResultRangedTargets[#ResultRangedTargets + 1] = UnitName("raid"..i)
-							if self:UnitIsDps("raid"..i) then
-								ResultRangedDPSTargets[#ResultRangedDPSTargets + 1] = UnitName("raid"..i)
+						if mod.Options.ShowGrouptarget then
+							local _, _, subgroup = GetRaidRosterInfo(i)
+							if subgroup == myGroup then
+								ResultGroupTargets[#ResultGroupTargets + 1] = UnitName("raid"..i)
 							end
 						else
-							ResultMeleeTargets[#ResultMeleeTargets + 1] = UnitName("raid"..i)
-						end					
+							ResultTargets[#ResultTargets + 1] = UnitName("raid"..i)
+							local _, class = UnitClass("raid"..i)
+							if (class == "DRUID" and UnitPowerMax("raid"..i) > 200000) or class == "HUNTER" or class == "PRIEST" or class == "MAGE" or class == "WARLOCK" or (class == "SHAMAN" and UnitPowerMax("raid"..i) > 200000) or (class == "PALADIN" and UnitPowerMax("raid"..i) > 200000) then
+								ResultRangedTargets[#ResultRangedTargets + 1] = UnitName("raid"..i)
+								if self:UnitIsDps("raid"..i) then
+									ResultRangedDPSTargets[#ResultRangedDPSTargets + 1] = UnitName("raid"..i)
+								end
+							else
+								ResultMeleeTargets[#ResultMeleeTargets + 1] = UnitName("raid"..i)
+							end
+						end
 					end
 				end
+			end
+			if mod.Options.ShowGrouptarget and self:IsDifficulty("heroic10", "heroic25") then
+				VEM.InfoFrame:SetHeader(GetSpellInfo(144095).."("..(firecount+1)..")")
+				if #ResultGroupTargets == 1 then
+					VEM.InfoFrame:Show(1, "other", ResultGroupTargets[1], "1")
+				elseif #ResultGroupTargets == 2 then
+					VEM.InfoFrame:Show(2, "other", ResultGroupTargets[1], "1", ResultGroupTargets[2], "2")
+				elseif #ResultGroupTargets == 3 then
+					VEM.InfoFrame:Show(3, "other", ResultGroupTargets[1], "1", ResultGroupTargets[2], "2", ResultGroupTargets[3], "3")
+				elseif #ResultGroupTargets == 4 then
+					VEM.InfoFrame:Show(4, "other", ResultGroupTargets[1], "1", ResultGroupTargets[2], "2", ResultGroupTargets[3], "3", ResultGroupTargets[4], "4")
+				elseif #ResultGroupTargets == 5 then
+					VEM.InfoFrame:Show(5, "other", ResultGroupTargets[1], "1", ResultGroupTargets[2], "2", ResultGroupTargets[3], "3", ResultGroupTargets[4], "4", ResultGroupTargets[5], "5")
+				else
+					VEM.InfoFrame:Show(1, "other", "No one", "0")
+				end
+				twipe(ResultGroupTargets)
+				
 			end
 			warnResult:Show(table.concat(ResultMeleeTargets, "<, >"))
 			warnResult:Show(table.concat(ResultRangedTargets, "<, >"))

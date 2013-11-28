@@ -571,6 +571,7 @@ end
 local malkorok_ai_mainframe_2 = nil
 local malkorok_ai_tmr_do = 0
 local function MalkorokAItimerfunc_do(self,elapsed)
+	if not malkorok_ai_mainframe then return end
 	malkorok_ai_tmr_do = malkorok_ai_tmr_do + elapsed
 	if malkorok_ai_tmr_do > 4.5 then
 		local n = GetNumGroupMembers() or 0
