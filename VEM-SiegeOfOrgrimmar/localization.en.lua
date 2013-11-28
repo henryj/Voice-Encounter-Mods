@@ -254,7 +254,7 @@ L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
 	Malhelper				= "===Special: Enable $spell:142842 graph assist (/mal)===",
 	MalhelperSend			= "===Assist Graph: Enable manual adjust mode===",
-	LTshow					= "Long Term Special Warning: Show shield absorbing amount=",
+	LTshow					= "Icon Vibration Warning: Show shield absorbing amount=",
 	dr						= "Defensive Warning: $spell:142986 (before explode)",
 	dr1						= "$spell:142986 1",
 	dr2						= "$spell:142986 2",
@@ -287,7 +287,7 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
-	LTZD					= "Long Term Special Warning: $spell:145987 on you",
+	LTZD					= "Icon Vibration Warning: $spell:145987 on you",
 	RangeFrame	= VEM_CORE_AUTO_RANGE_OPTION_TEXT:format(10, 145987),
 	Filterarea				= "Other: Use stricter way to tell the area"
 })
@@ -310,7 +310,7 @@ L:SetWarningLocalization({
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
 	SoundPX					= "Countdown: $spell:143343",
-	LTRange					= "Long Term Special Warning: P1 $spell:143343 stacks/P2 Boss Range",
+	LTRange					= "Icon Vibration Warning: P1 $spell:143343 stacks/P2 Boss Range",
 	optDD					= "$spell:143791 dispel chain",
 	DD1						= "Dispel 1",
 	DD2						= "Dispel 2",
@@ -368,8 +368,8 @@ L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
 	SoundFMD				= "Voice Warning: Before $spell:144208 warn to attack Shredder",
 	SoundDL					= "Voice Warning: Mine sweeping",
-	LTFD					= "Long Term Special Warning: $spell:143266 and $spell:143828",
-	LTHX					= "Long Term Special Warning: Show fire beam timer",
+	LTFD					= "Icon Vibration Warning: $spell:143266 and $spell:143828",
+	LTHX					= "Icon Vibration Warning: Show fire beam timer",
 	HudMAP					= "HUD MAP: $spell:143828",
 	SoundCZ					= "Voice Warning: Shredders' $spell:145444 AOE pre-warning",
 	SoundCZ4				= "Defensive Warning: Shredder 4th $spell:145444 (3 stacks buff)",
@@ -424,7 +424,8 @@ L:SetWarningLocalization({
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
 	LTchong					= "Graphic Cooldown Warning: $spell:143339",
-	LTIP					= "Icon Vibrate on Warning: Critical Ability",
+	LTIP					= "Icon Vibration Warning: Critical Ability",
+	ShowGrouptarget				= "Info Frame: $spell:144095 targets in your team(Heroic)",
 	dr						= "Defensive Warning: $spell:142416",
 	dr1						= "$spell:144095 1/6",
 	dr2						= "$spell:144095 2/6",
@@ -433,7 +434,6 @@ L:SetOptionLocalization({
 	dr5						= "$spell:144095 5/6",
 	dr6						= "$spell:144095 6/6",
 	InfoFrame				= "Info Frame: Next Klaxxi Paragon",
-	HudMAPDF				= "HUD MAP: $spell:142232",
 	HudMAP					= "HUD MAP: $spell:142726 / $spell:142727",
 	HudMAPMZ				= "HUD MAP: $journal:8073",
 	warnToxicCatalyst				= VEM_CORE_AUTO_ANNOUNCE_OPTIONS.spell:format("ej8036"),
@@ -481,6 +481,12 @@ L= VEM:GetModLocalization(869)
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
 	SoundGC					= "Voice Warning: $journal:8298 related",
+	SoundNL					= "Voice Warning: Phase 4 Boss Energy related",
+	ANcount					= "=內場殲滅=Defensive Warning",
+	XFcount					= "=普通旋風=Defensive Warning",
+	EXFcount				= "=強化旋風=Defensive Warning",
+	TQcount					= "=鋼鐵之星=Defensive Warning",
+	LTIP					= "Icon Vibration Warning: $spell:147209",
 	optDD					= "Ancestral Chain Heal interrupt warnings",
 	alldd					= "Always (If he's your target or focus)",
 	DD1						= "Odd number",
@@ -491,6 +497,10 @@ L:SetOptionLocalization({
 	DD4H					= "Interrupt 4(Heroic Mode, including chain lightning)",
 	nodd					= "None",
 	SetIconOnShaman			= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format("ej8294"),
+})
+
+L:SetMiscLocalization({
+	nameset				= "卡爾洛斯",
 })
 
 -------------
