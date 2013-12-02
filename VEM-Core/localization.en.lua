@@ -322,6 +322,6 @@ VEM_CORE_LAG_FOOTER					= "No Response: %s"
 
 
 VEM_CORE_SOUND_NOFILE		 		= "Voice File not found"
-VEM_CORE_SOUND_NOFILEUSAGE		 	= "    VEM did not find a voice-enabled package, please check whether the correct voice packets and enabled"
+VEM_CORE_SOUND_NOFILEUSAGE		 	= "    VEM failed to find any voice packs. Please check if you've correctly installed the voice packs and make sure they are enabled in your addons' list."
 VEM_CORE_SOUND_UNNAME		 		= "Custom Voice"
-VEM_CORE_SOUND_UNUSAGE		 		= "    This is a custom voice files, but the author is lazy, he did not write the introduction."
+VEM_CORE_SOUND_UNUSAGE		 		= "    This is a custom voice pack, but the author is too lazy to leave any details here."
