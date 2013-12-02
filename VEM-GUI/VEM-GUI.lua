@@ -44,7 +44,7 @@
 
 
 
-local revision =("$Revision: 10490 $"):sub(12, -3)
+local revision =("$Revision: 10687 $"):sub(12, -3)
 local FrameTitle = "VEM_GUI_Option_"	-- all GUI frames get automatically a name FrameTitle..ID
 local fixeditframe = false
 
@@ -1572,15 +1572,21 @@ local function CreateOptionsMenu()
 		RaidWarnSoundDropDown:SetPoint("TOPLEFT", ShowCountdownText, "BOTTOMLEFT", 10, -20)
 
 		local countSounds = {
-			{	text	= L.sst,	value 	= "sst"},
-			{	text	= L.yike,	value 	= "Mosh"},
-			{	text	= L.yun,	value 	= "yun"},
-			{	text	= VEM_CORE_SOUNDGRIL_CUSTOM,	value 	= "other"},
+			{	text	= VEM_CORE_SOUND_NOFILE,	value 	= "None"},
 		}
+		if #VEM.Soundfile > 0 and VEM.Soundfile[#VEM.Soundfile].Path then
+			table.wipe(countSounds)
+			for i = 1, #VEM.Soundfile do
+				tinsert(countSounds, {
+					text			= VEM.Soundfile[i].Name,
+					value			= VEM.Soundfile[i].Path,
+				})
+			end
+		end
 		local CountSoundDropDown = raidwarnoptions:CreateDropdown(L.CountdownVoice, countSounds,
 		VEM.Options.CountdownVoice, function(value)
 			VEM.Options.CountdownVoice = value
-			PlaySoundFile("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\movesoon.mp3", "Master")
+			PlaySoundFile("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\movesoon.mp3", "Master")
 			VEM:ShowSoundMM()
 		end
 		)

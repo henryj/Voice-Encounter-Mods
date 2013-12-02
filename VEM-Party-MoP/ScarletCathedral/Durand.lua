@@ -51,7 +51,7 @@ function mod:SPELL_CAST_START(args)
 	elseif args.spellId == 130857 then
 		warnMC:Show()
 		specWarnMC:Show(args.sourceName)
-		sndWOP:Play("Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\kickcast.mp3")--快打斷
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\kickcast.mp3")--快打斷
 	end
 end
 
@@ -63,12 +63,12 @@ function mod:SPELL_CAST_SUCCESS(args)
 		phase = 3
 		warnDeepSleep:Show()
 		timerDeepSleep:Start()
-		sndWOP:Schedule(5, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
-		sndWOP:Schedule(6, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-		sndWOP:Schedule(7, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOP:Schedule(8, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Schedule(9, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
-		sndWOP:Schedule(10, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\phasechange.mp3")--階段轉換
+		sndWOP:Schedule(5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
+		sndWOP:Schedule(6, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
+		sndWOP:Schedule(7, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+		sndWOP:Schedule(8, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
+		sndWOP:Schedule(9, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndWOP:Schedule(10, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\phasechange.mp3")--階段轉換
 		timerMassResCD:Start(18)--Limited Sample size
 		if self:IsDifficulty("challenge5") then
 			timerMCCD:Start(19)--Pretty much immediately after first mas res, unless mass res isn't interrupted then it'll delay MC

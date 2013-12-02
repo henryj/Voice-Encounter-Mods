@@ -482,10 +482,10 @@ L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
 	SoundGC					= "Voice Warning: $journal:8298 related",
 	SoundNL					= "Voice Warning: Phase 4 Boss Energy related",
-	ANcount					= "=內場殲滅=Defensive Warning",
-	XFcount					= "=普通旋風=Defensive Warning",
-	EXFcount				= "=強化旋風=Defensive Warning",
-	TQcount					= "=鋼鐵之星=Defensive Warning",
+	ANcount					= "=Annihilate= Defensive Warning",
+	XFcount					= "=Whirling Corruption= Defensive Warning",
+	EXFcount				= "=Empowered Whirling Corruption= Defensive Warning",
+	TQcount					= "=Iron Star= Defensive Warning",
 	LTIP					= "Icon Vibration Warning: $spell:147209",
 	optDD					= "Ancestral Chain Heal interrupt warnings",
 	alldd					= "Always (If he's your target or focus)",
@@ -500,7 +500,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	nameset				= "卡爾洛斯",
+	nameset				= "Garrosh",
 })
 
 -------------

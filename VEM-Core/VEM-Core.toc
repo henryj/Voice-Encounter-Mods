@@ -17,7 +17,6 @@ Libs\LibSharedMedia-3.0\lib.xml
 localization.en.lua
 localization.cn.lua
 localization.tw.lua
-extrasounds\other\other.lua
 DBT-Template.xml
 DBT.lua
 VEM-Core.lua

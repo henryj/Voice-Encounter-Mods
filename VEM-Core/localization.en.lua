@@ -320,11 +320,8 @@ VEM_CORE_LAG_ENTRY					= "%s: World delay [%d ms] / Home delay [%d ms]"
 VEM_CORE_LAG_FOOTER					= "No Response: %s"
 
 
-VEM_CORE_SOUNDGRIL_NAME_YIKE		= "Yike Xia"
-VEM_CORE_SOUNDGRIL_TEXT_YIKE		= "    Yike Xia, nickname coco-superwoman, girl, realname unknown. Dubbed as the female mage Mei Lv in <My name is MT>. Well known WOW narrator, Horde obsessed. Southwest University of Science and Technology China, 2009. She made her name in senior high with Sing Azeroth."
 
-VEM_CORE_SOUNDGRIL_NAME_YUN			= "Xiaoyun Zhi"
-VEM_CORE_SOUNDGRIL_TEXT_YUN			= "    Xiaoyun Zhi, WOW player from Taiwan, beautiful girl. Human DK from Black Hand Village @ TW-World Tree"
-
-VEM_CORE_SOUNDGRIL_NAME_SST			= "Default"
-VEM_CORE_SOUNDGRIL_TEXT_SST			= "    High-Quality British English Female Text-To-Speech. Chouu is a pro resto druid. Healing is a therapeutic activity for him."
+VEM_CORE_SOUND_NOFILE		 		= "Voice File not found"
+VEM_CORE_SOUND_NOFILEUSAGE		 	= "    VEM did not find a voice-enabled package, please check whether the correct voice packets and enabled"
+VEM_CORE_SOUND_UNNAME		 		= "Custom Voice"
+VEM_CORE_SOUND_UNUSAGE		 		= "    This is a custom voice files, but the author is lazy, he did not write the introduction."

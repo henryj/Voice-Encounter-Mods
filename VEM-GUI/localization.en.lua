@@ -222,7 +222,3 @@ L.Always						= "Always"
 
 -- Misc
 L.FontHeight	= 16
-
-L.sst = "Default(EN)"
-L.yike = "Xia Yike(CN)"
-L.yun =  "Xiao Yun(TW)"

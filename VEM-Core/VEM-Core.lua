@@ -50,7 +50,7 @@
 --  Globals/Default Options  --
 -------------------------------
 VEM = {
-	Revision = tonumber(("$Revision: 10745 $"):sub(12, -3)),
+	Revision = tonumber(("$Revision: 10746 $"):sub(12, -3)),
 	DisplayVersion = "(VEM) 5.4.4", -- the string that is shown as version
 	DisplayReleaseVersion = "5.4.5", -- Needed to work around bigwigs sending improper version information
 	ReleaseRevision = 10737 -- the revision of the latest stable version that is available
@@ -81,8 +81,8 @@ VEM.DefaultOptions = {
 	SpecialWarningSound3 = "Sound\\Spells\\PVPFlagTaken.ogg",
 	ModelSoundValue = "Short",
 	ChallengeBest = "Realm",
-	CountdownVoice = "sst",
-	CountdownVoice2 = "sst",
+	CountdownVoice = "VEM-Sound-Chouu\\chouu",
+	CountdownVoice2 = "chouu",
 	ShowCountdownText = false,
 	RaidWarningPosition = {
 		Point = "TOP",
@@ -201,6 +201,7 @@ VEM.DefaultOptions = {
 
 VEM.Bars = DBT:New()
 VEM.Mods = {}
+VEM.Soundfile = {}
 
 ------------------------
 -- Global Identifiers --
@@ -249,7 +250,6 @@ local currentSizes = nil
 local bossHealth = {}
 local savedDifficulty
 local difficultyText
-local flexSize
 
 local enableIcons = true -- set to false when a raid leader or a promoted player has a newer version of VEM
 local guiRequested = false
@@ -523,7 +523,7 @@ do
 		end
 
 	end
-	
+
 
 	-- UNIT_* events are special: they can take 'parameters' like this: "UNIT_HEALTH boss1 boss" which only trigger the event for the given unit ids
 	function VEM:RegisterEvents(...)
@@ -557,11 +557,11 @@ do
 			end
 		end
 	end
-	
+
 	local function unregisterEvent(mod, event)
 		if event:sub(0, 5) == "UNIT_" and event ~= "UNIT_DIED" and event ~= "UNIT_DESTROYED" then
 			local event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8 = strsplit(" ", event)
-			if event:sub(event:len() - 10) == "_UNFILTERED" then 
+			if event:sub(event:len() - 10) == "_UNFILTERED" then
 				mainFrame:UnregisterEvent(event:sub(0, -12))
 			else
 				unregisterUnitEvent(mod, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8)
@@ -717,10 +717,10 @@ end
 --  OnLoad  --
 --------------
 do
-	
+
 	local isLoaded = false
 	local onLoadCallbacks = {}
-	
+
 	-- register a callback that will be executed once the addon is fully loaded (ADDON_LOADED fired, saved vars are available)
 	function VEM:RegisterOnLoadCallback(cb)
 		if isLoaded then
@@ -729,7 +729,7 @@ do
 			onLoadCallbacks[#onLoadCallbacks + 1] = cb
 		end
 	end
-	
+
 	local function showOldVerWarning()
 		local popup = CreateFrame("Frame", nil, UIParent)
 		popup:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
@@ -838,6 +838,15 @@ do
 							end
 						end
 					end
+				elseif GetAddOnMetadata(i, "X-VEM-Mod-SoundFile") and enabled then
+					tinsert(VEM.Soundfile, {
+						Addon			= GetAddOnInfo(i),
+						Tag				= GetAddOnMetadata(i, "X-VEM-Mod-SoundFile"),
+						Path			= GetAddOnInfo(i).."\\"..GetAddOnMetadata(i, "X-VEM-Mod-SoundFile"),
+						Name			= GetAddOnMetadata(i, "X-VEM-Mod-SoundFileName") or VEM_CORE_SOUND_UNNAME,						
+						Usage			= GetAddOnMetadata(i, "X-VEM-Mod-SoundFileUsage") or VEM_CORE_SOUND_UNUSAGE,
+						hasPic			= tonumber(GetAddOnMetadata(i, "X-VEM-Mod-SoundFilePIC") or 0) == 1,
+					})
 				end
 			end
 			table.sort(self.AddOns, function(v1, v2) return v1.sort < v2.sort end)
@@ -850,6 +859,8 @@ do
 				"PLAYER_REGEN_DISABLED",
 				"PLAYER_REGEN_ENABLED",
 				"INSTANCE_ENCOUNTER_ENGAGE_UNIT",
+				"ENCOUNTER_START",
+				"ENCOUNTER_END",
 				"UNIT_DIED",
 				"UNIT_DESTROYED",
 				"UNIT_HEALTH mouseover target focus boss1 boss2 boss3 boss4 boss5",
@@ -1262,7 +1273,7 @@ end
 
 do
 	local sortMe = {}
-	
+
 	local function sort(v1, v2)
 		if v1.revision and not v2.revision then
 			return true
@@ -1450,7 +1461,7 @@ do
 			VEM:ShowRaidIDRequestResults()
 		end
 	end
-	
+
 	DEFAULT_CHAT_FRAME:HookScript("OnHyperlinkClick", linkHook) -- handles the weird case that the default chat frame is not one of the normal chat frames (3rd party chat frames or whatever causes this)
 	local i = 1
 	while _G["ChatFrame" .. i] do
@@ -1589,10 +1600,10 @@ end
 -------------------------------------------------
 do
 	local inRaid = false
-	
+
 	local raidUIds = {}
 	local raidGuids = {}
-	
+
 
 	--	save playerinfo into raid table on load. (for solo raid)
 	VEM:RegisterOnLoadCallback(function()
@@ -1825,7 +1836,7 @@ do
 			end
 		end
 	end
-	
+
 	local function soloIterator(_, state)
 		if not state then -- no state == first call
 			return "player", 0
@@ -1916,14 +1927,24 @@ do
 	end
 
 	local function fixsoundbug()
-		if VEM.Options.CountdownVoice ~= "Mosh" and VEM.Options.CountdownVoice ~= "sst" and VEM.Options.CountdownVoice ~= "yun" and VEM.Options.CountdownVoice ~= "other" then
-			if GetLocale() == "zhTW" then
-				VEM.Options.CountdownVoice = "yun"
-			elseif  GetLocale() == "zhCN" then
-				VEM.Options.CountdownVoice = "Mosh"
-			else
-				VEM.Options.CountdownVoice = "sst"
+		local findsoundfile = false
+		local finddefaultsoundfile = false
+		if #VEM.Soundfile > 0 and VEM.Soundfile[#VEM.Soundfile].Path then
+			for i = 1, #VEM.Soundfile do
+				if VEM.Options.CountdownVoice == VEM.Soundfile[i].Path then
+					findsoundfile = true							
+				end
+				if VEM.DefaultOptions.CountdownVoice == VEM.Soundfile[i].Path then
+					finddefaultsoundfile = true							
+				end
 			end
+			if not findsoundfile then
+				if finddefaultsoundfile then
+					VEM.Options.CountdownVoice = VEM.DefaultOptions.CountdownVoice
+				else
+					VEM.Options.CountdownVoice = VEM.Soundfile[#VEM.Soundfile].Path
+				end
+			end					
 		end
 	end
 	
@@ -1933,7 +1954,7 @@ do
 		addDefaultOptions(VEM.Options, VEM.DefaultOptions)
 		-- load special warning options
 		migrateSavedOptions()
-		fixsoundbug()
+		VEM:Schedule(5, fixsoundbug)
 		VEM:UpdateSpecialWarningOptions()
 		-- set this with a short delay to prevent issues with other addons also trying to do the same thing with another position ;)
 		VEM:Schedule(5, setRaidWarningPositon)
@@ -2379,7 +2400,7 @@ do
 			VEM:StartCombat(mod, delay + lag, "SYNC from - "..sender, true, startHp)
 		end
 	end
-	
+
 	syncHandlers["HF"] = function(sender, mod, modRevision)
 		mod = VEM:GetModByName(mod or "")
 		modRevision = tonumber(modRevision or 0) or 0
@@ -2426,15 +2447,15 @@ do
 		end
 		--Cancel any existing pull timers before creating new ones, we don't want double countdowns or mismatching blizz countdown text (cause you can't call another one if one is in progress)
 		if not VEM.Options.DontShowPT and VEM.Bars:GetBar(VEM_CORE_TIMER_PULL) then
-			VEM.Bars:CancelBar(VEM_CORE_TIMER_PULL) 
+			VEM.Bars:CancelBar(VEM_CORE_TIMER_PULL)
 		end
 		if not VEM.Options.DontPlayPTCountdown then
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfive.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\com_go.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\com_go.mp3", "Master")
 		end
 		if not VEM.Options.DontShowPTCountdownText then
 			VEM:Unschedule(countDownTextDelay)
@@ -2447,12 +2468,12 @@ do
 		end
 		if not VEM.Options.DontPlayPTCountdown then
 			PlaySoundFile("Interface\\AddOns\\VEM-Core\\Sounds\\win.ogg", "Master")
-			if timer > 5 then VEM:Schedule(timer-5, PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfive.mp3", "Master") end
-			if timer > 5 then VEM:Schedule(timer-4, PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3", "Master") end
-			if timer > 3 then VEM:Schedule(timer-3, PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3", "Master") end
-			if timer > 3 then VEM:Schedule(timer-2, PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3", "Master") end
-			if timer > 3 then VEM:Schedule(timer-1, PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3", "Master") end
-			if timer > 1 then VEM:Schedule(timer, PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\com_go.mp3", "Master") end
+			if timer > 5 then VEM:Schedule(timer-5, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3", "Master") end
+			if timer > 5 then VEM:Schedule(timer-4, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3", "Master") end
+			if timer > 3 then VEM:Schedule(timer-3, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3", "Master") end
+			if timer > 3 then VEM:Schedule(timer-2, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3", "Master") end
+			if timer > 3 then VEM:Schedule(timer-1, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3", "Master") end
+			if timer > 1 then VEM:Schedule(timer, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\com_go.mp3", "Master") end
 		end
 		if not VEM.Options.DontShowPTCountdownText then
 			local threshold = VEM.Options.PTCountThreshold
@@ -2478,12 +2499,12 @@ do
 		end
 		dummyMod.text:Cancel()
 		if not VEM.Options.DontPlayPTCountdown then
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfive.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countfour.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countthree.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\countone.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\com_go.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\com_go.mp3", "Master")
 		end
 		if not VEM.Options.DontShowPTCountdownText then
 			VEM:Unschedule(countDownTextDelay)
@@ -2507,7 +2528,7 @@ do
 			raid[sender].bwrevision = tonumber(bwrevision)
 		end
 	end
-	
+
 	syncHandlers["VRA"] = function(sender, bwarevision)--Sent by bigwigs Alphas
 		if bwarevision and raid[sender] then
 			raid[sender].bwarevision = tonumber(bwarevision)
@@ -2596,7 +2617,7 @@ do
 		local _, _, home, world = GetNetStats()
 		sendSync("LAG", ("%d\t%d"):format(home, world))
 	end
-	
+
 	syncHandlers["LAG"] = function(sender, homelag, worldlag)
 		homelag, worldlag = tonumber(homelag or ""), tonumber(worldlag or "")
 		if homelag and worldlag and raid[sender] then
@@ -2678,7 +2699,7 @@ do
 			VEM:Unschedule(autoDecline)
 			VEM:Schedule(59, autoDecline, sender)
 			inspopup:Hide()
-			if savedSender ~= sender then 
+			if savedSender ~= sender then
 				if savedSender then
 					autoDecline(savedSender, 1) -- Do not allow multiple popups, so auto decline to previous sender.
 				end
@@ -2963,7 +2984,7 @@ end
 -----------------------
 do
 	local frame, fontstring, fontstringFooter
-	
+
 	local function createFrame()
 		frame = CreateFrame("Frame", nil, UIParent)
 		frame:SetFrameStrata("FULLSCREEN_DIALOG") -- yes, this isn't a fullscreen dialog, but I want it to be in front of other DIALOG frames (like VEM GUI which might open this frame...)
@@ -3134,11 +3155,13 @@ do
 		Grilpic:SetPoint( "TOPLEFT", 10, -10 )
 		Grilpic:SetPoint( "BOTTOMRIGHT", -10, 10 )	
 		Grilpic:SetTexCoord(0, 2, 0, 1)
+		Grilpic:SetTexture( [[Interface\AddOns\VEM-Core\textures\soundgrils\pic.tga]] )
 		
 		fontstringHeader = frame:CreateFontString(nil, "ARTWORK", "ZoneTextFont")
 		fontstringHeader:SetWidth(410)
 		fontstringHeader:SetHeight(0)
 		fontstringHeader:SetPoint("TOP", 80, -26)
+		fontstringHeader:SetText(VEM_CORE_SOUND_UNNAME)
 		
 		fontstring = frame:CreateFontString(nil, "ARTWORK", "SystemFont_Tiny")	
 		fontstring:SetWidth(200)
@@ -3147,6 +3170,7 @@ do
 		fontstring:SetFont(STANDARD_TEXT_FONT, 15, "")
 		fontstring:SetTextColor(0.62, 0.32, 0.17, 1)
 		fontstring:SetPoint("TOP", fontstringHeader, "BOTTOM", 0, -20)
+		fontstring:SetText("       "..VEM_CORE_SOUND_UNUSAGE)
 		
 		local button = CreateFrame("Button", nil, frame)
 		button:SetHeight(15)
@@ -3173,23 +3197,27 @@ do
 		else
 			frame:Show()
 			fframe = true
-		end
-		if VEM.Options.CountdownVoice == "yun" then
-			Grilpic:SetTexture( [[Interface\AddOns\VEM-Core\textures\soundgrils\yun.tga]] )
-			fontstringHeader:SetText(VEM_CORE_SOUNDGRIL_NAME_YUN)
-			fontstring:SetText(VEM_CORE_SOUNDGRIL_TEXT_YUN)
-		elseif VEM.Options.CountdownVoice == "sst" then
-			Grilpic:SetTexture( [[Interface\AddOns\VEM-Core\textures\soundgrils\sst.tga]] )
-			fontstringHeader:SetText(VEM_CORE_SOUNDGRIL_NAME_SST)
-			fontstring:SetText(VEM_CORE_SOUNDGRIL_TEXT_SST)
-		elseif VEM.Options.CountdownVoice == "Mosh" then
-			Grilpic:SetTexture( [[Interface\AddOns\VEM-Core\textures\soundgrils\yike.tga]] )
-			fontstringHeader:SetText(VEM_CORE_SOUNDGRIL_NAME_YIKE)
-			fontstring:SetText(VEM_CORE_SOUNDGRIL_TEXT_YIKE)
-		else
-			Grilpic:SetTexture( [[Interface\AddOns\VEM-Core\extrasounds\other\other.tga]] )
-			fontstringHeader:SetText(VEM_CORE_SOUNDGRIL_NAME_CUSTOM)
-			fontstring:SetText(VEM_CORE_SOUNDGRIL_TEXT_CUSTOM)
+		end		
+		if #VEM.Soundfile > 0 and VEM.Soundfile[#VEM.Soundfile].Path then
+			for i = 1, #VEM.Soundfile do
+				if VEM.Soundfile[i].Path == VEM.Options.CountdownVoice then
+					if VEM.Soundfile[i].Name then
+						fontstringHeader:SetText(VEM.Soundfile[i].Name)
+					else
+						fontstringHeader:SetText(VEM_CORE_SOUND_UNNAME)
+					end
+					if VEM.Soundfile[i].Usage then
+						fontstring:SetText("       "..VEM.Soundfile[i].Usage)
+					else
+						fontstring:SetText("       "..VEM_CORE_SOUND_UNUSAGE)
+					end
+					if VEM.Soundfile[i].hasPic then
+						Grilpic:SetTexture("Interface\\Addons\\"..VEM.Soundfile[i].Addon.."\\"..VEM.Soundfile[i].Tag..".tga")
+					else
+						Grilpic:SetTexture( [[Interface\AddOns\VEM-Core\textures\soundgrils\pic.tga]] )
+					end					
+				end
+			end
 		end
 	end
 end
@@ -3287,6 +3315,43 @@ do
 			end
 		end
 	end
+	
+	function VEM:ENCOUNTER_START(encounterID, name, difficulty, size)
+		if VEM.Options.DebugMode then
+			print("ENCOUNTER_START EVENT Fired", encounterID, name, difficulty, size)
+		end
+		if combatInfo[LastInstanceMapID] then
+			for i, v in ipairs(combatInfo[LastInstanceMapID]) do
+				if v.multiEncounterPullDetection then
+					for _, encounter in ipairs(v.multiEncounterPullDetection) do
+						if encounterID == encounter then
+							self:StartCombat(v.mod, 0, "ENCOUNTER_START")
+							return
+						end
+					end
+				elseif encounterID == v.encounter then
+					self:StartCombat(v.mod, 0, "ENCOUNTER_START")
+					return
+				end
+			end
+		end
+	end
+	
+	function VEM:ENCOUNTER_END(encounterID, name, difficulty, size, success)
+		if VEM.Options.DebugMode then
+			print("ENCOUNTER_END EVENT Fired", encounterID, name, difficulty, size, success)
+		end
+		for i = #inCombat, 1, -1 do
+			local v = inCombat[i]
+			if not v.combatInfo then return end
+			if encounterID == v.encounter then
+				local wipe = nil
+				if success == 0 then wipe = true end
+				self:EndCombat(v, wipe)
+				return
+			end
+		end
+	end
 
 	local function checkExpressionList(exp, str)
 		for i, v in ipairs(exp) do
@@ -3350,17 +3415,18 @@ end
 
 function checkWipe(isIEEU, confirm)
 	if #inCombat > 0 then
+		local difficultyIndex
 		if not savedDifficulty or not difficultyText then--prevent error if savedDifficulty or difficultyText is nil
-			savedDifficulty, difficultyText = VEM:GetCurrentInstanceDifficulty()
+			savedDifficulty, difficultyText, difficultyIndex = VEM:GetCurrentInstanceDifficulty()
 		end
 		local wipe = 1 -- 0: no wipe, 1: normal wipe, 2: wipe by UnitExists check.
-		if IsInScenarioGroup() then -- Scenario mod uses special combat start and must be enabled before sceniro end. So do not wipe.
+		if IsInScenarioGroup() or (difficultyIndex == 11) or (difficultyIndex == 12) then -- Scenario mod uses special combat start and must be enabled before sceniro end. So do not wipe.
 			wipe = 0
 		elseif IsEncounterInProgress() then -- Encounter Progress marked, you obiously combat whth boss. So do not Wipe
 			wipe = 0
 		elseif savedDifficulty == "worldboss" and UnitIsDeadOrGhost("player") then -- On dead or ghost, unit combat status detection would be fail. If you ghost in instance, that means wipe. But in worldboss, ghost means not wipe. So do not wipe.
 			wipe = 0
-		elseif isIEEU then -- Combat started by IEEU and no boss exist and no EncounterProgress marked, that means wipe
+		elseif isIEEU and IsInRaid() then -- Combat started by IEEU and no boss exist and no EncounterProgress marked, that means wipe
 			wipe = 2
 			for i = 1, 5 do
 				if UnitExists("boss"..i) then
@@ -3418,7 +3484,7 @@ function VEM:StartCombat(mod, delay, event, synced, syncedStartHp)
 		if mod.combatInfo.noCombatInVehicle and UnitInVehicle("player") then -- HACK
 			return
 		end
-		savedDifficulty, difficultyText, flexSize = self:GetCurrentInstanceDifficulty()
+		savedDifficulty, difficultyText = self:GetCurrentInstanceDifficulty()
 		tinsert(inCombat, mod)
 		bossHealth[mod.combatInfo.mob or -1] = 1
 		if mod.multiMobPullDetection then
@@ -3554,7 +3620,7 @@ function VEM:StartCombat(mod, delay, event, synced, syncedStartHp)
 		if dummyMod then--stop pull timer, warning, countdowns
 			dummyMod.countdown:Cancel()
 			dummyMod.text:Cancel()
-			VEM.Bars:CancelBar(VEM_CORE_TIMER_PULL) 
+			VEM.Bars:CancelBar(VEM_CORE_TIMER_PULL)
 			TimerTracker_OnEvent(TimerTracker, "PLAYER_ENTERING_WORLD")
 		end
 		if mod.hotfixNoticeRev then
@@ -3857,7 +3923,6 @@ function VEM:EndCombat(mod, wipe)
 		end
 		savedDifficulty = nil
 		difficultyText = nil
-		flexSize = nil
 	end
 end
 
@@ -3932,31 +3997,31 @@ function VEM:GetCurrentInstanceDifficulty()
 	if difficulty == 0 then
 		return "worldboss", RAID_INFO_WORLD_BOSS.." - "
 	elseif difficulty == 1 then
-		return "normal5", difficultyName.." - "
+		return "normal5", difficultyName.." - ", difficulty
 	elseif difficulty == 2 then
-		return "heroic5", difficultyName.." - "
+		return "heroic5", difficultyName.." - ", difficulty
 	elseif difficulty == 3 then
-		return "normal10", difficultyName.." - "
+		return "normal10", difficultyName.." - ", difficulty
 	elseif difficulty == 4 then
-		return "normal25", difficultyName.." - "
+		return "normal25", difficultyName.." - ", difficulty
 	elseif difficulty == 5 then
-		return "heroic10", difficultyName.." - "
+		return "heroic10", difficultyName.." - ", difficulty
 	elseif difficulty == 6 then
-		return "heroic25", difficultyName.." - "
+		return "heroic25", difficultyName.." - ", difficulty
 	elseif difficulty == 7 then
-		return "lfr25", difficultyName.." - "
+		return "lfr25", difficultyName.." - ", difficulty
 	elseif difficulty == 8 then
-		return "challenge5", difficultyName.." - "
+		return "challenge5", difficultyName.." - ", difficulty
 	elseif difficulty == 9 then--40 man raids have their own difficulty now, no longer returned as normal 10man raids
-		return "normal10", difficultyName.." - "--Just use normal10 anyways, since that's where we been saving 40 man stuff for so long anyways, no reason to change it now, not like any 40 mans can be toggled between 10 and 40 where we NEED to tell the difference.
+		return "normal10", difficultyName.." - ",difficulty--Just use normal10 anyways, since that's where we been saving 40 man stuff for so long anyways, no reason to change it now, not like any 40 mans can be toggled between 10 and 40 where we NEED to tell the difference.
 	elseif difficulty == 11 then--5.3 heroic scenario
-		return "heroic5", difficultyName.." - "
+		return "heroic5", difficultyName.." - ", difficulty
 	elseif difficulty == 12 then--5.3 normal scenario
-		return "normal5", difficultyName.." - "
+		return "normal5", difficultyName.." - ", difficulty
 	elseif difficulty == 14 then
-		return "flex", difficultyName.." - ", instanceGroupSize
+		return "flex", difficultyName.." - ", difficulty
 	else--failsafe
-		return "normal5", ""
+		return "normal5", "", difficulty
 	end
 end
 
@@ -3979,7 +4044,7 @@ do
 	function VEM:RequestTimers()
 		local bestClient
 		for i, v in pairs(raid) do
-			-- If bestClient player's realm is not same with your's, timer recovery by bestClient not works at all. 
+			-- If bestClient player's realm is not same with your's, timer recovery by bestClient not works at all.
 			-- SendAddonMessage target channel is "WHISPER" and target player is other realm, no msg sends at all. At same realm, message sending works fine. (Maybe bliz bug or SendAddonMessage function restriction?)
 			if v.name ~= playerName and UnitIsConnected(v.id) and (not UnitIsGhost(v.id)) and (v.revision or 0) > ((bestClient and bestClient.revision) or 0) and not select(2, UnitName(v.id)) and not clientUsed[v.name] then
 				bestClient = v
@@ -4005,7 +4070,7 @@ do
 					if not bossHealth[mob] then bossHealth[mob] = 1 end
 				end
 			end
-			savedDifficulty, difficultyText, flexSize = self:GetCurrentInstanceDifficulty()
+			savedDifficulty, difficultyText = self:GetCurrentInstanceDifficulty()
 			if mod.inCombatOnlyEvents and not mod.inCombatOnlyEventsRegistered then
 				mod.inCombatOnlyEventsRegistered = 1
 				mod:RegisterEvents(unpack(mod.inCombatOnlyEvents))
@@ -4181,7 +4246,7 @@ do
 		end
 		return alive
 	end
-	
+
 	local function getNumRealAlivePlayers()
 		local alive = 0
 		local currentMapId = GetCurrentMapAreaID()
@@ -4530,7 +4595,7 @@ function VEM:UpdateMapSizes()
 	if dims then
 		currentSizes = dims
 		return
-	end 
+	end
 
 	-- failed, try Blizzard's map size
 	if not (a1 and b1 and c1 and d1) then
@@ -4729,6 +4794,17 @@ function bossModPrototype:SetCreatureID(...)
 	end
 end
 
+--NOT same as encounter journal IDs.
+function bossModPrototype:SetEncounterID(...)
+	self.encounterId = ...
+	if select("#", ...) > 1 then
+		self.multiEncounterPullDetection = {...}
+		if self.combatInfo then
+			self.combatInfo.multiEncounterPullDetection = self.multiEncounterPullDetection
+		end
+	end
+end
+
 function bossModPrototype:SetQuestID(id)
 	self.questId = id
 end
@@ -4783,7 +4859,6 @@ local bossTargetuIds = {
 	"target", "focus", "boss1", "boss2", "boss3", "boss4", "boss5"
 }
 
--- leave this function for older mods compatiblity.
 function bossModPrototype:GetBossTarget(cid)
 	cid = cid or self.creatureId
 	local name, uid, bossuid
@@ -5028,7 +5103,7 @@ function bossModPrototype:CheckTankDistance(cid, distance, defaultReturn)
 		--Tank in range, return true.
 		return true
 	end
-	return (defaultReturn == nil) or defaultReturn--When we simply can't figure anything out, return true and allow warnings using this filter to fire. But some spells will prefer not to fire(i.e : Galakras tower spell), we can define it on this function calling. 
+	return (defaultReturn == nil) or defaultReturn--When we simply can't figure anything out, return true and allow warnings using this filter to fire. But some spells will prefer not to fire(i.e : Galakras tower spell), we can define it on this function calling.
 end
 
 function bossModPrototype:Stop(cid)
@@ -5053,10 +5128,6 @@ function bossModPrototype:IsDifficulty(...)
 		end
 	end
 	return false
-end
-
-function bossModPrototype:FlexSize()
-	return flexSize or 10
 end
 
 function bossModPrototype:SetUsedIcons(...)
@@ -5192,7 +5263,7 @@ function bossModPrototype:IsSpellCaster(includePal)
 end
 
 function bossModPrototype:IsTanking(unit, boss)
-	if not unit then return false end 
+	if not unit then return false end
 	if GetPartyAssignment("MAINTANK", unit, 1) then
 		return true
 	end
@@ -5359,18 +5430,35 @@ do
 			if VEM.Options.DontShowBossAnnounces then return end	-- don't show the announces if the spam filter option is set
 			local colorCode = ("|cff%.2x%.2x%.2x"):format(self.color.r * 255, self.color.g * 255, self.color.b * 255)
 			local text
-			if #self.combinedtext > 0 then
+			if #self.combinedtext > 0 then--very ugly code. need tweaking. can cause script lan too long?
+				local count = select("#", ...)
+				-- create temporary arg table.
+				local argTable = {}
+				local pointToProcess = 0
+				if count == 1 then
+					pointToProcess = 1
+					argTable[1] = select(1, ...)
+				else
+					for i = 1, select("#", ...) do
+						local value = select(i, ...)
+						if type(value) == "table" then
+							pointToProcess = i
+						end
+						argTable[i] = value
+					end
+				end
 				--Throttle spam.
 				local displayText = table.concat(self.combinedtext, "<, >")
 				if self.combinedcount == 1 then
 					displayText = displayText.." "..VEM_CORE_GENERIC_WARNING_OTHERS
-				elseif self.combinedcount > 1 then 
-					displayText = displayText.." "..VEM_CORE_GENERIC_WARNING_OTHERS2:format(self.combinedcount) 
+				elseif self.combinedcount > 1 then
+					displayText = displayText.." "..VEM_CORE_GENERIC_WARNING_OTHERS2:format(self.combinedcount)
 				end
+				argTable[pointToProcess] = displayText
 				text = ("%s%s%s|r%s"):format(
 					(VEM.Options.WarningIconLeft and self.icon and textureCode:format(self.icon)) or "",
 					colorCode,
-					pformat(self.text, displayText),
+					pformat(self.text, argTable[1], argTable[2], argTable[3], argTable[4], argTable[5]),
 					(VEM.Options.WarningIconRight and self.icon and textureCode:format(self.icon)) or ""
 				)
 			else
@@ -5425,14 +5513,37 @@ do
 		end
 	end
 
-	function announcePrototype:CombinedShow(delay, text, ...)
+	function announcePrototype:CombinedShow(delay, ...)--very ugly code. need tweaking. can cause script lan too long?
+		local count = select("#", ...)
+		-- support only 5 args.
+		if count > 5 then error("CombinedShow method only support up to 5 args", 2) end
+		-- create temporary arg table.
+		local argTable = {}
+		local pointToCombine = 0
+		if count == 1 then
+			pointToCombine = 1
+			argTable[1] = select(1, ...)
+		else
+			for i = 1, select("#", ...) do
+				local value = select(i, ...)
+				if type(value) == "string" then
+					pointToCombine = i
+				end
+				argTable[i] = value
+			end
+		end
+		-- process text combine.
+		local text = select(pointToCombine, ...)
 		if #self.combinedtext < 8 then--Throttle spam. We may not need more than 9 targets..
 			self.combinedtext[#self.combinedtext + 1] = text or ""
 		else
 			self.combinedcount = self.combinedcount + 1
 		end
+		-- replace arg table
+		argTable[pointToCombine] = self.combinedtext
+		-- return to show method (up to 5 args)
 		unschedule(self.Show, self.mod, self)
-		schedule(delay or 0.5, self.Show, self.mod, self, ...)
+		schedule(delay or 0.5, self.Show, self.mod, self, argTable[1], argTable[2], argTable[3], argTable[4], argTable[5])
 	end
 
 	function announcePrototype:Schedule(t, ...)
@@ -5473,10 +5584,15 @@ do
 	end
 
 	-- new constructor (auto-localized warnings and options, yay!)
-	local function newAnnounce(self, announceType, spellId, color, icon, optionDefault, optionName, castTime, preWarnTime, noSound, optionSaveVar)
+	local function newAnnounce(self, announceType, spellId, color, icon, optionDefault, optionName, castTime, preWarnTime, noSound, optionVersion)
 		if not spellId then
 			error("newAnnounce: you must provide spellId", 2)
 			return
+		end
+		if type(spellId) == "string" and spellId:match("OptionVersion") then
+			local temp = optionVersion
+			optionVersion = string.sub(spellId, 14)
+			spellId, color, icon, optionDefault, optionName, castTime, preWarnTime, noSound = color, icon, optionDefault, optionName, castTime, preWarnTime, noSound, temp
 		end
 		local unparsedId = spellId
 		local spellName
@@ -5520,7 +5636,7 @@ do
 			obj.option = optionName
 			self:AddBoolOption(obj.option, optionDefault, "announce")
 		elseif not (optionName == false) then
-			obj.option = "Announce"..unparsedId..announceType..(optionSaveVar or "")
+			obj.option = "Announce"..unparsedId..announceType..(optionVersion or "")
 			self:AddBoolOption(obj.option, optionDefault, "announce")
 			self.localization.options[obj.option] = VEM_CORE_AUTO_ANNOUNCE_OPTIONS[announceType]:format(unparsedId)
 		end
@@ -5560,16 +5676,28 @@ do
 		return newAnnounce(self, "stack", spellId, color or 2, ...)
 	end
 
-	function bossModPrototype:NewCastAnnounce(spellId, color, castTime, icon, optionDefault, optionName, ...)
-		return newAnnounce(self, "cast", spellId, color or 3, icon, optionDefault, optionName, castTime, ...)
+	function bossModPrototype:NewCastAnnounce(spellId, color, castTime, icon, optionDefault, optionName, noArg, noSound, optionVersion)
+		local spellId, color, castTime, icon, optionDefault, optionName, noArg, noSound, optionVersion = spellId, color, castTime, icon, optionDefault, optionName, noArg, noSound, optionVersion
+		if type(spellId) == "string" and spellId:match("OptionVersion") then
+			local temp = optionVersion
+			optionVersion = string.sub(spellId, 14)
+			spellId, color, castTime, icon, optionDefault, optionName, noArg, noSound = color, castTime, icon, optionDefault, optionName, noArg, noSound, temp
+		end
+		return newAnnounce(self, "cast", spellId, color or 3, icon, optionDefault, optionName, castTime, nil, noSound, optionVersion)
 	end
 
 	function bossModPrototype:NewSoonAnnounce(spellId, color, ...)
 		return newAnnounce(self, "soon", spellId, color or 1, ...)
 	end
 
-	function bossModPrototype:NewPreWarnAnnounce(spellId, time, color, icon, optionDefault, optionName, ...)
-		return newAnnounce(self, "prewarn", spellId, color or 1, icon, optionDefault, optionName, nil, time, ...)
+	function bossModPrototype:NewPreWarnAnnounce(spellId, time, color, icon, optionDefault, optionName, noArg, noSound, optionVersion)
+		local spellId, time, color, icon, optionDefault, optionName, noArg, noSound, optionVersion = spellId, time, color, icon, optionDefault, optionName, noArg, noSound, optionVersion
+		if type(spellId) == "string" and spellId:match("OptionVersion") then
+			local temp = optionVersion
+			optionVersion = string.sub(spellId, 14)
+			spellId, time, color, icon, optionDefault, optionName, noArg, noSound = time, color, icon, optionDefault, optionName, noArg, noSound, temp
+		end
+		return newAnnounce(self, "prewarn", spellId, color or 1, icon, optionDefault, optionName, nil, time, noSound, optionVersion)
 	end
 
 	function bossModPrototype:NewPhaseAnnounce(phase, color, icon, ...)
@@ -5588,10 +5716,21 @@ end
 do
 	local soundPrototype = {}
 	local mt = { __index = soundPrototype }
-	function bossModPrototype:NewSound(spellId, optionName, optionDefault, optionSaveVar)
+	function bossModPrototype:NewSound(spellId, optionDefault, optionName, optionVersion)
+		local spellId, optionDefault, optionName, optionVersion = spellId, optionDefault, optionName, optionVersion
+		if type(optionName) == "boolean" and type(optionDefault) == "string" then
+			local temp = optionDefault
+			optionDefault = optionName
+			optionName = temp
+		end
 		if not spellId and not optionName then
 			error("NewSound: you must provide either spellId or optionName", 2)
 			return
+		end
+		if type(spellId) == "string" and spellId:match("OptionVersion") then
+			local temp = optionVersion
+			optionVersion = string.sub(spellId, 14)
+			spellId, optionDefault, optionName = optionDefault, optionName, temp
 		end
 		self.numSounds = self.numSounds and self.numSounds + 1 or 1
 		local obj = setmetatable(
@@ -5604,7 +5743,7 @@ do
 			obj.option = optionName
 			self:AddBoolOption(obj.option, optionDefault, "sound")
 		elseif not (optionName == false) then
-			obj.option = "Sound"..spellId..(optionSaveVar or "")
+			obj.option = "Sound"..spellId..(optionVersion or "")
 			self:AddBoolOption(obj.option, optionDefault, "sound")
 			self.localization.options[obj.option] = VEM_CORE_AUTO_SOUND_OPTION_TEXT:format(spellId)
 		end
@@ -5641,7 +5780,7 @@ do
 	local function showCountdown(timer)
 		TimerTracker_OnEvent(TimerTracker, "START_TIMER", 2, timer, timer)
 	end
-	
+
 	local function stopCountdown()
 		TimerTracker_OnEvent(TimerTracker, "PLAYER_ENTERING_WORLD")
 	end
@@ -5654,7 +5793,7 @@ do
 			if timer <= count then count = floor(timer) end
 			if VEM.Options.ShowCountdownText and not (self.textDisabled or self.alternateVoice) then
 				stopCountdown()
-				if timer >= count then 
+				if timer >= count then
 					VEM:Schedule(timer-count, showCountdown, count)
 				else
 					VEM:Schedule(timer%1, showCountdown, floor(timer))
@@ -5691,7 +5830,7 @@ do
 				elseif i == 10 then countvaluei = "countten"
 				elseif i == 11 then countvaluei = "counteleven" end
 				if i <= 11 then
-					self.sound5:Schedule(timer-i, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\"..countvaluei..".mp3")
+					self.sound5:Schedule(timer-i, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\"..countvaluei..".mp3")
 				end
 			end
 		end
@@ -5716,22 +5855,32 @@ do
 	end
 	countdownProtoType.Stop = countdownProtoType.Cancel
 
-	function bossModPrototype:NewCountdown(timer, spellId, optionDefault, optionName, count, textDisabled, altVoice, optionSaveVar)
+	function bossModPrototype:NewCountdown(timer, spellId, optionDefault, optionName, count, textDisabled, altVoice, optionVersion)
+		local timer, spellId, optionDefault, optionName, count, textDisabled, altVoice, optionVersion = timer, spellId, optionDefault, optionName, count, textDisabled, altVoice, optionVersion
 		if not spellId and not optionName then
 			error("NewCountdown: you must provide either spellId or optionName", 2)
 			return
 		end
-		local sound5 = self:NewSound(5, false, true)
-		local sound4 = self:NewSound(4, false, true)
-		local sound3 = self:NewSound(3, false, true)
-		local sound2 = self:NewSound(2, false, true)
-		local sound1 = self:NewSound(1, false, true)
+		if type(timer) == "string" and timer:match("OptionVersion") then
+			local temp = optionVersion
+			optionVersion = string.sub(timer, 14)
+			timer, spellId, optionDefault, optionName, count, textDisabled, altVoice = spellId, optionDefault, optionName, count, textDisabled, altVoice, temp
+		end
+		if type(timer) == "string" and timer:match("Alt") then
+			altVoice = true
+			timer = tonumber(string.sub(timer, 4))
+		end
+		local sound5 = self:NewSound(5, true, false)
+		local sound4 = self:NewSound(4, true, false)
+		local sound3 = self:NewSound(3, true, false)
+		local sound2 = self:NewSound(2, true, false)
+		local sound1 = self:NewSound(1, true, false)
 		timer = timer or 10
 		count = count or 5
 		spellId = spellId or 39505
 		local obj = setmetatable(
 			{
-				id = optionName or "Countdown"..spellId..(optionSaveVar or ""),
+				id = optionName or "Countdown"..spellId..(optionVersion or ""),
 				sound1 = sound1,
 				sound2 = sound2,
 				sound3 = sound3,
@@ -5757,22 +5906,32 @@ do
 		return obj
 	end
 
-	function bossModPrototype:NewCountdownFades(timer, spellId, optionDefault, optionName, count, textDisabled, altVoice, optionSaveVar)
+	function bossModPrototype:NewCountdownFades(timer, spellId, optionDefault, optionName, count, textDisabled, altVoice, optionVersion)
+		local timer, spellId, optionDefault, optionName, count, textDisabled, altVoice, optionVersion = timer, spellId, optionDefault, optionName, count, textDisabled, altVoice, optionVersion
 		if not spellId and not optionName then
 			error("NewCountdownFades: you must provide either spellId or optionName", 2)
 			return
 		end
-		local sound5 = self:NewSound(5, false, true)
-		local sound4 = self:NewSound(4, false, true)
-		local sound3 = self:NewSound(3, false, true)
-		local sound2 = self:NewSound(2, false, true)
-		local sound1 = self:NewSound(1, false, true)
+		if type(timer) == "string" and timer:match("OptionVersion") then
+			local temp = optionVersion
+			optionVersion = string.sub(timer, 14)
+			timer, spellId, optionDefault, optionName, count, textDisabled, altVoice = spellId, optionDefault, optionName, count, textDisabled, altVoice, temp
+		end
+		if type(timer) == "string" and timer:match("Alt") then
+			altVoice = true
+			timer = tonumber(string.sub(timer, 4))
+		end
+		local sound5 = self:NewSound(5, true, false)
+		local sound4 = self:NewSound(4, true, false)
+		local sound3 = self:NewSound(3, true, false)
+		local sound2 = self:NewSound(2, true, false)
+		local sound1 = self:NewSound(1, true, false)
 		timer = timer or 10
 		count = count or 5
 		spellId = spellId or 39505
 		local obj = setmetatable(
 			{
-				id = optionName or "CountdownFades"..spellId..(optionSaveVar or ""),
+				id = optionName or "CountdownFades"..spellId..(optionVersion or ""),
 				sound1 = sound1,
 				sound2 = sound2,
 				sound3 = sound3,
@@ -5796,7 +5955,7 @@ do
 		end
 		tinsert(self.countdowns, obj)
 		return obj
-	end	
+	end
 end
 
 ------------------------
@@ -5835,7 +5994,7 @@ do
 				elseif i == 10 then countvaluei = "countten"
 				elseif i == 11 then countvaluei = "counteleven" end
 				if i <= 11 then
-					self.sound5:Schedule(timer-i, "Interface\\AddOns\\VEM-Core\\extrasounds\\"..VEM.Options.CountdownVoice.."\\"..countvaluei..".mp3")
+					self.sound5:Schedule(timer-i, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\"..countvaluei..".mp3")
 				end
 			end
 		end
@@ -5855,16 +6014,22 @@ do
 	end
 	countoutProtoType.Stop = countoutProtoType.Cancel
 
-	function bossModPrototype:NewCountout(timer, spellId, optionDefault, optionName, optionSaveVar)
+	function bossModPrototype:NewCountout(timer, spellId, optionDefault, optionName, optionVersion)
+		local timer, spellId, optionDefault, optionName, optionVersion = timer, spellId, optionDefault, optionName, optionVersion
 		if not spellId and not optionName then
 			error("NewCountout: you must provide either spellId or optionName", 2)
 			return
 		end
-		local sound5 = self:NewSound(5, false, true)
-		local sound4 = self:NewSound(4, false, true)
-		local sound3 = self:NewSound(3, false, true)
-		local sound2 = self:NewSound(2, false, true)
-		local sound1 = self:NewSound(1, false, true)
+		if type(timer) == "string" and timer:match("OptionVersion") then
+			local temp = optionVersion
+			optionVersion = string.sub(timer, 14)
+			timer, spellId, optionDefault, optionName = spellId, optionDefault, optionName, temp
+		end
+		local sound5 = self:NewSound(5, true, false)
+		local sound4 = self:NewSound(4, true, false)
+		local sound3 = self:NewSound(3, true, false)
+		local sound2 = self:NewSound(2, true, false)
+		local sound1 = self:NewSound(1, true, false)
 		timer = timer or 10
 		spellId = spellId or 39505
 		local obj = setmetatable(
@@ -5883,7 +6048,7 @@ do
 			obj.option = optionName
 			self:AddBoolOption(obj.option, optionDefault, "sound")
 		elseif not (optionName == false) then
-			obj.option = "Countout"..spellId..(optionSaveVar or "")
+			obj.option = "Countout"..spellId..(optionVersion or "")
 			self:AddBoolOption(obj.option, optionDefault, "sound")
 			self.localization.options[obj.option] = VEM_CORE_AUTO_COUNTOUT_OPTION_TEXT:format(spellId)
 		end
@@ -5897,10 +6062,16 @@ end
 do
 	local yellPrototype = {}
 	local mt = { __index = yellPrototype }
-	function bossModPrototype:NewYell(spellId, yellText, optionDefault, optionName, chatType, optionSaveVar)
+	function bossModPrototype:NewYell(spellId, yellText, optionDefault, optionName, chatType, optionVersion)
+		local spellId, yellText, optionDefault, optionName, chatType, optionVersion = spellId, yellText, optionDefault, optionName, chatType, optionVersion
 		if not spellId and not yellText then
 			error("NewYell: you must provide either spellId or yellText", 2)
 			return
+		end
+		if type(spellId) == "string" and spellId:match("OptionVersion") then
+			local temp = optionVersion
+			optionVersion = string.sub(spellId, 14)
+			spellId, yellText, optionDefault, optionName, chatType = yellText, optionDefault, optionName, chatType, temp
 		end
 		local displayText
 		if not yellText then
@@ -5922,7 +6093,7 @@ do
 			obj.option = optionName
 			self:AddBoolOption(obj.option, optionDefault, "misc")
 		elseif not (optionName == false) then
-			obj.option = "Yell"..(spellId or yellText)..(optionSaveVar or "")
+			obj.option = "Yell"..(spellId or yellText)..(optionVersion or "")
 			self:AddBoolOption(obj.option, optionDefault, "misc")
 			self.localization.options[obj.option] = VEM_CORE_AUTO_YELL_OPTION_TEXT:format(spellId)
 		end
@@ -6068,10 +6239,16 @@ do
 		return obj
 	end
 
-	local function newSpecialWarning(self, announceType, spellId, stacks, optionDefault, optionName, noSound, runSound, optionSaveVar)
+	local function newSpecialWarning(self, announceType, spellId, stacks, optionDefault, optionName, noSound, runSound, optionVersion)
+		local spellId, stacks, optionDefault, optionName, noSound, runSound, optionVersion = spellId, stacks, optionDefault, optionName, noSound, runSound, optionVersion
 		if not spellId then
 			error("newSpecialWarning: you must provide spellId", 2)
 			return
+		end
+		if type(spellId) == "string" and spellId:match("OptionVersion") then
+			local temp = optionVersion
+			optionVersion = string.sub(spellId, 14)
+			spellId, optionDefault, optionName, noSound, runSound = optionDefault, optionName, noSound, runSound, temp
 		end
 		if runSound == true then
 			runSound = 2
@@ -6108,7 +6285,7 @@ do
 		if optionName then
 			obj.option = optionName
 		elseif not (optionName == false) then
-			obj.option = "SpecWarn"..spellId..announceType..(optionSaveVar or "")
+			obj.option = "SpecWarn"..spellId..announceType..(optionVersion or "")
 			if announceType == "stack" then
 				self.localization.options[obj.option] = VEM_CORE_AUTO_SPEC_WARN_OPTIONS[announceType]:format(stacks or 3, spellId)
 			elseif announceType == "prewarn" then
@@ -6171,7 +6348,7 @@ do
 	function bossModPrototype:NewSpecialWarningCast(text, optionDefault, ...)
 		return newSpecialWarning(self, "cast", text, nil, optionDefault, ...)
 	end
-	
+
 	function bossModPrototype:NewSpecialWarningReflect(text, optionDefault, ...)
 		return newSpecialWarning(self, "reflect", text, nil, optionDefault, ...)
 	end
@@ -6180,18 +6357,28 @@ do
 		return newSpecialWarning(self, "count", text, nil, optionDefault, ...)
 	end
 
-	function bossModPrototype:NewSpecialWarningStack(text, optionDefault, stacks, ...)
-		return newSpecialWarning(self, "stack", text, stacks, optionDefault, ...)
+	function bossModPrototype:NewSpecialWarningStack(text, optionDefault, stacks, optionName, noSound, runSound, optionVersion)
+		if type(text) == "string" and text:match("OptionVersion") then
+			local temp = optionVersion
+			optionVersion = string.sub(text, 14)
+			text, optionDefault, stacks, optionName, noSound, runSound = optionDefault, stacks, optionName, noSound, runSound, temp
+		end
+		return newSpecialWarning(self, "stack", text, stacks, optionDefault, optionName, noSound, runSound, optionVersion)
 	end
 
 	function bossModPrototype:NewSpecialWarningSwitch(text, optionDefault, ...)
 		return newSpecialWarning(self, "switch", text, nil, optionDefault, ...)
 	end
 
-	function bossModPrototype:NewSpecialWarningPreWarn(text, optionDefault, time, ...)
-		return newSpecialWarning(self, "prewarn", text, time, optionDefault, ...)
+	function bossModPrototype:NewSpecialWarningPreWarn(text, optionDefault, time, optionName, noSound, runSound, optionVersion)
+		if type(text) == "string" and text:match("OptionVersion") then
+			local temp = optionVersion
+			optionVersion = string.sub(text, 14)
+			text, optionDefault, time, optionName, noSound, runSound = optionDefault, time, optionName, noSound, runSound, temp
+		end
+		return newSpecialWarning(self, "prewarn", text, time, optionDefault, optionName, noSound, runSound, optionVersion)
 	end
-	
+
 	function VEM:PlayCountSound(number, forceVoice)
 		if number > 10 or number < 1 then return end
 --[[		local voice, voice2
@@ -6221,12 +6408,12 @@ do
 		elseif number == 9 then countvaluenumber = "countnine"
 		elseif number == 10 then countvaluenumber = "countten" end
 		if VEM.Options.UseMasterVolume then
-			PlaySoundFile("Interface\\AddOns\\VEM-Core\\extrasounds\\"..voice.."\\"..countvaluenumber..".mp3", "Master")
+			PlaySoundFile("Interface\\AddOns\\"..voice.."\\"..countvaluenumber..".mp3", "Master")
 		else
-			PlaySoundFile("Interface\\AddOns\\VEM-Core\\extrasounds\\"..voice.."\\"..countvaluenumber..".mp3")
+			PlaySoundFile("Interface\\AddOns\\"..voice.."\\"..countvaluenumber..".mp3")
 		end
 	end
-	
+
 	function VEM:PlaySpecialWarningSound(soundId)
 		local sound = type(soundId) == "number" and VEM.Options["SpecialWarningSound" .. (soundId == 1 and "" or soundId)] or soundId or VEM.Options.SpecialWarningSound
 		if VEM.Options.UseMasterVolume then
@@ -6651,10 +6838,15 @@ do
 	-- todo: disable the timer if the player already has the achievement and when the ACHIEVEMENT_EARNED event is fired
 	-- problem: heroic/normal achievements :[
 	-- local achievementTimers = {}
-	local function newTimer(self, timerType, timer, spellId, timerText, optionDefault, optionName, texture, r, g, b, countdownDefault, optionSaveVar)--countdownDefault should be a number, such as 5 or 10 hard coded in boss mod to say "audio countdown is on by default for this timer and default count start point is 5 or 10
+	local function newTimer(self, timerType, timer, spellId, timerText, optionDefault, optionName, texture, r, g, b, countdownDefault, optionVersion)--countdownDefault should be a number, such as 5 or 10 hard coded in boss mod to say "audio countdown is on by default for this timer and default count start point is 5 or 10
+		if type(timer) == "string" and timer:match("OptionVersion") then
+			local temp = optionVersion
+			optionVersion = string.sub(timer, 14)
+			timer, spellId, timerText, optionDefault, optionName, texture, r, g, b, countdownDefault = spellId, timerText, optionDefault, optionName, texture, r, g, b, countdownDefault, temp
+		end
 		-- new argument timerText is optional (usually only required for achievement timers as they have looooong names)
 		if type(timerText) == "boolean" or type(optionDefault) == "string" then -- check if the argument was skipped
-			return newTimer(self, timerType, timer, spellId, nil, timerText, optionDefault, optionName, texture, r, g, b, countdownDefault)
+			return newTimer(self, timerType, timer, spellId, nil, timerText, optionDefault, optionName, texture, r, g, b, countdownDefault, optionVersion)
 		end
 		local spellName, icon
 		local unparsedId = spellId
@@ -6678,7 +6870,7 @@ do
 			end
 		end
 		spellName = spellName or tostring(spellId)
-		local id = "Timer"..(spellId or 0)..timerType..(optionSaveVar or "")
+		local id = "Timer"..(spellId or 0)..timerType..(optionVersion or "")
 		local obj = setmetatable(
 			{
 				text = self.localization.timers[timerText],
@@ -6719,7 +6911,7 @@ do
 	end
 
 	function bossModPrototype:NewCastTimer(timer, ...)
-		if timer > 1000 then -- hehe :) best hack in VEM. This makes the first argument optional, so we can omit it to use the cast time from the spell id ;)
+		if tonumber(timer) and timer > 1000 then -- hehe :) best hack in VEM. This makes the first argument optional, so we can omit it to use the cast time from the spell id ;)
 			local spellId = timer
 			timer = select(7, GetSpellInfo(spellId)) or 1000 -- GetSpellInfo takes YOUR spell haste into account...WTF?
 			local spellHaste = select(7, GetSpellInfo(53142)) / 10000 -- 53142 = Dalaran Portal, should have 10000 ms cast time
@@ -7101,12 +7293,16 @@ function bossModPrototype:RegisterCombat(cType, ...)
 	local info = {
 		type = cType,
 		mob = self.creatureId,
+		encounter = self.encounterId,
 		name = self.localization.general.name or self.id,
 		msgs = (cType ~= "combat") and {...},
 		mod = self
 	}
 	if self.multiMobPullDetection then
 		info.multiMobPullDetection = self.multiMobPullDetection
+	end
+	if self.multiEncounterPullDetection then
+		info.multiEncounterPullDetection = self.multiEncounterPullDetection
 	end
 	-- use pull-mobs as kill mobs by default, can be overriden by RegisterKill
 	if self.multiMobPullDetection then

@@ -337,11 +337,8 @@ VEM_CORE_LAG_HEADER					= "Voice Encounter Mods - 延时检测"
 VEM_CORE_LAG_ENTRY					= "%s：世界延时[%d毫秒] / 本地延时[%d毫秒]"
 VEM_CORE_LAG_FOOTER					= "未反馈此次检测的团员:%s"
 
-VEM_CORE_SOUNDGRIL_NAME_YIKE		= "夏一可"
-VEM_CORE_SOUNDGRIL_TEXT_YIKE		= "    夏一可，又名可可超人，女，真名不详，《我叫MT》中法师和美屡的配音，魔兽世界知名解说，部落控。2009年进入西南科技大学。高三时因参加唱响艾泽拉斯而成名。"
 
-VEM_CORE_SOUNDGRIL_NAME_YUN			= "芷小芸"
-VEM_CORE_SOUNDGRIL_TEXT_YUN			= "    芷小芸，来自中国台湾省的魔兽世界美女玩家，现为台服世界之树《黑手之乡》公会人类死亡骑士。"
-
-VEM_CORE_SOUNDGRIL_NAME_SST			= "Default"
-VEM_CORE_SOUNDGRIL_TEXT_SST			= "    High-Quality British English Female Text-To-Speech. Chouu is a pro resto druid. Healing is a therapeutic activity for him."
+VEM_CORE_SOUND_NOFILE		 		= "未发现语音文件"
+VEM_CORE_SOUND_NOFILEUSAGE		 	= "    VEM没有发现已启用的语音包，请检查语音包是否正确并已启用"
+VEM_CORE_SOUND_UNNAME		 		= "自定义语音"
+VEM_CORE_SOUND_UNUSAGE		 		= "    这是一份自定义的语音文件，但作者很懒，他没有写介绍。"
