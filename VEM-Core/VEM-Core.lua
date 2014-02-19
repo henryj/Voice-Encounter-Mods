@@ -50,10 +50,10 @@
 --  Globals/Default Options  --
 -------------------------------
 VEM = {
-	Revision = tonumber(("$Revision: 10746 $"):sub(12, -3)),
-	DisplayVersion = "(VEM) 5.4.4", -- the string that is shown as version
+	Revision = tonumber(("$Revision: 11062 $"):sub(12, -3)),
+	DisplayVersion = "(VEM) 5.4.5", -- the string that is shown as version
 	DisplayReleaseVersion = "5.4.5", -- Needed to work around bigwigs sending improper version information
-	ReleaseRevision = 10737 -- the revision of the latest stable version that is available
+	ReleaseRevision = 11062 -- the revision of the latest stable version that is available
 }
 
 -- Legacy crap; that stupid "Version" field was never a good idea.
