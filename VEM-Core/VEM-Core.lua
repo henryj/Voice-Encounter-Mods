@@ -299,6 +299,7 @@ local InCombatLockdown = InCombatLockdown
 local GetAddOnInfo = GetAddOnInfo
 local PlaySoundFile = PlaySoundFile
 local PlaySound = PlaySound
+local Ambiguate = Ambiguate
 
 -- for Phanx' Class Colors
 local RAID_CLASS_COLORS = CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS
@@ -2966,10 +2967,13 @@ do
 
 	function VEM:CHAT_MSG_ADDON(prefix, msg, channel, sender)
 		if prefix == "V5" and msg and (channel == "PARTY" or channel == "RAID" or channel == "INSTANCE_CHAT" or channel == "WHISPER" and self:GetRaidUnitId(sender)) then
+			sender = Ambiguate(sender, "none")
 			handleSync(channel, sender, strsplit("\t", msg))
 		elseif prefix == "D4" and msg and (channel == "PARTY" or channel == "RAID" or channel == "INSTANCE_CHAT" or channel == "WHISPER" and self:GetRaidUnitId(sender)) then
+			sender = Ambiguate(sender, "none")
 			handleSync(channel, sender, strsplit("\t", msg))
 		elseif prefix == "BigWigs" and msg and (channel == "PARTY" or channel == "RAID" or channel == "INSTANCE_CHAT" or channel == "WHISPER" and self:GetRaidUnitId(sender)) then
+			sender = Ambiguate(sender, "none")
 			local bwPrefix, bwMsg = msg:match("^(%u-):(.+)")
 			if bwPrefix and (bwPrefix == "VR" or bwPrefix == "VRA") then--We only care about version prefixes so only pass those prefixes on
 				handleSync(channel, sender, bwPrefix, bwMsg)
