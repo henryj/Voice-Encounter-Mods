@@ -2407,7 +2407,8 @@ do
 		modRevision = tonumber(modRevision or 0) or 0
 		if mod and (mod.revision < modRevision) then
 			--TODO, maybe require at least 2 senders? this doesn't disable mod or make a popup though, just warn in chat that mod may have invalid timers/warnings do to a blizzard hotfix
-			VEM:AddMsg(VEM_CORE_UPDATEREMINDER_HOTFIX)
+			--TODO, VEM will not have any alpha version for now. Disable this so we don't get any warning from DBM. Need to add VEM only check in the future if we ever enable this again.
+			-- VEM:AddMsg(VEM_CORE_UPDATEREMINDER_HOTFIX)
 		end
 	end
 
