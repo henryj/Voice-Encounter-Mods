@@ -1890,6 +1890,25 @@ function VEM:GetNumRealGroupMembers()
 	return realGroupMembers
 end
 
+function VEM:GetUnitCreatureId(uId)
+	local guid = UnitGUID(uId)
+	return VEM:GetCIDFromGUID(guid)
+end
+
+--Creature/Vehicle/Pet
+----<type>:<subtype>:<realmID>:<mapID>:<serverID>:<dbID>:<creationbits>
+--Player/Item
+----<type>:<realmID>:<dbID>
+function VEM:GetCIDFromGUID(guid)
+	local type, _, playerdbID, _, _, cid, creationbits = strsplit("-", guid or "")
+	if type and (type == "Creature" or type == "Vehicle" or type == "Pet") then
+		return tonumber(cid), type
+	elseif type and (type == "Player" or type == "Item") then
+		return tonumber(playerdbID), type
+	end
+	return 0, nil
+end
+
 function VEM:GetBossUnitId(name)
 	for i = 1, 5 do
 		if UnitName("boss" .. i) == name then
@@ -1900,6 +1919,22 @@ function VEM:GetBossUnitId(name)
 		if UnitName(uId .. "target") == name and not UnitIsPlayer(uId .. "target") then
 			return uId .. "target"
 		end
+	end
+end
+
+-- An anti spam function to throttle spammy events (e.g. SPELL_AURA_APPLIED on all group members)
+-- @param time the time to wait between two events (optional, default 2.5 seconds)
+-- @param id the id to distinguish different events (optional, only necessary if your mod keeps track of two different spam events at the same time)
+function VEM:AntiSpam(time, id)
+	if GetTime() - (id and (self["lastAntiSpam" .. tostring(id)] or 0) or self.lastAntiSpam or 0) > (time or 2.5) then
+		if id then
+			self["lastAntiSpam" .. tostring(id)] = GetTime()
+		else
+			self.lastAntiSpam = GetTime()
+		end
+		return true
+	else
+		return false
 	end
 end
 
@@ -4600,6 +4635,7 @@ end
 bossModPrototype.RegisterEvents = VEM.RegisterEvents
 bossModPrototype.UnregisterInCombatEvents = VEM.UnregisterInCombatEvents
 bossModPrototype.AddMsg = VEM.AddMsg
+bossModPrototype.RegisterShortTermEvents = VEM.RegisterShortTermEvents
 bossModPrototype.UnregisterShortTermEvents = VEM.UnregisterShortTermEvents
 
 function bossModPrototype:SetZone(...)
@@ -4620,6 +4656,47 @@ function bossModPrototype:SetZone(...)
 	end
 end
 
+function bossModPrototype:Toggle()
+	if self.Options.Enabled then
+		self:DisableMod()
+	else
+		self:EnableMod()
+	end
+end
+
+function bossModPrototype:EnableMod()
+	self.Options.Enabled = true
+end
+
+function bossModPrototype:DisableMod()
+	self:Stop()
+	self.Options.Enabled = false
+end
+
+function bossModPrototype:Stop()
+	for i, v in ipairs(self.timers) do
+		v:Stop()
+	end
+	for i, v in ipairs(self.countdowns) do
+		v:Stop()
+	end
+	self:Unschedule()
+end
+
+function bossModPrototype:SetUsedIcons(...)
+	self.usedIcons = {}
+	for i = 1, select("#", ...) do
+		self.usedIcons[select(i, ...)] = true
+	end
+end
+
+function bossModPrototype:RegisterOnUpdateHandler(func, interval)
+	if type(func) ~= "function" then return end
+	self.elapsed = 0
+	self.updateInterval = interval or 0
+	updateFunctions[self] = func
+end
+
 --------------
 --  Events  --
 --------------
@@ -4634,21 +4711,6 @@ function bossModPrototype:RegisterEventsInCombat(...)
 			self.inCombatOnlyEvents[k] = v .. " boss1 boss2 boss3 boss4 boss5 target focus"
 		end
 	end
-end
-
-function bossModPrototype:RegisterShortTermEvents(...)
-	if self.shortTermEventsRegistered then
-		return
-	end
-	self.shortTermRegisterEvents = {...}
-	for k, v in pairs(self.shortTermRegisterEvents) do
-		if v:sub(0, 5) == "UNIT_" and v:sub(v:len() - 10) ~= "_UNFILTERED" and not v:find(" ") and v ~= "UNIT_DIED" and v ~= "UNIT_DESTROYED" then
-			-- legacy event, oh noes
-			self.shortTermRegisterEvents[k] = v .. " boss1 boss2 boss3 boss4 boss5 target focus"
-		end
-	end
-	self.shortTermEventsRegistered = 1
-	self:RegisterEvents(unpack(self.shortTermRegisterEvents))
 end
 
 function bossModPrototype:SetCreatureID(...)
@@ -4683,30 +4745,6 @@ function bossModPrototype:SetQuestID(id)
 	self.questId = id
 end
 
-function bossModPrototype:Toggle()
-	if self.Options.Enabled then
-		self:DisableMod()
-	else
-		self:EnableMod()
-	end
-end
-
-function bossModPrototype:EnableMod()
-	self.Options.Enabled = true
-end
-
-function bossModPrototype:DisableMod()
-	self:Stop()
-	self.Options.Enabled = false
-end
-
-function bossModPrototype:RegisterOnUpdateHandler(func, interval)
-	if type(func) ~= "function" then return end
-	self.elapsed = 0
-	self.updateInterval = interval or 0
-	updateFunctions[self] = func
-end
-
 function bossModPrototype:SetRevision(revision)
 	revision = tonumber(revision or "")
 	if not revision then
@@ -4720,26 +4758,11 @@ function bossModPrototype:SendWhisper(msg, target)
 	return not VEM.Options.DontSendBossWhispers and sendWhisper(target, chatPrefixShort..msg)
 end
 
-function bossModPrototype:GetUnitCreatureId(uId)
-	local guid = UnitGUID(uId)
-	return self:GetCIDFromGUID(guid)
-end
-
+bossModPrototype.GetUnitCreatureId = VEM.GetUnitCreatureId
+bossModPrototype.AntiSpam = VEM.AntiSpam
 bossModPrototype.GetCIDFromGUID = VEM.GetCIDFromGUID
 
---Creature/Vehicle/Pet
-----<type>:<subtype>:<realmID>:<mapID>:<serverID>:<dbID>:<creationbits>
---Player/Item
-----<type>:<realmID>:<dbID>
-function VEM:GetCIDFromGUID(guid)
-	local type, _, playerdbID, _, _, cid, creationbits = strsplit("-", guid or "")
-	if type and (type == "Creature" or type == "Vehicle" or type == "Pet") then
-		return tonumber(cid), type
-	elseif type and (type == "Player" or type == "Item") then
-		return tonumber(playerdbID), type
-	end
-	return 0, nil
-end
+
 
 local bossTargetuIds = {
 	"target", "focus", "boss1", "boss2", "boss3", "boss4", "boss5"
@@ -5047,13 +5070,6 @@ function bossModPrototype:IsTrivial(level)
 	return false
 end
 
-function bossModPrototype:SetUsedIcons(...)
-	self.usedIcons = {}
-	for i = 1, select("#", ...) do
-		self.usedIcons[select(i, ...)] = true
-	end
-end
-
 function bossModPrototype:LatencyCheck()
 	return select(4, GetNetStats()) < VEM.Options.LatencyThreshold
 end
@@ -5063,22 +5079,6 @@ function bossModPrototype:IsTrivial(level)
 		return true
 	end
 	return false
-end
-
--- An anti spam function to throttle spammy events (e.g. SPELL_AURA_APPLIED on all group members)
--- @param time the time to wait between two events (optional, default 2.5 seconds)
--- @param id the id to distinguish different events (optional, only necessary if your mod keeps track of two different spam events at the same time)
-function bossModPrototype:AntiSpam(time, id)
-	if GetTime() - (id and (self["lastAntiSpam" .. tostring(id)] or 0) or self.lastAntiSpam or 0) > (time or 2.5) then
-		if id then
-			self["lastAntiSpam" .. tostring(id)] = GetTime()
-		else
-			self.lastAntiSpam = GetTime()
-		end
-		return true
-	else
-		return false
-	end
 end
 
 function bossModPrototype:IsCriteriaCompleted(criteriaIDToCheck)
@@ -5310,7 +5310,7 @@ function bossModPrototype:SetBossHPInfoToHighest()
 	self.highesthealth = true
 end
 
-function bossModPrototype:GetBossHP(cId)
+function VEM:GetBossHP(cId)
 	for i = 1, 5 do
 		local bossId = self:GetCIDFromGUID(UnitGUID("boss"..i))
 		if bossId == cId then
@@ -5327,6 +5327,8 @@ function bossModPrototype:GetBossHP(cId)
 	end
 	return nil
 end
+
+bossModPrototype.GetBossHP = VEM.GetBossHP
 
 
 -----------------------
