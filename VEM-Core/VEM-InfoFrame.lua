@@ -662,7 +662,7 @@ end
 
 local function getUnitCreatureId(uId)
 	local guid = UnitGUID(uId)
-	return (guid and (tonumber(guid:sub(6, 10), 16))) or 0
+	return VEM:GetCIDFromGUID(guid)
 end
 
 local function updatePlayerTargets()

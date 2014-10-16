@@ -1,5 +1,5 @@
-﻿## Interface: 50400
-## X-Min-Interface: 50001
+﻿## Interface: 60000
+## X-Min-Interface: 60000
 ## Title:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0World Events|r
 ## Title-zhCN:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0世界事件|r
 ## Title-zhTW:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0世界事件|r

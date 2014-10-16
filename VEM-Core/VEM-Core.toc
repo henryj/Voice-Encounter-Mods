@@ -1,5 +1,5 @@
-﻿## Interface: 50400
-## X-Min-Interface: 50001
+﻿## Interface: 60000
+## X-Min-Interface: 60000
 ## Title:|cffffd200Voice Encounter Mods|r |cff69ccf0Core|r
 ## Title-zhCN:|cffffd200Voice Encounter Mods|r |cff69ccf0核心|r
 ## Title-zhTW:|cffffd200Voice Encounter Mods|r |cff69ccf0核心|r

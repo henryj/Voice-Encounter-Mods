@@ -303,7 +303,7 @@ function mod:RAID_BOSS_WHISPER(msg, npc)
 end
 
 function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
-	if UnitExists("boss1") and tonumber(UnitGUID("boss1"):sub(6, 10), 16) == 69427 then
+	if UnitExists("boss1") and self:GetCIDFromGUID(UnitGUID("boss1")) == 69427 then
 		self:UnregisterShortTermEvents()--Once boss is out, unregister event, since we need it no longer.		
 		if self:IsDifficulty("normal10", "normal25") then
 			timerSiphonAnimaCD:Start(5.3, 1)
