@@ -182,7 +182,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			specWarnFocusedDefense:Show()
 			if not mod:IsTank() then
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\justrun.mp3") --快跑
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\justrun.ogg") --快跑
 			end
 		end
 	elseif args:IsSpellID(116829) then
@@ -196,7 +196,7 @@ end
 function mod:SPELL_AURA_REMOVED(args)
 	if args:IsSpellID(116778) then
 		if args:IsPlayer() then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\safenow.mp3") --安全
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\safenow.ogg") --安全
 		end
 	end
 end
@@ -232,15 +232,15 @@ local function addsDelay(add)
 		if mod:IsDifficulty("heroic10", "heroic25") then
 			if MyBomb() then
 				specWarnBomb:Schedule(ragetime + 1, rageCount)
-				sndWOP:Schedule(ragetime + 1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_bpzb.mp3") --爆破準備
+				sndWOP:Schedule(ragetime + 1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_bpzb.ogg") --爆破準備
 			end
 			if MyKZ() then
 				specWarnKZ:Schedule(ragetime - 5, rageCount)
-				sndWOP:Schedule(ragetime - 5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_kzzb.mp3")
+				sndWOP:Schedule(ragetime - 5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_kzzb.ogg")
 			end
 		end
-		sndADD1A:Schedule(ragetime - 6, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qjbzb.mp3") --輕甲
-		sndADD1:Schedule(ragetime - 1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qjbcx.mp3")	
+		sndADD1A:Schedule(ragetime - 6, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qjbzb.ogg") --輕甲
+		sndADD1:Schedule(ragetime - 1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qjbcx.ogg")	
 	elseif add == "Boss" then
 		warnBossesActivated:Show()
 		specWarnBossesActivated:Show(10)
@@ -255,11 +255,11 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 		self:Unschedule(addsDelay, "Rage")--Unschedule any failsafes that triggered and resync to yell
 		self:Schedule(14, addsDelay, "Rage")
 		if rageCount == 1 then
-			sndADD1A:Schedule(5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qjbzb.mp3") --輕甲
-			sndADD1:Schedule(10, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qjbcx.mp3")
+			sndADD1A:Schedule(5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qjbzb.ogg") --輕甲
+			sndADD1:Schedule(10, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qjbcx.ogg")
 			if mod:IsDifficulty("heroic10", "heroic25") and MyKZ() then
 				specWarnKZ:Schedule(6, rageCount)
-				sndWOP:Schedule(6, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_kzzb.mp3") --控制準備
+				sndWOP:Schedule(6, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_kzzb.ogg") --控制準備
 			end
 			timerRageActivates:Start(14, rageCount)
 		end
@@ -270,17 +270,17 @@ function mod:RAID_BOSS_EMOTE(msg)
 	if msg == L.Strength or msg:find(L.Strength) then
 		self:Unschedule(addsDelay, "Strength")
 		self:Schedule(7, addsDelay, "Strength")
-		sndADD3A:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zjbzb.mp3") --重甲
-		sndADD3:Schedule(8, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zjbcx.mp3")
+		sndADD3A:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zjbzb.ogg") --重甲
+		sndADD3:Schedule(8, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zjbcx.ogg")
 	elseif msg == L.Courage or msg:find(L.Courage) then
 		self:Unschedule(addsDelay, "Courage")
 		self:Schedule(8, addsDelay, "Courage")
-		sndADD2A:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_dbzb.mp3") --盾兵
-		sndADD2:Schedule(8, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_dbkd.mp3")
+		sndADD2A:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_dbzb.ogg") --盾兵
+		sndADD2:Schedule(8, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_dbkd.ogg")
 	elseif msg == L.Boss or msg:find(L.Boss) then
 		warnBossesActivatedSoon:Show()
 		self:Schedule(10, addsDelay, "Boss")
-		sndWOP:Schedule(8, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_szcz.mp3") --雙子
+		sndWOP:Schedule(8, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_szcz.ogg") --雙子
 	elseif msg:find("spell:116779") then
 		if self:IsDifficulty("heroic10", "heroic25") then--On heroic the boss activates this perminantly on pull and it's always present
 			if not self:IsInCombat() then
@@ -290,7 +290,7 @@ function mod:RAID_BOSS_EMOTE(msg)
 			titanGasCast = titanGasCast + 1
 			warnTitanGas:Show(titanGasCast)
 			specWarnTitanGas:Show()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_ttqt.mp3") --泰坦氣體
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_ttqt.ogg") --泰坦氣體
 			if titanGasCast < 4 then -- after Titan Gas casted 4 times, Titan Gas lasts permanently. (soft enrage)
 				timerTitanGas:Start()
 				timerTitanGasCD:Start(150, titanGasCast+1)
@@ -315,38 +315,38 @@ end
 
 function checkisstomp()
 	if mod:IsDps() then
-		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Schedule(2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndWOP:Schedule(2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 	end
 	mod:Schedule(2, function() Isstomp = 0 end)
 	mod:Schedule(4, function() 
 		if Isstomp ~= 1 and comboCount ~= 0 then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_jt.mp3") --踐踏
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_jt.ogg") --踐踏
 		end
 	end)
 end
 
 function countsoundcombo()
 	if comboCount == 10 then
-		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countten.mp3")
+		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countten.ogg")
 	elseif comboCount == 9 then
-		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countnine.mp3")
+		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countnine.ogg")
 	elseif comboCount == 8 then
-		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counteight.mp3")
+		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counteight.ogg")
 	elseif comboCount == 7 then
-		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countseven.mp3")
+		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countseven.ogg")
 	elseif comboCount == 6 then
-		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countsix.mp3")
+		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countsix.ogg")
 	elseif comboCount == 5 then
-		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
+		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
 	elseif comboCount == 4 then
-		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
+		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
 	elseif comboCount == 3 then
-		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
 	elseif comboCount == 2 then
-		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
+		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
 	elseif comboCount == 1 then
-		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 	end
 end
 
@@ -367,7 +367,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		comboCount = comboCount + 1
 		checkisstomp()
 		warnArcLeft:Show(comboCount)
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_left.mp3") --左側
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_left.ogg") --左側
 		if mod:IsHealer() then
 			countsoundcombo()
 		end
@@ -383,7 +383,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		comboCount = comboCount + 1
 		checkisstomp()
 		warnArcRight:Show(comboCount)
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_right.mp3") --右側
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_right.ogg") --右側
 		if mod:IsHealer() then
 			countsoundcombo()
 		end
@@ -397,7 +397,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		comboCount = comboCount + 1
 		checkisstomp()
 		warnArcCenter:Show(comboCount)
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_center.mp3") --前方
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_center.ogg") --前方
 --		specWarnArcCenter:Show()
 		if mod:IsHealer() then
 			countsoundcombo()
@@ -413,7 +413,7 @@ function mod:UNIT_POWER(uId)
 	if (self:GetUnitCreatureId(uId) == 60399 or self:GetUnitCreatureId(uId) == 60400) and UnitPower(uId) == 18 and not comboWarned then
 		comboWarned = true
 		specWarnCombo:Show()		
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zbbyz.mp3") --準備半月斬
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zbbyz.ogg") --準備半月斬
 		dao = 0
 	elseif (self:GetUnitCreatureId(uId) == 60399 or self:GetUnitCreatureId(uId) == 60400) and UnitPower(uId) == 1 then
 		comboWarned = false
@@ -426,7 +426,7 @@ function mod:SWING_DAMAGE(sourceGUID, _, _, _, destGUID)
 	local cid = self:GetCIDFromGUID(sourceGUID)
 	if cid == 60396 and destGUID == UnitGUID("player") and self:AntiSpam(3, 5) then
 		specWarnFocused:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg") --快躲開
 	end
 end
 mod.SWING_MISSED = mod.SWING_DAMAGE

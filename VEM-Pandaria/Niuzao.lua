@@ -52,7 +52,7 @@ function mod:SPELL_CAST_START(args)
 		warnHeadbutt:Show()
 		specWarnHeadbutt:Show()
 		if mod:IsTank() then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\changemt.mp3") --換坦嘲諷
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\changemt.ogg") --換坦嘲諷
 		end
 		timerHeadbuttCD:Start()
 	elseif args.spellId == 144611 then
@@ -60,15 +60,15 @@ function mod:SPELL_CAST_START(args)
 		specWarnMassiveQuake:Show()
 		timerMassiveQuake:Start()
 		if mod:IsHealer() then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\healall.mp3") --注意群療
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\healall.ogg") --注意群療
 		else
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\aesoon.mp3") --准备AOE
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\aesoon.ogg") --准备AOE
 		end
 		timerMassiveQuakeCD:Start()
 	elseif args.spellId == 144608 then
 		warnCharge:Show()
 		specWarnCharge:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\chargemove.mp3") --衝鋒快躲
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\chargemove.ogg") --衝鋒快躲
 	end
 end
 

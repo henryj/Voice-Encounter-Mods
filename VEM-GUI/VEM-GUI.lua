@@ -1586,7 +1586,7 @@ local function CreateOptionsMenu()
 		local CountSoundDropDown = raidwarnoptions:CreateDropdown(L.CountdownVoice, countSounds,
 		VEM.Options.CountdownVoice, function(value)
 			VEM.Options.CountdownVoice = value
-			PlaySoundFile("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\movesoon.mp3", "Master")
+			PlaySoundFile("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\movesoon.ogg", "Master")
 			VEM:ShowSoundMM()
 		end
 		)

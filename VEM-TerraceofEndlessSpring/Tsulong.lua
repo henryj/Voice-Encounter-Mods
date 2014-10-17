@@ -131,61 +131,61 @@ function mod:LightOfDayRepeat()
 	lodcount = lodcount + 1
 	warnLightOfDay:Show(lodcount)
 	specWarnLightOfDay:Show()
-	sndGH:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_ghcx.mp3")--光華出現
+	sndGH:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_ghcx.ogg")--光華出現
 	if lodcount == 1 then
-		sndGH:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndGH:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		if self.Options.lod1 then
-			sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.mp3") --~
+			sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.ogg") --~
 		end
 	elseif lodcount == 2 then
-		sndGH:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
+		sndGH:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
 		if self.Options.lod2 then
-			sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.mp3")
+			sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.ogg")
 		end
 	elseif lodcount == 3 then
-		sndGH:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+		sndGH:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
 		if self.Options.lod3 then
-			sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.mp3")
+			sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.ogg")
 		end
 	elseif lodcount == 4 then
-		sndGH:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
+		sndGH:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
 		if self.Options.lod4 then
-			sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.mp3")
+			sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.ogg")
 		end
 	elseif lodcount == 5 then
-		sndGH:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
+		sndGH:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
 		if self.Options.lod5 then
-			sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.mp3")
+			sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.ogg")
 		end
 	elseif lodcount == 6 then
-		sndGH:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countsix.mp3")
+		sndGH:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countsix.ogg")
 		if self.Options.lod6 then
-			sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.mp3")
+			sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.ogg")
 		end
 	elseif lodcount == 7 then
-		sndGH:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countseven.mp3")
+		sndGH:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countseven.ogg")
 		if self.Options.lod7 then
-			sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.mp3")
+			sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.ogg")
 		end
 	elseif lodcount == 8 then
-		sndGH:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counteight.mp3")
+		sndGH:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counteight.ogg")
 		if self.Options.lod8 then
-			sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.mp3")
+			sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.ogg")
 		end
 	elseif lodcount == 9 then
-		sndGH:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countnine.mp3")
+		sndGH:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countnine.ogg")
 		if self.Options.lod9 then
-			sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.mp3")
+			sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.ogg")
 		end
 	elseif lodcount == 10 then
-		sndGH:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countten.mp3")
+		sndGH:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countten.ogg")
 		if self.Options.lod10 then
-			sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.mp3")
+			sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.ogg")
 		end
 	elseif lodcount == 11 then
-		sndGH:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counteleven.mp3")
+		sndGH:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counteleven.ogg")
 		if self.Options.lod11 then
-			sndWOP:Schedule(2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.mp3")
+			sndWOP:Schedule(2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.ogg")
 		end
 	end
 	if self:IsDifficulty("heroic10") then
@@ -204,7 +204,7 @@ function mod:ShadowsTarget(targetname)
 	end
 	if targetname == UnitName("player") then
 		specWarnNightmares:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.mp3")--快躲開
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg")--快躲開
 		yellNightmares:Yell()
 	else
 		local uId = VEM:GetRaidUnitId(targetname)
@@ -217,7 +217,7 @@ function mod:ShadowsTarget(targetname)
 			local inRange = VEM.RangeCheck:GetDistance("player", x, y)
 			if inRange and inRange < 10 then
 				specWarnNightmaresNear:Show(targetname)
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.mp3")--快躲開
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg")--快躲開
 			end
 		end
 	end
@@ -246,38 +246,38 @@ end
 
 function mod:OnCombatStart(delay)
 	timerShadowBreathCD:Start(8.5-delay)
-	sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zbhx.mp3")
-	sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-	sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-	sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
-	sndHX:Schedule(5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zbhx.mp3")--準備火息
-	sndHX:Schedule(6, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-	sndHX:Schedule(7, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-	sndHX:Schedule(8, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+	sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zbhx.ogg")
+	sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+	sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+	sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
+	sndHX:Schedule(5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zbhx.ogg")--準備火息
+	sndHX:Schedule(6, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+	sndHX:Schedule(7, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+	sndHX:Schedule(8, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 	timerNightmaresCD:Start(13.5-delay)
-	sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countseven.mp3")
-	sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countsix.mp3")
-	sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
-	sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-	sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-	sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-	sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
-	sndMY:Schedule(7, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countseven.mp3")
-	sndMY:Schedule(8, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countsix.mp3")
-	sndMY:Schedule(9, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
-	sndMY:Schedule(10, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-	sndMY:Schedule(11, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-	sndMY:Schedule(12, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-	sndMY:Schedule(13, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+	sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countseven.ogg")
+	sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countsix.ogg")
+	sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
+	sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+	sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+	sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+	sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
+	sndMY:Schedule(7, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countseven.ogg")
+	sndMY:Schedule(8, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countsix.ogg")
+	sndMY:Schedule(9, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
+	sndMY:Schedule(10, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+	sndMY:Schedule(11, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+	sndMY:Schedule(12, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+	sndMY:Schedule(13, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 	timerDayCD:Start(-delay)
-	sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\dayphase.mp3")
-	sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-	sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-	sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
-	sndWOP:Schedule(116.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\dayphase.mp3")--白天準備
-	sndWOP:Schedule(118, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-	sndWOP:Schedule(119, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-	sndWOP:Schedule(120, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+	sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\dayphase.ogg")
+	sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+	sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+	sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
+	sndWOP:Schedule(116.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\dayphase.ogg")--白天準備
+	sndWOP:Schedule(118, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+	sndWOP:Schedule(119, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+	sndWOP:Schedule(120, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 	if not self:IsDifficulty("lfr25") then
 		berserkTimer:Start(-delay)
 	end
@@ -306,22 +306,22 @@ function mod:SPELL_AURA_APPLIED(args)
 		if (args.amount or 1) >= DSn then
 			if args.amount % 3 == 0 then
 				specWarnDreadShadows:Show(args.amount)
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_kzyg.mp3")--快找陽光
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_kzyg.ogg")--快找陽光
 			end
 		end
 	elseif args:IsSpellID(123012) then
 		warnTerrorize:Show(args.destName)
 		if mod:IsHealer() then
 			specWarnTerrorize:Show(args.destName)
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\dispelnow.mp3")--快驅散
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\dispelnow.ogg")--快驅散
 		end
 		if self.Options.WarnJK then
 			if GetTime() - daytime < 96 then
 				sndJKNext[args.sourceGUID] = mod:NewSound(nil, "SoundWOP", true)
-				sndJKNext[args.sourceGUID]:Schedule(18, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qszb.mp3")--驅散準備
-				sndJKNext[args.sourceGUID]:Schedule(19, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-				sndJKNext[args.sourceGUID]:Schedule(20, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-				sndJKNext[args.sourceGUID]:Schedule(21, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+				sndJKNext[args.sourceGUID]:Schedule(18, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qszb.ogg")--驅散準備
+				sndJKNext[args.sourceGUID]:Schedule(19, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+				sndJKNext[args.sourceGUID]:Schedule(20, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+				sndJKNext[args.sourceGUID]:Schedule(21, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 			end
 		end
 	elseif args:IsSpellID(122789) then
@@ -341,11 +341,11 @@ function mod:SPELL_CAST_START(args)
 		specWarnSunBreath:Show()
 		timerSunBreathCD:Start()
 		if not mod:IsDps() then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zbhx.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zbhx.ogg")
 		end
 		hxcount = hxcount + 1
 		if MyTS() then
-			sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_kgts.mp3") --快給天使
+			sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_kgts.ogg") --快給天使
 		end
 	end
 end
@@ -359,20 +359,20 @@ function mod:SPELL_CAST_SUCCESS(args)
 		else
 			timerShadowBreathCD:Start()
 		end
-		sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zbhx.mp3")
-		sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zbhx.ogg")
+		sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		if self:IsDifficulty("heroic10", "heroic25") then
-			sndHX:Schedule(21, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zbhx.mp3")
-			sndHX:Schedule(22.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-			sndHX:Schedule(23.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-			sndHX:Schedule(24.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			sndHX:Schedule(21, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zbhx.ogg")
+			sndHX:Schedule(22.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+			sndHX:Schedule(23.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+			sndHX:Schedule(24.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		else
-			sndHX:Schedule(24, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zbhx.mp3")
-			sndHX:Schedule(25.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-			sndHX:Schedule(26.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-			sndHX:Schedule(27.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			sndHX:Schedule(24, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zbhx.ogg")
+			sndHX:Schedule(25.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+			sndHX:Schedule(26.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+			sndHX:Schedule(27.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		end
 	elseif args:IsSpellID(124176, 123630) then
 		VEM:EndCombat(self)
@@ -385,13 +385,13 @@ function mod:RAID_BOSS_EMOTE(msg)
 	elseif msg:find(terrorName) then
 		timerTerrorizeCD:Start()--always cast 14-15 seconds after one spawns (Unless stunned, if you stun the mob you can delay the cast, using this timer)
 		warnSummonEmbodiedTerror:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_kjjx.mp3")--恐懼具現
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_kjjx.ogg")--恐懼具現
 		terrorN = terrorN + 1
 		if self.Options.WarnJK then
-			sndJK:Schedule(10, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qszb.mp3")--驅散準備
-			sndJK:Schedule(11, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-			sndJK:Schedule(12, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-			sndJK:Schedule(13, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			sndJK:Schedule(10, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qszb.ogg")--驅散準備
+			sndJK:Schedule(11, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+			sndJK:Schedule(12, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+			sndJK:Schedule(13, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		end
 		timerSummonEmbodiedTerrorCD:Start()
 	end
@@ -400,19 +400,19 @@ end
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 122770 and self:AntiSpam(2, 1) then--Nightmares (Night Phase)
 		if self:IsDifficulty("normal25", "heroic25", "lfr25") then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\firecircle.mp3")--注意火圈
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\firecircle.ogg")--注意火圈
 		end
 		targetScansDone = 0		
 		self:TargetScanner()
 		if timerDayCD:GetTime() < 106 then
 			timerNightmaresCD:Start()
-			sndMY:Schedule(9, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countseven.mp3")
-			sndMY:Schedule(10, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countsix.mp3")
-			sndMY:Schedule(11, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
-			sndMY:Schedule(12, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-			sndMY:Schedule(13, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-			sndMY:Schedule(14, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-			sndMY:Schedule(15, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			sndMY:Schedule(9, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countseven.ogg")
+			sndMY:Schedule(10, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countsix.ogg")
+			sndMY:Schedule(11, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
+			sndMY:Schedule(12, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+			sndMY:Schedule(13, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+			sndMY:Schedule(14, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+			sndMY:Schedule(15, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		end
 	elseif spellId == 123252 and self:AntiSpam(2, 2) and self:IsInCombat() then--Dread Shadows Cancel (Sun Phase)
 		daytime = GetTime()
@@ -420,41 +420,41 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		mobcount = 0
 		hxcount = 0
 		timerShadowBreathCD:Cancel()
-		sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zbhx.mp3")
-		sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zbhx.ogg")
+		sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		timerSunbeamCD:Cancel()
 		timerNightmaresCD:Cancel()
-		sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countseven.mp3")
-		sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countsix.mp3")
-		sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
-		sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-		sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countseven.ogg")
+		sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countsix.ogg")
+		sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
+		sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+		sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndMY:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		timerDarkOfNightCD:Cancel()
 		warnDay:Show()
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\phasechange.mp3")--階段轉換
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\phasechange.ogg")--階段轉換
 		timerSunBreathCD:Start()
 		timerNightCD:Start()
-		sndWOP:Schedule(116.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_hyzb.mp3")--黑夜準備
-		sndWOP:Schedule(118, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOP:Schedule(119, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Schedule(120, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndWOP:Schedule(116.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_hyzb.ogg")--黑夜準備
+		sndWOP:Schedule(118, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndWOP:Schedule(119, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndWOP:Schedule(120, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 	elseif spellId == 122953 and self:AntiSpam(2, 1) then--Summon Unstable Sha (122946 is another ID, but it always triggers at SAME time as Dread Shadows Cancel so can just trigger there too without additional ID scanning.
 		warnSummonUnstableSha:Show()
 		if mod:IsDps() then
-			sndWOP:Schedule(4, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_kdbwds.mp3")--快打不穩定煞
+			sndWOP:Schedule(4, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_kdbwds.ogg")--快打不穩定煞
 		end
 		timerSummonUnstableShaCD:Start()
 		mobcount = mobcount + 1
 		if MyJS() then
 			specWarnJSA:Schedule(6, mobcount)
-			sndWOP:Schedule(6, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
+			sndWOP:Schedule(6, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.ogg") --注意減傷
 		end
 	elseif spellId == 122767 and self:AntiSpam(2, 2) then--Dread Shadows (Night Phase)
 		timerSummonUnstableShaCD:Cancel()
@@ -469,37 +469,37 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		end
 		warnNight:Show()
 		if self.Options.WarnJK then
-			sndJK:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qszb.mp3")
-			sndJK:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-			sndJK:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-			sndJK:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			sndJK:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qszb.ogg")
+			sndJK:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+			sndJK:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+			sndJK:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 			for i,j in pairs(sndJKNext) do
-				sndJKNext[i]:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qszb.mp3")
-				sndJKNext[i]:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-				sndJKNext[i]:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-				sndJKNext[i]:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+				sndJKNext[i]:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qszb.ogg")
+				sndJKNext[i]:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+				sndJKNext[i]:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+				sndJKNext[i]:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 			end
 			table.wipe(sndJKNext)
 		end
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\phasechange.mp3")
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\phasechange.ogg")
 		timerShadowBreathCD:Start(10)
-		sndHX:Schedule(6, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zbhx.mp3")--準備火息
-		sndHX:Schedule(7.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndHX:Schedule(8.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndHX:Schedule(9.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndHX:Schedule(6, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zbhx.ogg")--準備火息
+		sndHX:Schedule(7.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndHX:Schedule(8.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndHX:Schedule(9.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		timerNightmaresCD:Start(16)
-		sndMY:Schedule(9.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countseven.mp3")
-		sndMY:Schedule(10.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countsix.mp3")
-		sndMY:Schedule(11.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
-		sndMY:Schedule(12.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-		sndMY:Schedule(13.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndMY:Schedule(14.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndMY:Schedule(15.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndMY:Schedule(9.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countseven.ogg")
+		sndMY:Schedule(10.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countsix.ogg")
+		sndMY:Schedule(11.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
+		sndMY:Schedule(12.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+		sndMY:Schedule(13.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndMY:Schedule(14.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndMY:Schedule(15.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		timerDayCD:Start()
-		sndWOP:Schedule(116.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\dayphase.mp3")
-		sndWOP:Schedule(118, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOP:Schedule(119, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Schedule(120, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndWOP:Schedule(116.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\dayphase.ogg")
+		sndWOP:Schedule(118, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndWOP:Schedule(119, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndWOP:Schedule(120, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		if self:IsDifficulty("heroic10", "heroic25") then
 --			timerDarkOfNightCD:Start(10-delay)--Not enough information yet, no logs of this phase starting anywhere but combat start, and those timers differ. This might have first cast IMMEDIATELY on phase start like day does
 		end
@@ -509,7 +509,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		specWarnDarkOfNight:Show()
 		timerDarkOfNightCD:Start()
 		if mod:IsDps() then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_aykd.mp3")--暗影快打
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_aykd.ogg")--暗影快打
 		end
 	elseif spellId == 123816 and self:AntiSpam(2, 3) then--The Light of Day (Day Phase)
 		if self:IsDifficulty("heroic10") then
@@ -528,16 +528,16 @@ function mod:UNIT_DIED(args)
 		terrorN = terrorN - 1
 		if self.Options.WarnJK then
 			if terrorN == 0 then
-				sndJK:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qszb.mp3")
-				sndJK:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-				sndJK:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-				sndJK:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+				sndJK:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qszb.ogg")
+				sndJK:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+				sndJK:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+				sndJK:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 			end
 			if sndJKNext[args.destGUID] then
-				sndJKNext[args.destGUID]:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qszb.mp3")
-				sndJKNext[args.destGUID]:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-				sndJKNext[args.destGUID]:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-				sndJKNext[args.destGUID]:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+				sndJKNext[args.destGUID]:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qszb.ogg")
+				sndJKNext[args.destGUID]:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+				sndJKNext[args.destGUID]:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+				sndJKNext[args.destGUID]:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 			end
 		end
 	end

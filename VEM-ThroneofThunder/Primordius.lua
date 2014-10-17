@@ -124,7 +124,7 @@ function mod:BigOoze()
 	warnViscousHorror:Show(bigOozeCount)
 	specWarnViscousHorror:Show(bigOozeCount)
 	if mod:IsTank() then
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_drn.mp3")--大軟泥
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_drn.ogg")--大軟泥
 	end
 	timerViscousHorrorCD:Start(30, bigOozeCount+1)
 	self:ScheduleMethod(30, "BigOoze")
@@ -194,7 +194,7 @@ function mod:SPELL_CAST_START(args)
 	if args.spellId == 136216 then
 		warnCausticGas:Show()
 		specWarnCausticGas:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_kjfd.mp3")--靠近分擔
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_kjfd.ogg")--靠近分擔
 		timerCausticGasCD:Start()
 	end
 end
@@ -227,7 +227,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if self.Options.RangeFrame and not acidSpinesActive then--Check if acidSpinesActive is active, if they are, we should already have range 5 up
 			VEM.RangeCheck:Show(3)
 		end
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\range2.mp3")--2碼手雷
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\range2.ogg")--2碼手雷
 		showspellinfo()
 	elseif args.spellId == 136225 then
 		warnPathogenGlands:Show(args.destName)
@@ -237,14 +237,14 @@ function mod:SPELL_AURA_APPLIED(args)
 		timerVolatilePathogenCD:Start()
 		if args:IsPlayer() then
 			specWarnVolatilePathogen:Show()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\holdit.mp3")--自保
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\holdit.ogg")--自保
 			VEM.Flash:Shake(1, 0, 0)
 		elseif mod:IsHealer() then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_byt.mp3")--病原體出現
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_byt.ogg")--病原體出現
 		end
 	elseif args.spellId == 136245 then
 		metabolicBoost = true
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_sljs.mp3")--加速
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_sljs.ogg")--加速
 		warnMetabolicBoost:Show(args.destName)
 		showspellinfo()		
 	elseif args.spellId == 136210 then
@@ -255,13 +255,13 @@ function mod:SPELL_AURA_APPLIED(args)
 		if self.Options.RangeFrame then
 			VEM.RangeCheck:Show(5)
 		end
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\range5.mp3")--注意分散
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\range5.ogg")--注意分散
 		showspellinfo()
 	elseif args.spellId == 140546 and args:IsPlayer() then
 		specWarnFullyMutated:Show()
 		VEM.Flash:Shake(0, 1, 0)
 		timerFullyMutated:Start()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_tbwc.mp3")--完美突變
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_tbwc.ogg")--完美突變
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
@@ -300,7 +300,7 @@ function mod:SPELL_AURA_REMOVED(args)
 	elseif args.spellId == 140546 and args:IsPlayer() then
 		timerFullyMutated:Cancel()--Can be dispeled
 		specWarnFullyMutatedFaded:Show(args.spellName)
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_bsjs.mp3")--變身結束
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_bsjs.ogg")--變身結束
 	end
 end
 
@@ -338,7 +338,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		timerPustuleEruptionCD:Start()
 		if not self:IsDifficulty("lfr25") then
 			specWarnPustuleEruption:Show()		
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_zynx.mp3")--注意膿血
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_zynx.ogg")--注意膿血
 			if mod.Options.HudMAPF then
 				for i = 1, VEM:GetNumGroupMembers() do
 					local uId = "raid"..i

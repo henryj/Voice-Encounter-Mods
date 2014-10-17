@@ -2511,12 +2511,12 @@ do
 			VEM.Bars:CancelBar(VEM_CORE_TIMER_PULL)
 		end
 		if not VEM.Options.DontPlayPTCountdown then
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\com_go.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\com_go.ogg", "Master")
 		end
 		if not VEM.Options.DontShowPTCountdownText then
 			VEM:Unschedule(countDownTextDelay)
@@ -2529,12 +2529,12 @@ do
 		end
 		if not VEM.Options.DontPlayPTCountdown then
 			PlaySoundFile("Interface\\AddOns\\VEM-Core\\Sounds\\win.ogg", "Master")
-			if timer > 5 then VEM:Schedule(timer-5, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3", "Master") end
-			if timer > 5 then VEM:Schedule(timer-4, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3", "Master") end
-			if timer > 3 then VEM:Schedule(timer-3, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3", "Master") end
-			if timer > 3 then VEM:Schedule(timer-2, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3", "Master") end
-			if timer > 3 then VEM:Schedule(timer-1, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3", "Master") end
-			if timer > 1 then VEM:Schedule(timer, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\com_go.mp3", "Master") end
+			if timer > 5 then VEM:Schedule(timer-5, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg", "Master") end
+			if timer > 5 then VEM:Schedule(timer-4, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg", "Master") end
+			if timer > 3 then VEM:Schedule(timer-3, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg", "Master") end
+			if timer > 3 then VEM:Schedule(timer-2, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg", "Master") end
+			if timer > 3 then VEM:Schedule(timer-1, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg", "Master") end
+			if timer > 1 then VEM:Schedule(timer, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\com_go.ogg", "Master") end
 		end
 		if not VEM.Options.DontShowPTCountdownText then
 			local threshold = VEM.Options.PTCountThreshold
@@ -2560,12 +2560,12 @@ do
 		end
 		dummyMod.text:Cancel()
 		if not VEM.Options.DontPlayPTCountdown then
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\com_go.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\com_go.ogg", "Master")
 		end
 		if not VEM.Options.DontShowPTCountdownText then
 			VEM:Unschedule(countDownTextDelay)
@@ -5749,7 +5749,7 @@ do
 				elseif i == 10 then countvaluei = "countten"
 				elseif i == 11 then countvaluei = "counteleven" end
 				if i <= 11 then
-					self.sound5:Schedule(timer-i, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\"..countvaluei..".mp3")
+					self.sound5:Schedule(timer-i, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\"..countvaluei..".ogg")
 				end
 			end
 		end
@@ -5913,7 +5913,7 @@ do
 				elseif i == 10 then countvaluei = "countten"
 				elseif i == 11 then countvaluei = "counteleven" end
 				if i <= 11 then
-					self.sound5:Schedule(timer-i, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\"..countvaluei..".mp3")
+					self.sound5:Schedule(timer-i, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\"..countvaluei..".ogg")
 				end
 			end
 		end
@@ -6327,9 +6327,9 @@ do
 		elseif number == 9 then countvaluenumber = "countnine"
 		elseif number == 10 then countvaluenumber = "countten" end
 		if VEM.Options.UseMasterVolume then
-			PlaySoundFile("Interface\\AddOns\\"..voice.."\\"..countvaluenumber..".mp3", "Master")
+			PlaySoundFile("Interface\\AddOns\\"..voice.."\\"..countvaluenumber..".ogg", "Master")
 		else
-			PlaySoundFile("Interface\\AddOns\\"..voice.."\\"..countvaluenumber..".mp3")
+			PlaySoundFile("Interface\\AddOns\\"..voice.."\\"..countvaluenumber..".ogg")
 		end
 	end
 
