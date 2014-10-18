@@ -258,7 +258,7 @@ EJ_GetSectionInfo(8015) 	--切割者 71158
 EJ_GetSectionInfo(8016) 	--虫群卫士 71153 ]]
 
 local function showspellinfo()
-	if mod:IsDifficulty("heroic25") then return end
+	if mod:IsMythic() then return end
 	if mod.Options.InfoFrame then
 		twipe(bossspellinfo)
 		local onlyactboss = 0
@@ -312,7 +312,7 @@ local function showspellinfo()
 end
 
 local function testinfo()
-	if not mod:IsDifficulty("heroic25") then return end
+	if not mod:IsMythic() then return end
 	local showxiezi = {}
 	local xiezinum = 0
 	for k,v in pairs(xiezi) do
@@ -446,10 +446,10 @@ local function CheckBosses()
 			--Activation Controller
 			local cid = mod:GetCIDFromGUID(UnitGUID(unitID))
 			if cid == 71161 then--Kil'ruk the Wind-Reaver
-				if mod:IsDifficulty("heroic10", "heroic25") then
+				if mod:IsMythic() then
 					timerReaveCD:Start(38.5)
 				end
-				if mod:IsDifficulty("heroic10", "heroic25") then
+				if mod:IsMythic() then
 					mod:Schedule(15, HeroicDFAScan)--Not a large sample size, data shows it happen 29-30 seconds after IEEU fires on two different pulls. Although 2 is a poor sample
 				else
 					mod:Schedule(23, DFAScan)--Not a large sample size, data shows it happen 29-30 seconds after IEEU fires on two different pulls. Although 2 is a poor sample
@@ -504,7 +504,7 @@ local function CheckBosses()
 				end
 			elseif cid == 71153 then--Hisek the Swarmkeeper
 				timerAimCD:Start(37)--Might be 32 now with the UnitBuff filter, so pay attention to that and adjust as needed
-				if mod:IsDifficulty("heroic10", "heroic25") then
+				if mod:IsMythic() then
 					timerRapidFireCD:Start(44.5)
 				end
 				if activetime >= 15 then
@@ -871,7 +871,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		timerEncaseInAmber:Start(args.destName)
 		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_hupd.ogg") --琥珀快打
 		timerEncaseInAmberCD:Start()
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 --			countdownEncaseInAmber:Start()
 		end
 	elseif args.spellId == 143939 then
@@ -1031,7 +1031,7 @@ mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if cid == 71161 then--Kil'ruk the Wind-Reaver
-		if mod:IsDifficulty("heroic10", "heroic25") then
+		if mod:IsMythic() then
 			self:Unschedule(HeroicDFAScan)
 		else
 			self:Unschedule(DFAScan)
@@ -1165,7 +1165,7 @@ function mod:CHAT_MSG_MONSTER_EMOTE(msg, npc, _, _, target)
 			yellCalculated:Yell()
 			caled = true
 		end
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			local resultshape, resultcolor, resultnumber = parseDebuff(target)
 			local shape, color, number = parseDebuff("player")
 			if shape then
@@ -1213,7 +1213,7 @@ function mod:CHAT_MSG_MONSTER_EMOTE(msg, npc, _, _, target)
 					end
 				end
 			end
-			if mod.Options.ShowGrouptarget and self:IsDifficulty("heroic10", "heroic25") then
+			if mod.Options.ShowGrouptarget and self:IsMythic() then
 				VEM.InfoFrame:SetHeader(GetSpellInfo(144095).."("..(firecount+1)..")")
 				if #ResultGroupTargets == 1 then
 					VEM.InfoFrame:Show(1, "other", ResultGroupTargets[1], "1")

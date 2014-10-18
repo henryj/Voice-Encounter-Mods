@@ -94,7 +94,7 @@ function mod:OnCombatStart(delay)
 	brokenLegs = 0
 	Crushcount = 0
 	timerFuriousSwipeCD:Start(-delay)--8-11 sec on pull
-	if not self:IsDifficulty("lfr25") then
+	if not self:IsLFR() then
 		berserkTimer:Start(-delay)
 	else
 		berserkTimer:Start(720-delay)
@@ -103,7 +103,7 @@ function mod:OnCombatStart(delay)
 	sndFS:Schedule(6, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
 	sndFS:Schedule(7, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 	table.wipe(PheromonesMarkers)	
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		timerCrushCD:Start(30-delay, Crushcount + 1)
 		sndZN:Schedule(25.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
 		sndZN:Schedule(26.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
@@ -129,7 +129,7 @@ end
 function mod:SPELL_AURA_APPLIED(args)
 	if args:IsSpellID(122754) and args:GetDestCreatureID() == 63191 then--It applies to both creatureids, so we antispam it
 		warnFury:Show(args.destName, args.amount or 1)
-		if self:IsDifficulty("lfr25") then
+		if self:IsLFR() then
 			timerFury:Start(15)
 		else
 			timerFury:Start()
@@ -166,9 +166,9 @@ function mod:SPELL_AURA_APPLIED(args)
 			self:SetIcon(args.destName, 2)
 		end
 	elseif args:IsSpellID(123081) then
-		if self:IsDifficulty("normal25", "heroic25") then--Is it also 4 min on LFR?
+		if self:IsHeroic() or self:IsMythic() then--Is it also 4 min on LFR?
 			timerPungency:Start(240, args.destName)
-		elseif self:IsDifficulty("lfr25") then
+		elseif self:IsLFR() then
 			timerPungency:Start(20, args.destName)
 		else
 			timerPungency:Start(args.destName)

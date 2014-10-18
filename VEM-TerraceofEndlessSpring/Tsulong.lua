@@ -188,18 +188,13 @@ function mod:LightOfDayRepeat()
 			sndWOP:Schedule(2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\uu.ogg")
 		end
 	end
-	if self:IsDifficulty("heroic10") then
-		timerLightOfDayCD:Start(25)
-		self:ScheduleMethod(25, "LightOfDayRepeat")
-	else
-		timerLightOfDayCD:Start(10)
-		self:ScheduleMethod(10, "LightOfDayRepeat")
-	end
+	timerLightOfDayCD:Start(10)
+	self:ScheduleMethod(10, "LightOfDayRepeat")
 end
 
 function mod:ShadowsTarget(targetname)
 	warnNightmares:Show(targetname)
-	if self.Options.HudMAP and self:IsDifficulty("normal10", "heroic10") then
+	if self.Options.HudMAP then
 		NightmaresMarkers[targetname] = register(VEMHudMap:PlaceStaticMarkerOnPartyMember("highlight", targetname, 9, 4, 0, 1, 0, 0.5):Appear():RegisterForAlerts())
 	end
 	if targetname == UnitName("player") then
@@ -278,10 +273,10 @@ function mod:OnCombatStart(delay)
 	sndWOP:Schedule(118, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
 	sndWOP:Schedule(119, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
 	sndWOP:Schedule(120, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
-	if not self:IsDifficulty("lfr25") then
+	if not self:IsLFR() then
 		berserkTimer:Start(-delay)
 	end
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		timerDarkOfNightCD:Start(10-delay)
 	end
 	terrorN = 0
@@ -354,7 +349,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 	if args:IsSpellID(122752) then
 		warnShadowBreath:Show()
 		specWarnShadowBreath:Show()
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerShadowBreathCD:Start(25)
 		else
 			timerShadowBreathCD:Start()
@@ -363,7 +358,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
 		sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
 		sndHX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			sndHX:Schedule(21, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zbhx.ogg")
 			sndHX:Schedule(22.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
 			sndHX:Schedule(23.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
@@ -399,10 +394,8 @@ end
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 122770 and self:AntiSpam(2, 1) then--Nightmares (Night Phase)
-		if self:IsDifficulty("normal25", "heroic25", "lfr25") then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\firecircle.ogg")--注意火圈
-		end
-		targetScansDone = 0		
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\firecircle.ogg")--注意火圈
+		targetScansDone = 0
 		self:TargetScanner()
 		if timerDayCD:GetTime() < 106 then
 			timerNightmaresCD:Start()
@@ -464,7 +457,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		lodcount = 0
 		mobcount = 0
 		hxcount = 0
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			self:UnscheduleMethod("LightOfDayRepeat")
 		end
 		warnNight:Show()
@@ -500,7 +493,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		sndWOP:Schedule(118, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
 		sndWOP:Schedule(119, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
 		sndWOP:Schedule(120, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 --			timerDarkOfNightCD:Start(10-delay)--Not enough information yet, no logs of this phase starting anywhere but combat start, and those timers differ. This might have first cast IMMEDIATELY on phase start like day does
 		end
 	elseif spellId == 123813 and self:AntiSpam(2, 3) then--The Dark of Night (Night Phase)
@@ -512,13 +505,8 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_aykd.ogg")--暗影快打
 		end
 	elseif spellId == 123816 and self:AntiSpam(2, 3) then--The Light of Day (Day Phase)
-		if self:IsDifficulty("heroic10") then
-			timerLightOfDayCD:Start(25)
-			self:ScheduleMethod(25, "LightOfDayRepeat")
-		else
-			timerLightOfDayCD:Start(10)
-			self:ScheduleMethod(10, "LightOfDayRepeat")
-		end
+		timerLightOfDayCD:Start(10)
+		self:ScheduleMethod(10, "LightOfDayRepeat")
 	end
 end
 

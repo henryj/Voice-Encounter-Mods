@@ -178,7 +178,7 @@ end
 function mod:OnCombatStart(delay)
 	table.wipe(toxicMistsTargets)
 	ashCount = 0
-	if self:IsDifficulty("lfr25") then
+	if self:IsLFR() then
 		berserkTimer:Start(600-delay)
 	else
 		berserkTimer:Start(-delay)

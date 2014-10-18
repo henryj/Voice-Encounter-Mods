@@ -215,7 +215,7 @@ function mod:OnCombatStart(delay)
 	twipe(AoPMarkers)
 	timerGiftOfTitansCD:Start(7.5-delay)
 	timerMarkCD:Start(-delay)
-	if not self:IsDifficulty("lfr25") then
+	if not self:IsLFR() then
 		timerWoundedPrideCD:Start(10-delay)
 	end
 	timerSelfReflectionCD:Start(-delay)
@@ -251,7 +251,7 @@ function mod:OnCombatStart(delay)
 		VEM.InfoFrame:SetHeader(prideLevel)
 		VEM.InfoFrame:Show(5, "playerpower", 5, ALTERNATE_POWER_INDEX)
 	end
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		timerBanishmentCD:Start(-delay)
 	end
 end
@@ -300,7 +300,7 @@ function mod:SPELL_CAST_START(args)
 		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
 		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
 		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
-		if not self:IsDifficulty("lfr25") then
+		if not self:IsLFR() then
 			timerWoundedPrideCD:Start(11.5) --BH FIXED
 		end
 		timerSelfReflectionCD:Start()
@@ -313,7 +313,7 @@ function mod:SPELL_CAST_START(args)
 		timerCorruptedPrisonCD:Start()
 		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\readyrescue.ogg")
 		sndWOP:Schedule(40, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\readyrescue.ogg") --準備救人			
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerBanishmentCD:Start()
 		end
 	end
@@ -346,7 +346,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		sndWOP:Schedule(73.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
 		sndWOP:Schedule(74.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
 		sndWOP:Schedule(75.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerBanishmentCD:Start()
 		end
 		--This is done here because a lot can change during a cast, and we need to know players energy when cast ends, i.e. this event
@@ -428,7 +428,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		self:Schedule(0.5, warnGiftOfTitansTargets)
 		if args:IsPlayer() then
 			specWarnGiftOfTitans:Show()
-			if not self:IsDifficulty("lfr25") then
+			if not self:IsLFR() then
 				yellGiftOfTitans:Yell()
 			end
 			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_ttzc.ogg") --泰坦之賜
@@ -499,7 +499,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if self.Options.SetIconOnMark and args:IsDestTypePlayer() then--Filter further on icons because we don't want to set icons on grounding totems
 			tinsert(markOfArroganceIcons, VEM:GetRaidUnitId(VEM:GetFullPlayerNameByGUID(args.destGUID)))
 			self:UnscheduleMethod("SetMarkIcons")
-			if (self:IsDifficulty("normal25", "heroic25") and #markOfArroganceIcons >= 8) or (self:IsDifficulty("normal10", "heroic10") and #markOfArroganceIcons >= 3) then
+			if (self:IsHeroic() or self:IsMythic()) and #markOfArroganceIcons >= 3 then--Don´t know the numbers for 6.0.2
 				self:SetMarkIcons()
 			else
 				if self:LatencyCheck() then--lag can fail the icons so we check it before allowing.
@@ -513,7 +513,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if mod:IsTank() or mod:IsHealer() then
 			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\changemt.ogg") --換坦嘲諷
 		end	
-		if not firstWound and not self:IsDifficulty("lfr25") then
+		if not firstWound and not self:IsLFR() then
 			firstWound = true
 			timerWoundedPrideCD:Start()
 		end

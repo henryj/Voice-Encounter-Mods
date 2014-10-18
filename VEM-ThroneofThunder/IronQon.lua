@@ -124,7 +124,7 @@ local function updateHealthFrame()
 			VEM.BossHealth:AddBoss(68081, Damren)
 		elseif phase == 4 then
 			VEM.BossHealth:AddBoss(68078, L.name)
-			if mod:IsDifficulty("heroic10", "heroic25") then
+			if mod:IsMythic() then
 				VEM.BossHealth:AddBoss(68081, Damren)
 				VEM.BossHealth:AddBoss(68080, Quetzal)
 				VEM.BossHealth:AddBoss(68079, Roshak)
@@ -278,13 +278,9 @@ function mod:OnCombatStart(delay)
 	timerThrowSpearCD:Start(-delay)
 	self:Schedule(25, checkSpear)
 	if self.Options.RangeFrame then
-		if self:IsDifficulty("normal10", "heroic10") then
-			VEM.RangeCheck:Show(10, nil, nil, 2)
-		else
-			VEM.RangeCheck:Show(10, nil, nil, 4)
-		end
+		VEM.RangeCheck:Show(10, nil, nil, 4)
 	end
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		timerWhirlingWindsCD:Start(15-delay)
 		timerLightningStormCD:Start(22-delay)
 		if self.Options.InfoFrame then
@@ -362,7 +358,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		else--Heroic phase 1 or 4
 			timerLightningStormCD:Start(37.5)
 		end
-		if self.Options.SetIconOnLightningStorm and not self:IsDifficulty("lfr25") then
+		if self.Options.SetIconOnLightningStorm and not self:IsLFR() then
 			self:SetIcon(args.destName, 8)
 		end
 		--BH ADD
@@ -422,7 +418,7 @@ function mod:SPELL_AURA_REMOVED(args)
 		if (args.destName == mod.Options.dispsetLight1) or (args.destName == mod.Options.dispsetLight2) then
 			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\thanks.ogg")
 		end
-		if self.Options.SetIconOnLightningStorm and not self:IsDifficulty("lfr25") then
+		if self.Options.SetIconOnLightningStorm and not self:IsLFR() then
 			self:SetIcon(args.destName, 0)
 		end
 	--BH ADD END
@@ -544,7 +540,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 			phase = 2
 			stormcount = 0
 			updateHealthFrame()
-			if self:IsDifficulty("heroic10", "heroic25") then
+			if self:IsMythic() then
 				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_sdxt.ogg") --閃電形态
 			end
 			timerUnleashedFlameCD:Cancel()
@@ -552,7 +548,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 			timerWhirlingWindsCD:Cancel()
 			warnPhase2:Show()
 			self:Schedule(25, checkSpear)
-			if self:IsDifficulty("heroic10", "heroic25") then
+			if self:IsMythic() then
 				timerFreezeCD:Start(13)
 				timerFrostSpikeCD:Start(15)
 			end
@@ -582,7 +578,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 				end
 			end
 			updateHealthFrame()
-			if self:IsDifficulty("heroic10", "heroic25") then
+			if self:IsMythic() then
 				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_bsxt.ogg") --冰霜形態
 			end
 			timerLightningStormCD:Cancel()
@@ -616,7 +612,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 				VEM.InfoFrame:SetHeader(arcingName)
 				VEM.InfoFrame:Show(5, "playerbaddebuff", 136193)
 			end
-			if self:IsDifficulty("heroic10", "heroic25") then
+			if self:IsMythic() then
 				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ptwo.ogg") --2階段
 			end
 		end
@@ -653,7 +649,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		warnFistSmash:Show(fistSmashCount)
 --		specWarnFistSmash:Show()
 		timerFistSmash:Start()
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerFistSmashCD:Start(30, fistSmashCount+1) -- heroic cd longer.
 		else
 			timerFistSmashCD:Start(nil, fistSmashCount+1)
@@ -673,13 +669,13 @@ function mod:UNIT_DIED(args)
 	if cid == 68079 then--Ro'shak
 		timerUnleashedFlameCD:Cancel()
 		timerMoltenOverload:Cancel()
-		if self:IsDifficulty("heroic10", "heroic25") then--In heroic, all mounts die in phase 4.
+		if self:IsMythic() then--In heroic, all mounts die in phase 4.
 			VEM.BossHealth:RemoveBoss(cid)
 		else
 			if self.Options.RangeFrame then
 				VEM.RangeCheck:Show(10, nil, nil, 1)--Switch range frame back to 1. Range is assumed 10, no spell info
 			end
-			if self.Options.InfoFrame and not self:IsDifficulty("lfr25") then
+			if self.Options.InfoFrame and not self:IsLFR() then
 				VEM.InfoFrame:SetHeader(arcingName)
 				VEM.InfoFrame:Show(5, "playerbaddebuff", 136193)
 			end
@@ -715,14 +711,14 @@ function mod:UNIT_DIED(args)
 		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
 		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		timerWindStorm:Cancel()
-		if not self:IsDifficulty("lfr25") then--LFR has no concept of clearing arcing, they certainly don't use info/range frames
+		if not self:IsLFR() then--LFR has no concept of clearing arcing, they certainly don't use info/range frames
 			checkArcing()
 		else--So just hide range frame when quet'zal dies
 			if self.Options.RangeFrame then
 				VEM.RangeCheck:Hide()
 			end
 		end
-		if self:IsDifficulty("heroic10", "heroic25") then--In heroic, all mounts die in phase 4.
+		if self:IsMythic() then--In heroic, all mounts die in phase 4.
 			VEM.BossHealth:RemoveBoss(cid)
 		else
 			phase = 3
@@ -749,7 +745,7 @@ function mod:UNIT_DIED(args)
 	elseif cid == 68081 then--Dam'ren
 		timerDeadZoneCD:Cancel()
 		timerFreezeCD:Cancel()
-		if self:IsDifficulty("heroic10", "heroic25") then--In heroic, all mounts die in phase 4.
+		if self:IsMythic() then--In heroic, all mounts die in phase 4.
 			VEM.BossHealth:RemoveBoss(cid)
 		else
 			phase = 4
@@ -767,7 +763,7 @@ end
 
 --BH ADD
 function mod:UNIT_POWER(uId)
-	if self:IsDifficulty("lfr25") then return end
+	if self:IsLFR() then return end
 	if (self:GetUnitCreatureId(uId) == 68079) and UnitPower(uId) > 50 and not Warned then
 		Warned = true
 		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\energyhigh.ogg") --能量過高

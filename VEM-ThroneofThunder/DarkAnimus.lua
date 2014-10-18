@@ -107,7 +107,7 @@ function mod:OnCombatStart(delay)
 	self:RegisterShortTermEvents(
 		"INSTANCE_ENCOUNTER_ENGAGE_UNIT"--We register here to prevent detecting first heads on pull before variables reset from first engage fire. We'll catch them on delayed engages fired couple seconds later
 	)
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		timerAnimaFontCD:Start(14)
 		timerAnimaRingCD:Start(23)
 		timerSiphonAnimaCD:Start(120, 1)--VERY important on heroic. boss activaet on pull, you have 2 minutes to do as much with adds as you can before he starts using siphon anima
@@ -192,7 +192,7 @@ local function PowerDelay()
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
-	if args.spellId == 138644 and self:IsDifficulty("heroic10", "heroic25") then--Only start on heroic, on normal it's 6 second cd, not worth using timer there
+	if args.spellId == 138644 and self:IsMythic() then--Only start on heroic, on normal it's 6 second cd, not worth using timer there
 		SiphonAnimaCount = SiphonAnimaCount + 1
 		timerSiphonAnimaCD:Start(nil, SiphonAnimaCount + 1)
 		if mod.Options.MobB then
@@ -292,7 +292,7 @@ function mod:RAID_BOSS_WHISPER(msg, npc)
 		if self:AntiSpam(3, 1) then--This actually doesn't spam, but we ues same antispam here so that the MOVE warning doesn't fire at same time unless you fail to move for 2 seconds
 			specWarnCrimsonWakeYou:Show()
 		end
-		if not self:IsDifficulty("lfr25") then
+		if not self:IsLFR() then
 			yellCrimsonWake:Yell()
 		end
 ----BH DELETE	soundCrimsonWake:Play()
@@ -305,7 +305,7 @@ end
 function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
 	if UnitExists("boss1") and self:GetCIDFromGUID(UnitGUID("boss1")) == 69427 then
 		self:UnregisterShortTermEvents()--Once boss is out, unregister event, since we need it no longer.		
-		if self:IsDifficulty("normal10", "normal25") then
+		if self:IsHeroic() then
 			timerSiphonAnimaCD:Start(5.3, 1)
 		end
 	end

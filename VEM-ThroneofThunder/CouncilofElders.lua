@@ -232,7 +232,7 @@ function mod:OnCombatStart(delay)
 	sndSpirit:Schedule(22, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
 	sndSpirit:Schedule(23, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
 	sndSpirit:Schedule(24, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
-	if self.Options.RangeFrame and not self:IsDifficulty("lfr25") then
+	if self.Options.RangeFrame and not self:IsLFR() then
 		VEM.RangeCheck:Show(5)
 	end
 end
@@ -342,19 +342,17 @@ function mod:SPELL_AURA_APPLIED(args)
 		specWarnPossessed:Show(args.spellName, args.destName)
 		if uid and UnitBuff(uid, lingeringPresence) then
 			local _, _, _, stack = UnitBuff(uid, lingeringPresence)
-			if self:IsDifficulty("heroic10", "heroic25") then
+			if self:IsMythic() then
 				timerDarkPowerCD:Start(math.floor(68/(0.15*stack+1.0)+0.5))--(68, 59, 52, 47)
-			elseif self:IsDifficulty("normal25") then
+			elseif self:IsHeroic() then
 				timerDarkPowerCD:Start(math.floor(68/(0.10*stack+1.0)+0.5))--(68, 62, 57, 52)
-			elseif self:IsDifficulty("normal10") then
-				timerDarkPowerCD:Start(math.floor(68/(0.10*(stack-1)+1.0)+0.5))--(76, 68, 62, x)
 			else
 				timerDarkPowerCD:Start(math.floor(68/(0.05*(stack-6)+1.0)+0.5))--(97, 91, 85, x)
 			end
 		else
-			if self:IsDifficulty("lfr25") then
+			if self:IsLFR() then
 				timerDarkPowerCD:Start(97)
-			elseif self:IsDifficulty("normal10") then
+			elseif self:IsHeroic() then
 				timerDarkPowerCD:Start(76)
 			else
 				timerDarkPowerCD:Start(68)
@@ -386,7 +384,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			local elapsed, total = timerBlessedLoaSpiritCD:GetTime()
 			timerBlessedLoaSpiritCD:Cancel()
 			if elapsed and total then--If for some reason it was nil, like it JUST came off cd, do nothing, she should cast loa spirit right away.
-				if self:IsDifficulty("heroic10", "heroic25") then
+				if self:IsMythic() then
 					timerTwistedFateCD:Update(elapsed, total)
 				else
 					timerShadowedLoaSpiritCD:Update(elapsed, total)
@@ -433,7 +431,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 		--BH ADD
 		if mod.Options.InfoFrame then
-			if self:IsDifficulty("lfr25") then return end
+			if self:IsLFR() then return end
 			VEM.InfoFrame:Hide()
 			local bosshealthnow
 			for i = 1, 5 do
@@ -443,7 +441,7 @@ function mod:SPELL_AURA_APPLIED(args)
 				end
 			end				
 			local bosspowerspeed
-			if self:IsDifficulty("heroic10", "heroic25") then
+			if self:IsMythic() then
 				bosspowerspeed = math.modf(68*(0.85^(speedcheck-1)))
 			else
 				bosspowerspeed = math.modf(68*(0.9^(speedcheck-1)))
@@ -561,7 +559,7 @@ function mod:SPELL_AURA_REMOVED(args)
 		elseif args:GetDestCreatureID() == 69132 then--High Prestess Mar'li
 			--Swap timer back
 			local elapsed, total
-			if self:IsDifficulty("heroic10", "heroic25") then
+			if self:IsMythic() then
 				elapsed, total = timerTwistedFateCD:GetTime()
 			else
 				elapsed, total = timerShadowedLoaSpiritCD:GetTime()

@@ -283,16 +283,12 @@ function mod:OnCombatStart(delay)
 	table.wipe(LightningPrisonMarkers)
 	timerCleansingWatersCD:Start(10-delay)
 	timerLightningPrisonCD:Start(15.5-delay)
-	if self:IsDifficulty("normal10", "heroic10") then
-		timerTouchOfShaCD:Start(35-delay)
-	else
-		timerTouchOfShaCD:Start(15-delay)
-	end
-	if not self:IsDifficulty("lfr25") then--lfr not berserks or more than 8m 10sec.
+	timerTouchOfShaCD:Start(15-delay)
+	if not self:IsLFR() then--lfr not berserks or more than 8m 10sec.
 		berserkTimer:Start(-delay)
 	end
 	myGroup = mod.Options.optMob == "Mob1" and 1 or mod.Options.optMob == "Mob2" and 2 or mod.Options.optMob == "Mob3" and 3 or mod.Options.optMob == "Mob4" and 4 or mod.Options.optMob == "Mob5" and 5
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		self:Schedule(15, function()
 			warnGroupOrder:Show(1)
 			if myGroup == 1 then
@@ -320,11 +316,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		totalTouchOfSha = totalTouchOfSha + 1
 		warnTouchofSha:Show(args.destName)
 		if totalTouchOfSha < VEM:GetNumGroupMembers() then--This ability will not be cast if everyone in raid has it.
-			if self:IsDifficulty("normal10", "heroic10") then--Heroic is assumed same as 10 normal.
-				timerTouchOfShaCD:Start()
-			else
-				timerTouchOfShaCD:Start(12)--every 12 seconds on 25 man. Not sure about LFR though. Will adjust next week accordingly
-			end
+			timerTouchOfShaCD:Start(12)--every 12 seconds
 		end
 	elseif args:IsSpellID(111850) then--111850 is targeting debuff (NOT dispelable one)
 		if args.destName == mod.Options.helpdispset then		
@@ -530,7 +522,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 	elseif args:IsSpellID(118191) then--Corrupted Essence
 		SetmobTactics()
 		corruptedCount = corruptedCount + 1		
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			for i = 1, #warnmobone do
 				if corruptedCount == warnmobone[i] then
 					warnGroupOrder:Show(1)

@@ -218,7 +218,7 @@ function mod:OnCombatStart(delay)
 	sndWOP:Schedule(69, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
 	sndWOP:Schedule(70, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 	timerBloodRageCD:Start(122-delay)
-	if self:IsDifficulty("lfr25") then
+	if self:IsLFR() then
 		berserkTimer:Start(720-delay)
 	else
 		berserkTimer:Start(-delay)
@@ -227,7 +227,7 @@ function mod:OnCombatStart(delay)
 		VEM.RangeCheck:Show(5)
 	end
 	if self.Options.Malhelper and (not IsAddOnLoaded("Malkorok")) then
-		if self:IsDifficulty("normal25", "heroic25") then
+		if self:IsHeroic() or self:IsMythic() then
 			ExRT:MalkorokAILoad()
 		else
 			ExRT:MalkorokLoad()

@@ -102,7 +102,7 @@ function mod:OnCombatStart(delay)
 	focusme = false
 	inoizame = false
 	stormcount = 0
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		timerIonizationCD:Start(60-delay)
 --BH DELETE	countdownIonization:Start(60-delay)
 		berserkTimer:Start(360-delay)
@@ -161,7 +161,7 @@ function mod:SPELL_CAST_START(args)
 		end		
 		sndWOP:Schedule(15, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_fbjs.ogg") --風暴結束
 		--BH ADD END		
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerIonizationCD:Start()
 --BH DELETE		countdownIonization:Start()
 			sndIonCD:Schedule(56, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_dlzb.ogg")
@@ -203,7 +203,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		timerIonization:Start()
 		--BH MODIFY
 		if self.Options.RangeFrame then
-			if self:IsDifficulty("heroic25") then
+			if self:IsMythic() then
 				VEM.RangeCheck:Show(4)
 			else
 				VEM.RangeCheck:Show(8)
@@ -263,7 +263,7 @@ function mod:SPELL_AURA_REMOVED(args)
 		focusme = false
 		if self.Options.RangeFrame then
 			if inoizame then
-				if self:IsDifficulty("heroic25") then
+				if self:IsMythic() then
 					VEM.RangeCheck:Show(4)
 				else
 					VEM.RangeCheck:Show(8)

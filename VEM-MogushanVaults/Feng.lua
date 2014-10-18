@@ -420,7 +420,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 			NullBarriorMarkers[args.sourceName] = register(VEMHudMap:PlaceRangeMarkerOnPartyMember("highlight", args.sourceName, 5, 5, 0, 1, 0, 0.8):RegisterForAlerts(true, spelltext))
 		end
 		timerNullBarrior:Start()
-		if self:IsDifficulty("lfr25") then
+		if self:IsLFR() then
 			timerNullBarriorCD:Start(25)
 		else
 			timerNullBarriorCD:Start()

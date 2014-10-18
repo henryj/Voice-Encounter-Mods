@@ -542,7 +542,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, npc, _, _, target)
 			end
 			myweapon = true
 			self:Schedule(35, function() myweapon = false end)
-			if self.Options.LTHX and self:IsDifficulty("heroic10", "heroic25") then
+			if self.Options.LTHX and self:IsMythic() then
 				self:Schedule(5, function()
 					showheroichx()					
 				end)

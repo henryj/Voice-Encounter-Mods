@@ -180,7 +180,7 @@ function mod:OnCombatStart(delay)
 	timerFlankingOrdersCD:Start(25)
 	sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zwjh.ogg") --戰王激活
 	sndWOP:Schedule(21, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_bczb.ogg")
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		timerImperviousShieldCD:Start(40.7)
 		warnImperviousShieldSoon:Schedule(35.7)
 		sndDSA:Schedule(37.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zwhd.ogg") -- 戰王護盾準備
@@ -384,7 +384,7 @@ function mod:SPELL_CAST_START(args)
 	elseif args:IsSpellID(117948) then
 		warnAnnihilate:Show()
 		specWarnAnnihilate:Show()
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerAnnihilateCD:Start(32.5)
 		else
 			timerAnnihilateCD:Start()
@@ -395,7 +395,7 @@ function mod:SPELL_CAST_START(args)
 	elseif args:IsSpellID(117961) then
 		warnImperviousShield:Show(args.sourceName)
 		specWarnImperviousShield:Show(args.sourceName)
-		if self:IsDifficulty("heroic10") then
+		if self:IsMythic() then
 			warnImperviousShieldSoon:Schedule(57)
 			timerImperviousShieldCD:Start(62)
 --			countdownImperviousShield:Start(62)
@@ -436,7 +436,7 @@ function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 		if (countzsb == 0 and timerAnnihilateCD:GetTime() < 6) or (countzsb >= 1 and timerAnnihilateCD:GetTime() < 27) then
 			timerJL:Start()
 		else
-			if self:IsDifficulty("heroic10", "heroic25") then
+			if self:IsMythic() then
 				if mod:IsTank() then
 					specWarnQBHT:Show()
 				else
@@ -458,7 +458,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		timerVolleyCD:Start()
 		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_zyjy.ogg") --注意箭雨
 	elseif spellId == 118121 and self:AntiSpam(2, 2) then--Rain of Arrows
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerRainOfArrowsCD:Start(41)
 		else
 			timerRainOfArrowsCD:Start()
@@ -557,7 +557,7 @@ function mod:CHAT_MSG_MONSTER_YELL(msg, boss)
 			specWarnDDL:Schedule(1)
 			sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\interruptsoon.ogg") --打斷準備
 		end
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			warnShieldOfDarknessSoon:Schedule(35, 5)--Start pre warning with regular warnings only as you don't move at this point yet.
 			warnShieldOfDarknessSoon:Schedule(36, 4)
 			warnShieldOfDarknessSoon:Schedule(37, 3)
@@ -581,7 +581,7 @@ function mod:CHAT_MSG_MONSTER_YELL(msg, boss)
 	elseif boss == Meng then
 		warnActivated:Show(boss)
 		mengActive = true
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerDeliriousCD:Start()
 			if mod:CanRemoveEnrage() then
 				sndWOP:Schedule(18, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_kwjn.ogg") -- 狂王激怒準備
@@ -605,7 +605,7 @@ function mod:CHAT_MSG_MONSTER_YELL(msg, boss)
 		timerVolleyCD:Start(5)
 		timerPillageCD:Start(25)
 		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_dwjh.ogg") --盜王激活
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerSleightOfHandCD:Start(40.7)
 			timerRainOfArrowsCD:Start(40)
 			sndDSA:Schedule(37.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_dwhd.ogg") -- 盜王護盾準備

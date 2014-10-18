@@ -233,7 +233,7 @@ function mod:ThreeBossStart(delay)
 	for i = 1, 5 do
 		local id = self:GetUnitCreatureId("boss"..i)
 		if id == 60051 then -- cobalt
-			if self:IsDifficulty("lfr25") then
+			if self:IsLFR() then
 				timerCobaltMineCD:Start(10.5-delay-1)
 			else
 				timerCobaltMineCD:Start(-delay-1)
@@ -253,12 +253,12 @@ function mod:OnCombatStart(delay)
 	playerHasChains = false
 	table.wipe(jasperChainsTargets)
 	table.wipe(amethystPoolTargets)
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		berserkTimer:Start(-delay)
 	else
 		berserkTimer:Start(485-delay)
 	end
-	if self:IsDifficulty("normal25", "heroic25") then
+	if self:IsHeroic() or self:IsMythic() then
 		timerCobaltMineCD:Start(-delay)
 		timerJadeShardsCD:Start(-delay)
 		timerJasperChainsCD:Start(-delay)
@@ -313,7 +313,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 		if args:IsPlayer() then
 			playerHasChains = true
-			if not self:IsDifficulty("lfr25") then
+			if not self:IsLFR() then
 				yellJasperChains:Yell()
 			end
 			local uId = getBossuId(Jasper)
@@ -509,7 +509,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		end
 	elseif spellId == 129424 then
 		warnCobaltMine:Show()
-		if self:IsDifficulty("lfr25") then
+		if self:IsLFR() then
 			timerCobaltMineCD:Start(10.5)
 		else
 			timerCobaltMineCD:Start()

@@ -174,7 +174,7 @@ function mod:OnCombatStart(delay)
 	bigOozeAlive = 0
 	table.wipe(bigOozeGUIDS)
 	berserkTimer:Start(-delay)
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		timerViscousHorrorCD:Start(10-delay, 1)
 		self:ScheduleMethod(10-delay, "BigOoze")
 	end
@@ -336,7 +336,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 136248 and self:AntiSpam(2, 1) then--Pustule Eruption
 		warnPustuleEruption:Show()
 		timerPustuleEruptionCD:Start()
-		if not self:IsDifficulty("lfr25") then
+		if not self:IsLFR() then
 			specWarnPustuleEruption:Show()		
 			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_zynx.ogg")--注意膿血
 			if mod.Options.HudMAPF then

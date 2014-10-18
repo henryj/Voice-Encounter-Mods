@@ -366,7 +366,7 @@ function mod:OnSync(msg, guid)
 		protectorCount = protectorCount + 1
 		warnProtector:Show(protectorCount)
 		specWarnProtector:Show(protectorCount)
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerProtectorCD:Start(26)--26-28 variation on heroic
 		else
 			timerProtectorCD:Start()--35-37 on normal
@@ -377,7 +377,7 @@ function mod:OnSync(msg, guid)
 		else
 			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_bwzcx.ogg") --保衛者出現
 		end
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			if (((self.Options.optYB == "YB1" and protectorCount == 1) or (self.Options.optYB == "YB2" and protectorCount == 2) or (self.Options.optYB == "YB3" and protectorCount == 3) or (self.Options.optYB == "YB4" and protectorCount == 4) or (self.Options.optYB == "YB5" and protectorCount == 5)) and not ptwo) or (((self.Options.optYBT == "YBT1" and protectorCount == 1) or (self.Options.optYBT == "YBT2" and protectorCount == 2) or (self.Options.optYBT == "YBT3" and protectorCount == 3) or (self.Options.optYBT == "YBT4" and protectorCount == 4) or (self.Options.optYBT == "YBT5" and protectorCount == 5)) and ptwo) then
 				sndWOP:Schedule(4, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_ybfd.ogg") --分擔異變
 				specwarnYB:Schedule(4)

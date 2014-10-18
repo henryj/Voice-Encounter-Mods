@@ -95,7 +95,7 @@ function mod:OnCombatStart(delay)
 	timerBorerDrillCD:Start(-delay)
 	timerCrawlerMineCD:Start(-delay)
 	timerSiegeModeCD:Start(120.5-delay)--First one longer than rest
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		berserkTimer:Start(450-delay)
 		timerRicochetCD:Start(-delay)
 	else
@@ -105,7 +105,7 @@ function mod:OnCombatStart(delay)
 	sndWOP:Schedule(118, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
 	sndWOP:Schedule(119, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
 	sndWOP:Schedule(120, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
-	if self.Options.RangeFrame and not self:IsDifficulty("lfr25") then
+	if self.Options.RangeFrame and not self:IsLFR() then
 		VEM.RangeCheck:Show(6)
 	end
 end
@@ -130,7 +130,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnSeismicActivity:Show()
 		timerExplosiveTarCD:Start(7)
 		timerShockPulseCD:Start(nil, 1)
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerMortarBarrageCD:Start(20)
 		end
 		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_qgzb.ogg")
@@ -261,7 +261,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 			sndWOP:Schedule(115, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 			siegeMode = false
 		end
-		--[[if self:IsDifficulty("heroic10", "heroic25") then
+		--[[if self:IsMythic() then
 			timerRicochetCD:Start(22)
 		end--]]--TODO, verify consistency, as 22 seems odd and could have just been a delayed cast.
 	elseif spellId == 144555 then

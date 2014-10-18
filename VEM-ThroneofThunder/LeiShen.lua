@@ -531,7 +531,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 				self:Schedule(37, warnSpellReflection)
 			end
 		end
-		if intermissionActive and self:IsDifficulty("heroic10", "heroic25") then
+		if intermissionActive and self:IsMythic() then
 			if firstchain == 0 then
 				self:Schedule(5, function() firstchain = 1 end)
 			else
@@ -556,7 +556,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 			timerSummonBallLightningCD:Start(30)
 			sndWOP:Schedule(25, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_wmdq.ogg")
 		end
-		if self:IsDifficulty("heroic10", "heroic25") and self.Options.RangeFrameLB then
+		if self:IsMythic() and self.Options.RangeFrameLB then
 			VEM.RangeCheck:Show(3)
 		end
 	elseif args.spellId == 108199 and self:IsInCombat() then
@@ -662,7 +662,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, target)
 			westDestroyed = true
 			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_ttsh.ogg") --彈跳閃電損毀
 		end
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			--On heroic he gains ability perm when pillar dies.
 			--it will be cast 14 seconds later unless you get him to cast one of other ones first then it may be at 15-16 right after the other one
 			--not sure how it works after second intermission, probably up in air which one he casts first and other right after. thats why these are CD timers.
@@ -707,7 +707,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, target)
 			timerSummonBallLightningCD:Start(41.5)
 			sndWOP:Schedule(36, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_wmdq.ogg") --5秒後電球
 			if self.Options.RangeFrame then
-				if self:IsDifficulty("heroic10", "heroic25") then
+				if self:IsMythic() then
 					if self:IsRanged() then
 						VEM.RangeCheck:Show(8)
 					else
@@ -723,14 +723,14 @@ end
 
 local function LoopIntermission()
 	if not southDestroyed then
-		if mod:IsDifficulty("lfr25") then
+		if mod:IsLFR() then
 			timerOverchargeCD:Start(17.5)
 		else
 			timerOverchargeCD:Start(6.5)
 		end
 	end
 	if not eastDestroyed then
-		if mod:IsDifficulty("lfr25") then
+		if mod:IsLFR() then
 			timerDiffusionChainCD:Start(17.5)
 			specWarnDiffusionChainSoon:Schedule(13.5)
 			sndWOP:Schedule(13.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\scattersoon.ogg")--注意分散
@@ -741,7 +741,7 @@ local function LoopIntermission()
 		end
 	end
 	if not westDestroyed then
-		if mod:IsDifficulty("lfr25") then
+		if mod:IsLFR() then
 			warnBouncingBolt:Schedule(9)
 			specWarnBouncingBolt:Schedule(9)
 			timerBouncingBoltCD:Start(9)
@@ -753,10 +753,10 @@ local function LoopIntermission()
 			sndWOP:Schedule(14, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_fscq.ogg")
 		end
 	end
-	if not mod:IsDifficulty("lfr25") and not northDestroyed then--Doesn't cast a 2nd one in LFR
+	if not mod:IsLFR() and not northDestroyed then--Doesn't cast a 2nd one in LFR
 		timerStaticShockCD:Start(16)
 	end
-	if mod:IsDifficulty("heroic10", "heroic25") then
+	if mod:IsMythic() then
 		timerHelmOfCommand:Start(15)
 	end
 end
@@ -806,7 +806,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		timerOverchargeCD:Cancel()
 		timerBouncingBoltCD:Cancel()
 		if not eastDestroyed then
-			if self:IsDifficulty("lfr25") then
+			if self:IsLFR() then
 				timerDiffusionChainCD:Start(10)
 				specWarnDiffusionChainSoon:Schedule(6)
 				sndWOP:Schedule(6, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\scattersoon.ogg")--注意分散
@@ -820,27 +820,27 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 			VEM.RangeCheck:Show(8)
 		end
 		if not southDestroyed then
-			if self:IsDifficulty("lfr25") then
+			if self:IsLFR() then
 				timerOverchargeCD:Start(10)
 			else
 				timerOverchargeCD:Start(6)
 			end
 		end
-		if not westDestroyed and not self:IsDifficulty("lfr25") then--Doesn't get cast in first wave in LFR, only second
+		if not westDestroyed and not self:IsLFR() then--Doesn't get cast in first wave in LFR, only second
 			warnBouncingBolt:Schedule(14)
 			specWarnBouncingBolt:Schedule(14)
 			sndWOP:Schedule(14, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_fscq.ogg")
 			timerBouncingBoltCD:Start(14)
 		end
 		if not northDestroyed then
-			if self:IsDifficulty("lfr25") then
+			if self:IsLFR() then
 				timerStaticShockCD:Start(21)
 			else
 				timerStaticShockCD:Start(19)
 			end
 		end
 		self:Schedule(23, LoopIntermission)--Fire function to start second wave of specials timers
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerHelmOfCommand:Start(14)
 		end
 	elseif spellId == 136395 and self:AntiSpam(2, 3) and not intermissionActive then--Bouncing Bolt (During intermission phases, it fires randomly, use scheduler and filter this :\)
@@ -876,7 +876,7 @@ function mod:UNIT_DIED(args)
 		lbcount = lbcount - 1
 --		print(GetSpellInfo(136543)..":"..lbcount)
 		if lbcount == 0 then
-			if self:IsDifficulty("heroic10", "heroic25") and self.Options.RangeFrameLB then
+			if self:IsMythic() and self.Options.RangeFrameLB then
 				VEM.RangeCheck:Hide()
 				if self:IsRanged() then
 					VEM.RangeCheck:Show(8)

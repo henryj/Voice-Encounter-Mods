@@ -248,9 +248,9 @@ function mod:OnCombatStart(delay)
 	table.wipe(voodooDollTargetIcons)
 	timerShadowyAttackCD:Start(7-delay)
 	totemn = 0
-	if self:IsDifficulty("normal25", "heroic25") then
+	if self:IsHeroic() or self:IsMythic() then
 		timerTotemCD:Start(20-delay, totemn+1)
-	elseif self:IsDifficulty("lfr25") then
+	elseif self:IsLFR() then
 		timerTotemCD:Start(30-delay, totemn+1)
 	else
 		timerTotemCD:Start(36-delay, totemn+1)
@@ -261,7 +261,7 @@ function mod:OnCombatStart(delay)
 	vd = 0
 	ct = 0
 	incombat = true
-	if not self:IsDifficulty("lfr25") then -- lfr seems not berserks.
+	if not self:IsLFR() then -- lfr seems not berserks.
 		berserkTimer:Start(-delay)
 	end
 end
@@ -349,7 +349,7 @@ function mod:SPELL_AURA_APPLIED(args)--We don't use spell cast success for actua
 			VEM.InfoFrame:SetHeader(GetSpellInfo(116161))
 			VEM.InfoFrame:Show(10, "playerbaddebuff", 116161)
 		end
-		if not self:IsDifficulty("lfr25") then -- lfr totems not breakable, instead totems can click. so lfr warns can be spam, not needed to warn. also CLEU fires all players, no need to use sync.
+		if not self:IsLFR() then -- lfr totems not breakable, instead totems can click. so lfr warns can be spam, not needed to warn. also CLEU fires all players, no need to use sync.
 			crossedOverTargets[#crossedOverTargets + 1] = args.destName
 			self:Unschedule(warnCrossedOverTargets)
 			self:Schedule(0.3, warnCrossedOverTargets)		
@@ -486,16 +486,16 @@ function mod:OnSync(msg, guid)
 		end
 		
 		if self.Options.GoTotemAdmin and UnitIsGroupLeader("player") then
-			if mod:IsDifficulty("heroic10", "heroic25") then
+			if mod:IsMythic() then
 				self:Schedule(1.5, choosehealther)
 				self:Schedule(1.5, choosedps)
 			end
 		end
 
 		specWarnTotem:Show()
-		if self:IsDifficulty("normal25", "heroic25") then
+		if self:IsHeroic() or self:IsMythic() then
 			timerTotemCD:Start(20, totemn+1)
-		elseif self:IsDifficulty("lfr25") then
+		elseif self:IsLFR() then
 			timerTotemCD:Start(30, totemn+1)
 		else
 			timerTotemCD:Start(36, totemn+1)

@@ -209,7 +209,7 @@ function mod:SPELL_CAST_START(args)
 		end
 	elseif args.spellId == 143502 then
 		warnExecute:Show()
-		if self:IsDifficulty("heroic25") then
+		if self:IsMythic() then
 			timerExecuteCD:Start(18)
 		else
 			timerExecuteCD:Start()
@@ -219,7 +219,7 @@ function mod:SPELL_CAST_START(args)
 			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\execute.ogg") --斬殺
 		end
 		local executecd = 30
-		if self:IsDifficulty("heroic25") then executecd = 15 end
+		if self:IsMythic() then executecd = 15 end
 		self:Schedule(executecd, function()
 			if UnitExists("boss1") and UnitDetailedThreatSituation("player", "boss1") then
 				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\executeready.ogg") --準備斬殺

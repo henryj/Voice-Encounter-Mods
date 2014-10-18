@@ -115,10 +115,10 @@ function mod:OnCombatStart(delay)
 	timerUnseenStrikeCD:Start(30.5-delay, 1)
 	sndWOP:Schedule(27, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_wxdjzb.ogg") --無形打擊準備
 	timerIntensifyCD:Start(intensifyCD-delay)
-	if not self:IsDifficulty("lfr25") then
+	if not self:IsLFR() then
 		berserkTimer:Start(-delay)
 	end
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		timerBladeTempestCD:Start(-delay)
 		sndWOP:Schedule(57, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\wwsoon.ogg") --準備旋風
 	end
@@ -217,7 +217,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		castOA = true
 	elseif args:IsSpellID(123175) then
 		warnWindStep:Show(args.destName)
-		if self:IsDifficulty("lfr25") then
+		if self:IsLFR() then
 			timerWindStepCD:Start(30)
 		else
 			timerWindStepCD:Start()
@@ -269,7 +269,7 @@ end
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 122839 then--Tempest Slash. DO NOT ADD OTHER SPELLID. 122839 is primary cast, 122842 is secondary cast 3 seconds later. We only need to warn for primary and start CD off it and it alone.
 		warnTempestSlash:Show()
-		if self:IsDifficulty("lfr25") then
+		if self:IsLFR() then
 			timerTempestSlashCD:Start(20)
 		else
 			timerTempestSlashCD:Start()

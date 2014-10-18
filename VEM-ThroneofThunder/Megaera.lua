@@ -135,7 +135,7 @@ local function showheadinfo()
 		local iceBehindcolor = "|cFF0080FF"..iceBehind.."|r"
 		local venomBehindcolor = "|cFF088A08"..venomBehind.."|r"
 		local arcaneBehindcolor = "|cFFB91FC7"..arcaneBehind.."|r"
-		if mod:IsDifficulty("heroic10", "heroic25") then
+		if mod:IsMythic() then
 			VEM.InfoFrame:SetHeader(L.Behind.." ("..(Ramcount + 1).."/7)")
 			VEM.InfoFrame:Show(4, "other", iceBehindcolor, iceinfob, venomBehindcolor, venominfob, fireBehindcolor, fireinfob, arcaneBehindcolor, arcaneinfob)
 		else
@@ -245,13 +245,13 @@ function mod:OnCombatStart(delay)
 	cinderIcon = 7
 	iceIcon = 6
 	table.wipe(torrentExpires)
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		arcaneBehind = 1
 		arcaneInFront = 0
 		arcaneRecent = false
 		timerCinderCD:Start(13)
 		timerNetherTearCD:Start()
-	elseif self:IsDifficulty("normal10", "normal25") then
+	elseif self:IsHeroic() then
 		timerCinderCD:Start()
 	else
 		timerCinderCD:Start(58)
@@ -435,14 +435,14 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 		end
 		--timers below may need adjusting by 1-2 seconds as I had to substitute last rampage SPELL_DAMAGE event for rampage ends emote when i reg expressioned these timers on WoL
 		if iceBehind > 0 then
-			if self:IsDifficulty("heroic10", "heroic25") then
+			if self:IsMythic() then
 				timerTorrentofIceCD:Start(12)--12-17 second variation on heroic
 			else
 				timerTorrentofIceCD:Start(8)--8-12 second variation on normal
 			end
 		end
 		if fireBehind > 0 then
-			if self:IsDifficulty("lfr25") then
+			if self:IsLFR() then
 				timerCinderCD:Start(12)--12-15 second variation
 			else
 				timerCinderCD:Start(5)--5-8 second variation

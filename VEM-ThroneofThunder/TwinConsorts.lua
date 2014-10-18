@@ -541,7 +541,7 @@ function mod:OnSync(msg)
 		timerIceCometCD:Start()
 		timerFanOfFlamesCD:Start()
 		--timerFlamesOfPassionCD:Start(12.5)
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerNuclearInfernoCD:Start(50, 1)
 		end
 		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\dayphase.ogg")
@@ -559,7 +559,7 @@ function mod:OnSync(msg)
 		warnDusk:Show()
 		timerIceCometCD:Start(17)--This seems to reset, despite what last CD was (this can be a bad thing if it was do any second)
 		timerTidalForceCD:Start(30, 1)		
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerNuclearInfernoCD:Cancel()
 			timerNuclearInfernoCD:Start(63, 1)
 		end
@@ -584,7 +584,7 @@ function mod:OnSync(msg)
 			phase3Started = true
 			timerIceCometCD:Start(11)--This seems to reset, despite what last CD was (this can be a bad thing if it was do any second)
 			timerTidalForceCD:Start(20)
-			if self:IsDifficulty("heroic10", "heroic25") then
+			if self:IsMythic() then
 				timerNuclearInfernoCD:Start(57)
 			end
 			timerCosmicBarrageCD:Start(48, 1)

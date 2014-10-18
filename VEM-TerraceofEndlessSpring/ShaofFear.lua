@@ -242,7 +242,7 @@ end
 
 function mod:OnCombatStart(delay)
 	warnBreathOfFearSoon:Schedule(23.4-delay)
-	if self:IsDifficulty("normal10", "heroic10", "lfr25") then
+	if self:IsLFR() then
 		timerOminousCackleCD:Start(40-delay)
 	else
 		timerOminousCackleCD:Start(25.5-delay)
@@ -445,11 +445,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
 		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		warnNakedAndAfraid:Show(args.destName)
-		if self:IsDifficulty("heroic10") then
-			timerNakedAndAfraid:Start(args.destName)
-		else
-			timerNakedAndAfraid:Start(50, args.destName)
-		end
+		timerNakedAndAfraid:Start(50, args.destName)
 		if args:IsPlayer() then
 			specWarnzhanli:Show()
 		else
@@ -520,7 +516,7 @@ end
 function mod:SPELL_CAST_START(args)
 	if args:IsSpellID(119593, 119692, 119693) then--This seems to have multiple spellids, depending on which platform he's going to send you to. TODO, figure out which is which platform and add additional warnings
 		specWarnOminousCackle:Show()
-		if self:IsDifficulty("normal10", "heroic10", "lfr25") then
+		if self:IsLFR() then
 			timerOminousCackleCD:Start(90.5)--Far less often on LFR
 		else
 			timerOminousCackleCD:Start()
@@ -724,7 +720,7 @@ mod.SPELL_MISSED = mod.SPELL_DAMAGE
 
 function mod:UNIT_HEALTH(uId)
 	if self:GetUnitCreatureId(uId) == 60999 then
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			local h = UnitHealth(uId) / UnitHealthMax(uId) * 100
 			if h > 67 and h < 70 and not prewarnedPhase2 then
 				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ptwo.ogg") --2階段準備

@@ -147,9 +147,7 @@ function mod:BrewTarget(targetname, uId)
 	if targetname == UnitName("player") then
 		specWarnCorruptedBrew:Show()
 		yellCorruptedBrew:Yell()
-		if not self:IsDifficulty("normal25", "heroic25") then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg") --快躲開
-		end
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg") --快躲開
 	else
 		if uId then
 			local x, y = GetPlayerMapPosition(uId)
@@ -160,9 +158,7 @@ function mod:BrewTarget(targetname, uId)
 			local inRange = VEM.RangeCheck:GetDistance("player", x, y)
 			if inRange and inRange < 6 then
 				specWarnCorruptedBrewNear:Show(targetname)
-				if not self:IsDifficulty("normal25", "heroic25") then					
-					sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg") --快躲開
-				end
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg") --快躲開
 			end
 		end
 	end
@@ -189,7 +185,7 @@ function mod:OnCombatStart(delay)
 	timerGougeCD:Start(23-delay)
 	timerCalamityCD:Start(31-delay)
 	timerClashCD:Start(45-delay)
-	if self:IsDifficulty("lfr25") then--Might also be flex as well
+	if self:IsLFR() then--Might also be flex as well
 		berserkTimer:Start(900-delay)--15min confirmed
 	else
 		berserkTimer:Start(-delay)
@@ -241,7 +237,7 @@ function mod:SPELL_CAST_START(args)
 		warnBane:Show()
 		specWarnBane:Show()
 		sndBD:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_ays.ogg") --暗言術準備
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerBaneCD:Start(13)--TODO, verify normal to see if it was changed too
 		else
 			timerBaneCD:Start()
@@ -320,7 +316,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 	elseif args.spellId == 143198 then
 		warnGarrote:Show(args.destName)
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerGarroteCD:Start(20)--TODO, see if it's cast more often on heroic only, or if normal was also changed to 20
 		else
 			timerGarroteCD:Start()
@@ -435,7 +431,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 143019 then--Does not show in combat log on normal
 		self:BossTargetScanner(71475, "BrewTarget", 0.025)
 		timerCorruptedBrewCD:Start()
-		if self:IsDifficulty("normal25", "heroic25") then
+		if self:IsHeroic() or self:IsMythic() then
 			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\watchstep.ogg") --注意腳下
 		end
 	end

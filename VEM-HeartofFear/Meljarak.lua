@@ -157,7 +157,7 @@ function mod:OnCombatStart(delay)
 	timerWhirlingBladeCD:Start(35.5-delay)
 	timerKorthikStrikeCD:Start(18-delay)
 	timerRainOfBladesCD:Start(60-delay)
-	if not self:IsDifficulty("lfr25") then
+	if not self:IsLFR() then
 		berserkTimer:Start(-delay)
 	end
 	if mod:IsHealer() then
@@ -222,7 +222,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			if self.Options.ReapetAP then
 				self:ScheduleMethod(7, "checkdebuff")
 			end
-			if not self:IsDifficulty("lfr25") then
+			if not self:IsLFR() then
 				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runout.ogg") --離開人群
 			end
 		else
@@ -426,7 +426,7 @@ function mod:SPELL_DAMAGE(_, _, _, _, destGUID, destName, _, _, spellId)
 	elseif spellId == 122125 and destGUID == UnitGUID("player") and self:AntiSpam(3, 5) then
 		specWarnCorrosiveResinPool:Show()
 		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg")--快躲開
-	elseif spellId == 121898 and destGUID == UnitGUID("player") and not self:IsDifficulty("lfr25") and self:AntiSpam(3, 10) then
+	elseif spellId == 121898 and destGUID == UnitGUID("player") and not self:IsLFR() and self:AntiSpam(3, 10) then
 		specWarnWhirlingBladeMove:Show()
 		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg")--快躲開
 	end
@@ -454,7 +454,7 @@ function mod:UNIT_DIED(args)
 		table.wipe(zarthikGUIDS)
 	elseif cid == 62402 then--The Kor'thik
 		timerKorthikStrikeCD:Cancel()--No need for GUID cancelation, this ability seems to be off a timed trigger and they all do it together, unlike other mob sets.
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerKorthikStrikeCD:Start(79)
 		end
 	end

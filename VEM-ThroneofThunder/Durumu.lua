@@ -173,7 +173,7 @@ local function warnDarkParasiteTargets()
 end
 
 local function warnBeam()
-	if mod:IsDifficulty("heroic10", "heroic25", "lfr25") then
+	if mod:IsMythic() or mod:IsLFR() then
 		warnBeamHeroic:Show(lastRed, lastBlue, lastYellow)
 	else
 		warnBeamNormal:Show(lastRed, lastBlue)
@@ -183,10 +183,10 @@ end
 local function BeamEnded()
 	timerLingeringGazeCD:Start(17)
 	timerForceOfWillCD:Start(19)
-	if mod:IsDifficulty("heroic10", "heroic25") then
+	if mod:IsMythic() then
 		timerIceWallCD:Start(32)
 	end
-	if mod:IsDifficulty("lfr25") then
+	if mod:IsLFR() then
 		timerLightSpectrumCD:Start(66)
 		sndWOP:Schedule(63, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_syg.ogg") --三原光準備
 		sndWOP:Schedule(64, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
@@ -225,7 +225,7 @@ local function HideInfoFrame()
 	if mod.Options.InfoFrameLife then
 		VEM.InfoFrame:Hide()
 	end
-	if mod.Options.InfoFrame and mod:IsDifficulty("heroic10", "heroic25") then
+	if mod.Options.InfoFrame and mod:IsMythic() then
 		VEM.InfoFrame:SetHeader(GetSpellInfo(133597).."("..paracount..")")
 		VEM.InfoFrame:Show(3, "playerdebuffstackstime", 133597)
 	end
@@ -262,11 +262,11 @@ function mod:OnCombatStart(delay)
 	sndWOP:Schedule(38-delay, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
 	sndWOP:Schedule(39-delay, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
 	sndWOP:Schedule(40-delay, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		timerDarkParasiteCD:Start(-delay)
 		timerIceWallCD:Start(127-delay)
 	end
-	if self:IsDifficulty("lfr25") then
+	if self:IsLFR() then
 		lfrEngaged = true
 		timerLifeDrainCD:Start(151)
 		timerDisintegrationBeamCD:Start(161-delay)
@@ -343,7 +343,7 @@ function mod:SPELL_CAST_START(args)
 		timerHardStareCD:Start()
 	elseif args.spellId == 138467 then
 		timerLingeringGazeCD:Start(lingeringGazeCD)
-	elseif args.spellId == 136154 and self:IsDifficulty("lfr25") and not lfrCrimsonFogRevealed then--Only use in lfr.
+	elseif args.spellId == 136154 and self:IsLFR() and not lfrCrimsonFogRevealed then--Only use in lfr.
 		lfrCrimsonFogRevealed = true
 		specWarnFogRevealed:Show(crimsonFog)
 		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_hong.ogg") --紅色快打
@@ -361,12 +361,12 @@ function mod:SPELL_CAST_SUCCESS(args)
 		if args:IsPlayer() then
 			specWarnForceOfWill:Show()
 			yellForceOfWill:Yell()
-			if not self:IsDifficulty("lfr25") then
+			if not self:IsLFR() then
 				VEM.Flash:Shake(1, 0, 0)
 				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg")
 			end
 		else
-			if not self:IsDifficulty("lfr25") then
+			if not self:IsLFR() then
 				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\carefly.ogg") --小心擊飛
 			end
 			local uId = VEM:GetRaidUnitId(args.destName)
@@ -391,7 +391,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		rgbcount = rgbcount + 1
 		--BH ADD END
 		if args:IsPlayer() then
-			if self:IsDifficulty("lfr25") and self.Options.specWarnBlueBeam then
+			if self:IsLFR() and self.Options.specWarnBlueBeam then
 				specWarnBlueBeamLFR:Show()
 			else
 				specWarnBlueBeam:Show()
@@ -423,7 +423,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		mod:Schedule(10, function()
 			lightphase = true
 		end)
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerObliterateCD:Start()
 			if lifeDrained then -- Check 1st Beam ended.
 				timerIceWallCD:Start(88.5)
@@ -469,7 +469,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		local _, _, _, _, _, duration = UnitDebuff(args.destName, args.spellName)
 		timerDarkParasite:Start(duration, args.destName)
 		self:Unschedule(warnDarkParasiteTargets)
-		if (self:IsDifficulty("heroic25") and #darkParasiteTargets >= 3) or self:IsDifficulty("heroic10") then
+		if self:IsMythic() then
 			warnDarkParasiteTargets()
 		else
 			self:Schedule(0.5, warnDarkParasiteTargets)
@@ -478,7 +478,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			table.insert(darkParasiteTargetsIcons, VEM:GetRaidUnitId(VEM:GetFullPlayerNameByGUID(args.destGUID)))
 			self:UnscheduleMethod("SetParasiteIcons")
 			if self:LatencyCheck() then--lag can fail the icons so we check it before allowing.
-				if (self:IsDifficulty("heroic25") and #darkParasiteTargets >= 3) or self:IsDifficulty("heroic10") then
+				if self:IsMythic() then
 					self:SetParasiteIcons()
 				else
 					self:ScheduleMethod(0.5, "SetParasiteIcons")
@@ -542,7 +542,7 @@ function mod:SPELL_AURA_APPLIED(args)
 --BH DELETE		soundLingeringGaze:Play()
 		end
 		self:Unschedule(warnLingeringGazeTargets)
-		if #lingeringGazeTargets >= 5 and self:IsDifficulty("normal25", "heroic25") or #lingeringGazeTargets >= 2 and self:IsDifficulty("normal10", "heroic10") then--TODO, add LFR number of targets
+		if #lingeringGazeTargets >= 2 and (self:IsHeroic() or self:IsMythic()) then--TODO, add LFR number of targets
 			warnLingeringGazeTargets()
 		else
 			self:Schedule(0.5, warnLingeringGazeTargets)
@@ -643,11 +643,11 @@ mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 --Blizz doesn't like combat log anymore for some spells
 function mod:CHAT_MSG_MONSTER_EMOTE(msg, npc, _, _, target)
 	if (npc == crimsonFog or npc == amberFog or npc == azureFog) and self:AntiSpam(1, npc) then
-		if self:IsDifficulty("lfr25") and npc == azureFog and not lfrAzureFogRevealed then
+		if self:IsLFR() and npc == azureFog and not lfrAzureFogRevealed then
 			lfrAzureFogRevealed = true
 			specWarnFogRevealed:Show(npc)
 			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_lan.ogg") --藍色快打
-		elseif not lfrAzureFogRevealed or not self:IsDifficulty("lfr25") then
+		elseif not lfrAzureFogRevealed or not self:IsLFR() then
 			specWarnFogRevealed:Show(npc)
 			--BH ADD
 			if npc == azureFog then
@@ -748,7 +748,7 @@ function mod:UNIT_AURA(uId)
 		if lastBlue ~= name then
 			lastBlue = name
 			if name == UnitName("player") then
-				if self:IsDifficulty("lfr25") and self.Options.specWarnBlueBeam then
+				if self:IsLFR() and self.Options.specWarnBlueBeam then
 					specWarnBlueBeamLFR:Show()
 				else
 					specWarnBlueBeam:Show()
@@ -802,7 +802,7 @@ function mod:UNIT_DIED(args)
 		end
 	elseif cid == 69051 then--Amber Fog
 		--Maybe do something for heroic here too, if timers for the crap this thing does gets added.
-		if self:IsDifficulty("lfr25") then
+		if self:IsLFR() then
 			totalFogs = totalFogs - 1
 			if totalFogs >= 1 then
 				--LFR does something completely different than kill 3 crimson adds to end phase. in LFR, they kill 1 of each color (which is completely against what you do in 10N, 25N, 10H, 25H)
@@ -825,7 +825,7 @@ function mod:UNIT_DIED(args)
 		end
 	elseif cid == 69052 then--Azure Fog (endlessly respawn in all but LFR, so we ignore them dying anywhere else)
 		--Maybe do something for heroic here too, if timers for the crap this thing does gets added.
-		if self:IsDifficulty("lfr25") then
+		if self:IsLFR() then
 			totalFogs = totalFogs - 1
 			if totalFogs >= 1 then
 				--LFR does something completely different than kill 3 crimson adds to end phase. in LFR, they kill 1 of each color (which is completely against what you do in 10N, 25N, 10H, 25H)

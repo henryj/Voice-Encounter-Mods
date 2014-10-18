@@ -109,7 +109,7 @@ function mod:OnCombatStart(delay)
 	flockCount = 0
 	wstime = 0
 	-- BH ADD END
-	if self:IsDifficulty("normal10", "heroic10", "lfr25") then
+	if self:IsLFR() then
 		timerQuillsCD:Start(60-delay, 1)
 	else
 		timerQuillsCD:Start(42.5-delay, 1)
@@ -121,7 +121,7 @@ function mod:OnCombatStart(delay)
 	sndWOP:Schedule(88, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
 	sndWOP:Schedule(89, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
 	sndWOP:Schedule(90, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
-	if self.Options.RangeFrame and not self:IsDifficulty("lfr25") then
+	if self.Options.RangeFrame and not self:IsLFR() then
 		VEM.RangeCheck:Show(10)
 	end
 end
@@ -160,7 +160,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		sndWOPWS:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
 		sndWOPWS:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		sndWOPWS:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_wsyc.ogg") --餵食	
-		if self:IsDifficulty("normal10", "heroic10", "lfr25") then
+		if self:IsLFR() then
 			timerFeedYoungCD:Start(40)
 			sndWOPWS:Schedule(36, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_zbws.ogg")
 			sndWOPWS:Schedule(37.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
@@ -215,7 +215,7 @@ function mod:SPELL_CAST_START(args)
 		warnQuills:Show(quillsCount)
 		specWarnQuills:Show()
 		timerQuills:Start()
-		if self:IsDifficulty("normal10", "heroic10", "lfr25") then
+		if self:IsLFR() then
 			timerQuillsCD:Start(81, quillsCount+1)--81 sec normal, sometimes 91s?
 		else
 			timerQuillsCD:Start(nil, quillsCount+1)
@@ -239,7 +239,7 @@ function mod:SPELL_CAST_START(args)
 		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
 		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
 		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
-		if self:IsDifficulty("normal10", "heroic10", "lfr25") then
+		if self:IsLFR() then
 			if GetTime() - wstime > 35 then
 				sndWOPWS:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
 				sndWOPWS:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
@@ -253,7 +253,7 @@ function mod:SPELL_CAST_START(args)
 			end
 		end
 		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_xjql.ogg") --下降氣流		
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerDowndraftCD:Start(93)
 			sndWOP:Schedule(87, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_xjzb.ogg") --下降氣流準備
 			sndWOP:Schedule(88, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
@@ -287,7 +287,7 @@ function mod:CHAT_MSG_MONSTER_EMOTE(msg, _, _, _, target)
 		if self:AntiSpam(5, 2) then
 			flockCount = flockCount + 1
 			if MyAddDown(flockCount+1) then
-				if self:IsDifficulty("normal10", "heroic10", "lfr25") then
+				if self:IsLFR() then
 					self:Schedule(34, function()
 						VEM.Flash:Shake(1, 0, 0)
 					end)
@@ -304,7 +304,7 @@ function mod:CHAT_MSG_MONSTER_EMOTE(msg, _, _, _, target)
 				end
 			end
 			if MyAddUp(flockCount+1) then
-				if self:IsDifficulty("normal10", "heroic10", "lfr25") then
+				if self:IsLFR() then
 					self:Schedule(34, function()
 						VEM.Flash:Shake(1, 0, 0)
 					end)
@@ -345,7 +345,7 @@ function mod:CHAT_MSG_MONSTER_EMOTE(msg, _, _, _, target)
 		warnFlock:Schedule(0.5, messageText, flockName, flockText)
 --BH DELETE	specWarnFlock:Schedule(0.5, messageText, flockName, flockText)
 		--10N/10H/LFR: L, L, L, U, U, U (Repeating)
-		if self:IsDifficulty("normal10", "heroic10", "lfr25") then
+		if self:IsLFR() then
 			if flockC == 1 or flockC == 2 or flockC == 6 or flockC == 7 or flockC == 8 or flockC == 12 or flockC == 13 or flockC == 14 or flockC == 18 or flockC == 19 or flockC == 20 or flockC == 24 or flockC == 25 or flockC == 26 or flockC == 30 or flockC == 31 or flockC == 32 then--Lower is next
 				timerFlockCD:Show(40, flockCount+1, L.Lower)
 			elseif flockC == 3 or flockC == 4 or flockC == 5 or flockC == 9 or flockC == 10 or flockC == 11 or flockC == 15 or flockC == 16 or flockC == 17 or flockC == 21 or flockC == 22 or flockC == 23 or flockC == 27 or flockC == 28 or flockC == 29 or flockC == 33 or flockC == 34 or flockC == 35 then--Upper is next
@@ -354,7 +354,7 @@ function mod:CHAT_MSG_MONSTER_EMOTE(msg, _, _, _, target)
 				timerFlockCD:Show(40, flockCount+1, VEM_CORE_UNKNOWN)
 			end
 		--25N: Lower (1), Lower (2), Lower (3), Lower (4), Lower & Upper (5+6), Upper (7), Upper (8), Lower & Upper (9+10), Lower & Upper (11+12), Lower (13), Lower (14), Lower & Upper (15+16), Upper (17), Lower & Upper (18+19), Lower & Upper (20+21), Lower & Upper (22+23), Lower (24), Lower & Upper (25+26), Lower & Upper (27+28)
-		elseif self:IsDifficulty("normal25") then
+		elseif self:IsHeroic() then
 			if flockC == 1 or flockC == 2 or flockC == 3 or flockC == 12 or flockC == 13 or flockC == 23 then--Lower is next
 				timerFlockCD:Show(30, flockCount+1, L.Lower)
 			elseif flockC == 6 or flockC == 7 or flockC == 16 then--Upper is next
@@ -365,7 +365,7 @@ function mod:CHAT_MSG_MONSTER_EMOTE(msg, _, _, _, target)
 				timerFlockCD:Show(30, flockCount+1, VEM_CORE_UNKNOWN)
 			end
 		--25H: Lower (1), Lower (2), Lower (3), Lower & Upper (4, 5), Lower & Upper (6, 7), Upper (8), Upper & Lower (9, 10), Upper & Lower (11, 12), Lower (13), Upper & Lower (14, 15), Upper & Lower (16, 17), Upper & Lower (18, 19), Upper & Lower (20, 21), Upper & Lower & Upper (22, 23, 24), Upper & Lower (25, 26), Lower & Upper & Lower (27, 28, 29), Upper & Lower & Upper (30, 31, 32), Lower & Upper (33, 34), Lower & Upper & Lower (35, 36, 37)
-		elseif self:IsDifficulty("heroic25") then
+		elseif self:IsMythic() then
 			if flockC == 1 or flockC == 2 or flockC == 12 then--Lower is next
 				timerFlockCD:Show(30, flockCount+1, L.Lower)
 			elseif flockC == 7 then--Upper is next
@@ -383,7 +383,7 @@ function mod:CHAT_MSG_MONSTER_EMOTE(msg, _, _, _, target)
 			timerFlockCD:Show(30, flockCount+1, VEM_CORE_UNKNOWN)
 		end
 		lastFlock = GetTime()
-		if self:IsDifficulty("heroic10") and (flockC == 2 or flockC == 4 or flockC == 8 or flockC == 12 or flockC == 14) or self:IsDifficulty("heroic25") and (flockC == 2 or flockC == 6 or flockC == 12 or flockC == 16 or flockC == 23) then--TODO, nest 12/16 are upper, all others on 25H are lower.
+		if self:IsMythic() and (flockC == 2 or flockC == 6 or flockC == 12 or flockC == 16 or flockC == 23) then--TODO, nest 12/16 are upper, all others on 25H are lower.
 			specWarnBigBird:Show()
 		end
 	end

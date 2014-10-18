@@ -187,7 +187,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 138297 then --不穩定的生命
 		lightcount = lightcount + 1
 		warnUnstableVita:Show(args.destName)
-		if self:IsDifficulty("heroic25") then
+		if self:IsMythic() then
 			timerUnstableVita:Start(5, args.destName)
 		else
 			timerUnstableVita:Start(args.destName)
@@ -197,7 +197,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnUnstableVita:Show()
 			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_smdn.ogg") --生命點你
 			sndWOP:Schedule(0.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\movesoon.ogg")  --快跑位
-			if self:IsDifficulty("heroic25") then
+			if self:IsMythic() then
 				sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
 				sndWOP:Schedule(2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
 				sndWOP:Schedule(3, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
@@ -231,7 +231,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif args.spellId == 138308 then --生命轉移
 		lightcount = lightcount + 1
 		warnUnstableVita:Show(args.destName)
-		if self:IsDifficulty("heroic25") then
+		if self:IsMythic() then
 			timerUnstableVita:Start(5, args.destName)
 		else
 			timerUnstableVita:Start(args.destName)
@@ -239,7 +239,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			yellUnstableVita:Yell()
 			specWarnUnstableVita:Show()
-			if self:IsDifficulty("heroic25") then
+			if self:IsMythic() then
 				sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
 				sndWOP:Schedule(2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
 				sndWOP:Schedule(3, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")

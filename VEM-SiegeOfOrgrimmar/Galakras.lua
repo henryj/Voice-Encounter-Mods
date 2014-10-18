@@ -149,7 +149,7 @@ function mod:OnCombatStart(delay)
 	flamesCount = 0
 	pulseCount = 0
 	timerAddsCD:Start(60-delay, 2) --BH FIX
-	if not self:IsDifficulty("heroic10", "heroic25") then
+	if not self:IsMythic() then
 		timerTowerCD:Start(116.5-delay)
 	else
 		timerTowerGruntCD:Start(6)
@@ -338,7 +338,7 @@ end
 function mod:UPDATE_WORLD_STATES()
 	local text = select(4, GetWorldStateUIInfo(4))
 	local percent = tonumber(string.match(text or "", "%d+"))
-	if percent == 1 and not firstTower and not self:IsDifficulty("heroic10", "heroic25") then
+	if percent == 1 and not firstTower and not self:IsMythic() then
 		firstTower = true
 		timerTowerCD:Start()
 	end
@@ -349,7 +349,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 	if msg:find("cFFFF0404") then--They fixed epiccenter bug (figured they would). Color code should be usuable though. It's only emote on encounter that uses it.
 		warnDemolisher:Show()
 		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_tscd.ogg") --投石车快打
-		if self:IsDifficulty("heroic10", "heroic25") and firstTower == 0 then
+		if self:IsMythic() and firstTower == 0 then
 			timerTowerGruntCD:Start(15)
 			self:Schedule(15, TowerGrunt)
 			firstTower = 2
@@ -357,7 +357,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 	elseif msg:find(L.tower) then
 		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_ptkf.ogg") --炮塔攻破
 		timerDemolisherCD:Start()
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerTowerGruntCD:Cancel()
 			self:Unschedule(TowerGrunt)
 		end

@@ -145,7 +145,7 @@ function mod:OnCombatStart(delay)
 	Isstomp = 0
 	strengthCount = 0
 	courageCount = 0
-	if self:IsDifficulty("heroic10", "heroic25") then--Heroic trigger is shorter, everything comes about 6 seconds earlier
+	if self:IsMythic() then--Heroic trigger is shorter, everything comes about 6 seconds earlier
 		timerStrengthActivates:Start(35-delay, 1)
 		timerCourageActivates:Start(69-delay, 1)
 		timerBossesActivates:Start(101-delay)
@@ -229,7 +229,7 @@ local function addsDelay(add)
 		--Titan gas delay has funny interaction with these and causes 30 or 60 second delays. Pretty much have to use a table.
 		timerRageActivates:Start(ragetime, rageCount)
 		mod:Schedule(ragetime, addsDelay, "Rage")--Because he doesn't always yell, schedule next one here as a failsafe
-		if mod:IsDifficulty("heroic10", "heroic25") then
+		if mod:IsMythic() then
 			if MyBomb() then
 				specWarnBomb:Schedule(ragetime + 1, rageCount)
 				sndWOP:Schedule(ragetime + 1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_bpzb.ogg") --爆破準備
@@ -244,7 +244,7 @@ local function addsDelay(add)
 	elseif add == "Boss" then
 		warnBossesActivated:Show()
 		specWarnBossesActivated:Show(10)
-		if not mod:IsDifficulty("heroic10", "heroic25") then
+		if not mod:IsMythic() then
 			timerTitanGasCD:Start(113, 1)
 		end
 	end
@@ -257,7 +257,7 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 		if rageCount == 1 then
 			sndADD1A:Schedule(5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qjbzb.ogg") --輕甲
 			sndADD1:Schedule(10, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qjbcx.ogg")
-			if mod:IsDifficulty("heroic10", "heroic25") and MyKZ() then
+			if mod:IsMythic() and MyKZ() then
 				specWarnKZ:Schedule(6, rageCount)
 				sndWOP:Schedule(6, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_kzzb.ogg") --控制準備
 			end
@@ -282,7 +282,7 @@ function mod:RAID_BOSS_EMOTE(msg)
 		self:Schedule(10, addsDelay, "Boss")
 		sndWOP:Schedule(8, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_szcz.ogg") --雙子
 	elseif msg:find("spell:116779") then
-		if self:IsDifficulty("heroic10", "heroic25") then--On heroic the boss activates this perminantly on pull and it's always present
+		if self:IsMythic() then--On heroic the boss activates this perminantly on pull and it's always present
 			if not self:IsInCombat() then
 				VEM:StartCombat(self, 0)
 			end

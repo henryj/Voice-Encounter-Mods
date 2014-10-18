@@ -441,7 +441,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnDispatch:Show(args.sourceName)
 			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\kickcast.ogg")--快打斷
 		end
-		if self:IsDifficulty("normal25", "heroic25", "lfr25") then
+		if self:IsLFR() or self:IsHeroic() or self:IsMythic() then
 			timerDispatchCD:Start()--25 is about 12-15 variation
 		else
 			timerDispatchCD:Start(21)--Longer Cd on 10 man (21-24 variation)
@@ -524,7 +524,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		timerCalamityCD:Start(9)
 		timerConsumingTerrorCD:Start(11)
 		if GetGuildInfo("player") then
-			if string.find(GetGuildInfo("player"), "黑手") and self:IsDifficulty("heroic25") then
+			if string.find(GetGuildInfo("player"), "黑手") and self:IsMythic() then
 				MyDR()
 			end
 		end
@@ -534,7 +534,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		if fieldCount < 2 then
 			timerDissonanceFieldCD:Start(nil, fieldCount+1)
 		end
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			if fieldCount == 1 then
 				timerCorruptedDissonance:Start(10)
 			else
@@ -583,7 +583,7 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 		timerCalamityCD:Start(12)
 		timerConsumingTerrorCD:Start(14)
 		if GetGuildInfo("player") then
-			if string.find(GetGuildInfo("player"), "黑手") and self:IsDifficulty("heroic25") then
+			if string.find(GetGuildInfo("player"), "黑手") and self:IsMythic() then
 				MyDR()
 			end
 		end
@@ -660,7 +660,7 @@ function mod:UNIT_HEALTH_FREQUENT_UNFILTERED(uId)
 	end
 	if uId == "player" then
 		if UnitDebuff("player", GetSpellInfo(123184)) then
-			if self:IsDifficulty("heroic10", "heroic25") then
+			if self:IsMythic() then
 				if UnitHealth(uId) / UnitHealthMax(uId) <= 0.8 and not warnedhp then
 					sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\checkhp.ogg")--注意血量
 					warnedhp = true

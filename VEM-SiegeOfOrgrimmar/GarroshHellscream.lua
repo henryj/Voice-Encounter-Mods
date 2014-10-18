@@ -757,7 +757,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, target)
 --		countdownPowerIronStar:Start()
 		Tqcount = Tqcount + 1
 		sndWOP:Schedule(12, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_tqzb.ogg") --鐵球準備
-		if mod:IsDifficulty("heroic10", "heroic25") then
+		if mod:IsMythic() then
 			warnFireUnstableIronStar:Schedule(12)
 			specWarnFireUnstableIronStar:Schedule(12)
 			if MyJS("TQ") then

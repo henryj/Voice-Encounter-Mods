@@ -128,7 +128,7 @@ function mod:OnCombatStart(delay)
 	timerStompCD:Start(29-delay, 1)
 	sndWOP:Schedule(24, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\stompsoon.ogg")--準備踐踏
 	timerBreathCD:Start(-delay)
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		if mod.Options.warnsj then
 			mod:checkmydebuff()
 		else
@@ -137,7 +137,7 @@ function mod:OnCombatStart(delay)
 			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_sjsl.ogg")--水晶碎裂
 		end
 	end
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		if self.Options.InfoFrame then
 			VEM.InfoFrame:SetHeader(L.WrongDebuff:format(shelldName))
 			VEM.InfoFrame:Show(5, "playergooddebuff", 137633)
@@ -160,7 +160,7 @@ end
 function mod:SPELL_CAST_START(args)
 	if args.spellId == 133939 then
 		warnStoneBreath:Show()
-		if not self:IsDifficulty("lfr25") then
+		if not self:IsLFR() then
 			specWarnStoneBreath:Show(args.sourceName)
 		end
 		timerBreathCD:Start()
@@ -298,7 +298,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 				warnRockfall:Show()
 				specWarnRockfall:Show()--To warn of massive incoming for the 9 back to back rockfalls that are incoming
 				self:Schedule(10, clearStomp)
-				if self:IsDifficulty("heroic10", "heroic25") then
+				if self:IsMythic() then
 					if mod.Options.warnsj then
 						self:ScheduleMethod(12, "checkmydebuff")
 					end

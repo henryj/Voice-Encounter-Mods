@@ -180,7 +180,7 @@ function mod:OnCombatStart(delay)
 	dispnum = 0
 	table.wipe(bloodTargets)
 	timerFearsomeRoarCD:Start(-delay)
-	if self:IsDifficulty("lfr25") then
+	if self:IsLFR() then
 		timerDeafeningScreechCD:Start(19-delay, 1)
 		sndPX:Schedule(16-delay, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\aesoon.ogg")	
 		sndPX:Schedule(17-delay, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
@@ -194,12 +194,8 @@ function mod:OnCombatStart(delay)
 		sndPX:Schedule(13-delay, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 	end
 	berserkTimer:Start(-delay)
-	if self.Options.RangeFrame and not self:IsDifficulty("lfr25") then
-		if self:IsDifficulty("normal10", "heroic10") then
-			VEM.RangeCheck:Show(10, nil, nil, 4)
-		else
-			VEM.RangeCheck:Show(10, nil, nil, 14)
-		end
+	if self.Options.RangeFrame and not self:IsLFR() then
+		VEM.RangeCheck:Show(10, nil, nil, 14)
 	end
 end
 
@@ -222,7 +218,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		sndPX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
 		sndPX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
 		sndPX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
-		if self:IsDifficulty("lfr25") then
+		if self:IsLFR() then
 			timerDeafeningScreechCD:Start(18, screechCount+1)
 			sndPX:Schedule(15, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\aesoon.ogg")	
 			sndPX:Schedule(16, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
@@ -401,7 +397,7 @@ function mod:SPELL_AURA_REMOVED(args)
 	elseif args.spellId == 143440 then
 		timerBloodFrenzyCD:Cancel()
 		screechCount = 0
-		if self:IsDifficulty("lfr25") then
+		if self:IsLFR() then
 			timerDeafeningScreechCD:Start(19, 1)
 			sndPX:Schedule(16, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\aesoon.ogg")
 			sndPX:Schedule(17, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
@@ -414,12 +410,8 @@ function mod:SPELL_AURA_REMOVED(args)
 			sndPX:Schedule(12, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
 			sndPX:Schedule(13, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		end
-		if self.Options.RangeFrame and not self:IsDifficulty("lfr25") then
-			if self:IsDifficulty("normal10", "heroic10") then
-				VEM.RangeCheck:Show(10, nil, nil, 4)
-			else
-				VEM.RangeCheck:Show(10, nil, nil, 14)
-			end
+		if self.Options.RangeFrame and not self:IsLFR() then
+			VEM.RangeCheck:Show(10, nil, nil, 14)
 		end
 	elseif args.spellId == 143445 then
 		timerFixate:Cancel(args.destName)
@@ -472,7 +464,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		specWarnBloodFrenzy:Show()
 --DELETE	soundBloodFrenzy:Play()
 		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ptwo.ogg") --2階段準備
-		if self.Options.RangeFrame and not self:IsDifficulty("lfr25") then
+		if self.Options.RangeFrame and not self:IsLFR() then
 			VEM.RangeCheck:Hide()
 		end
 		phase = 2

@@ -176,7 +176,7 @@ function mod:OnCombatStart(delay)
 	timerDoor:Start(16.5-delay)
 	timerChargeCD:Start(31-delay)--31-35sec variation
 	berserkTimer:Start(-delay)
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		timerDireCallCD:Start(-delay, 1)
 		--BH ADD
 		if mod:IsHealer() then
@@ -563,7 +563,7 @@ function mod:OnSync(msg, target)
 			timerAdds:Start(18.9, Amani)
 			warnAdds:Schedule(18.9, Amani)
 			self:Schedule(18.9, addsDelay, Amani)
-			if self.Options.RangeFrame and not self:IsDifficulty("lfr25") then
+			if self.Options.RangeFrame and not self:IsLFR() then
 				VEM.RangeCheck:Show(5)
 			end
 		end

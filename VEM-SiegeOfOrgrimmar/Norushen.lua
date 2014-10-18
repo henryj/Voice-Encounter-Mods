@@ -132,7 +132,7 @@ function mod:OnCombatStart(delay)
 			sndWOP:Schedule(3, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		end
 	end)
-	if self:IsDifficulty("lfr25") then--Might also be flex as well
+	if self:IsLFR() then--Might also be flex as well
 		berserkTimer:Start(600-delay)--No log to confirm 8 min, only one report, so changing back to 10 min for now.
 	else
 		berserkTimer:Start(-delay)

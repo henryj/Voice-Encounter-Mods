@@ -212,7 +212,7 @@ function mod:OnCombatStart(delay)
 	timerAmberScalpelCD:Start(9-delay)
 	timerReshapeLifeCD:Start(20-delay, 1)
 	timerParasiticGrowthCD:Start(23.5-delay)
-	if not self:IsDifficulty("lfr25") then
+	if not self:IsLFR() then
 		berserkTimer:Start(-delay)
 	end
 	updateInfoFrame()
@@ -267,7 +267,7 @@ end
 function mod:SPELL_AURA_APPLIED(args)
 	if args:IsSpellID(123059) and args:GetDestCreatureID() ~= 62691 then--Only track debuffs on boss, constructs, or monstrosity, ignore oozes.
 		warnDestabalize:Show(args.destName, args.amount or 1)
-		if self:IsDifficulty("lfr25") then
+		if self:IsLFR() then
 			timerDestabalize:Start(60, args.destName)
 		else
 			timerDestabalize:Start(args.destName)
