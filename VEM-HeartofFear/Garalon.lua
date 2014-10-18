@@ -94,25 +94,25 @@ function mod:OnCombatStart(delay)
 	brokenLegs = 0
 	Crushcount = 0
 	timerFuriousSwipeCD:Start(-delay)--8-11 sec on pull
-	if not self:IsDifficulty("lfr25") then
+	if not self:IsLFR() then
 		berserkTimer:Start(-delay)
 	else
 		berserkTimer:Start(720-delay)
 	end
-	sndFS:Schedule(5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-	sndFS:Schedule(6, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-	sndFS:Schedule(7, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+	sndFS:Schedule(5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+	sndFS:Schedule(6, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+	sndFS:Schedule(7, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 	table.wipe(PheromonesMarkers)	
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		timerCrushCD:Start(30-delay, Crushcount + 1)
-		sndZN:Schedule(25.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
-		sndZN:Schedule(26.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-		sndZN:Schedule(27.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndZN:Schedule(28.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndZN:Schedule(29.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndZN:Schedule(25.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
+		sndZN:Schedule(26.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+		sndZN:Schedule(27.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndZN:Schedule(28.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndZN:Schedule(29.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		if MyJS() then
 			specWarnJSA:Schedule(24)
-			sndWOP:Schedule(24, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
+			sndWOP:Schedule(24, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.ogg") --注意減傷
 		end
 	end
 end
@@ -129,7 +129,7 @@ end
 function mod:SPELL_AURA_APPLIED(args)
 	if args:IsSpellID(122754) and args:GetDestCreatureID() == 63191 then--It applies to both creatureids, so we antispam it
 		warnFury:Show(args.destName, args.amount or 1)
-		if self:IsDifficulty("lfr25") then
+		if self:IsLFR() then
 			timerFury:Start(15)
 		else
 			timerFury:Start()
@@ -143,7 +143,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			specwarnPheromonesYou:Show()
 			yellPheromones:Yell()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\targetyou.mp3") --目標是你
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\targetyou.ogg") --目標是你
 		else
 			local uId = VEM:GetRaidUnitId(args.destName)
 			if uId then
@@ -166,9 +166,9 @@ function mod:SPELL_AURA_APPLIED(args)
 			self:SetIcon(args.destName, 2)
 		end
 	elseif args:IsSpellID(123081) then
-		if self:IsDifficulty("normal25", "heroic25") then--Is it also 4 min on LFR?
+		if self:IsHeroic() or self:IsMythic() then--Is it also 4 min on LFR?
 			timerPungency:Start(240, args.destName)
-		elseif self:IsDifficulty("lfr25") then
+		elseif self:IsLFR() then
 			timerPungency:Start(20, args.destName)
 		else
 			timerPungency:Start(args.destName)
@@ -183,7 +183,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if (args.amount or 1) == 3 then
 			if mod.Options.optFLM == args.destName then
 				specWarnFLM:Show(args.destName)
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_xxszb.mp3") --信息素準備
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_xxszb.ogg") --信息素準備
 				self:SendSync("MyPheromone", UnitName("player").."("..flmchoose..")")
 			end
 		end
@@ -200,7 +200,7 @@ function mod:SPELL_AURA_REMOVED(args)
 			self:SetIcon(args.destName, 0)
 		end
 		if args:IsPlayer() then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\targetchange.mp3")--目標改變
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\targetchange.ogg")--目標改變
 		end
 		if PheromonesMarkers[args.destName] then
 			PheromonesMarkers[args.destName] = free(PheromonesMarkers[args.destName])
@@ -214,14 +214,14 @@ mod.SPELL_AURA_REMOVED_DOSE = mod.SPELL_AURA_REMOVED
 function mod:SPELL_CAST_START(args)
 	if args:IsSpellID(122735) then
 		warnFuriousSwipe:Show()
-		sndFS:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndFS:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndFS:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
-		sndFS:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_hj.mp3") --揮擊
+		sndFS:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndFS:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndFS:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
+		sndFS:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_hj.ogg") --揮擊
 		timerFuriousSwipeCD:Start()
-		sndFS:Schedule(5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndFS:Schedule(6, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndFS:Schedule(7, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndFS:Schedule(5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndFS:Schedule(6, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndFS:Schedule(7, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 	end
 end
 
@@ -238,7 +238,7 @@ end
 function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 123120 and destGUID == UnitGUID("player") and self:AntiSpam(3, 1) then
 		specwarnPheromoneTrail:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg") --快躲開
 	end
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE
@@ -249,38 +249,38 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, target)
 			Crushcount = Crushcount + 1
 			warnCrush:Show()
 			specwarnCrushH:Show(Crushcount)
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_nyjd.mp3") --碾壓
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_nyjd.ogg") --碾壓
 		end
 		timerCrush:Start()
 		if msg:find(L.UnderHim) and target == UnitName("player") then
 			specwarnUnder:Show()--it's a bit of a too little too late warning, but hopefully it'll help people in LFR understand it's not place to be and less likely to repeat it, eventually thining out LFR failure rate to this.
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_lkzq.mp3") --離開紫圈
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_lkzq.ogg") --離開紫圈
 		end
 		if msg:find(L.Heroicrush) then
 			timerCrushCD:Cancel()
-			sndZN:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
-			sndZN:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-			sndZN:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-			sndZN:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-			sndZN:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			sndZN:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
+			sndZN:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+			sndZN:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+			sndZN:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+			sndZN:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 			timerCrushCD:Start(37.5, Crushcount + 1)
-			sndZN:Schedule(33, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
-			sndZN:Schedule(34, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-			sndZN:Schedule(35, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-			sndZN:Schedule(36, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-			sndZN:Schedule(37, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			sndZN:Schedule(33, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
+			sndZN:Schedule(34, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+			sndZN:Schedule(35, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+			sndZN:Schedule(36, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+			sndZN:Schedule(37, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 			if MyJS() then
 				specWarnJSA:Schedule(32)
-				sndWOP:Schedule(32, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
+				sndWOP:Schedule(32, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.ogg") --注意減傷
 			end
 		end
 	elseif msg:find(L.Ptwostart) then
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ptwo.mp3")
-		sndZN:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
-		sndZN:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-		sndZN:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndZN:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndZN:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ptwo.ogg")
+		sndZN:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
+		sndZN:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+		sndZN:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndZN:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndZN:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 	end
 end
 

@@ -219,28 +219,28 @@ local function intTTtime()
 		[L.HH2] = HH2,
 	}
 	if XN1 > 20 then
-		sndWOP:Schedule(XN1-20, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_xnzb.mp3")
+		sndWOP:Schedule(XN1-20, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_xnzb.ogg")
 	end
 	if QL1 > 20 then
-		sndWOP:Schedule(QL1-20, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_qlzb.mp3")
+		sndWOP:Schedule(QL1-20, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_qlzb.ogg")
 	end
 	if BH1 > 20 then
-		sndWOP:Schedule(BH1-20, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_bhzb.mp3")
+		sndWOP:Schedule(BH1-20, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_bhzb.ogg")
 	end
 	if HH1 > 20 then
-		sndWOP:Schedule(HH1-20, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_hhttzb.mp3")
+		sndWOP:Schedule(HH1-20, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_hhttzb.ogg")
 	end
 	if XN2 > 20 then
-		sndWOP:Schedule(XN2-20, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_xnzb.mp3")
+		sndWOP:Schedule(XN2-20, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_xnzb.ogg")
 	end
 	if QL2 > 20 then
-		sndWOP:Schedule(QL2-20, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_qlzb.mp3")
+		sndWOP:Schedule(QL2-20, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_qlzb.ogg")
 	end
 	if BH2 > 20 then
-		sndWOP:Schedule(BH2-20, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_bhzb.mp3")
+		sndWOP:Schedule(BH2-20, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_bhzb.ogg")
 	end
 	if HH2 > 20 then
-		sndWOP:Schedule(HH2-20, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_hhttzb.mp3")
+		sndWOP:Schedule(HH2-20, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_hhttzb.ogg")
 	end
 	local function sortFuncAsc(a, b) return TTA[a] < TTA[b] end
 	table.wipe(sortedTTA)
@@ -309,11 +309,11 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnBeastOfNightmares:Show(args.destName)
 		specWarnBeastOfNightmares:Show()
 		if args:IsPlayer() or mod:IsHealer() then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_mys.mp3") --夢魘獸出現
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_mys.ogg") --夢魘獸出現
 		else
 			if not UnitDebuff("player", GetSpellInfo(137375)) and not UnitIsDeadOrGhost("player") then
 				if mod:IsTank() then
-					sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\changemt.mp3") --換坦嘲諷
+					sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\changemt.ogg") --換坦嘲諷
 				end
 			end
 		end
@@ -333,13 +333,13 @@ function mod:SPELL_AURA_APPLIED(args)
 			if amount >= 2 and not UnitDebuff("player", GetSpellInfo(137408)) and not UnitIsDeadOrGhost("player") then
 				specWarnFanOfFlamesOther:Show(args.destName)
 				if mod:IsTank() then
-					sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\changemt.mp3") --換坦嘲諷
+					sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\changemt.ogg") --換坦嘲諷
 				end
 			end
 		end
 	elseif args.spellId == 137417 and args:IsPlayer() and self:AntiSpam(3, 4) then
 		specWarnFlamesofPassionMove:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg") --快躲開
 	elseif args.spellId == 138264 and args:IsPlayer() then  --白虎
 		if self.Options.HudMAP then
 			self:Schedule(1, function()
@@ -381,17 +381,17 @@ function mod:SPELL_AURA_APPLIED(args)
 			end)
 		end		
 	elseif args.spellId == 138300 and self:AntiSpam(40, 10) then
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_xntt.mp3")--玄牛圖騰
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_xntt.ogg")--玄牛圖騰
 		specWarnTT1:Show()
 		TTstart = TTstart + 1
 		showTTtime(TTstart+1)
 	elseif args.spellId == 138855 and self:AntiSpam(40, 11) then
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_bhtt.mp3")--白虎圖騰
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_bhtt.ogg")--白虎圖騰
 		specWarnTT2:Show()
 		TTstart = TTstart + 1
 		showTTtime(TTstart+1)
 	elseif args.spellId == 138306 and self:AntiSpam(40, 12) then
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_yjtt.mp3")--玉蛟圖騰
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_yjtt.ogg")--玉蛟圖騰
 		specWarnTT3:Show()
 		TTstart = TTstart + 1
 		showTTtime(TTstart+1)
@@ -454,7 +454,7 @@ function mod:CHAT_MSG_MONSTER_YELL(msg) -- Switch to yell. INSTANCE_ENCOUNTER_EN
 end
 
 function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT(event) -- still remains backup trigger for phase3.
-	if UnitExists("boss2") and tonumber(UnitGUID("boss2"):sub(6, 10), 16) == 68905 then--Make sure we don't trigger it off another engage such as wipe engage event
+	if UnitExists("boss2") and self:GetCIDFromGUID(UnitGUID("boss2")) == 68905 then--Make sure we don't trigger it off another engage such as wipe engage event
 		self:SendSync("Phase3")
 	end
 end
@@ -468,12 +468,12 @@ function mod:UNIT_DIED(args)
 		timerDuskCD:Cancel()
 		timerNuclearInfernoCD:Cancel()
 		warnDay:Show()
-		sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.mp3")
-		sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_cxzb.mp3")
-		sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-		sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.ogg")
+		sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_cxzb.ogg")
+		sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+		sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		timerLightOfDayCD:Start()
 		timerFanOfFlamesCD:Start(19)
 		--She also does Flames of passion, but this is done 3 seconds after Lu'lin dies, is a 3 second timer worth it?
@@ -489,11 +489,11 @@ function mod:UNIT_DIED(args)
 		warnNight:Show()
 		phase3Started = true
 		timerTidalForceCD:Cancel()
-		sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_cxzb.mp3")
-		sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-		sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_cxzb.ogg")
+		sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+		sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 	end
 end
 
@@ -503,10 +503,10 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		timerFanOfFlamesCD:Cancel()
 		--timerFlamesOfPassionCD:Cancel()
 		warnNight:Show()
-		sndWOP:Schedule(180, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\dayphase.mp3")--白天準備
-		sndWOP:Schedule(181, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOP:Schedule(182, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Schedule(183, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndWOP:Schedule(180, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\dayphase.ogg")--白天準備
+		sndWOP:Schedule(181, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndWOP:Schedule(182, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndWOP:Schedule(183, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		if Sunlive then
 			timerDayCD:Start()
 			timerDuskCD:Start()
@@ -525,7 +525,7 @@ end
 function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 137417 and destGUID == UnitGUID("player") and self:AntiSpam(2, 4) then
 		specWarnFlamesofPassionMove:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg") --快躲開
 	end
 end
 mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
@@ -541,14 +541,14 @@ function mod:OnSync(msg)
 		timerIceCometCD:Start()
 		timerFanOfFlamesCD:Start()
 		--timerFlamesOfPassionCD:Start(12.5)
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerNuclearInfernoCD:Start(50, 1)
 		end
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\dayphase.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_bzjd.mp3")--白晝開始
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\dayphase.ogg")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_bzjd.ogg")--白晝開始
 		self:RegisterShortTermEvents(
 			"INSTANCE_ENCOUNTER_ENGAGE_UNIT"
 		)
@@ -559,23 +559,23 @@ function mod:OnSync(msg)
 		warnDusk:Show()
 		timerIceCometCD:Start(17)--This seems to reset, despite what last CD was (this can be a bad thing if it was do any second)
 		timerTidalForceCD:Start(30, 1)		
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerNuclearInfernoCD:Cancel()
 			timerNuclearInfernoCD:Start(63, 1)
 		end
 		timerCosmicBarrageCD:Start(54, 1)
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_hhzb.mp3")--黃昏準備
-		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
-		sndWOP:Schedule(2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-		sndWOP:Schedule(3, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOP:Schedule(4, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Schedule(5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
-		sndWOP:Schedule(6, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_hhjd.mp3") --黃昏開始
-		sndWOPCX:Schedule(25, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_cxzb.mp3")
-		sndWOPCX:Schedule(26, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-		sndWOPCX:Schedule(27, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOPCX:Schedule(28, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOPCX:Schedule(29, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_hhzb.ogg")--黃昏準備
+		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
+		sndWOP:Schedule(2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+		sndWOP:Schedule(3, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndWOP:Schedule(4, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndWOP:Schedule(5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
+		sndWOP:Schedule(6, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_hhjd.ogg") --黃昏開始
+		sndWOPCX:Schedule(25, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_cxzb.ogg")
+		sndWOPCX:Schedule(26, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+		sndWOPCX:Schedule(27, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndWOPCX:Schedule(28, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndWOPCX:Schedule(29, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 	elseif msg == "Phase3" then
 		self:UnregisterShortTermEvents()
 		timerFanOfFlamesCD:Cancel()--DO NOT CANCEL THIS ON YELL
@@ -584,7 +584,7 @@ function mod:OnSync(msg)
 			phase3Started = true
 			timerIceCometCD:Start(11)--This seems to reset, despite what last CD was (this can be a bad thing if it was do any second)
 			timerTidalForceCD:Start(20)
-			if self:IsDifficulty("heroic10", "heroic25") then
+			if self:IsMythic() then
 				timerNuclearInfernoCD:Start(57)
 			end
 			timerCosmicBarrageCD:Start(48, 1)
@@ -593,7 +593,7 @@ function mod:OnSync(msg)
 		if self:AntiSpam(10, 5) then
 			warnIceComet:Show()
 			specWarnIceComet:Show()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_hbcx.mp3") --寒冰出現
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_hbcx.ogg") --寒冰出現
 			if phase3Started then -- cd longer on phase 3.
 				timerIceCometCD:Start(30.5)
 			else
@@ -607,21 +607,21 @@ function mod:OnSync(msg)
 			specWarnTidalForce:Show(TidalForceCount)
 			timerTidalForce:Start()
 			timerTidalForceCD:Start(74, TidalForceCount + 1)
-			sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_cxzb.mp3")
-			sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-			sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-			sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-			sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_cxzb.ogg")
+			sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+			sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+			sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+			sndWOPCX:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 			if MyJSE() then
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.mp3")
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.ogg")
 			else
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_cxzl.mp3") --潮汐之力
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_cxzl.ogg") --潮汐之力
 			end
-			sndWOPCX:Schedule(68, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_cxzb.mp3")
-			sndWOPCX:Schedule(69, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-			sndWOPCX:Schedule(70, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-			sndWOPCX:Schedule(71, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-			sndWOPCX:Schedule(72, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			sndWOPCX:Schedule(68, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_cxzb.ogg")
+			sndWOPCX:Schedule(69, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+			sndWOPCX:Schedule(70, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+			sndWOPCX:Schedule(71, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+			sndWOPCX:Schedule(72, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 
 		end
 	elseif msg == "CosmicBarrage" then
@@ -633,32 +633,32 @@ function mod:OnSync(msg)
 			if phase3Started then
 				timerCosmicBarrageCD:Start(35, CrashingStarCount + 1)
 				if MyJSB() then
-					sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
+					sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.ogg") --注意減傷
 				else
 					if mod:IsRanged() then
-						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\scattersoon.mp3")--注意分散
+						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\scattersoon.ogg")--注意分散
 					else
-						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_xzzb.mp3")--星宙准备
+						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_xzzb.ogg")--星宙准备
 					end
 				end
-				sndYX:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-				sndYX:Schedule(2.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-				sndYX:Schedule(3.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-				sndYX:Schedule(4.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+				sndYX:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+				sndYX:Schedule(2.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+				sndYX:Schedule(3.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+				sndYX:Schedule(4.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 			else
 				timerCosmicBarrageCD:Start(22, CrashingStarCount + 1)
 				if MyJSA() then
-					sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.mp3")
-					sndYX:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-					sndYX:Schedule(2.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-					sndYX:Schedule(3.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-					sndYX:Schedule(4.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+					sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.ogg")
+					sndYX:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+					sndYX:Schedule(2.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+					sndYX:Schedule(3.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+					sndYX:Schedule(4.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 				elseif mod:IsRanged() then
-					sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\scattersoon.mp3")
-					sndYX:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-					sndYX:Schedule(2.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-					sndYX:Schedule(3.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-					sndYX:Schedule(4.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+					sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\scattersoon.ogg")
+					sndYX:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+					sndYX:Schedule(2.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+					sndYX:Schedule(3.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+					sndYX:Schedule(4.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 				end
 			end
 		end
@@ -668,25 +668,25 @@ function mod:OnSync(msg)
 			warnNuclearInferno:Show(NuclearInfernoCount)
 			specWarnNuclearInferno:Show(NuclearInfernoCount)
 			timerNuclearInferno:Start()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_hzly.mp3") --核子煉獄
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_hzly.ogg") --核子煉獄
 			if phase3Started then
 				timerNuclearInfernoCD:Start(73, NuclearInfernoCount + 1)
 				if MyJSD() then
-					sndWOP:Schedule(2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.mp3")
+					sndWOP:Schedule(2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.ogg")
 				end
 			else
 				timerNuclearInfernoCD:Start(49.5, NuclearInfernoCount + 1)
 				if MyJSC() then
-					sndWOP:Schedule(2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.mp3")
+					sndWOP:Schedule(2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.ogg")
 				end
 			end
-			sndWOP:Schedule(11, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\scatter.mp3")
+			sndWOP:Schedule(11, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\scatter.ogg")
 		end
 	elseif msg == "TearsOfSun" then
 		if self:AntiSpam(10, 9) then
 			warnTearsOfSun:Show()
 			specWarnTearsOfSun:Show()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_lrzl.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_lrzl.ogg")
 			timerTearsOfTheSun:Start()
 			if timerDayCD:GetTime() < 145 then
 				timerTearsOfTheSunCD:Start()

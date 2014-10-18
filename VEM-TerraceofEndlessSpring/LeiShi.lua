@@ -187,7 +187,7 @@ function mod:OnCombatStart(delay)
 	lostHealth = 0
 	prevlostHealth = 0
 	timerSpecialCD:Start(30.5-delay, 1)--Variable, 30.5-37 (or aborted if 80% protect happens first)
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		if self.Options.InfoFrame then
 			VEM.InfoFrame:SetHeader(GetSpellInfo(123712))
 			VEM.InfoFrame:Show(1, "bossdebuffstacks", 123712)
@@ -222,9 +222,9 @@ function mod:SPELL_AURA_APPLIED(args)
 			timerSpecialCD:Cancel()
 		end)
 		if mod:IsDps() then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_bwzkd.mp3") --保衛者快打
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_bwzkd.ogg") --保衛者快打
 		else
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_bwzcx.mp3") --保衛者出現
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_bwzcx.ogg") --保衛者出現
 		end
 	elseif args:IsSpellID(123505) and self.Options.SetIconOnGuardfix then
 		if guardActivated == 0 then
@@ -239,7 +239,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnGetAway:Show(specialsCast)
 		specWarnGetAway:Show()
 		timerSpecialCD:Start(nil, specialsCast+1)
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerGetAway:Start(45)
 		else
 			timerGetAway:Start()
@@ -249,19 +249,19 @@ function mod:SPELL_AURA_APPLIED(args)
 			showDamagedHealthBar(self, args.sourceGUID, args.spellName, getAwayHealth)
 		end
 		if mod:IsHealer() then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\healall.mp3") --注意群療
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\healall.ogg") --注意群療
 		else
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_slkd.mp3") --首領快打
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_slkd.ogg") --首領快打
 		end
 		Crushcount = Crushcount + 1
 		if MyJS() then
 			specWarnJSA:Schedule(1)
-			sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
+			sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.ogg") --注意減傷
 		end
 	elseif args:IsSpellID(123121) then
 		if not mod:IsTank() and args:IsPlayer() and (not hideActive) and self:AntiSpam(2, 1) then
 			specWarnSprayNT:Show()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲开
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg") --快躲开
 		end
 		if (args.amount or 1) % 3 == 0 and args:IsDestTypePlayer() then
 			warnSpray:Show(args.destName, args.amount)
@@ -271,7 +271,7 @@ function mod:SPELL_AURA_APPLIED(args)
 				if args.amount >= 6 and not UnitDebuff("player", GetSpellInfo(123121)) and not UnitIsDeadOrGhost("player") then
 					specWarnSprayOther:Show(args.destName)
 					if mod:IsTank() and (not hideActive) then
-						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\changemt.mp3") --換坦嘲諷
+						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\changemt.ogg") --換坦嘲諷
 					end
 				end
 			end
@@ -374,8 +374,8 @@ function mod:SPELL_CAST_START(args)
 		specWarnHide:Show()
 		timerSpecialCD:Start(nil, specialsCast+1)
 		self:SetWipeTime(60)--If she hides at 1.6% or below, she will be killed during hide. In this situration, yell fires very slowly. This hack can prevent recording as wipe.
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_yszb.mp3") --隱身準備
-		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\scattersoon.mp3")--注意分散
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_yszb.ogg") --隱身準備
+		sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\scattersoon.ogg")--注意分散
 		self:RegisterShortTermEvents(
 			"INSTANCE_ENCOUNTER_ENGAGE_UNIT",--We register on hide, because it also fires just before hide, every time and don't want to trigger "hide over" at same time as hide.
 			"SPELL_DAMAGE",
@@ -439,7 +439,7 @@ function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT(event)
 	warnHideOver:Show(GetSpellInfo(123244))
 	warnHideProgress:Cancel()
 	warnHideProgress:Show(hideDebug, damageDebug, tostring(format("%.1f", timeDebug)))--Show right away instead of waiting out the schedule
-	sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_ysjs.mp3") --隱身結束
+	sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_ysjs.ogg") --隱身結束
 	if self.Options.RangeFrame then
 		VEM.RangeCheck:Show(3, bossTank)--Go back to showing only tanks
 	end

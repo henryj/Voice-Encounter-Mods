@@ -202,13 +202,6 @@ do
 	-- TODO: entries in these caches might never get deleted, worst case: one entry per added boss to the health frame; consider wiping these tables on remove of the corresponding bar or on hiding
 	local targetCache = {}
 	local targetGuidCache = {}
-	local function getCIDfromGUID(guid)
-		if not guid then
-			return -1
-		end
-		local cType = bit.band(guid:sub(0, 5), 0x00F)
-		return (cType == 3 or cType == 5) and tonumber(guid:sub(6, 10), 16) or -1
-	end
 
 --	local function compareBars(b1, b2)
 --		return b1.value > b2.value
@@ -217,17 +210,17 @@ do
 	-- gets the health and unit id of the given creature id, returns nil if the target could not be found
 	local function getHealth(cId)
 		local id = targetCache[cId] -- ask the cache if we already know where the mob is
-		if getCIDfromGUID(UnitGUID(id or "")) ~= cId then -- the cache doesn't know it or has invalid data, update it
+		if self:GetCIDFromGUID(UnitGUID(id or "")) ~= cId then -- the cache doesn't know it or has invalid data, update it
 			targetCache[cId] = nil
 			-- check focus target
-			if getCIDfromGUID(UnitGUID("focus")) == cId then
+			if self:GetCIDFromGUID(UnitGUID("focus")) == cId then
 				targetCache[cId] = "focus"
 			else
 				-- just some hack to add support for boss unit ids
 				local found = false
 				for i = 1, 5 do -- are there really just boss1 to boss4? everyone seems to be assuming this...
 					id = "boss"..i
-					if getCIDfromGUID(UnitGUID(id)) == cId then
+					if self:GetCIDFromGUID(UnitGUID(id)) == cId then
 						found = true
 						targetCache[cId] = id
 						break
@@ -238,7 +231,7 @@ do
 					local uId = (IsInRaid() and "raid") or "party"
 					for i = 0, math.max(GetNumGroupMembers(), GetNumSubgroupMembers()) do
 						id = (i == 0 and "target") or uId..i.."target"
-						if getCIDfromGUID(UnitGUID(id or "")) == cId then
+						if self:GetCIDFromGUID(UnitGUID(id or "")) == cId then
 							targetCache[cId] = id
 							break
 						end
@@ -247,7 +240,7 @@ do
 			end
 		end
 		-- UnitHealthMax is sometimes 0 for one frame when the unit just showed up; so we need to check this here due to stupid UI changes
-		if getCIDfromGUID(UnitGUID(id or "")) == cId and UnitHealthMax(id) ~= 0 then -- did we find the mob? if yes: update the health bar
+		if self:GetCIDFromGUID(UnitGUID(id or "")) == cId and UnitHealthMax(id) ~= 0 then -- did we find the mob? if yes: update the health bar
 			return UnitHealth(id) / UnitHealthMax(id) * 100, id
 		end
 	end

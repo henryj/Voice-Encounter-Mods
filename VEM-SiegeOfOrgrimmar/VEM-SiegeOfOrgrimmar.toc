@@ -1,5 +1,5 @@
-﻿## Interface: 50400
-## X-Min-Interface: 50400
+﻿## Interface: 60000
+## X-Min-Interface: 60000
 ## Title:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0Siege of Orgrimmar|r
 ## Title-deDE:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0Schlacht um Orgrimmar|r
 ## Title-zhTW:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0圍攻奧格瑪|r
@@ -15,8 +15,8 @@
 ## X-VEM-Mod: 1
 ## X-VEM-Mod-Type: RAID
 ## X-VEM-Mod-Category: MOP
-## X-VEM-Mod-Has-LFR : 1
-## X-VEM-Mod-Has-Flex : 1
+## X-DBM-Mod-Has-LFR : 1
+## X-DBM-Mod-Has-Mythic : 1
 ## X-VEM-Mod-Sort: 1
 ## X-VEM-Mod-MapID: 1136
 ## X-VEM-Mod-Block-Movie-Skip-ItemID: 105930,105931,105932,105933,105934,105935

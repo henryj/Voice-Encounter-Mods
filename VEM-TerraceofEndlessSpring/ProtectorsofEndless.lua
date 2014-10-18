@@ -136,7 +136,7 @@ local function MyDR(msg)
 	if (msg == "dr90" and mod.Options.warndr9) or (msg == "dr80" and mod.Options.warndr8) or (msg == "dr70" and mod.Options.warndr7) or (msg == "dr60" and mod.Options.warndr6) or (msg == "dr50" and mod.Options.warndr5) or (msg == "dr40" and mod.Options.warndr4) or (msg == "dr30" and mod.Options.warndr3) or (msg == "dr20" and mod.Options.warndr2) or (msg == "dr10" and mod.Options.warndr1) then
 		local healthshow = string.sub(msg, 3, 4)
 		specWarnJSA:Show(healthshow)
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.ogg") --注意減傷
 	end
 end
 
@@ -167,15 +167,15 @@ local function warnPrisonTargets()
 			if helpdisp then
 				local helpername = mod.Options.helpdispset
 				specWarnLightningPrisonOther:Show(helpername)
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\helpdispel.mp3")
-				sndWOP:Schedule(0.2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-				sndWOP:Schedule(1.2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-				sndWOP:Schedule(2.2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\helpdispel.ogg")
+				sndWOP:Schedule(0.2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+				sndWOP:Schedule(1.2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+				sndWOP:Schedule(2.2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 				helpdisp = false
 			else
-				sndSDQ:Schedule(0.2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-				sndSDQ:Schedule(1.2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-				sndSDQ:Schedule(2.2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+				sndSDQ:Schedule(0.2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+				sndSDQ:Schedule(1.2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+				sndSDQ:Schedule(2.2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 			end
 		end
 	end
@@ -252,9 +252,9 @@ function mod:WatersTarget()
 				if UnitName("boss"..i) == targetname then
 					if UnitDetailedThreatSituation("player", "boss"..i) and (self.Options.SoundWater) then--You are targeting the target of this spell.
 						specWarnCleansingWaters:Show(targetname)
-						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\bossout.mp3") --拉開boss
+						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\bossout.ogg") --拉開boss
 					else
-						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_jhzs.mp3") --淨化之水
+						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_jhzs.ogg") --淨化之水
 					end
 				end
 			end			
@@ -283,23 +283,19 @@ function mod:OnCombatStart(delay)
 	table.wipe(LightningPrisonMarkers)
 	timerCleansingWatersCD:Start(10-delay)
 	timerLightningPrisonCD:Start(15.5-delay)
-	if self:IsDifficulty("normal10", "heroic10") then
-		timerTouchOfShaCD:Start(35-delay)
-	else
-		timerTouchOfShaCD:Start(15-delay)
-	end
-	if not self:IsDifficulty("lfr25") then--lfr not berserks or more than 8m 10sec.
+	timerTouchOfShaCD:Start(15-delay)
+	if not self:IsLFR() then--lfr not berserks or more than 8m 10sec.
 		berserkTimer:Start(-delay)
 	end
 	myGroup = mod.Options.optMob == "Mob1" and 1 or mod.Options.optMob == "Mob2" and 2 or mod.Options.optMob == "Mob3" and 3 or mod.Options.optMob == "Mob4" and 4 or mod.Options.optMob == "Mob5" and 5
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		self:Schedule(15, function()
 			warnGroupOrder:Show(1)
 			if myGroup == 1 then
 				outgroup = true
 				specWarnYourGroup:Show()
 				VEM.Flash:Shake(1, 0, 0)
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3") --準備小怪
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\mobsoon.ogg") --準備小怪
 			end
 		end)
 	end
@@ -320,11 +316,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		totalTouchOfSha = totalTouchOfSha + 1
 		warnTouchofSha:Show(args.destName)
 		if totalTouchOfSha < VEM:GetNumGroupMembers() then--This ability will not be cast if everyone in raid has it.
-			if self:IsDifficulty("normal10", "heroic10") then--Heroic is assumed same as 10 normal.
-				timerTouchOfShaCD:Start()
-			else
-				timerTouchOfShaCD:Start(12)--every 12 seconds on 25 man. Not sure about LFR though. Will adjust next week accordingly
-			end
+			timerTouchOfShaCD:Start(12)--every 12 seconds
 		end
 	elseif args:IsSpellID(111850) then--111850 is targeting debuff (NOT dispelable one)
 		if args.destName == mod.Options.helpdispset then		
@@ -335,10 +327,10 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			specWarnLightningPrison:Show()
 			yellLightningPrison:Yell()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runout.mp3") --跑開人群
-			sndWOP:Schedule(0.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-			sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-			sndWOP:Schedule(2.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runout.ogg") --跑開人群
+			sndWOP:Schedule(0.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+			sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+			sndWOP:Schedule(2.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		end
 		if self.Options.HudMAP then
 			if args:IsPlayer() then
@@ -355,7 +347,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			prisonIcon = prisonIcon + 1
 		end
 		if self:AntiSpam(2, 2) then
-			sndSDQ:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qssd.mp3")--驅散閃電
+			sndSDQ:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qssd.ogg")--驅散閃電
 		end
 		if self.Options.HudMAP then
 			if not args:IsPlayer() then
@@ -366,7 +358,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args.destName == UnitName("boss1") or args.destName == UnitName("boss2") or args.destName == UnitName("boss3") then
 			specWarnCleansingWatersDispel:Show(args.destName)
 			if isDispeller and self.Options.SoundDW and self:AntiSpam(2, 3) then
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qszl.mp3") --驅散治療
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_qszl.ogg") --驅散治療
 			end
 		end
 	elseif args:IsSpellID(117052) then--Phase changes
@@ -395,7 +387,7 @@ function mod:SPELL_AURA_APPLIED(args)
 				self:Schedule(1, function() VEM.Flash:Shake(1, 0, 0) end)
 				self:Schedule(1.5, function() VEM.Flash:Shake(0, 0, 1) end)
 				self:Schedule(2, function() VEM.Flash:Shake(1, 0, 0) end)
-				sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\mobenough.mp3") --能量已滿 遠離小怪
+				sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\mobenough.ogg") --能量已滿 遠離小怪
 			end
 		end
 	end
@@ -427,31 +419,31 @@ function mod:SPELL_CAST_START(args)
 	elseif args:IsSpellID(117975) then
 		warnExpelCorruption:Show()
 		specWarnExpelCorruption:Show()
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_ylhq.mp3") --遠離黑球
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_ylhq.ogg") --遠離黑球
 		timerExpelCorruptionCD:Start()
-		sndWOP:Schedule(34, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
-		sndWOP:Schedule(35, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-		sndWOP:Schedule(36, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOP:Schedule(37, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Schedule(38, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndWOP:Schedule(34, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
+		sndWOP:Schedule(35, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+		sndWOP:Schedule(36, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndWOP:Schedule(37, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndWOP:Schedule(38, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 	elseif args:IsSpellID(117227) then
 		warnCorruptingWaters:Show()
 		specWarnCorruptingWaters:Show()
 		timerCorruptingWatersCD:Start()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_sqkd.mp3")--水球快打
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_mop_sqkd.ogg")--水球快打
 	elseif args:IsSpellID(118077) then
 		warnLightningStorm:Show()
 		specWarnLightningStorm:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\lightstorm.mp3") --閃電風暴
-		sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
-		sndWOP:Schedule(4.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Schedule(7.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOP:Schedule(10, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\lightstorm.ogg") --閃電風暴
+		sndWOP:Schedule(1.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
+		sndWOP:Schedule(4.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndWOP:Schedule(7.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndWOP:Schedule(10, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
 		helpstop = true
 		if phase == 3 then
 			timerLightningStormCD:Start(32)
@@ -462,25 +454,25 @@ function mod:SPELL_CAST_START(args)
 		watercount = watercount + 1
 		if self.Options.optDD4 then
 			if ((mod.Options.optDD == "DD1") and (watercount % 4 == 1)) or ((mod.Options.optDD == "DD2") and (watercount % 4 == 2)) or ((mod.Options.optDD == "DD3") and (watercount % 4 == 3)) or ((mod.Options.optDD == "DD4") and (watercount % 4 == 0)) then
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\kickcast.mp3") --快打斷
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\kickcast.ogg") --快打斷
 				specWarnwarterDD:Show(args.sourceName)
 			end	
 			if ((mod.Options.optDD == "DD1") and (watercount % 4 == 0)) or ((mod.Options.optDD == "DD2") and (watercount % 4 == 1)) or ((mod.Options.optDD == "DD3") and (watercount % 4 == 2)) or ((mod.Options.optDD == "DD4") and (watercount % 4 == 3)) then
-				sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\interruptsoon.mp3") --打斷準備
+				sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\interruptsoon.ogg") --打斷準備
 				specWarnDDL:Schedule(1)
 			end
 		else
 			if ((mod.Options.optDD == "DD1") and (watercount % 3 == 1)) or ((mod.Options.optDD == "DD2") and (watercount % 3 == 2)) or ((mod.Options.optDD == "DD3") and (watercount % 3 == 0)) then
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\kickcast.mp3")
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\kickcast.ogg")
 				specWarnwarterDD:Show(args.sourceName)
 			end	
 			if ((mod.Options.optDD == "DD1") and (watercount % 3 == 0)) or ((mod.Options.optDD == "DD2") and (watercount % 3 == 1)) or ((mod.Options.optDD == "DD3") and (watercount % 3 == 2)) then
-				sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\interruptsoon.mp3")
+				sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\interruptsoon.ogg")
 				specWarnDDL:Schedule(1)
 			end
 		end
 		if helpstop and self.Options.opthelpDD then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\helpkick.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\helpkick.ogg")
 			specWarnwarterDD:Show(args.sourceName)
 			helpstop = false
 		end
@@ -495,7 +487,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 			if UnitName("boss"..i) == args.sourceName then
 				if UnitDetailedThreatSituation("player", "boss"..i) then
 					specWarnDefiledGround:Show()
-					sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.mp3")--快躲開
+					sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg")--快躲開
 				end
 			end
 		end
@@ -503,10 +495,10 @@ function mod:SPELL_CAST_SUCCESS(args)
 		phase = phase + 1
 		if phase == 2 then
 			warnPhase2:Show()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ptwo.mp3") -- P2
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ptwo.ogg") -- P2
 		elseif phase == 3 then
 			warnPhase3:Show()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\pthree.mp3") -- P3
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\pthree.ogg") -- P3
 			table.wipe(senddr)
 			table.wipe(warneddr)
 			self:RegisterShortTermEvents(
@@ -530,7 +522,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 	elseif args:IsSpellID(118191) then--Corrupted Essence
 		SetmobTactics()
 		corruptedCount = corruptedCount + 1		
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			for i = 1, #warnmobone do
 				if corruptedCount == warnmobone[i] then
 					warnGroupOrder:Show(1)
@@ -538,12 +530,12 @@ function mod:SPELL_CAST_SUCCESS(args)
 						outgroup = true
 						specWarnYourGroup:Show()
 						VEM.Flash:Shake(1, 0, 0)
-						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3")
+						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\mobsoon.ogg")
 					end
 					if myGroup ~= 1 and outgroup then
 						outgroup = false
 						specWarnYourEnd:Show()
-						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runin.mp3")
+						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runin.ogg")
 					end
 				end
 			end
@@ -554,12 +546,12 @@ function mod:SPELL_CAST_SUCCESS(args)
 						outgroup = true
 						specWarnYourGroup:Show()
 						VEM.Flash:Shake(1, 0, 0)
-						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3") --準備小怪
+						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\mobsoon.ogg") --準備小怪
 					end
 					if myGroup ~= 2 and outgroup then
 						outgroup = false
 						specWarnYourEnd:Show()
-						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runin.mp3") --快回人群
+						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runin.ogg") --快回人群
 					end
 				end
 			end
@@ -570,12 +562,12 @@ function mod:SPELL_CAST_SUCCESS(args)
 						outgroup = true
 						specWarnYourGroup:Show()
 						VEM.Flash:Shake(1, 0, 0)
-						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3")
+						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\mobsoon.ogg")
 					end
 					if myGroup ~= 3 and outgroup then
 						outgroup = false
 						specWarnYourEnd:Show()
-						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runin.mp3")
+						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runin.ogg")
 					end
 				end
 			end
@@ -586,12 +578,12 @@ function mod:SPELL_CAST_SUCCESS(args)
 						outgroup = true
 						specWarnYourGroup:Show()
 						VEM.Flash:Shake(1, 0, 0)
-						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3")
+						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\mobsoon.ogg")
 					end
 					if myGroup ~= 4 and outgroup then
 						outgroup = false
 						specWarnYourEnd:Show()
-						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runin.mp3")
+						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runin.ogg")
 					end
 				end
 			end
@@ -603,12 +595,12 @@ function mod:SPELL_CAST_SUCCESS(args)
 							outgroup = true
 							specWarnYourGroup:Show()
 							VEM.Flash:Shake(1, 0, 0)
-							sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\mobsoon.mp3")
+							sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\mobsoon.ogg")
 						end
 						if myGroup ~= 5 and outgroup then
 							outgroup = false
 							specWarnYourEnd:Show()
-							sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runin.mp3")
+							sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runin.ogg")
 						end
 					end
 				end
@@ -620,10 +612,10 @@ end
 function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 117436 and destGUID == UnitGUID("player") and self:AntiSpam(3, 4) then
 		specWarnLPmove:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg") --快躲開
 	elseif spellId == 117988 and destGUID == UnitGUID("player") and self:AntiSpam(3, 5) then
 		specWarnDefiledGround:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg") --快躲開
 	end
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE

@@ -135,7 +135,7 @@ local function showheadinfo()
 		local iceBehindcolor = "|cFF0080FF"..iceBehind.."|r"
 		local venomBehindcolor = "|cFF088A08"..venomBehind.."|r"
 		local arcaneBehindcolor = "|cFFB91FC7"..arcaneBehind.."|r"
-		if mod:IsDifficulty("heroic10", "heroic25") then
+		if mod:IsMythic() then
 			VEM.InfoFrame:SetHeader(L.Behind.." ("..(Ramcount + 1).."/7)")
 			VEM.InfoFrame:Show(4, "other", iceBehindcolor, iceinfob, venomBehindcolor, venominfob, fireBehindcolor, fireinfob, arcaneBehindcolor, arcaneinfob)
 		else
@@ -154,7 +154,7 @@ local function warnTorrent(name)
 			timerTorrentofIce:Start()
 			yellTorrentofIce:Yell()
 			VEM.Flash:Shake(0, 0, 1)
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\justrun.mp3") --快跑
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\justrun.ogg") --快跑
 		end
 	else
 		local uId = VEM:GetRaidUnitId(name)
@@ -245,13 +245,13 @@ function mod:OnCombatStart(delay)
 	cinderIcon = 7
 	iceIcon = 6
 	table.wipe(torrentExpires)
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		arcaneBehind = 1
 		arcaneInFront = 0
 		arcaneRecent = false
 		timerCinderCD:Start(13)
 		timerNetherTearCD:Start()
-	elseif self:IsDifficulty("normal10", "normal25") then
+	elseif self:IsHeroic() then
 		timerCinderCD:Start()
 	else
 		timerCinderCD:Start(58)
@@ -279,7 +279,7 @@ function mod:RAID_BOSS_WHISPER(msg)
 		timerTorrentofIce:Start()
 		yellTorrentofIce:Yell()
 		VEM.Flash:Shake(0, 0, 1)
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\justrun.mp3") --快跑
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\justrun.ogg") --快跑
 	end
 end
 
@@ -290,7 +290,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		specWarnNetherTear:Show()
 		timerNetherTearCD:Start(args.sourceGUID)
 		if self:AntiSpam(10, 5) then
-			sndXL:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\dragonnow.mp3")  --小龍出現
+			sndXL:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\dragonnow.ogg")  --小龍出現
 		end
 	elseif args.spellId == 139866 then
 		timerTorrentofIceCD:Start(args.sourceGUID)
@@ -359,7 +359,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			yellCinders:Yell()
 --			soundCinders:Play()
 			VEM.Flash:Shake(1, 0, 0)
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\firerun.mp3")  --快跑 火焰點你
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\firerun.ogg")  --快跑 火焰點你
 		end
 		if self.Options.HudMAP then
 			local spelltext = GetSpellInfo(139822)
@@ -380,7 +380,7 @@ mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 function mod:SPELL_AURA_REMOVED(args)
 	if args.spellId == 139822 then
 		if args:IsPlayer() then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\safenow.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\safenow.ogg")
 		end
 		if FireMarkers[args.destName] then
 			FireMarkers[args.destName] = free(FireMarkers[args.destName])
@@ -394,7 +394,7 @@ end
 function mod:SPELL_DAMAGE(sourceGUID, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 139836 and destGUID == UnitGUID("player") and self:AntiSpam(2, 4) then
 		specWarnCindersMove:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg") --快躲開
 	end
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE
@@ -402,7 +402,7 @@ mod.SPELL_MISSED = mod.SPELL_DAMAGE
 function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 139909 and destGUID == UnitGUID("player") and self:AntiSpam(2, 2) then
 		specWarnTorrentofIce:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg") --快躲開
 	end
 end
 mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
@@ -421,7 +421,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 		timerRampage:Start()	
 		if MyJS() then
 			SpecWarnJSA:Show()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.ogg") --注意減傷
 		else
 			VEM:PlayCountSound(Ramcount)
 		end		
@@ -429,20 +429,20 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 		arcaneRecent = false
 		warnRampageFaded:Show()
 		specWarnRampageFaded:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\scattersoon.mp3")--注意分散
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\scattersoon.ogg")--注意分散
 		if self.Options.timerBreaths then
 			timerBreathsCD:Start(10)
 		end
 		--timers below may need adjusting by 1-2 seconds as I had to substitute last rampage SPELL_DAMAGE event for rampage ends emote when i reg expressioned these timers on WoL
 		if iceBehind > 0 then
-			if self:IsDifficulty("heroic10", "heroic25") then
+			if self:IsMythic() then
 				timerTorrentofIceCD:Start(12)--12-17 second variation on heroic
 			else
 				timerTorrentofIceCD:Start(8)--8-12 second variation on normal
 			end
 		end
 		if fireBehind > 0 then
-			if self:IsDifficulty("lfr25") then
+			if self:IsLFR() then
 				timerCinderCD:Start(12)--12-15 second variation
 			else
 				timerCinderCD:Start(5)--5-8 second variation
@@ -464,7 +464,7 @@ end
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 70628 then--Permanent Feign Death
 		local cid = self:GetCIDFromGUID(UnitGUID(uId))
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\gather.mp3")--快集合
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\gather.ogg")--快集合
 		if cid == 70235 then--Frozen
 			iceInFront = iceInFront - 1
 			iceBehind = iceBehind + 2

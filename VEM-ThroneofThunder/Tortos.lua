@@ -80,7 +80,7 @@ function mod:checkmydebuff()
 			if GetTime() - stomptime > 10 then
 				specWarnCrystalShell:Show(shelldName)
 				VEM.Flash:Shake(1, 1, 0)
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_sjsl.mp3")--水晶碎裂
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_sjsl.ogg")--水晶碎裂
 			end
 		end
 	end
@@ -126,18 +126,18 @@ function mod:OnCombatStart(delay)
 	timerRockfallCD:Start(15-delay)
 	timerCallTortosCD:Start(21-delay)
 	timerStompCD:Start(29-delay, 1)
-	sndWOP:Schedule(24, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\stompsoon.mp3")--準備踐踏
+	sndWOP:Schedule(24, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\stompsoon.ogg")--準備踐踏
 	timerBreathCD:Start(-delay)
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		if mod.Options.warnsj then
 			mod:checkmydebuff()
 		else
 			specWarnCrystalShell:Show(shelldName)
 			VEM.Flash:Shake(1, 1, 0)
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_sjsl.mp3")--水晶碎裂
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_sjsl.ogg")--水晶碎裂
 		end
 	end
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		if self.Options.InfoFrame then
 			VEM.InfoFrame:SetHeader(L.WrongDebuff:format(shelldName))
 			VEM.InfoFrame:Show(5, "playergooddebuff", 137633)
@@ -160,28 +160,28 @@ end
 function mod:SPELL_CAST_START(args)
 	if args.spellId == 133939 then
 		warnStoneBreath:Show()
-		if not self:IsDifficulty("lfr25") then
+		if not self:IsLFR() then
 			specWarnStoneBreath:Show(args.sourceName)
 		end
 		timerBreathCD:Start()
 		VEM.Flash:Shake(1, 0, 0)
-		sndAE:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\aesoon.mp3")
-		sndAE:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
-		sndAE:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")	
-		sndAE:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndAE:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndAE:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
-		sndAE:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\kickcast.mp3")--快打斷
+		sndAE:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\aesoon.ogg")
+		sndAE:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
+		sndAE:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")	
+		sndAE:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndAE:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndAE:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
+		sndAE:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\kickcast.ogg")--快打斷
 	elseif args.spellId == 136294 then
 		warnCallofTortos:Show()
 		specWarnCallofTortos:Show()
 		if self:AntiSpam(59, 3) then -- On below 10%, he casts Call of Tortos always. This cast ignores cooldown, so filter below 10% cast.
 			timerCallTortosCD:Start()
 		end
-		sndXG:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_xwg.mp3")--小烏龜出現
+		sndXG:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_xwg.ogg")--小烏龜出現
 	elseif args.spellId == 135251 then
 		if UnitName("boss1target") == UnitName("player") then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_xxsy.mp3")--小心撕咬
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_xxsy.ogg")--小心撕咬
 		end
 		warnBite:Show()
 		timerBiteCD:Start()
@@ -193,11 +193,11 @@ function mod:SPELL_CAST_START(args)
 		timerStompActive:Start()
 		timerRockfallCD:Start(7.4)--When the spam of rockfalls start
 		timerStompCD:Start(nil, stompCount+1)
-		sndWOP:Schedule(45, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\stompsoon.mp3")--準備踐踏
+		sndWOP:Schedule(45, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\stompsoon.ogg")--準備踐踏
 		if MyJS() then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.ogg") --注意減傷
 		else
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\stompstart.mp3")--踐踏開始
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\stompstart.ogg")--踐踏開始
 		end
 		stomptime = GetTime()
 	end
@@ -285,7 +285,7 @@ function mod:SPELL_AURA_REMOVED(args)
 		else
 			specWarnCrystalShell:Show(shelldName)
 			VEM.Flash:Shake(1, 1, 0)
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_sjsl.mp3")--水晶碎裂
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_sjsl.ogg")--水晶碎裂
 		end
 	end
 end
@@ -298,7 +298,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 				warnRockfall:Show()
 				specWarnRockfall:Show()--To warn of massive incoming for the 9 back to back rockfalls that are incoming
 				self:Schedule(10, clearStomp)
-				if self:IsDifficulty("heroic10", "heroic25") then
+				if self:IsMythic() then
 					if mod.Options.warnsj then
 						self:ScheduleMethod(12, "checkmydebuff")
 					end
@@ -335,7 +335,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		warnSummonBats:Show()
 		specWarnSummonBats:Show()
 		timerSummonBatsCD:Start()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_bfcx.mp3")--蝙蝠出現
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_bfcx.ogg")--蝙蝠出現
 	end
 end
 
@@ -374,11 +374,11 @@ function mod:OnSync(msg, guid, ver)
 		end
 	elseif msg == "aesoon" then
 		if mod:AntiSpam(15, 10) then
-			sndAE:Schedule(0.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\aesoon.mp3") --準備AE
-			sndAE:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")	
-			sndAE:Schedule(2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-			sndAE:Schedule(3, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-			sndAE:Schedule(4, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			sndAE:Schedule(0.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\aesoon.ogg") --準備AE
+			sndAE:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")	
+			sndAE:Schedule(2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+			sndAE:Schedule(3, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+			sndAE:Schedule(4, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		end
 	end
 end

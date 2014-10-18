@@ -1,5 +1,5 @@
-﻿## Interface: 50400
-## X-Min-Interface: 50100
+﻿## Interface: 60000
+## X-Min-Interface: 60000
 ## Title:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0Brawlers|r
 ## Title-zhCN:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0搏击俱乐部|r
 ## Title-zhTW:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0鬥陣俱樂部|r

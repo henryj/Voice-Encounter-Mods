@@ -269,36 +269,24 @@ local VEM = VEM
 -- so caching them is worth the effort
 local ipairs, pairs, next = ipairs, pairs, next
 local tinsert, tremove, twipe = table.insert, table.remove, table.wipe
-local type = type
-local select = select
+local type, select = type, select
 local GetTime = GetTime
+local bband = bit.band
 local floor, mhuge, mmin, mmax = math.floor, math.huge, math.min, math.max
-local GetNumGroupMembers = GetNumGroupMembers
-local GetRaidRosterInfo = GetRaidRosterInfo
-local IsInRaid = IsInRaid
-local IsInGroup = IsInGroup
-local IsInInstance = IsInInstance
-local UnitAffectingCombat = UnitAffectingCombat
-local UnitExists = UnitExists
-local UnitIsDead = UnitIsDead
-local UnitIsFriend = UnitIsFriend
-local GetSpellInfo = GetSpellInfo
-local EJ_GetSectionInfo = EJ_GetSectionInfo
+local GetNumGroupMembers, GetRaidRosterInfo = GetNumGroupMembers, GetRaidRosterInfo
+local IsInRaid, IsInGroup, IsInInstance = IsInRaid, IsInGroup, IsInInstance
+local UnitAffectingCombat, InCombatLockdown, IsEncounterInProgress = UnitAffectingCombat, InCombatLockdown, IsEncounterInProgress
+local UnitGUID, UnitHealth, UnitHealthMax, UnitBuff = UnitGUID, UnitHealth, UnitHealthMax, UnitBuff
+local UnitExists, UnitIsDead, UnitIsFriend, UnitIsUnit, UnitIsAFK = UnitExists, UnitIsDead, UnitIsFriend, UnitIsUnit, UnitIsAFK
+local GetSpellInfo, EJ_GetSectionInfo = GetSpellInfo, EJ_GetSectionInfo
+local EJ_GetEncounterInfo, EJ_GetCreatureInfo, GetDungeonInfo = EJ_GetEncounterInfo, EJ_GetCreatureInfo, GetDungeonInfo
 local GetInstanceInfo = GetInstanceInfo
-local GetCurrentMapDungeonLevel = GetCurrentMapDungeonLevel
-local GetMapInfo = GetMapInfo
-local GetCurrentMapZone = GetCurrentMapZone
-local SetMapToCurrentZone = SetMapToCurrentZone
+local UnitPosition, GetCurrentMapDungeonLevel, GetMapInfo, GetCurrentMapZone, SetMapToCurrentZone = UnitPosition, GetCurrentMapDungeonLevel, GetMapInfo, GetCurrentMapZone, SetMapToCurrentZone
 local GetSpecialization = GetSpecialization
 local UnitDetailedThreatSituation = UnitDetailedThreatSituation
-local GetPartyAssignment = GetPartyAssignment
-local UnitGroupRolesAssigned = UnitGroupRolesAssigned
-local LoadAddOn = LoadAddOn
-local IsEncounterInProgress = IsEncounterInProgress
-local InCombatLockdown = InCombatLockdown
-local GetAddOnInfo = GetAddOnInfo
-local PlaySoundFile = PlaySoundFile
-local PlaySound = PlaySound
+local GetPartyAssignment, UnitGroupRolesAssigned = GetPartyAssignment, UnitGroupRolesAssigned
+local LoadAddOn, GetAddOnInfo, GetAddOnEnableState, GetAddOnMetadata, GetNumAddOns = LoadAddOn, GetAddOnInfo, GetAddOnEnableState, GetAddOnMetadata, GetNumAddOns
+local PlaySoundFile, PlaySound = PlaySoundFile, PlaySound
 local Ambiguate = Ambiguate
 
 -- for Phanx' Class Colors
@@ -442,11 +430,11 @@ do
 	end
 
 	function argsMT.__index:GetSrcCreatureID()
-		return tonumber(self.sourceGUID:sub(6, 10), 16) or 0
+		return VEM:GetCIDFromGUID(self.sourceGUID)
 	end
 
 	function argsMT.__index:GetDestCreatureID()
-		return tonumber(self.destGUID:sub(6, 10), 16) or 0
+		return VEM:GetCIDFromGUID(self.destGUID)
 	end
 
 	local function handleEvent(self, event, ...)
@@ -590,6 +578,21 @@ do
 				end
 			end
 		end
+	end
+
+	function VEM:RegisterShortTermEvents(...)
+		if self.shortTermEventsRegistered then
+			return
+		end
+		self.shortTermRegisterEvents = {...}
+		for k, v in pairs(self.shortTermRegisterEvents) do
+			if v:sub(0, 5) == "UNIT_" and v:sub(v:len() - 10) ~= "_UNFILTERED" and not v:find(" ") and v ~= "UNIT_DIED" and v ~= "UNIT_DESTROYED" then
+				-- legacy event, oh noes
+				self.shortTermRegisterEvents[k] = v .. " boss1 boss2 boss3 boss4 boss5 target focus"
+			end
+		end
+		self.shortTermEventsRegistered = 1
+		self:RegisterEvents(unpack(self.shortTermRegisterEvents))
 	end
 
 	function VEM:UnregisterShortTermEvents()
@@ -781,7 +784,8 @@ do
 			if not VEM.Options.ShowMinimapButton then self:HideMinimapButton() end
 			self.AddOns = {}
 			for i = 1, GetNumAddOns() do
-				local addonName, _, _, enabled = GetAddOnInfo(i)
+				local addonName = GetAddOnInfo(i)
+				local enabled = GetAddOnEnableState(playerName, i)
 				if GetAddOnMetadata(i, "X-VEM-Mod") and enabled then
 					if checkEntry(bannedMods, addonName) then
 						print("The mod " .. addonName .. " is deprecated and will not be available. Please remove the folder " .. addonName .. " from your Interface" .. (IsWindowsClient() and "\\" or "/") .. "AddOns folder to get rid of this message.")
@@ -796,10 +800,11 @@ do
 							subTabs			= GetAddOnMetadata(i, "X-VEM-Mod-SubCategoriesID") and {strsplit(",", GetAddOnMetadata(i, "X-VEM-Mod-SubCategoriesID"))} or GetAddOnMetadata(i, "X-VEM-Mod-SubCategories") and {strsplit(",", GetAddOnMetadata(i, "X-VEM-Mod-SubCategories"))},
 							oneFormat		= tonumber(GetAddOnMetadata(i, "X-VEM-Mod-Has-Single-Format") or 0) == 1,
 							hasLFR			= tonumber(GetAddOnMetadata(i, "X-VEM-Mod-Has-LFR") or 0) == 1,
-							hasFlex			= tonumber(GetAddOnMetadata(i, "X-VEM-Mod-Has-Flex") or 0) == 1,
 							hasChallenge	= tonumber(GetAddOnMetadata(i, "X-VEM-Mod-Has-Challenge") or 0) == 1,
 							noHeroic		= tonumber(GetAddOnMetadata(i, "X-VEM-Mod-No-Heroic") or 0) == 1,
 							noStatistics	= tonumber(GetAddOnMetadata(i, "X-VEM-Mod-No-Statistics") or 0) == 1,
+							hasMythic		= tonumber(GetAddOnMetadata(i, "X-VEM-Mod-Has-Mythic") or 0) == 1,
+							isWorldBoss		= tonumber(GetAddOnMetadata(i, "X-VEM-Mod-World-Boss") or 0) == 1,
 							modId			= addonName,
 						})
 						for i = #self.AddOns[#self.AddOns].mapId, 1, -1 do
@@ -1885,6 +1890,25 @@ function VEM:GetNumRealGroupMembers()
 	return realGroupMembers
 end
 
+function VEM:GetUnitCreatureId(uId)
+	local guid = UnitGUID(uId)
+	return VEM:GetCIDFromGUID(guid)
+end
+
+--Creature/Vehicle/Pet
+----<type>:<subtype>:<realmID>:<mapID>:<serverID>:<dbID>:<creationbits>
+--Player/Item
+----<type>:<realmID>:<dbID>
+function VEM:GetCIDFromGUID(guid)
+	local type, _, playerdbID, _, _, cid, creationbits = strsplit("-", guid or "")
+	if type and (type == "Creature" or type == "Vehicle" or type == "Pet") then
+		return tonumber(cid), type
+	elseif type and (type == "Player" or type == "Item") then
+		return tonumber(playerdbID), type
+	end
+	return 0, nil
+end
+
 function VEM:GetBossUnitId(name)
 	for i = 1, 5 do
 		if UnitName("boss" .. i) == name then
@@ -1895,6 +1919,22 @@ function VEM:GetBossUnitId(name)
 		if UnitName(uId .. "target") == name and not UnitIsPlayer(uId .. "target") then
 			return uId .. "target"
 		end
+	end
+end
+
+-- An anti spam function to throttle spammy events (e.g. SPELL_AURA_APPLIED on all group members)
+-- @param time the time to wait between two events (optional, default 2.5 seconds)
+-- @param id the id to distinguish different events (optional, only necessary if your mod keeps track of two different spam events at the same time)
+function VEM:AntiSpam(time, id)
+	if GetTime() - (id and (self["lastAntiSpam" .. tostring(id)] or 0) or self.lastAntiSpam or 0) > (time or 2.5) then
+		if id then
+			self["lastAntiSpam" .. tostring(id)] = GetTime()
+		else
+			self.lastAntiSpam = GetTime()
+		end
+		return true
+	else
+		return false
 	end
 end
 
@@ -2004,8 +2044,8 @@ do
 				stats.heroicPulls = stats.heroicPulls or 0
 				stats.challengeKills = stats.challengeKills or 0
 				stats.challengePulls = stats.challengePulls or 0
-				stats.flexKills = stats.flexKills or 0
-				stats.flexPulls = stats.flexPulls or 0
+				stats.mythicKills = stats.mythicKills or 0
+				stats.mythicPulls = stats.mythicPulls or 0
 				stats.normal25Kills = stats.normal25Kills or 0
 				stats.normal25Kills = stats.normal25Kills or 0
 				stats.normal25Pulls = stats.normal25Pulls or 0
@@ -2106,9 +2146,8 @@ end
 --Loading routeens hacks for world bosses based on target or mouseover.
 function VEM:UPDATE_MOUSEOVER_UNIT()
 	if IsInInstance() or UnitIsDead("player") or UnitIsDead("mouseover") then return end--If you're in an instance no reason to waste cpu. If THE BOSS dead, no reason to load a mod for it. To prevent rare lua error, needed to filter on player dead.
-	local guid = UnitGUID("mouseover")
-	if guid and (bit.band(guid:sub(1, 5), 0x00F) == 3 or bit.band(guid:sub(1, 5), 0x00F) == 5) then
-		local cId = tonumber(guid:sub(6, 10), 16)
+	local cId, type = VEM:GetCIDFromGUID(UnitGUID("mouseover"))
+	if type and (type == "Creature" or type == "Vehicle" or type == "Pet") then
 		for bosscId, addon in pairs(loadcIds) do
 			local _, _, _, enabled = GetAddOnInfo(addon)
 			if cId and bosscId and cId == bosscId and not IsAddOnLoaded(addon) and enabled then
@@ -2125,9 +2164,8 @@ end
 
 function VEM:UNIT_TARGET_UNFILTERED(uId)
 	if IsInInstance() or not UnitIsFriend("player", uId) or UnitIsDead(uId.."target") then return end--If you're in an instance no reason to waste cpu. check only friend's target. If it's dead, no reason to load a mod for it.
-	local guid = UnitGUID(uId.."target")
-	if guid and (bit.band(guid:sub(1, 5), 0x00F) == 3 or bit.band(guid:sub(1, 5), 0x00F) == 5) then
-		local cId = tonumber(guid:sub(6, 10), 16)
+	local cId, type = VEM:GetCIDFromGUID(UnitGUID(uId.."target"))
+	if type and (type == "Creature" or type == "Vehicle" or type == "Pet") then
 		for bosscId, addon in pairs(loadcIds) do
 			local _, _, _, enabled = GetAddOnInfo(addon)
 			if cId and bosscId and cId == bosscId and not IsAddOnLoaded(addon) and enabled then
@@ -2205,29 +2243,50 @@ end
 --  Load Boss Mods on Demand  --
 --------------------------------
 do
+	local targetEventsRegistered = false
 	local function FixForShittyComputers()
-		local _, instanceType, _, _, _, _, _, mapID = GetInstanceInfo()
+		timerRequestInProgress = false
+		local _, instanceType, difficulty, _, _, _, _, mapID, instanceGroupSize = GetInstanceInfo()
+		if LastInstanceMapID == mapID then return end--ID hasn't changed, don't waste cpu doing anything else (example situation, porting into garrosh phase 4 is a loading screen)
 		LastInstanceMapID = mapID
-		if instanceType == "none" and not forceloadmapIds[mapID] then return end
-		-- You entered instance duing worldboss combat. Force end worldboss mod.
-		if instanceType ~= "none" and savedDifficulty == "worldboss" then
-			for i = #inCombat, 1, -1 do
-				VEM:EndCombat(inCombat[i], true)
+		LastGroupSize = instanceGroupSize
+		difficultyIndex = difficulty
+		if instanceType == "none" then
+			if not targetEventsRegistered then
+				VEM:RegisterShortTermEvents("UPDATE_MOUSEOVER_UNIT", "UNIT_TARGET_UNFILTERED")
+				targetEventsRegistered = true
+			end
+			if not forceloadmapIds[mapID] then return end
+		-- You entered instance during worldboss combat. Force end worldboss mod.
+		else
+			if targetEventsRegistered then
+				VEM:UnregisterShortTermEvents()
+				targetEventsRegistered = false
+			end
+			if savedDifficulty == "worldboss" then
+				for i = #inCombat, 1, -1 do
+					VEM:EndCombat(inCombat[i], true)
+				end
 			end
 		end
 		-- LoadMod
 		VEM:LoadModsOnDemand("mapId", mapID)
+		if not VEM.Options.PGMessageShown and LastInstanceMapID == 1148 and not GetAddOnInfo("VEM-ProvingGrounds") then
+			VEM.Options.PGMessageShown = true
+			VEM:AddMsg(VEM_CORE_PROVINGGROUNDS_AD)
+		end
 	end
 	--Faster and more accurate loading for instances, but useless outside of them
 	function VEM:LOADING_SCREEN_DISABLED()
-		self:Schedule(1, FixForShittyComputers, VEM)
+		FixForShittyComputers()
+		VEM:Schedule(3, FixForShittyComputers, VEM)
 	end
 
 	function VEM:LoadModsOnDemand(checkTable, checkValue)
 		for i, v in ipairs(VEM.AddOns) do
 			local modTable = v[checkTable]
-			local _, _, _, enabled = GetAddOnInfo(v.modId)
-			if enabled and not IsAddOnLoaded(v.modId) and modTable and checkEntry(modTable, checkValue) then
+			local enabled = GetAddOnEnableState(playerName, v.modId)
+			if enabled ~= 0 and not IsAddOnLoaded(v.modId) and modTable and checkEntry(modTable, checkValue) then
 				self:LoadMod(v)
 			end
 		end
@@ -2284,9 +2343,9 @@ function VEM:LoadMod(mod)
 				v.type = mod.type
 				v.oneFormat = mod.oneFormat
 				v.hasLFR = mod.hasLFR
-				v.hasFlex = mod.hasFlex
 				v.hasChallenge = mod.hasChallenge
 				v.noHeroic = mod.noHeroic
+				v.hasMythic = mod.hasMythic
 			end
 		end
 		if VEM_GUI then
@@ -2452,12 +2511,12 @@ do
 			VEM.Bars:CancelBar(VEM_CORE_TIMER_PULL)
 		end
 		if not VEM.Options.DontPlayPTCountdown then
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\com_go.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\com_go.ogg", "Master")
 		end
 		if not VEM.Options.DontShowPTCountdownText then
 			VEM:Unschedule(countDownTextDelay)
@@ -2470,12 +2529,12 @@ do
 		end
 		if not VEM.Options.DontPlayPTCountdown then
 			PlaySoundFile("Interface\\AddOns\\VEM-Core\\Sounds\\win.ogg", "Master")
-			if timer > 5 then VEM:Schedule(timer-5, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3", "Master") end
-			if timer > 5 then VEM:Schedule(timer-4, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3", "Master") end
-			if timer > 3 then VEM:Schedule(timer-3, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3", "Master") end
-			if timer > 3 then VEM:Schedule(timer-2, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3", "Master") end
-			if timer > 3 then VEM:Schedule(timer-1, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3", "Master") end
-			if timer > 1 then VEM:Schedule(timer, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\com_go.mp3", "Master") end
+			if timer > 5 then VEM:Schedule(timer-5, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg", "Master") end
+			if timer > 5 then VEM:Schedule(timer-4, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg", "Master") end
+			if timer > 3 then VEM:Schedule(timer-3, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg", "Master") end
+			if timer > 3 then VEM:Schedule(timer-2, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg", "Master") end
+			if timer > 3 then VEM:Schedule(timer-1, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg", "Master") end
+			if timer > 1 then VEM:Schedule(timer, PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\com_go.ogg", "Master") end
 		end
 		if not VEM.Options.DontShowPTCountdownText then
 			local threshold = VEM.Options.PTCountThreshold
@@ -2501,12 +2560,12 @@ do
 		end
 		dummyMod.text:Cancel()
 		if not VEM.Options.DontPlayPTCountdown then
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3", "Master")
-			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\com_go.mp3", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg", "Master")
+			VEM:Unschedule(PlaySoundFile, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\com_go.ogg", "Master")
 		end
 		if not VEM.Options.DontShowPTCountdownText then
 			VEM:Unschedule(countDownTextDelay)
@@ -3236,9 +3295,8 @@ do
 		local uId = (IsInRaid() and "raid") or "party"
 		for i = 0, GetNumGroupMembers() do
 			local id = (i == 0 and "target") or uId..i.."target"
-			local guid = UnitGUID(id)
-			if guid and (bit.band(guid:sub(1, 5), 0x00F) == 3 or bit.band(guid:sub(1, 5), 0x00F) == 5) then
-				local cId = tonumber(guid:sub(6, 10), 16)
+			local cId, type = VEM:GetCIDFromGUID(UnitGUID(id))
+			if type and (type == "Creature" or type == "Vehicle" or type == "Pet") then
 				targetList[cId] = id
 			end
 		end
@@ -3303,7 +3361,7 @@ do
 			local bossUnitId = "boss"..i
 			local bossExists = UnitExists(bossUnitId)
 			local bossGUID = bossExists and not UnitIsDead(bossUnitId) and UnitGUID(bossUnitId) -- check for UnitIsVisible maybe?
-			local bossCId = bossGUID and tonumber(bossGUID:sub(6, 10), 16)
+			local bossCId = bossGUID and VEM:GetCIDFromGUID(bossGUID)
 			if bossCId and (type(cId) == "number" and cId == bossCId or type(cId) == "table" and checkEntry(cId, bossCId)) then
 				return true
 			end
@@ -3470,6 +3528,26 @@ function checkWipe(isIEEU, confirm)
 	end
 end
 
+
+local statVarTable = {
+	--6.0
+	["normal5"] = "normal",
+	["heroic5"] = "heroic",
+	["challenge5"] = "challenge",
+	["lfr"] = "lfr25",
+	["normal"] = "normal",
+	["heroic"] = "heroic",
+	["mythic"] = "mythic",
+	["worldboss"] = "normal",
+	--Legacy
+	["lfr25"] = "lfr25",
+	["normal10"] = "normal",
+	["normal25"] = "normal25",
+	["heroic10"] = "heroic",
+	["heroic25"] = "heroic25",
+}
+
+
 local combatStartedByIEEU = false
 
 function VEM:StartCombat(mod, delay, event, synced, syncedStartHp)
@@ -3505,23 +3583,11 @@ function VEM:StartCombat(mod, delay, event, synced, syncedStartHp)
 		if not mod.stats then
 			self:AddMsg(VEM_CORE_BAD_LOAD)--Warn user that they should reload ui soon as they leave combat to get their mod to load correctly as soon as possible
 			mod.ignoreBestkill = true--Force this to true so we don't check any more occurances of "stats"
-		else
-			if mod:IsDifficulty("lfr25") then
-				mod.stats.lfr25Pulls = mod.stats.lfr25Pulls + 1
-			elseif mod:IsDifficulty("normal5", "normal10", "worldboss") then
-				mod.stats.normalPulls = mod.stats.normalPulls + 1
-			elseif mod:IsDifficulty("heroic5", "heroic10") then
-				mod.stats.heroicPulls = mod.stats.heroicPulls + 1
-			elseif mod:IsDifficulty("challenge5") then
-				mod.stats.challengePulls = mod.stats.challengePulls + 1
-			elseif mod:IsDifficulty("flex") then
-				mod.stats.flexPulls = mod.stats.flexPulls + 1
-			elseif mod:IsDifficulty("normal25") then
-				mod.stats.normal25Pulls = mod.stats.normal25Pulls + 1
-			elseif mod:IsDifficulty("heroic25") then
-				mod.stats.heroic25Pulls = mod.stats.heroic25Pulls + 1
-			end
 		end
+		--set mod default info
+		savedDifficulty, difficultyText, difficultyIndex, LastGroupSize = VEM:GetCurrentInstanceDifficulty()
+		local name = mod.combatInfo.name
+		local modId = mod.id
 		if C_Scenario.IsInScenario() then
 			mod.inScenario = true
 		end
@@ -3543,26 +3609,16 @@ function VEM:StartCombat(mod, delay, event, synced, syncedStartHp)
 		local startHp = (syncedStartHp and (tonumber(syncedStartHp))) or mod:GetBossHP(mod.mainBossId or mod.combatInfo.mob) or -1
 		if (mod:IsDifficulty("worldboss") and startHp < 0.98) or (event == "UNIT_HEALTH" and startHp < 0.90) then--Boss was not full health when engaged, disable combat start timer and kill record
 			mod.ignoreBestkill = true
+		elseif mod.inScenario then
+			local _, currentStage, numStages = C_Scenario.GetInfo()
+			if currentStage > 1 and numStages > 1 then
+				mod.ignoreBestkill = true
+			end
 		else--Reset ignoreBestkill after wipe
 			mod.ignoreBestkill = false
 		end
 		if (VEM.Options.AlwaysShowSpeedKillTimer or mod.Options.SpeedKillTimer) and not mod.ignoreBestkill then
-			local bestTime
-			if mod:IsDifficulty("lfr25") and mod.stats.lfr25BestTime then
-				bestTime = mod.stats.lfr25BestTime
-			elseif mod:IsDifficulty("normal5", "normal10", "worldboss") and mod.stats.normalBestTime then
-				bestTime = mod.stats.normalBestTime
-			elseif mod:IsDifficulty("heroic5", "heroic10") and mod.stats.heroicBestTime then
-				bestTime = mod.stats.heroicBestTime
-			elseif mod:IsDifficulty("challenge5") and mod.stats.challengeBestTime then
-				bestTime = mod.stats.challengeBestTime
-			elseif mod:IsDifficulty("flex") and mod.stats.flexBestTime then
-				bestTime = mod.stats.flexBestTime
-			elseif mod:IsDifficulty("normal25") and mod.stats.normal25BestTime then
-				bestTime = mod.stats.normal25BestTime
-			elseif mod:IsDifficulty("heroic25") and mod.stats.heroic25BestTime then
-				bestTime = mod.stats.heroic25BestTime
-			end
+			local bestTime = mod.stats[statVarTable[savedDifficulty].."BestTime"]
 			if bestTime and bestTime > 0 then
 				local speedTimer = mod:NewTimer(bestTime, VEM_SPEED_KILL_TIMER_TEXT, "Interface\\Icons\\Spell_Holy_BorrowedTime")
 				speedTimer:Start()
@@ -3636,7 +3692,7 @@ end
 
 function VEM:UNIT_HEALTH(uId)
 	if not UnitExists(uId) then return end
-	local cId = UnitGUID(uId) and tonumber(UnitGUID(uId):sub(6, 10), 16)
+	local cId = UnitGUID(uId) and VEM:GetCIDFromGUID(UnitGUID(uId))
 	if not cId then return end
 	local health = (UnitHealth(uId) or 0) / (UnitHealthMax(uId) or 1)
 	if #inCombat > 0 and bossHealth[cId] then
@@ -3716,24 +3772,10 @@ function VEM:EndCombat(mod, wipe)
 			--Fix for "attempt to perform arithmetic on field 'pull' (a nil value)" (which was actually caused by stats being nil, so we never did getTime on pull, fixing one SHOULD fix the other)
 			local thisTime = GetTime() - mod.combatInfo.pull
 			local wipeHP = ("%d%%"):format((mod.mainBossId and VEM:GetBossHealthByCID(mod.mainBossId) or mod.highesthealth and VEM:GetHighestBossHealth() or VEM:GetLowestBossHealth()) * 100)
-			local totalPulls = (savedDifficulty == "lfr25" and mod.stats.lfr25Pulls) or ((savedDifficulty == "heroic5" or savedDifficulty == "heroic10") and mod.stats.heroicPulls) or (savedDifficulty == "challenge5" and mod.stats.challengePulls) or (savedDifficulty == "flex" and mod.stats.flexPulls) or (savedDifficulty == "normal25" and mod.stats.normal25Pulls) or (savedDifficulty == "heroic25" and mod.stats.heroic25Pulls) or ((savedDifficulty == "normal5" or savedDifficulty == "normal10" or savedDifficulty == "worldboss") and mod.stats.normalPulls) or 0
-			local totalKills = (savedDifficulty == "lfr25" and mod.stats.lfr25Kills) or ((savedDifficulty == "heroic5" or savedDifficulty == "heroic10") and mod.stats.heroicKills) or (savedDifficulty == "challenge5" and mod.stats.challengeKills) or (savedDifficulty == "flex" and mod.stats.flexKills) or (savedDifficulty == "normal25" and mod.stats.normal25Kills) or (savedDifficulty == "heroic25" and mod.stats.heroic25Kills) or ((savedDifficulty == "normal5" or savedDifficulty == "normal10" or savedDifficulty == "worldboss") and mod.stats.normalKills) or 0
+			local totalPulls = mod.stats[statVarTable[savedDifficulty].."Pulls"]
+			local totalKills = mod.stats[statVarTable[savedDifficulty].."Kills"]
 			if thisTime < 30 then -- Normally, one attempt will last at least 30 sec.
-				if savedDifficulty == "lfr25" then
-					mod.stats.lfr25Pulls = mod.stats.lfr25Pulls - 1
-				elseif savedDifficulty == "heroic5" or savedDifficulty == "heroic10" then
-					mod.stats.heroicPulls = mod.stats.heroicPulls - 1
-				elseif savedDifficulty == "challenge5" then
-					mod.stats.challengePulls = mod.stats.challengePulls - 1
-				elseif savedDifficulty == "flex" then
-					mod.stats.flexPulls = mod.stats.flexPulls - 1
-				elseif savedDifficulty == "normal25" then
-					mod.stats.normal25Pulls = mod.stats.normal25Pulls - 1
-				elseif savedDifficulty == "heroic25" then
-					mod.stats.heroic25Pulls = mod.stats.heroic25Pulls - 1
-				else
-					mod.stats.normalPulls = mod.stats.normalPulls - 1
-				end
+				totalPulls = totalPulls - 1
 				if VEM.Options.ShowWipeMessage then
 					if scenario then
 						self:AddMsg(VEM_CORE_SCENARIO_ENDED_AT:format(difficultyText..mod.combatInfo.name, strFromTime(thisTime)))
@@ -3772,102 +3814,22 @@ function VEM:EndCombat(mod, wipe)
 		else
 			mod.lastKillTime = GetTime()
 			local thisTime = GetTime() - mod.combatInfo.pull
-			local lastTime = (savedDifficulty == "lfr25" and mod.stats.lfr25LastTime) or ((savedDifficulty == "heroic5" or savedDifficulty == "heroic10") and mod.stats.heroicLastTime) or (savedDifficulty == "challenge5" and mod.stats.challengeLastTime) or (savedDifficulty == "flex" and mod.stats.flexLastTime) or (savedDifficulty == "normal25" and mod.stats.normal25LastTime) or (savedDifficulty == "heroic25" and mod.stats.heroic25LastTime) or ((savedDifficulty == "normal5" or savedDifficulty == "normal10" or savedDifficulty == "worldboss") and mod.stats.normalLastTime) or nil
-			local bestTime = (savedDifficulty == "lfr25" and mod.stats.lfr25BestTime) or ((savedDifficulty == "heroic5" or savedDifficulty == "heroic10") and mod.stats.heroicBestTime) or (savedDifficulty == "challenge5" and mod.stats.challengeBestTime) or (savedDifficulty == "flex" and mod.stats.flexBestTime) or (savedDifficulty == "normal25" and mod.stats.normal25BestTime) or (savedDifficulty == "heroic25" and mod.stats.heroic25BestTime) or ((savedDifficulty == "normal5" or savedDifficulty == "normal10" or savedDifficulty == "worldboss") and mod.stats.normalBestTime) or nil
-			if savedDifficulty == "lfr25" then
-				if not mod.stats.lfr25Kills or mod.stats.lfr25Kills < 0 then mod.stats.lfr25Kills = 0 end
-				if mod.stats.lfr25Kills > mod.stats.lfr25Pulls then mod.stats.lfr25Kills = mod.stats.lfr25Pulls end--Fix logical error i've seen where for some reason we have more kills then pulls for boss as seen by - stats for wipe messages.
-				mod.stats.lfr25Kills = mod.stats.lfr25Kills + 1
-				if not mod.ignoreBestkill then
-					mod.stats.lfr25LastTime = thisTime
-					if bestTime and bestTime > 0 and bestTime < 10 then--Just to prevent pre mature end combat calls from broken mods from saving bad time stats.
-						mod.stats.lfr25BestTime = thisTime
-					else
-						mod.stats.lfr25BestTime = mmin(bestTime or mhuge, thisTime)
-					end
-				end
-			elseif savedDifficulty == "normal5" or savedDifficulty == "worldboss" then
-				if not mod.stats.normalKills or mod.stats.normalKills < 0 then mod.stats.normalKills = 0 end
-				if mod.stats.normalKills > mod.stats.normalPulls then mod.stats.normalKills = mod.stats.normalPulls end
-				mod.stats.normalKills = mod.stats.normalKills + 1
-				if not mod.ignoreBestkill then
-					mod.stats.normalLastTime = thisTime
-					mod.stats.normalBestTime = mmin(bestTime or mhuge, thisTime)
-				end
-			elseif savedDifficulty == "heroic5" then
-				if not mod.stats.heroicKills or mod.stats.heroicKills < 0 then mod.stats.heroicKills = 0 end
-				if mod.stats.heroicKills > mod.stats.heroicPulls then mod.stats.heroicKills = mod.stats.heroicPulls end
-				mod.stats.heroicKills = mod.stats.heroicKills + 1
-				if not mod.ignoreBestkill then
-					mod.stats.heroicLastTime = thisTime
-					mod.stats.heroicBestTime = mmin(bestTime or mhuge, thisTime)
-				end
-			elseif savedDifficulty == "challenge5" then
-				if not mod.stats.challengeKills or mod.stats.challengeKills < 0 then mod.stats.challengeKills = 0 end
-				if mod.stats.challengeKills > mod.stats.challengePulls then mod.stats.challengeKills = mod.stats.challengePulls end
-				mod.stats.challengeKills = mod.stats.challengeKills + 1
-				if not mod.ignoreBestkill then
-					mod.stats.challengeLastTime = thisTime
-					mod.stats.challengeBestTime = mmin(bestTime or mhuge, thisTime)
-				end
-			elseif savedDifficulty == "flex" then
-				if not mod.stats.flexKills or mod.stats.flexKills < 0 then mod.stats.flexKills = 0 end
-				if mod.stats.flexKills > mod.stats.flexPulls then mod.stats.flexKills = mod.stats.flexPulls end
-				mod.stats.flexKills = mod.stats.flexKills + 1
-				if not mod.ignoreBestkill then
-					mod.stats.flexLastTime = thisTime
-					mod.stats.flexBestTime = mmin(bestTime or mhuge, thisTime)
-				end
-			elseif savedDifficulty == "normal10" then
-				if not mod.stats.normalKills or mod.stats.normalKills < 0 then mod.stats.normalKills = 0 end
-				if mod.stats.normalKills > mod.stats.normalPulls then mod.stats.normalKills = mod.stats.normalPulls end
-				mod.stats.normalKills = mod.stats.normalKills + 1
-				if not mod.ignoreBestkill then
-					mod.stats.normalLastTime = thisTime
-					if bestTime and bestTime > 0 and bestTime < 1.5 then--you did not kill a raid boss in one global CD. (all level 60 raids report as instance difficulty 1 which means this time has to be ridiculously low. It's more or less only gonna fix kill times of 0.)
-						mod.stats.normalBestTime = thisTime
-					else
-						mod.stats.normalBestTime = mmin(bestTime or mhuge, thisTime)
-					end
-				end
-			elseif savedDifficulty == "heroic10" then
-				if not mod.stats.heroicKills or mod.stats.heroicKills < 0 then mod.stats.heroicKills = 0 end
-				if mod.stats.heroicKills > mod.stats.heroicPulls then mod.stats.heroicKills = mod.stats.heroicPulls end
-				mod.stats.heroicKills = mod.stats.heroicKills + 1
-				if not mod.ignoreBestkill then
-					mod.stats.heroicLastTime = thisTime
-					if bestTime and bestTime > 0 and bestTime < 2 then
-						mod.stats.heroicBestTime = thisTime
-					else
-						mod.stats.heroicBestTime = mmin(bestTime or mhuge, thisTime)
-					end
-				end
-			elseif savedDifficulty == "normal25" then
-				if not mod.stats.normal25Kills or mod.stats.normal25Kills < 0 then mod.stats.normal25Kills = 0 end
-				if mod.stats.normal25Kills > mod.stats.normal25Pulls then mod.stats.normal25Kills = mod.stats.normal25Pulls end
-				mod.stats.normal25Kills = mod.stats.normal25Kills + 1
-				if not mod.ignoreBestkill then
-					mod.stats.normal25LastTime = thisTime
-					if bestTime and bestTime > 0 and bestTime < 3 then
-						mod.stats.normal25BestTime = thisTime
-					else
-						mod.stats.normal25BestTime = mmin(bestTime or mhuge, thisTime)
-					end
-				end
-			elseif savedDifficulty == "heroic25" then
-				if not mod.stats.heroic25Kills or mod.stats.heroic25Kills < 0 then mod.stats.heroic25Kills = 0 end
-				if mod.stats.heroic25Kills > mod.stats.heroic25Pulls then mod.stats.heroic25Kills = mod.stats.heroic25Pulls end
-				mod.stats.heroic25Kills = mod.stats.heroic25Kills + 1
-				if not mod.ignoreBestkill then
-					mod.stats.heroic25LastTime = thisTime
-					if bestTime and bestTime > 0 and bestTime < 4 then
-						mod.stats.heroic25BestTime = thisTime
-					else
-						mod.stats.heroic25BestTime = mmin(bestTime or mhuge, thisTime)
-					end
+			local lastTime = mod.stats[statVarTable[savedDifficulty].."LastTime"]
+			local bestTime = mod.stats[statVarTable[savedDifficulty].."BestTime"]
+			if not mod.stats[statVarTable[savedDifficulty].."Kills"] or mod.stats[statVarTable[savedDifficulty].."Kills"] < 0 then mod.stats[statVarTable[savedDifficulty].."Kills"] = 0 end
+			--Fix logical error i've seen where for some reason we have more kills then pulls for boss as seen by - stats for wipe messages.
+			if mod.stats[statVarTable[savedDifficulty].."Kills"] > mod.stats[statVarTable[savedDifficulty].."Pulls"] then mod.stats[statVarTable[savedDifficulty].."Kills"] = mod.stats[statVarTable[savedDifficulty].."Pulls"] end
+			mod.stats[statVarTable[savedDifficulty].."Kills"] = mod.stats[statVarTable[savedDifficulty].."Kills"] + 1
+			if not mod.ignoreBestkill and mod.combatInfo.pull then
+				mod.stats[statVarTable[savedDifficulty].."LastTime"] = thisTime
+				--Just to prevent pre mature end combat calls from broken mods from saving bad time stats.
+				if bestTime and bestTime > 0 and bestTime < 1.5 then
+					mod.stats[statVarTable[savedDifficulty].."BestTime"] = thisTime
+				else
+					mod.stats[statVarTable[savedDifficulty].."BestTime"] = mmin(bestTime or mhuge, thisTime)
 				end
 			end
-			local totalKills = (savedDifficulty == "lfr25" and mod.stats.lfr25Kills) or ((savedDifficulty == "heroic5" or savedDifficulty == "heroic10") and mod.stats.heroicKills) or (savedDifficulty == "challenge5" and mod.stats.challengeKills) or (savedDifficulty == "flex" and mod.stats.flexKills) or (savedDifficulty == "normal25" and mod.stats.normal25Kills) or (savedDifficulty == "heroic25" and mod.stats.heroic25Kills) or mod.stats.normalKills
+			local totalKills = mod.stats[statVarTable[savedDifficulty].."Kills"]
 			if VEM.Options.ShowKillMessage then
 				if not thisTime then--was a bad pull so we ignored thisTime
 					if scenario then
@@ -3963,7 +3925,8 @@ end
 
 function VEM:StartLogging(timer, checkFunc)
 	self:Unschedule(VEM.StopLogging)
-	if VEM.Options.LogOnlyRaidBosses and savedDifficulty ~= "normal10" and savedDifficulty ~= "normal25" and savedDifficulty ~= "heroic10" and savedDifficulty ~= "heroic25" and savedDifficulty ~= "flex" then return end
+	local _, instanceType = GetInstanceInfo()
+	if VEM.Options.LogOnlyRaidBosses and ((instanceType ~= "raid") or IsPartyLFG()) then return end
 	if VEM.Options.AutologBosses and not LoggingCombat() then--Start logging here to catch pre pots.
 		self:AddMsg("|cffffff00"..COMBATLOGENABLED.."|r")
 		LoggingCombat(1)
@@ -4000,39 +3963,50 @@ end
 function VEM:GetCurrentInstanceDifficulty()
 	local _, _, difficulty, difficultyName, _, _, _, _, instanceGroupSize = GetInstanceInfo()
 	if difficulty == 0 then
-		return "worldboss", RAID_INFO_WORLD_BOSS.." - "
+		return "worldboss", RAID_INFO_WORLD_BOSS.." - ", difficulty
 	elseif difficulty == 1 then
-		return "normal5", difficultyName.." - ", difficulty
+		return "normal5", difficultyName.." - ", difficulty, instanceGroupSize
 	elseif difficulty == 2 then
-		return "heroic5", difficultyName.." - ", difficulty
+		return "heroic5", difficultyName.." - ", difficulty, instanceGroupSize
 	elseif difficulty == 3 then
-		return "normal10", difficultyName.." - ", difficulty
+		return "normal10", difficultyName.." - ", difficulty, instanceGroupSize
 	elseif difficulty == 4 then
-		return "normal25", difficultyName.." - ", difficulty
+		return "normal25", difficultyName.." - ", difficulty, instanceGroupSize
 	elseif difficulty == 5 then
-		return "heroic10", difficultyName.." - ", difficulty
+		return "heroic10", difficultyName.." - ", difficulty, instanceGroupSize
 	elseif difficulty == 6 then
-		return "heroic25", difficultyName.." - ", difficulty
-	elseif difficulty == 7 then
-		return "lfr25", difficultyName.." - ", difficulty
+		return "heroic25", difficultyName.." - ", difficulty, instanceGroupSize
+	elseif difficulty == 7 then--Fixed LFR (ie pre WoD zones)
+		return "lfr25", difficultyName.." - ", difficulty, instanceGroupSize
 	elseif difficulty == 8 then
-		return "challenge5", difficultyName.." - ", difficulty
+		return "challenge5", difficultyName.." - ", difficulty, instanceGroupSize
 	elseif difficulty == 9 then--40 man raids have their own difficulty now, no longer returned as normal 10man raids
-		return "normal10", difficultyName.." - ",difficulty--Just use normal10 anyways, since that's where we been saving 40 man stuff for so long anyways, no reason to change it now, not like any 40 mans can be toggled between 10 and 40 where we NEED to tell the difference.
-	elseif difficulty == 11 then--5.3 heroic scenario
-		return "heroic5", difficultyName.." - ", difficulty
-	elseif difficulty == 12 then--5.3 normal scenario
-		return "normal5", difficultyName.." - ", difficulty
+		return "normal10", difficultyName.." - ",difficulty, instanceGroupSize--Just use normal10 anyways, since that's where we been saving 40 man stuff for so long anyways, no reason to change it now, not like any 40 mans can be toggled between 10 and 40 where we NEED to tell the difference.
+	elseif difficulty == 11 then
+		return "heroic5", difficultyName.." - ", difficulty, instanceGroupSize
+	elseif difficulty == 12 then
+		return "normal5", difficultyName.." - ", difficulty, instanceGroupSize
 	elseif difficulty == 14 then
-		return "flex", difficultyName.." - ", difficulty
+		return "normal", difficultyName.." - ", difficulty, instanceGroupSize
+	elseif difficulty == 15 then
+		return "heroic", difficultyName.." - ", difficulty, instanceGroupSize
+	elseif difficulty == 16 then
+		return "mythic", difficultyName.." - ", difficulty, instanceGroupSize
+	elseif difficulty == 17 then--Variable LFR (ie post WoD zones)
+		return "lfr", difficultyName.." - ", difficulty, instanceGroupSize
+	elseif difficulty == 18 then
+		return "event40", difficultyName.." - ", difficulty, instanceGroupSize
+	elseif difficulty == 19 then
+		return "event5", difficultyName.." - ", difficulty, instanceGroupSize
 	else--failsafe
-		return "normal5", "", difficulty
+		return "normal5", "", difficulty, instanceGroupSize
 	end
 end
 
 function VEM:UNIT_DIED(args)
-	if bit.band(args.destGUID:sub(1, 5), 0x00F) == 3 or bit.band(args.destGUID:sub(1, 5), 0x00F) == 5  then
-		self:OnMobKill(tonumber(args.destGUID:sub(6, 10), 16))
+	local cId, type = VEM:GetCIDFromGUID(args.destGUID)
+	if type and (type == "Creature" or type == "Vehicle" or type == "Pet") then
+		self:OnMobKill(cId)
 	end
 end
 VEM.UNIT_DESTROYED = VEM.UNIT_DIED
@@ -4064,77 +4038,7 @@ do
 
 	function VEM:ReceiveCombatInfo(sender, mod, time, isIEEU)
 		if sender == requestedFrom and (GetTime() - requestTime) < 5 and #inCombat == 0 then
-			if not mod.Options.Enabled then return end
-			local lag = select(4, GetNetStats()) / 1000
-			if not mod.combatInfo then return end
-			self:AddMsg(VEM_CORE_COMBAT_STATE_RECOVERED:format(mod.combatInfo.name, strFromTime(time + lag)))
-			tinsert(inCombat, mod)
-			bossHealth[mod.combatInfo.mob or -1] = 1
-			if mod.multiMobPullDetection then
-				for _, mob in ipairs(mod.multiMobPullDetection) do
-					if not bossHealth[mob] then bossHealth[mob] = 1 end
-				end
-			end
-			savedDifficulty, difficultyText = self:GetCurrentInstanceDifficulty()
-			if mod.inCombatOnlyEvents and not mod.inCombatOnlyEventsRegistered then
-				mod.inCombatOnlyEventsRegistered = 1
-				mod:RegisterEvents(unpack(mod.inCombatOnlyEvents))
-			end
-			if C_Scenario.IsInScenario() then
-				mod.inScenario = true
-			end
-			mod.inCombat = true
-			mod.blockSyncs = nil
-			mod.combatInfo.pull = GetTime() - time + lag
-			local isIEEU = isIEEU
-			--hack for no iEEU information provided.
-			if not isIEEU then
-				for i = 1, 5 do
-					if UnitExists("boss"..i) then
-						isIEEU = "true"
-						break
-					end
-				end
-			end
-			if mod.minCombatTime then
-				self:Schedule(mmax((mod.minCombatTime - time - lag), 3), checkWipe, isIEEU == "true")
-			else
-				self:Schedule(3, checkWipe, isIEEU == "true")
-			end
-			if (VEM.Options.AlwaysShowHealthFrame or mod.Options.HealthFrame) and not mod.inSecnario then
-				VEM.BossHealth:Show(mod.localization.general.name)
-				if mod.bossHealthInfo then
-					for i = 1, #mod.bossHealthInfo, 2 do
-						VEM.BossHealth:AddBoss(mod.bossHealthInfo[i], mod.bossHealthInfo[i + 1])
-					end
-				else
-					VEM.BossHealth:AddBoss(mod.combatInfo.mob, mod.localization.general.name)
-				end
-			end
-			if (VEM.Options.AlwaysShowSpeedKillTimer or mod.Options.SpeedKillTimer) then
-				local bestTime
-				local elapsed = time + lag
-				if mod:IsDifficulty("lfr25") and mod.stats.lfr25BestTime then
-					bestTime = mod.stats.lfr25BestTime
-				elseif mod:IsDifficulty("normal5", "normal10", "worldboss") and mod.stats.normalBestTime then
-					bestTime = mod.stats.normalBestTime
-				elseif mod:IsDifficulty("heroic5", "heroic10") and mod.stats.heroicBestTime then
-					bestTime = mod.stats.heroicBestTime
-				elseif mod:IsDifficulty("challenge5") and mod.stats.challengeBestTime then
-					bestTime = mod.stats.challengeBestTime
-				elseif mod:IsDifficulty("flex") and mod.stats.flexBestTime then
-					bestTime = mod.stats.flexBestTime
-				elseif mod:IsDifficulty("normal25") and mod.stats.normal25BestTime then
-					bestTime = mod.stats.normal25BestTime
-				elseif mod:IsDifficulty("heroic25") and mod.stats.heroic25BestTime then
-					bestTime = mod.stats.heroic25BestTime
-				end
-				if bestTime and bestTime > 0 and elapsed < bestTime then	-- only start if you already have a bestTime :)
-					local speedTimer = mod:NewTimer(bestTime, VEM_SPEED_KILL_TIMER_TEXT, "Interface\\Icons\\Spell_Holy_BorrowedTime")
-					speedTimer:Update(time + lag, bestTime)
-				end
-			end
-			self:ToggleRaidBossEmoteFrame(1)
+			self:StartCombat(mod, time, "TIMER_RECOVERY")
 		end
 	end
 
@@ -4731,6 +4635,7 @@ end
 bossModPrototype.RegisterEvents = VEM.RegisterEvents
 bossModPrototype.UnregisterInCombatEvents = VEM.UnregisterInCombatEvents
 bossModPrototype.AddMsg = VEM.AddMsg
+bossModPrototype.RegisterShortTermEvents = VEM.RegisterShortTermEvents
 bossModPrototype.UnregisterShortTermEvents = VEM.UnregisterShortTermEvents
 
 function bossModPrototype:SetZone(...)
@@ -4751,6 +4656,47 @@ function bossModPrototype:SetZone(...)
 	end
 end
 
+function bossModPrototype:Toggle()
+	if self.Options.Enabled then
+		self:DisableMod()
+	else
+		self:EnableMod()
+	end
+end
+
+function bossModPrototype:EnableMod()
+	self.Options.Enabled = true
+end
+
+function bossModPrototype:DisableMod()
+	self:Stop()
+	self.Options.Enabled = false
+end
+
+function bossModPrototype:Stop()
+	for i, v in ipairs(self.timers) do
+		v:Stop()
+	end
+	for i, v in ipairs(self.countdowns) do
+		v:Stop()
+	end
+	self:Unschedule()
+end
+
+function bossModPrototype:SetUsedIcons(...)
+	self.usedIcons = {}
+	for i = 1, select("#", ...) do
+		self.usedIcons[select(i, ...)] = true
+	end
+end
+
+function bossModPrototype:RegisterOnUpdateHandler(func, interval)
+	if type(func) ~= "function" then return end
+	self.elapsed = 0
+	self.updateInterval = interval or 0
+	updateFunctions[self] = func
+end
+
 --------------
 --  Events  --
 --------------
@@ -4765,21 +4711,6 @@ function bossModPrototype:RegisterEventsInCombat(...)
 			self.inCombatOnlyEvents[k] = v .. " boss1 boss2 boss3 boss4 boss5 target focus"
 		end
 	end
-end
-
-function bossModPrototype:RegisterShortTermEvents(...)
-	if self.shortTermEventsRegistered then
-		return
-	end
-	self.shortTermRegisterEvents = {...}
-	for k, v in pairs(self.shortTermRegisterEvents) do
-		if v:sub(0, 5) == "UNIT_" and v:sub(v:len() - 10) ~= "_UNFILTERED" and not v:find(" ") and v ~= "UNIT_DIED" and v ~= "UNIT_DESTROYED" then
-			-- legacy event, oh noes
-			self.shortTermRegisterEvents[k] = v .. " boss1 boss2 boss3 boss4 boss5 target focus"
-		end
-	end
-	self.shortTermEventsRegistered = 1
-	self:RegisterEvents(unpack(self.shortTermRegisterEvents))
 end
 
 function bossModPrototype:SetCreatureID(...)
@@ -4814,30 +4745,6 @@ function bossModPrototype:SetQuestID(id)
 	self.questId = id
 end
 
-function bossModPrototype:Toggle()
-	if self.Options.Enabled then
-		self:DisableMod()
-	else
-		self:EnableMod()
-	end
-end
-
-function bossModPrototype:EnableMod()
-	self.Options.Enabled = true
-end
-
-function bossModPrototype:DisableMod()
-	self:Stop()
-	self.Options.Enabled = false
-end
-
-function bossModPrototype:RegisterOnUpdateHandler(func, interval)
-	if type(func) ~= "function" then return end
-	self.elapsed = 0
-	self.updateInterval = interval or 0
-	updateFunctions[self] = func
-end
-
 function bossModPrototype:SetRevision(revision)
 	revision = tonumber(revision or "")
 	if not revision then
@@ -4851,14 +4758,11 @@ function bossModPrototype:SendWhisper(msg, target)
 	return not VEM.Options.DontSendBossWhispers and sendWhisper(target, chatPrefixShort..msg)
 end
 
-function bossModPrototype:GetUnitCreatureId(uId)
-	local guid = UnitGUID(uId)
-	return (guid and (tonumber(guid:sub(6, 10), 16))) or 0
-end
+bossModPrototype.GetUnitCreatureId = VEM.GetUnitCreatureId
+bossModPrototype.AntiSpam = VEM.AntiSpam
+bossModPrototype.GetCIDFromGUID = VEM.GetCIDFromGUID
 
-function bossModPrototype:GetCIDFromGUID(guid)
-	return (guid and (tonumber(guid:sub(6, 10), 16))) or 0
-end
+
 
 local bossTargetuIds = {
 	"target", "focus", "boss1", "boss2", "boss3", "boss4", "boss5"
@@ -4963,7 +4867,7 @@ function bossModPrototype:ScanForMobs(creatureID, iconSetMethod, mobIcon, maxIco
 		for uId in VEM:GetGroupMembers() do
 			local unitid = uId.."target"
 			local guid = UnitGUID(unitid)
-			local cid = self:GetCIDFromGUID(guid)
+			local cid = VEM:GetCIDFromGUID(guid)
 			if guid and type(creatureID) == "table" and creatureID[cid] and not addsGUIDs[guid] then
 				if type(creatureID[cid]) == "number" then
 					SetRaidTarget(unitid, creatureID[cid])
@@ -5007,7 +4911,7 @@ function bossModPrototype:ScanForMobs(creatureID, iconSetMethod, mobIcon, maxIco
 			end
 		end
 		local guid2 = UnitGUID("mouseover")
-		local cid2 = self:GetCIDFromGUID(guid2)
+		local cid2 = VEM:GetCIDFromGUID(guid2)
 		if guid2 and type(creatureID) == "table" and creatureID[cid2] and not addsGUIDs[guid2] then
 			if type(creatureID[cid2]) == "number" then
 				SetRaidTarget("mouseover", creatureID[cid2])
@@ -5135,11 +5039,35 @@ function bossModPrototype:IsDifficulty(...)
 	return false
 end
 
-function bossModPrototype:SetUsedIcons(...)
-	self.usedIcons = {}
-	for i = 1, select("#", ...) do
-		self.usedIcons[select(i, ...)] = true
+function bossModPrototype:IsLFR()
+	local diff = VEM:GetCurrentInstanceDifficulty()
+	if diff == "lfr" or diff == "lfr25" then
+		return true
 	end
+	return false
+end
+
+function bossModPrototype:IsHeroic()
+	local diff = VEM:GetCurrentInstanceDifficulty()
+	if diff == "heroic" or diff == "heroic5" or diff == "heroic10" or diff == "heroic25" then
+		return true
+	end
+	return false
+end
+
+function bossModPrototype:IsMythic()
+	local diff = VEM:GetCurrentInstanceDifficulty()
+	if diff == "mythic" then
+		return true
+	end
+	return false
+end
+
+function bossModPrototype:IsTrivial(level)
+	if UnitLevel("player") >= level then
+		return true
+	end
+	return false
 end
 
 function bossModPrototype:LatencyCheck()
@@ -5151,22 +5079,6 @@ function bossModPrototype:IsTrivial(level)
 		return true
 	end
 	return false
-end
-
--- An anti spam function to throttle spammy events (e.g. SPELL_AURA_APPLIED on all group members)
--- @param time the time to wait between two events (optional, default 2.5 seconds)
--- @param id the id to distinguish different events (optional, only necessary if your mod keeps track of two different spam events at the same time)
-function bossModPrototype:AntiSpam(time, id)
-	if GetTime() - (id and (self["lastAntiSpam" .. tostring(id)] or 0) or self.lastAntiSpam or 0) > (time or 2.5) then
-		if id then
-			self["lastAntiSpam" .. tostring(id)] = GetTime()
-		else
-			self.lastAntiSpam = GetTime()
-		end
-		return true
-	else
-		return false
-	end
 end
 
 function bossModPrototype:IsCriteriaCompleted(criteriaIDToCheck)
@@ -5398,23 +5310,25 @@ function bossModPrototype:SetBossHPInfoToHighest()
 	self.highesthealth = true
 end
 
-function bossModPrototype:GetBossHP(cId)
+function VEM:GetBossHP(cId)
 	for i = 1, 5 do
-		local guid = UnitGUID("boss"..i)
-		if guid and tonumber(guid:sub(6, 10), 16) == cId then
+		local bossId = self:GetCIDFromGUID(UnitGUID("boss"..i))
+		if bossId == cId then
 			return UnitHealth("boss"..i) / UnitHealthMax("boss"..i)
 		end
 	end
 	local idType = (IsInRaid() and "raid") or "party"
 	for i = 0, GetNumGroupMembers() do
 		local unitId = ((i == 0) and "target") or idType..i.."target"
-		local guid = UnitGUID(unitId)
-		if guid and (tonumber(guid:sub(6, 10), 16)) == cId then
+		local targetId = self:GetCIDFromGUID(UnitGUID(unitId))
+		if targetId == cId then
 			return UnitHealth(unitId) / UnitHealthMax(unitId)
 		end
 	end
 	return nil
 end
+
+bossModPrototype.GetBossHP = VEM.GetBossHP
 
 
 -----------------------
@@ -5610,8 +5524,8 @@ do
 		icon = icon or unparsedId
 		local text
 		if announceType == "cast" then
-			local spellHaste = select(7, GetSpellInfo(53142)) / 10000 -- 53142 = Dalaran Portal, should have 10000 ms cast time
-			local timer = (select(7, GetSpellInfo(spellId)) or 1000) / spellHaste
+			local spellHaste = select(4, GetSpellInfo(53142)) / 10000 -- 53142 = Dalaran Portal, should have 10000 ms cast time
+			local timer = (select(4, GetSpellInfo(spellId)) or 1000) / spellHaste
 			text = VEM_CORE_AUTO_ANNOUNCE_TEXTS[announceType]:format(spellName, castTime or (timer / 1000))
 		elseif announceType == "prewarn" then
 			if type(preWarnTime) == "string" then
@@ -5835,7 +5749,7 @@ do
 				elseif i == 10 then countvaluei = "countten"
 				elseif i == 11 then countvaluei = "counteleven" end
 				if i <= 11 then
-					self.sound5:Schedule(timer-i, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\"..countvaluei..".mp3")
+					self.sound5:Schedule(timer-i, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\"..countvaluei..".ogg")
 				end
 			end
 		end
@@ -5999,7 +5913,7 @@ do
 				elseif i == 10 then countvaluei = "countten"
 				elseif i == 11 then countvaluei = "counteleven" end
 				if i <= 11 then
-					self.sound5:Schedule(timer-i, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\"..countvaluei..".mp3")
+					self.sound5:Schedule(timer-i, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\"..countvaluei..".ogg")
 				end
 			end
 		end
@@ -6413,9 +6327,9 @@ do
 		elseif number == 9 then countvaluenumber = "countnine"
 		elseif number == 10 then countvaluenumber = "countten" end
 		if VEM.Options.UseMasterVolume then
-			PlaySoundFile("Interface\\AddOns\\"..voice.."\\"..countvaluenumber..".mp3", "Master")
+			PlaySoundFile("Interface\\AddOns\\"..voice.."\\"..countvaluenumber..".ogg", "Master")
 		else
-			PlaySoundFile("Interface\\AddOns\\"..voice.."\\"..countvaluenumber..".mp3")
+			PlaySoundFile("Interface\\AddOns\\"..voice.."\\"..countvaluenumber..".ogg")
 		end
 	end
 
@@ -6918,8 +6832,8 @@ do
 	function bossModPrototype:NewCastTimer(timer, ...)
 		if tonumber(timer) and timer > 1000 then -- hehe :) best hack in VEM. This makes the first argument optional, so we can omit it to use the cast time from the spell id ;)
 			local spellId = timer
-			timer = select(7, GetSpellInfo(spellId)) or 1000 -- GetSpellInfo takes YOUR spell haste into account...WTF?
-			local spellHaste = select(7, GetSpellInfo(53142)) / 10000 -- 53142 = Dalaran Portal, should have 10000 ms cast time
+			timer = select(4, GetSpellInfo(spellId)) or 1000 -- GetSpellInfo takes YOUR spell haste into account...WTF?
+			local spellHaste = select(4, GetSpellInfo(53142)) / 10000 -- 53142 = Dalaran Portal, should have 10000 ms cast time
 			timer = timer / spellHaste -- calculate the real cast time of the spell...
 			return self:NewCastTimer(timer / 1000, spellId, ...)
 		end

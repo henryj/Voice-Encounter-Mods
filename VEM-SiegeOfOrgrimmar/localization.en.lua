@@ -128,15 +128,18 @@ L= VEM:GetModLocalization(868)
 
 L:SetTimerLocalization({
 	timerAddsCD		= "Next Adds",
-	timerTowerCD	= "Next Tower & Adds"
+	timerTowerCD	= "Next Tower & Adds",
+	timerTowerGruntCD	= "Next Tower Grunt"
 })
 
 L:SetOptionLocalization({
 	SoundWOP				= "Voice Warning: Critical Ability",
 	SoundZQ					= "Voice Warning: $spell:147328",
 	SoundTT					= "Voice Warning: $spell:146753",
+	warnTowerGrunt		= "Warn approach of tower grunt",
 	timerAddsCD				= "Show timer for next adds wave",
 	timerTowerCD			= "Show timer for next tower assault",
+	timerTowerGruntCD			= "Show timer for next tower grunt",
 	FixateIcon				= VEM_CORE_AUTO_ICONS_OPTION_TEXT:format(147068),
 	InfoFrame				= "Info frame: Next $journal:8427",
 	flamecount				= "Defensive Warning: 2nd phase, which Pulsing Flames do you want to be warned."
@@ -144,7 +147,9 @@ L:SetOptionLocalization({
 
 L:SetMiscLocalization({
 	nameset		= "Galakras",
-	Pull		= "Dragonmaw clan, retake the docks and push them into the sea!  In the name of Hellscream and the True Horde!",
+	wasteOfTime		= "Well done! Landing parties, form up! Footmen to the front!",-- alliance trigger
+	wasteOfTime2	= "Well done. The first brigade has made landfall.",
+  Pull		= "Dragonmaw clan, retake the docks and push them into the sea!  In the name of Hellscream and the True Horde!",
 	newForces1	= "Here they come!",--Jaina's line, alliance
 	newForces1H	= "Bring her down quick so i can wrap my fingers around her neck.",--Sylva's line, horde
 	newForces2	= "Dragonmaw, advance!",

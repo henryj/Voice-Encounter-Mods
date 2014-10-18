@@ -39,8 +39,10 @@ mod:RegisterEventsInCombat(
 local warnWarBanner					= mod:NewSpellAnnounce(147328, 3)
 local warnFracture					= mod:NewTargetAnnounce(146899, 3)--TODO: see if target scanning works with one of earlier events
 local warnChainHeal					= mod:NewCastAnnounce(146757, 4)
+local warnProto						= mod:NewCountAnnounce("ej8587", 2, 59961)
 local warnDemolisher				= mod:NewSpellAnnounce("ej8562", 3, 116040)
 local warnHealingTideTotem			= mod:NewSpellAnnounce(146753, 4)
+local warnTowerGrunt				= mod:NewAnnounce("warnTowerGrunt", 3, 89253)
 ----Master Cannoneer Dragryn (Tower)
 local warnMuzzleSpray				= mod:NewSpellAnnounce(147824, 3)--147824 spams combat log, 147825 is actual cast but does not show in combat log only UNIT event
 ----Lieutenant General Krugruk (Tower)
@@ -54,6 +56,7 @@ local warnCurseVenom				= mod:NewSpellAnnounce(147711, 3)
 local warnPhase2					= mod:NewPhaseAnnounce(2, 2)
 local warnFlamesofGalakrondTarget	= mod:NewTargetAnnounce(147068, 4)
 local warnFlamesofGalakrond			= mod:NewStackAnnounce(147029, 2, nil, mod:IsTank())
+local warnPulsingFlames				= mod:NewCountAnnounce(147042, 3)
 
 --Stage 2: Bring Her Down!
 local specWarnWarBanner				= mod:NewSpecialWarningSwitch(147328, not mod:IsHealer())
@@ -80,12 +83,15 @@ local specWarnFlamesofGalakrondYou	= mod:NewSpecialWarningYou(147068)
 local yellFlamesofGalakrond			= mod:NewYell(147068)
 local specWarnFlamesofGalakrondTank	= mod:NewSpecialWarningStack(147029, mod:IsTank(), 3)
 local specWarnFlamesofGalakrondOther= mod:NewSpecialWarningTarget(147029, mod:IsTank())
+local specWarnPulsingFlames			= mod:NewSpecialWarningSpell(147042, false, nil, nil, 2)
 
 --Stage 2: Bring Her Down!
+local timerCombatStarts				= mod:NewCombatTimer(34.5)
 local timerAddsCD					= mod:NewNextCountTimer(55, "ej8553", nil, nil, nil, 2457)
-local timerTowerCD					= mod:NewTimer(99, "timerTowerCD", 88852)
-local timerDemolisherCD				= mod:NewNextTimer(20, "ej8562", nil, nil, nil, 116040)--EJ is just not complete yet, shouldn't need localizing
 local timerProtoCD					= mod:NewNextTimer(55, "ej8587", nil, nil, nil, 59961)
+local timerTowerCD					= mod:NewTimer(99, "timerTowerCD", 88852)
+local timerTowerGruntCD				= mod:NewTimer(60, "timerTowerGruntCD", 89253)
+local timerDemolisherCD				= mod:NewNextTimer(20, "ej8562", nil, nil, nil, 116040)--EJ is just not complete yet, shouldn't need localizing
 ----High Enforcer Thranok (Road)
 local timerShatteringCleaveCD		= mod:NewCDTimer(7.5, 146849, nil, mod:IsTank())
 local timerCrushersCallCD			= mod:NewNextTimer(30, 146769)
@@ -93,12 +99,15 @@ local timerCrushersCallCD			= mod:NewNextTimer(30, 146769)
 --Phase 3: Galakras,The Last of His Progeny
 local timerFlamesofGalakrondCD		= mod:NewCDCountTimer(6, 147068)
 local timerFlamesofGalakrond		= mod:NewTargetTimer(15, 147029, nil, mod:IsTank())
+local timerPulsingFlamesCD			= mod:NewNextCountTimer(25, 147042)
+local timerPulsingFlames			= mod:NewBuffActiveTimer(7, 147042)
 
 mod:AddBoolOption("FixateIcon", true)
 
 local addsCount = 0
 local firstTower = false
 local flamesCount = 0
+local pulseCount = 0
 
 mod:AddEditBoxOption("flamecount", 50, "", "sound", 
 function()
@@ -122,13 +131,29 @@ local function MyJS()
 	return false
 end
 
+local function protos()
+	addsCount = addsCount + 1
+	warnProto:Show(addsCount)
+	timerAddsCD:Start(nil, addsCount + 1)
+end
+
+local function TowerGrunt()
+	warnTowerGrunt:Show()
+	timerTowerGruntCD:Start()
+	mod:Schedule(60, TowerGrunt)
+end
+
 function mod:OnCombatStart(delay)
 	addsCount = 1
 	firstTower = false
 	flamesCount = 0
+	pulseCount = 0
 	timerAddsCD:Start(60-delay, 2) --BH FIX
-	if not self:IsDifficulty("heroic10", "heroic25") then
+	if not self:IsMythic() then
 		timerTowerCD:Start(116.5-delay)
+	else
+		timerTowerGruntCD:Start(6)
+		self:Schedule(6, TowerGrunt)
 	end
 end
 
@@ -137,18 +162,18 @@ function mod:SPELL_CAST_START(args)
 		warnArcingSmash:Show()
 		specWarnArcingSmash:Show()
 		if self:AntiSpam(10, 4) then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\carefly.mp3")--小心击飞
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\carefly.ogg")--小心击飞
 		end
 	elseif args.spellId == 146757 and UnitPower("player", ALTERNATE_POWER_INDEX) == 0 then
 		local source = args.sourceName
 		warnChainHeal:Show()
 		if source == UnitName("target") or source == UnitName("focus") then 
 			specWarnChainheal:Show(source)
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\kickcast.mp3") --快打斷
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\kickcast.ogg") --快打斷
 		end
 	elseif args.spellId == 146848 and UnitPower("player", ALTERNATE_POWER_INDEX) == 0 then
 		specWarnSkullCracker:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_sfzd.mp3")--旋風斬
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_sfzd.ogg")--旋風斬
 	end
 end
 
@@ -166,7 +191,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 	elseif args.spellId == 146753 and UnitPower("player", ALTERNATE_POWER_INDEX) == 0 then
 		warnHealingTideTotem:Show()
 		specWarnHealingTideTotem:Show()
-		sndTT:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_ttkd.mp3") --圖騰快打
+		sndTT:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_ttkd.ogg") --圖騰快打
 	end
 end
 
@@ -179,7 +204,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			specWarnFlamesofGalakrondYou:Show()
 			yellFlamesofGalakrond:Yell()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\justrun.mp3") --快跑
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\justrun.ogg") --快跑
 		else
 			specWarnFlamesofGalakrond:Show(flamesCount)
 		end
@@ -187,31 +212,37 @@ function mod:SPELL_AURA_APPLIED(args)
 			self:SetIcon(args.destName, 8)
 		end
 		if MyJS() then
-			sndWOP:Schedule(3, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
+			sndWOP:Schedule(3, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.ogg") --注意減傷
 		end
 	elseif args.spellId == 147328 and UnitPower("player", ALTERNATE_POWER_INDEX) == 0 then
 		warnWarBanner:Show()
-		sndZQ:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_zqkd.mp3")--战旗快打
+		sndZQ:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_zqkd.ogg")--战旗快打
 		specWarnWarBanner:Show()
 	elseif args.spellId == 146899 and UnitPower("player", ALTERNATE_POWER_INDEX) == 0 then
 		warnFracture:Show(args.destName)
 		if args:IsPlayer() then
 			specWarnFractureYou:Show()
 			yellFracture:Yell()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\chargemove.mp3")--冲锋快躲
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\chargemove.ogg")--冲锋快躲
 		else
 			specWarnFracture:Show(args.destName)
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_sgcf.mp3")--碎骨冲锋
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_sgcf.ogg")--碎骨冲锋
 		end
 	elseif args.spellId == 147705 then
 		if args:IsPlayer() and self:AntiSpam(2, 1) then
 			specWarnPoisonCloud:Show()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg") --快躲開
 		end
 	elseif args.spellId == 147711 and UnitPower("player", ALTERNATE_POWER_INDEX) == 0 then
 		warnCurseVenom:Show()
 		specWarnCurseVenom:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_dskd.mp3")--毒蛇快打
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_dskd.ogg")--毒蛇快打
+	elseif spellId == 147042 then
+		pulseCount = pulseCount + 1
+		warnPulsingFlames:Show(pulseCount)
+		specWarnPulsingFlames:Show()
+		timerPulsingFlames:Start()
+		timerPulsingFlamesCD:Start(nil, pulseCount + 1)
 	end
 end
 
@@ -252,7 +283,7 @@ end
 function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, destName, _, _, spellId)
 	if spellId == 147705 and destGUID == UnitGUID("player") and self:AntiSpam(2, 1) then
 		specWarnPoisonCloud:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg") --快躲開
 	end
 end
 mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
@@ -262,7 +293,7 @@ function mod:SPELL_DAMAGE(_, _, _, _, destGUID, destName, _, _, spellId)
 	--	specWarnFlameArrow:Show()
 	elseif spellId == 146872 and destGUID == UnitGUID("player") and self:AntiSpam(2, 1) then
 		specWarnShadowAttack:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg") --快躲開
 	end
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE
@@ -282,8 +313,19 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		timerAddsCD:Cancel()
 		timerProtoCD:Cancel()
 		warnPhase2:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ptwo.mp3") -- 2階段
-		timerFlamesofGalakrondCD:Start(18.6, 1)--TODO, verify consistency since this timing may depend on where drake lands and time it takes to get picked up.
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ptwo.ogg") -- 2階段
+		--NE: Using DBM setting
+		--timerFlamesofGalakrondCD:Start(18.6, 1)--TODO, verify consistency since this timing may depend on where drake lands and time it takes to get picked up.
+		timerFlamesofGalakrondCD:Start(13.5)
+		timerPulsingFlamesCD:Start(39, 1)--unconfirmed
+	end
+end
+
+function mod:CHAT_MSG_MONSTER_SAY(msg)
+	if msg == L.wasteOfTime then
+		self:SendSync("prepull")
+	elseif msg == L.wasteOfTime2 then
+		self:SendSync("prepull2")
 	end
 end
 
@@ -296,7 +338,7 @@ end
 function mod:UPDATE_WORLD_STATES()
 	local text = select(4, GetWorldStateUIInfo(4))
 	local percent = tonumber(string.match(text or "", "%d+"))
-	if percent == 1 and not firstTower and not self:IsDifficulty("heroic10", "heroic25") then
+	if percent == 1 and not firstTower and not self:IsMythic() then
 		firstTower = true
 		timerTowerCD:Start()
 	end
@@ -306,16 +348,27 @@ end
 function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 	if msg:find("cFFFF0404") then--They fixed epiccenter bug (figured they would). Color code should be usuable though. It's only emote on encounter that uses it.
 		warnDemolisher:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_tscd.mp3") --投石车快打
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_tscd.ogg") --投石车快打
+		if self:IsMythic() and firstTower == 0 then
+			timerTowerGruntCD:Start(15)
+			self:Schedule(15, TowerGrunt)
+			firstTower = 2
+		end
 	elseif msg:find(L.tower) then
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_ptkf.mp3") --炮塔攻破
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_ptkf.ogg") --炮塔攻破
 		timerDemolisherCD:Start()
+		if self:IsMythic() then
+			timerTowerGruntCD:Cancel()
+			self:Unschedule(TowerGrunt)
+		end
 	end
 end
 
 function mod:OnSync(msg)
 	if msg == "AddsFix" and self:AntiSpam(10, 4) then
 		addsCount = addsCount + 1
+	-- NE: useing actual DBM settings
+	--[[
 		if addsCount == 1 then
 			timerAddsCD:Cancel()
 			timerAddsCD:Start(48, addsCount + 1)
@@ -326,6 +379,20 @@ function mod:OnSync(msg)
 		else
 			timerAddsCD:Cancel()
 			timerAddsCD:Start(55, addsCount + 1)
+		end]]
+		if addsCount % 5 == 3 then
+			timerProtoCD:Start(nil, addsCount + 1)
+			self:Schedule(55, protos)
+		elseif addsCount == 1 then
+			timerAddsCD:Cancel()
+			timerAddsCD:Start(48, 2)
+		else
+			timerAddsCD:Cancel()
+			timerAddsCD:Start(nil, addsCount + 1)
 		end
+	elseif msg == "prepull" then--Alliance
+		timerCombatStarts:Start()
+	elseif msg == "prepull2" then--Horde
+		timerCombatStarts:Start(30.5)
 	end
 end

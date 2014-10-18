@@ -95,17 +95,17 @@ function mod:OnCombatStart(delay)
 	timerBorerDrillCD:Start(-delay)
 	timerCrawlerMineCD:Start(-delay)
 	timerSiegeModeCD:Start(120.5-delay)--First one longer than rest
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		berserkTimer:Start(450-delay)
 		timerRicochetCD:Start(-delay)
 	else
 		berserkTimer:Start(-delay)
 	end
-	sndWOP:Schedule(117, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_qgzb.mp3") --強攻階段準備
-	sndWOP:Schedule(118, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-	sndWOP:Schedule(119, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-	sndWOP:Schedule(120, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
-	if self.Options.RangeFrame and not self:IsDifficulty("lfr25") then
+	sndWOP:Schedule(117, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_qgzb.ogg") --強攻階段準備
+	sndWOP:Schedule(118, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+	sndWOP:Schedule(119, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+	sndWOP:Schedule(120, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
+	if self.Options.RangeFrame and not self:IsLFR() then
 		VEM.RangeCheck:Show(6)
 	end
 end
@@ -130,19 +130,19 @@ function mod:SPELL_CAST_START(args)
 		specWarnSeismicActivity:Show()
 		timerExplosiveTarCD:Start(7)
 		timerShockPulseCD:Start(nil, 1)
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerMortarBarrageCD:Start(20)
 		end
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_qgzb.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\phasechange.mp3") --階段轉換		
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_qgzb.ogg")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\phasechange.ogg") --階段轉換		
 		timerAssaultModeCD:Start()
-		sndWOP:Schedule(60, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_tjzb.mp3") --突擊階段準備
-		sndWOP:Schedule(61, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOP:Schedule(62, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Schedule(63, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndWOP:Schedule(60, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_tjzb.ogg") --突擊階段準備
+		sndWOP:Schedule(61, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndWOP:Schedule(62, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndWOP:Schedule(63, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 	elseif args.spellId == 144485 then
 		shockCount = shockCount + 1
 		warnShockPulse:Show(shockCount)
@@ -150,14 +150,14 @@ function mod:SPELL_CAST_START(args)
 		if shockCount < 3 then
 			timerShockPulseCD:Start(nil, shockCount+1)
 		end
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_zbjt.mp3") --準備擊飞		
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_zbjt.ogg") --準備擊飞		
 		if MyJS() then
-			sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
+			sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.ogg") --注意減傷
 		else
-			sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+			sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
 		end		
-		sndWOP:Schedule(2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Schedule(3, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndWOP:Schedule(2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndWOP:Schedule(3, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 	end
 end
 
@@ -178,11 +178,11 @@ function mod:SPELL_AURA_APPLIED(args)
 			if amount >= 3 then
 				if args:IsPlayer() then
 					specWarnIgniteArmor:Show(amount)
-					sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\sunderhigh.mp3") --破甲過高
+					sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\sunderhigh.ogg") --破甲過高
 				else
 					specWarnIgniteArmorOther:Show(args.destName)
 					if mod:IsTank() then
-						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\changemt.mp3") --換坦嘲諷
+						sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\changemt.ogg") --換坦嘲諷
 					end
 				end
 			end
@@ -194,7 +194,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		timerLaserBurnCD:DelayedStart(0.5)
 	elseif args.spellId == 144498 and args:IsPlayer() then
 		specWarnExplosiveTar:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.mp3")--快躲開
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg")--快躲開
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
@@ -211,7 +211,7 @@ end
 function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 144218 and destGUID == UnitGUID("player") and self:AntiSpam() then
 		specWarnBorerDrillMove:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.mp3")--快躲開
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg")--快躲開
 	end
 end
 mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
@@ -228,14 +228,14 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	elseif spellId == 144296 then--absolutely do NOT add 144218 to this. 144218 is an every 0.4 second periodic trigger that fires after 144296
 		warnBorerDrill:Show()
 		specWarnBorerDrill:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_dckd.mp3")--地刺快躲
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_dckd.ogg")--地刺快躲
 		timerBorerDrillCD:Start()
 	elseif spellId == 144673 then
 		warnCrawlerMine:Show()
 		if not siegeMode then--These spawn during siege mode but random as all hell, there is no timer in this phase for these
 			timerCrawlerMineCD:Start()
 		end
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_dlcx.mp3")--地雷出現
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_dlcx.ogg")--地雷出現
 	elseif spellId == 144198 then
 		warnDemolisherCanon:Show()
 		timerDemolisherCanonCD:Start()
@@ -250,18 +250,18 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		timerMortarBarrageCD:Cancel()
 		if siegeMode == true then--don't start timer on pull regenerate, pull regenerate is 5 seconds longer than rest of them
 			timerSiegeModeCD:Start()
-			sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_tjzb.mp3")
-			sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-			sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-			sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\phasechange.mp3") --階段轉換
-			sndWOP:Schedule(112, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_qgzb.mp3") --強攻階段準備
-			sndWOP:Schedule(113, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-			sndWOP:Schedule(114, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-			sndWOP:Schedule(115, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_tjzb.ogg")
+			sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+			sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+			sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\phasechange.ogg") --階段轉換
+			sndWOP:Schedule(112, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_so_qgzb.ogg") --強攻階段準備
+			sndWOP:Schedule(113, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+			sndWOP:Schedule(114, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+			sndWOP:Schedule(115, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 			siegeMode = false
 		end
-		--[[if self:IsDifficulty("heroic10", "heroic25") then
+		--[[if self:IsMythic() then
 			timerRicochetCD:Start(22)
 		end--]]--TODO, verify consistency, as 22 seems odd and could have just been a delayed cast.
 	elseif spellId == 144555 then
@@ -290,7 +290,7 @@ function mod:OnSync(msg, guid)
 			specWarnCutterLaser:Show()
 			yellCutterLaser:Yell()
 --			soundCuttingLaser:Play()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\laserrun.mp3") --快跑 激光點你
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\laserrun.ogg") --快跑 激光點你
 		end
 	elseif msg == "LaserTargetRemoved" and guid then
 		timerCuttingLaser:Cancel(VEM:GetFullPlayerNameByGUID(guid))

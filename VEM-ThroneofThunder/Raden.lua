@@ -134,7 +134,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnMaterialsofCreation:Show(creationCount)
 		timerMaterialsofCreationCD:Start(nil, creationCount+1)
 		specWarnCreationSwitch:Schedule(2)
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_zbdq.mp3") --準備打球
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_zbdq.ogg") --準備打球
 		self:Schedule(1, function()
 			VEM:PlayCountSound(creationCount)
 		end)
@@ -145,7 +145,7 @@ function mod:SPELL_CAST_START(args)
 		timerSummonSanguineHorror:Start(nil, horrorCount+1)
 		if self:AntiSpam(2, 1) then
 			if not mod:IsHealer() then
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_xgkd.mp3") --小怪快打
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_xgkd.ogg") --小怪快打
 			end
 		end
 	elseif args.spellId == 138339 then --召唤龟裂追踪者
@@ -156,7 +156,7 @@ function mod:SPELL_CAST_START(args)
 		timerSummonCracklingStalker:Start(nil, stalkerCount+1)
 		if self:AntiSpam(2, 1) then
 			if not mod:IsHealer() then
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_xgkd.mp3")
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_xgkd.ogg")
 			end
 		end
 	elseif args.spellId == 139087 then --毀滅箭
@@ -176,9 +176,9 @@ function mod:SPELL_CAST_SUCCESS(args)
 		specWarnFatalStrike:Show()
 		timerFatalStrikeCD:Start()
 		if mod:IsTank() or mod:IsHealer() then
-			sndStrike:Schedule(7, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-			sndStrike:Schedule(8, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-			sndStrike:Schedule(9, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			sndStrike:Schedule(7, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+			sndStrike:Schedule(8, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+			sndStrike:Schedule(9, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		end
 	end
 end
@@ -187,7 +187,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 138297 then --不穩定的生命
 		lightcount = lightcount + 1
 		warnUnstableVita:Show(args.destName)
-		if self:IsDifficulty("heroic25") then
+		if self:IsMythic() then
 			timerUnstableVita:Start(5, args.destName)
 		else
 			timerUnstableVita:Start(args.destName)
@@ -195,19 +195,19 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			yellUnstableVita:Yell()
 			specWarnUnstableVita:Show()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_smdn.mp3") --生命點你
-			sndWOP:Schedule(0.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\movesoon.mp3")  --快跑位
-			if self:IsDifficulty("heroic25") then
-				sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-				sndWOP:Schedule(2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-				sndWOP:Schedule(3, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-				sndWOP:Schedule(4, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_smdn.ogg") --生命點你
+			sndWOP:Schedule(0.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\movesoon.ogg")  --快跑位
+			if self:IsMythic() then
+				sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+				sndWOP:Schedule(2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+				sndWOP:Schedule(3, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+				sndWOP:Schedule(4, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 			else
-				sndWOP:Schedule(7, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
-				sndWOP:Schedule(8, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-				sndWOP:Schedule(9, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-				sndWOP:Schedule(10, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-				sndWOP:Schedule(11, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+				sndWOP:Schedule(7, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
+				sndWOP:Schedule(8, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+				sndWOP:Schedule(9, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+				sndWOP:Schedule(10, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+				sndWOP:Schedule(11, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 			end
 		else
 			specWarnUnstableVitaOther:Show(args.destName)
@@ -224,14 +224,14 @@ function mod:SPELL_AURA_APPLIED(args)
 				mod:SendSync("Bench1")
 			else
 				specWarnVitarun:Show()
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\movesoon.mp3")
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\movesoon.ogg")
 			end
 		end
 		if lightcount == lastlightnum then lightcount = 0 end
 	elseif args.spellId == 138308 then --生命轉移
 		lightcount = lightcount + 1
 		warnUnstableVita:Show(args.destName)
-		if self:IsDifficulty("heroic25") then
+		if self:IsMythic() then
 			timerUnstableVita:Start(5, args.destName)
 		else
 			timerUnstableVita:Start(args.destName)
@@ -239,17 +239,17 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			yellUnstableVita:Yell()
 			specWarnUnstableVita:Show()
-			if self:IsDifficulty("heroic25") then
-				sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-				sndWOP:Schedule(2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-				sndWOP:Schedule(3, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-				sndWOP:Schedule(4, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			if self:IsMythic() then
+				sndWOP:Schedule(1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+				sndWOP:Schedule(2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+				sndWOP:Schedule(3, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+				sndWOP:Schedule(4, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 			else
-				sndWOP:Schedule(7, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
-				sndWOP:Schedule(8, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-				sndWOP:Schedule(9, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-				sndWOP:Schedule(10, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-				sndWOP:Schedule(11, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+				sndWOP:Schedule(7, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
+				sndWOP:Schedule(8, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+				sndWOP:Schedule(9, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+				sndWOP:Schedule(10, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+				sndWOP:Schedule(11, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 			end
 		else
 			specWarnUnstableVitaOther:Show(args.destName)
@@ -266,7 +266,7 @@ function mod:SPELL_AURA_APPLIED(args)
 				mod:SendSync("Bench1")
 			else
 				specWarnVitarun:Show()
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\movesoon.mp3")
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\movesoon.ogg")
 			end
 		end
 		if lightcount == lastlightnum then lightcount = 0 end
@@ -275,7 +275,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		UnstableAnimatarget = args.destName
 		if args:IsPlayer() then
 			specWarnUnstableAnima:Show()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_xndn.mp3") --心能點你
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_xndn.ogg") --心能點你
 		else
 			specWarnUnstableAnimaOther:Show(args.destName)
 		end
@@ -308,9 +308,9 @@ function mod:SPELL_AURA_APPLIED(args)
 		timerSummonCracklingStalker:Start(stalkerupdate, 1)
 		timerFatalStrikeCD:Start(10-radenPower)
 		if mod:IsTank() or mod:IsHealer() then
-			sndStrike:Schedule(10-radenPower-3, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-			sndStrike:Schedule(10-radenPower-2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-			sndStrike:Schedule(10-radenPower-1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			sndStrike:Schedule(10-radenPower-3, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+			sndStrike:Schedule(10-radenPower-2, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+			sndStrike:Schedule(10-radenPower-1, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		end
 	end
 end
@@ -321,7 +321,7 @@ function mod:SPELL_AURA_REMOVED(args)
 			self:SetIcon(args.destName, 0)
 		end
 		if args:IsPlayer() then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runin.mp3") --快回人群
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runin.ogg") --快回人群
 		end
 		if FireMarkers[args.destName] then
 			FireMarkers[args.destName] = free(FireMarkers[args.destName])
@@ -353,37 +353,37 @@ function mod:OnSync(msg, msg2)
 			mod:SendSync("Bench2")
 		else
 			specWarnVitarun:Show()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\movesoon.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\movesoon.ogg")
 		end
 	elseif msg == "Bench2" and mod.Options.optDD == "DD2" then
 		if UnitDebuff("player", GetSpellInfo(138372)) or UnitIsDeadOrGhost("player") then
 			mod:SendSync("Bench3")
 		else
 			specWarnVitarun:Show()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\movesoon.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\movesoon.ogg")
 		end
 	elseif msg == "Bench3" and mod.Options.optDD == "DD3" then
 		if UnitDebuff("player", GetSpellInfo(138372)) or UnitIsDeadOrGhost("player") then
 			mod:SendSync("Bench4")
 		else
 			specWarnVitarun:Show()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\movesoon.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\movesoon.ogg")
 		end
 	elseif msg == "Bench4" and mod.Options.optDD == "DD4" then
 		if UnitDebuff("player", GetSpellInfo(138372)) or UnitIsDeadOrGhost("player") then
 			mod:SendSync("Bench5")
 		else
 			specWarnVitarun:Show()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\movesoon.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\movesoon.ogg")
 		end
 	elseif msg == "Bench5" and mod.Options.optDD == "DD5" then
 		if (not UnitDebuff("player", GetSpellInfo(138372))) and (not UnitIsDeadOrGhost("player")) then
 			specWarnVitarun:Show()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\movesoon.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\movesoon.ogg")
 		end
 	elseif msg == "Phase2" then
 		warnPhase2:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ptwo.mp3")
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ptwo.ogg")
 		timerSummonCracklingStalker:Cancel()
 		timerSummonSanguineHorror:Cancel()
 		timerMurderousStrikeCD:Cancel()

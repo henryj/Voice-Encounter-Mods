@@ -152,7 +152,7 @@ function createFrame()
 	frame:SetWidth(64)
 	frame:EnableMouse(true)
 	frame:SetToplevel(true)
-	frame:SetMovable()
+	frame:SetMovable(1)
 	GameTooltip_OnLoad(frame)
 	frame:SetPadding(16)
 	frame:RegisterForDrag("LeftButton")
@@ -662,7 +662,7 @@ end
 
 local function getUnitCreatureId(uId)
 	local guid = UnitGUID(uId)
-	return (guid and (tonumber(guid:sub(6, 10), 16))) or 0
+	return VEM:GetCIDFromGUID(guid)
 end
 
 local function updatePlayerTargets()

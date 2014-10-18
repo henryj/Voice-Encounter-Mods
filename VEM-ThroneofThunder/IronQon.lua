@@ -124,7 +124,7 @@ local function updateHealthFrame()
 			VEM.BossHealth:AddBoss(68081, Damren)
 		elseif phase == 4 then
 			VEM.BossHealth:AddBoss(68078, L.name)
-			if mod:IsDifficulty("heroic10", "heroic25") then
+			if mod:IsMythic() then
 				VEM.BossHealth:AddBoss(68081, Damren)
 				VEM.BossHealth:AddBoss(68080, Quetzal)
 				VEM.BossHealth:AddBoss(68079, Roshak)
@@ -273,18 +273,14 @@ function mod:OnCombatStart(delay)
 	stormcount = 0
 	table.wipe(lightmaker)
 	table.wipe(FireMarkers)
-	sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_hyxt.mp3") --火焰形态
+	sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_hyxt.ogg") --火焰形态
 	--BH ADD END
 	timerThrowSpearCD:Start(-delay)
 	self:Schedule(25, checkSpear)
 	if self.Options.RangeFrame then
-		if self:IsDifficulty("normal10", "heroic10") then
-			VEM.RangeCheck:Show(10, nil, nil, 2)
-		else
-			VEM.RangeCheck:Show(10, nil, nil, 4)
-		end
+		VEM.RangeCheck:Show(10, nil, nil, 4)
 	end
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsMythic() then
 		timerWhirlingWindsCD:Start(15-delay)
 		timerLightningStormCD:Start(22-delay)
 		if self.Options.InfoFrame then
@@ -335,17 +331,17 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 		self:Schedule(0.2, function()
 			if morestack == 1 then
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 			elseif morestack == 2 then
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
 			elseif morestack == 3 then
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
 			elseif morestack == 4 then
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
 			elseif morestack == 5 then
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
 			elseif morestack == 6 then
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countsix.mp3")
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countsix.ogg")
 			end
 			morestack = 0
 		end)
@@ -354,7 +350,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnMoltenOverload:Show()
 		specWarnMoltenOverload:Show()
 		timerMoltenOverload:Start()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_rycz.mp3") --熔岩超載
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_rycz.ogg") --熔岩超載
 	elseif args.spellId == 136192 then
 		warnLightningStorm:Show(args.destName)
 		if phase == 2 then
@@ -362,7 +358,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		else--Heroic phase 1 or 4
 			timerLightningStormCD:Start(37.5)
 		end
-		if self.Options.SetIconOnLightningStorm and not self:IsDifficulty("lfr25") then
+		if self.Options.SetIconOnLightningStorm and not self:IsLFR() then
 			self:SetIcon(args.destName, 8)
 		end
 		--BH ADD
@@ -374,14 +370,14 @@ function mod:SPELL_AURA_APPLIED(args)
 			end
 		else
 			if (mod.Options.dispsetLight1 == "") and (mod.Options.dispsetLight2 == "") then
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\helpme.mp3") --救我
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\helpme.ogg") --救我
 				if self.Options.HudMAP then
 					lightmaker[args.destName] = register(VEMHudMap:AddEdge(0, 0, 1, 1, nil, "player", args.destName))
 					fixdebuffremovebug(args.destName)
 				end				
 			else
 				if (args.destName == mod.Options.dispsetLight1) or (args.destName == mod.Options.dispsetLight2) then
-					sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\helpme.mp3") --救我
+					sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\helpme.ogg") --救我
 					if self.Options.HudMAP then
 						lightmaker[args.destName] = register(VEMHudMap:AddEdge(0, 0, 1, 1, nil, "player", args.destName))
 						fixdebuffremovebug(args.destName)
@@ -420,9 +416,9 @@ function mod:SPELL_AURA_REMOVED(args)
 			lightmaker[args.destName] = free(lightmaker[args.destName])
 		end
 		if (args.destName == mod.Options.dispsetLight1) or (args.destName == mod.Options.dispsetLight2) then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\thanks.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\thanks.ogg")
 		end
-		if self.Options.SetIconOnLightningStorm and not self:IsDifficulty("lfr25") then
+		if self.Options.SetIconOnLightningStorm and not self:IsLFR() then
 			self:SetIcon(args.destName, 0)
 		end
 	--BH ADD END
@@ -441,54 +437,54 @@ function mod:SPELL_CAST_SUCCESS(args)
 		warnDeadZone:Show(args.spellName, VEM_CORE_FRONT, VEM_CORE_RIGHT)
 		timerDeadZoneCD:Start()
 		if self.Options.SoundARAT then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\attmid.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\attmid.ogg")
 		else
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_mq.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_mq.ogg")
 		end
 		--Attack left or Behind (maybe add special warning that says where you can attack, for dps?)
 	elseif args.spellId == 137227 then--Left, Right Shielded
 		warnDeadZone:Show(args.spellName, VEM_CORE_LEFT, VEM_CORE_RIGHT)
 		timerDeadZoneCD:Start()
 		if self.Options.SoundARAT then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\attmid.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\attmid.ogg")
 		else
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_mq.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_mq.ogg")
 		end
 		--Attack Front or Behind
 	elseif args.spellId == 137228 then--Left, Front Shielded
 		warnDeadZone:Show(args.spellName, VEM_CORE_LEFT, VEM_CORE_FRONT)
 		timerDeadZoneCD:Start()
 		if self.Options.SoundARAT then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\attmid.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\attmid.ogg")
 		else
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_mq.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_mq.ogg")
 		end
 		--Attack Right or Behind
 	elseif args.spellId == 137229 then--Back, Front Shielded
 		warnDeadZone:Show(args.spellName, VEM_CORE_BACK, VEM_CORE_FRONT)
 		timerDeadZoneCD:Start()
 		if self.Options.SoundARAT then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\attleft.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\attleft.ogg")
 		else
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_mq.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_mq.ogg")
 		end
 		--Attack left or Right
 	elseif args.spellId == 137230 then--Back, Left Shielded
 		warnDeadZone:Show(args.spellName, VEM_CORE_BACK, VEM_CORE_LEFT)
 		timerDeadZoneCD:Start()
 		if self.Options.SoundARAT then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\attright.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\attright.ogg")
 		else
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_mq.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_mq.ogg")
 		end
 		--Attack Front or Right
 	elseif args.spellId == 137231 then--Back, Right Shielded
 		warnDeadZone:Show(args.spellName, VEM_CORE_BACK, VEM_CORE_RIGHT)
 		timerDeadZoneCD:Start()
 		if self.Options.SoundARAT then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\attleft.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\attleft.ogg")
 		else
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_mq.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_mq.ogg")
 		end
 		--Attack Front or Left
 	end
@@ -502,7 +498,7 @@ function mod:SPELL_SUMMON(args)
 		timerThrowSpearCD:Start()
 		self:Unschedule(checkSpear)
 		self:Schedule(25, checkSpear)--Timing adjust to reduce cpu usage when we know for sure the best time to check target. spear cd is variable, minimum though is 30, 25 is probably too early to start scanning but a good place to start.
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\spear.mp3") --投擲長矛
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\spear.ogg") --投擲長矛
 	end
 end
 
@@ -514,13 +510,13 @@ end
 function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 137668 and destGUID == UnitGUID("player") and self:AntiSpam(3, 2) then
 		specWarnBurningCinders:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.mp3") --快躲開
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg") --快躲開
 	elseif spellId == 137669 and destGUID == UnitGUID("player") and self:AntiSpam(3, 3) then
 		specWarnStormCloud:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.mp3")
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg")
 	elseif spellId == 137664 and destGUID == UnitGUID("player") and self:AntiSpam(2, 4) then
 		specWarnFrozenBlood:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.mp3")
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg")
 	end
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE
@@ -544,15 +540,15 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 			phase = 2
 			stormcount = 0
 			updateHealthFrame()
-			if self:IsDifficulty("heroic10", "heroic25") then
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_sdxt.mp3") --閃電形态
+			if self:IsMythic() then
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_sdxt.ogg") --閃電形态
 			end
 			timerUnleashedFlameCD:Cancel()
 			timerMoltenOverload:Cancel()
 			timerWhirlingWindsCD:Cancel()
 			warnPhase2:Show()
 			self:Schedule(25, checkSpear)
-			if self:IsDifficulty("heroic10", "heroic25") then
+			if self:IsMythic() then
 				timerFreezeCD:Start(13)
 				timerFrostSpikeCD:Start(15)
 			end
@@ -561,12 +557,12 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 			specWarnWindStorm:Schedule(52)
 			timerWindStorm:Schedule(52)
 			timerWindStormCD:Start(52)
-			sndWOP:Schedule(47, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\wwsoon.mp3")
-			sndWOP:Schedule(48, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
-			sndWOP:Schedule(49, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-			sndWOP:Schedule(50, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-			sndWOP:Schedule(51, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-			sndWOP:Schedule(52, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			sndWOP:Schedule(47, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\wwsoon.ogg")
+			sndWOP:Schedule(48, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
+			sndWOP:Schedule(49, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+			sndWOP:Schedule(50, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+			sndWOP:Schedule(51, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+			sndWOP:Schedule(52, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		elseif cid == 68080 then--Quet'zal
 			phase = 3
 			if self.Options.HudLight then
@@ -582,20 +578,20 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 				end
 			end
 			updateHealthFrame()
-			if self:IsDifficulty("heroic10", "heroic25") then
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_bsxt.mp3") --冰霜形態
+			if self:IsMythic() then
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_bsxt.ogg") --冰霜形態
 			end
 			timerLightningStormCD:Cancel()
 			timerWindStorm:Cancel()
 			timerWindStormCD:Cancel()
 			warnWindStorm:Cancel()
 			specWarnWindStorm:Cancel()
-			sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\wwsoon.mp3")
-			sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
-			sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-			sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-			sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-			sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\wwsoon.ogg")
+			sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
+			sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+			sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+			sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+			sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 			timerFrostSpikeCD:Cancel()
 			warnPhase3:Show()
 			self:Schedule(25, checkSpear)
@@ -616,8 +612,8 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 				VEM.InfoFrame:SetHeader(arcingName)
 				VEM.InfoFrame:Show(5, "playerbaddebuff", 136193)
 			end
-			if self:IsDifficulty("heroic10", "heroic25") then
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ptwo.mp3") --2階段
+			if self:IsMythic() then
+				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ptwo.ogg") --2階段
 			end
 		end
 	elseif spellId == 139172 then--Whirling Winds (Phase 1 Heroic).
@@ -630,22 +626,22 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		warnWindStorm:Cancel()
 		specWarnWindStorm:Cancel()
 		warnWindStormEnd:Show()
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\wwsoon.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")		
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\wwsoon.ogg")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")		
 		if phase == 2 then
 			warnWindStorm:Schedule(70)
 			specWarnWindStorm:Schedule(70)
 			timerWindStorm:Schedule(70)
-			sndWOP:Schedule(65, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\wwsoon.mp3")
-			sndWOP:Schedule(66, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
-			sndWOP:Schedule(67, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-			sndWOP:Schedule(68, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-			sndWOP:Schedule(69, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-			sndWOP:Schedule(70, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			sndWOP:Schedule(65, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\wwsoon.ogg")
+			sndWOP:Schedule(66, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
+			sndWOP:Schedule(67, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+			sndWOP:Schedule(68, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+			sndWOP:Schedule(69, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+			sndWOP:Schedule(70, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		end
 		timerWindStormCD:Start()
 	elseif spellId == 136146 and self:AntiSpam(2, 5) then
@@ -653,17 +649,17 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		warnFistSmash:Show(fistSmashCount)
 --		specWarnFistSmash:Show()
 		timerFistSmash:Start()
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsMythic() then
 			timerFistSmashCD:Start(30, fistSmashCount+1) -- heroic cd longer.
 		else
 			timerFistSmashCD:Start(nil, fistSmashCount+1)
 		end		
 		if MyJS() then
 			specWarnJSA:Show()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.mp3") --注意減傷
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\defensive.ogg") --注意減傷
 		else
 			specWarnFistSmash:Show(fistSmashCount)
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\aesoon.mp3")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\aesoon.ogg")
 		end
 	end
 end
@@ -673,13 +669,13 @@ function mod:UNIT_DIED(args)
 	if cid == 68079 then--Ro'shak
 		timerUnleashedFlameCD:Cancel()
 		timerMoltenOverload:Cancel()
-		if self:IsDifficulty("heroic10", "heroic25") then--In heroic, all mounts die in phase 4.
+		if self:IsMythic() then--In heroic, all mounts die in phase 4.
 			VEM.BossHealth:RemoveBoss(cid)
 		else
 			if self.Options.RangeFrame then
 				VEM.RangeCheck:Show(10, nil, nil, 1)--Switch range frame back to 1. Range is assumed 10, no spell info
 			end
-			if self.Options.InfoFrame and not self:IsDifficulty("lfr25") then
+			if self.Options.InfoFrame and not self:IsLFR() then
 				VEM.InfoFrame:SetHeader(arcingName)
 				VEM.InfoFrame:Show(5, "playerbaddebuff", 136193)
 			end
@@ -694,35 +690,35 @@ function mod:UNIT_DIED(args)
 			warnWindStorm:Schedule(49.5)
 			specWarnWindStorm:Schedule(49.5)
 			timerWindStorm:Schedule(49.5)
-			sndWOP:Schedule(44.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\wwsoon.mp3")
-			sndWOP:Schedule(45.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
-			sndWOP:Schedule(46.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-			sndWOP:Schedule(47.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-			sndWOP:Schedule(48.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-			sndWOP:Schedule(49.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+			sndWOP:Schedule(44.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\wwsoon.ogg")
+			sndWOP:Schedule(45.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
+			sndWOP:Schedule(46.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+			sndWOP:Schedule(47.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+			sndWOP:Schedule(48.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+			sndWOP:Schedule(49.5, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 			timerWindStormCD:Start(49.5)
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_sdxt.mp3") --閃電形态
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_sdxt.ogg") --閃電形态
 		end
 	elseif cid == 68080 then--Quet'zal
 		timerLightningStormCD:Cancel()
 		timerWindStormCD:Cancel()
 		warnWindStorm:Cancel()
 		specWarnWindStorm:Cancel()
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\wwsoon.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.mp3")
-		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.mp3")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\wwsoon.ogg")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfive.ogg")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countfour.ogg")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countthree.ogg")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\counttwo.ogg")
+		sndWOP:Cancel("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\countone.ogg")
 		timerWindStorm:Cancel()
-		if not self:IsDifficulty("lfr25") then--LFR has no concept of clearing arcing, they certainly don't use info/range frames
+		if not self:IsLFR() then--LFR has no concept of clearing arcing, they certainly don't use info/range frames
 			checkArcing()
 		else--So just hide range frame when quet'zal dies
 			if self.Options.RangeFrame then
 				VEM.RangeCheck:Hide()
 			end
 		end
-		if self:IsDifficulty("heroic10", "heroic25") then--In heroic, all mounts die in phase 4.
+		if self:IsMythic() then--In heroic, all mounts die in phase 4.
 			VEM.BossHealth:RemoveBoss(cid)
 		else
 			phase = 3
@@ -744,12 +740,12 @@ function mod:UNIT_DIED(args)
 			self:Unschedule(checkSpear)
 			self:Schedule(25, checkSpear)
 			timerThrowSpearCD:Start()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_bsxt.mp3") --冰霜形態
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ex_tt_bsxt.ogg") --冰霜形態
 		end
 	elseif cid == 68081 then--Dam'ren
 		timerDeadZoneCD:Cancel()
 		timerFreezeCD:Cancel()
-		if self:IsDifficulty("heroic10", "heroic25") then--In heroic, all mounts die in phase 4.
+		if self:IsMythic() then--In heroic, all mounts die in phase 4.
 			VEM.BossHealth:RemoveBoss(cid)
 		else
 			phase = 4
@@ -760,17 +756,17 @@ function mod:UNIT_DIED(args)
 			warnPhase4:Show()
 			timerRisingAngerCD:Start()
 			timerFistSmashCD:Start(22.5, 1)--fist smash cd is random. (22.5 or 31.5)
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ptwo.mp3") --2階段
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ptwo.ogg") --2階段
 		end
 	end
 end
 
 --BH ADD
 function mod:UNIT_POWER(uId)
-	if self:IsDifficulty("lfr25") then return end
+	if self:IsLFR() then return end
 	if (self:GetUnitCreatureId(uId) == 68079) and UnitPower(uId) > 50 and not Warned then
 		Warned = true
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\energyhigh.mp3") --能量過高
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\energyhigh.ogg") --能量過高
 	elseif (self:GetUnitCreatureId(uId) == 68079) and UnitPower(uId) < 20 and Warned then
 		Warned = false
 	end

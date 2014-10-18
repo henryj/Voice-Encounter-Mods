@@ -60,7 +60,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 	elseif args.spellId == 106851 and args:IsPlayer() and (args.amount or 3) >= 3 and self:AntiSpam() then
 		specWarnBlackoutBrew:Show()--Basically special warn any time you gain a stack over 3, if stack is nil, then it's initial application and stack count is 3.
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\keepmove.mp3")--保持移動
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\keepmove.ogg")--保持移動
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
@@ -72,7 +72,7 @@ function mod:SPELL_AURA_REMOVED(args)
 			VEM.RangeCheck:Hide()
 		end
 	elseif args:IsSpellID(106851) and args:IsPlayer() then
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\safenow.mp3")--安全
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\safenow.ogg")--安全
 	end
 end
 
