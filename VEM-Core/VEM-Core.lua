@@ -1246,6 +1246,9 @@ SlashCmdList["VOICEENCOUNTERMODS"] = function(msg)
 				VEM:AddMsg(v)
 			end
 		end
+	elseif cmd == "hud" then
+		VEM:AddMsg("showing hud")
+		VEMHudMap:AddEdge(1, 0, 0, 1, 3, "player", "target")
 	elseif cmd:sub(1, 7) == "lockout" or cmd:sub(1, 3) == "ids" then
 		if VEM:GetRaidRank(playerName) == 0 then
 			return VEM:AddMsg(VEM_ERROR_NO_PERMISSION)
