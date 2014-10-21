@@ -1587,7 +1587,6 @@ local function CreateOptionsMenu()
 		VEM.Options.CountdownVoice, function(value)
 			VEM.Options.CountdownVoice = value
 			PlaySoundFile("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\movesoon.ogg", "Master")
-			VEM:ShowSoundMM()
 		end
 		)
 		CountSoundDropDown:SetPoint("LEFT", RaidWarnSoundDropDown, "RIGHT", 30, 0)
@@ -2504,11 +2503,6 @@ local function CreateOptionsMenu()
 	local frame = CreateFrame("Frame", nil, VEM_GUI_OptionsFrame)
 	frame:SetAllPoints(VEM_GUI_OptionsFrameWebsite)
 	frame:SetScript("OnMouseUp", function(...) VEM:ShowUpdateReminder(nil, nil, VEM_FORUMS_COPY_URL_DIALOG) end)
-	
-	VEM_GUI_OptionsFrameSoundMM:SetText(VEM_GUI_Translations.SoundMM)
-	local mmframe = CreateFrame("Frame", nil, VEM_GUI_OptionsFrame)
-	mmframe:SetAllPoints(VEM_GUI_OptionsFrameSoundMM)
-	mmframe:SetScript("OnMouseUp", function(...) VEM:ShowSoundMM() end)
 end
 VEM:RegisterOnGuiLoadCallback(CreateOptionsMenu, 1)
 

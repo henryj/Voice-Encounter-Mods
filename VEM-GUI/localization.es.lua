@@ -11,7 +11,6 @@ L.TranslationByPrefix		= "Traducido por "
 L.TranslationBy 			= "www.roxathatecuenta.es"
 L.Website					= "Visita nuestra version inglesa en la pagina del proyecto |cFF73C2FBhttps://github.com/henryj/Voice-Encounter-Mods|r"
 L.WebsiteButton				= "Github"
-L.SoundMM					= "Voice Actor"
 
 L.OTabBosses	= "Bosses"
 L.OTabOptions	= "Opciones"

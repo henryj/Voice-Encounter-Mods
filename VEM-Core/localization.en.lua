@@ -5,6 +5,7 @@ VEM_HOW_TO_USE_MOD					= "Welcome to VEM. Type /vem help for a list of supported
 VEM_FORUMS_MESSAGE					= "Found a bug or wrong timer? Do you think some mod would need an additional warning, timer or special feature?\nVisit the new Voice Encounter Mods Github site at |HVEM:forums|h|cff3588ffhttps://github.com/henryj/Voice-Encounter-Mods|r (you can click the link to copy the URL)"
 VEM_FORUMS_COPY_URL_DIALOG			= "Come visit our Github site"
 
+VEM_CORE_VEM						= "VEM is not enabled for this character"
 VEM_CORE_LOAD_MOD_ERROR				= "Error while loading boss mods for %s: %s"
 VEM_CORE_LOAD_MOD_SUCCESS			= "Loaded '%s' mods. For more options, type /vem or /vem help in your chat."
 VEM_CORE_LOAD_MOD_COMBAT			= "Loading of '%s' delayed until you leave combat"

@@ -8,7 +8,6 @@ L.TranslationByPrefix		= ""
 L.TranslationBy 			= "黑手歡迎您的加入"
 L.Website					= "拜訪我們的討論與支援論壇:|cFF73C2FBhttp://bbs.ngacn.cc/read.php?tid=5397726&page=1|r"
 L.WebsiteButton				= "了解黑手"
-L.SoundMM					= "|cFFC3C2FB[查看配音介紹]|r"
 
 L.Checkinstance				= "檢查進度"
 L.Checkver					= "檢查版本"
