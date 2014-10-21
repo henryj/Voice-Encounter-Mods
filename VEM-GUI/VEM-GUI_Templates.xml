@@ -395,15 +395,6 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentSoundMM" inherits="GameFontNormal" text="">
-					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentWebsite" relativePoint="RIGHT">
-							<Offset>
-								<AbsDimension x="10" y="0"/>
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
 			</Layer>
 		</Layers>
 		<Frames>
@@ -440,12 +431,7 @@
 						self:SetText(VEM_GUI_Translations.WebsiteButton)
 					</OnShow>
 					<OnClick>
-						if GetLocale() == "zhTW" then
-							self:GetParent():Hide()
-							VEM:ShowGuildAD()
-						else
-							VEM:ShowUpdateReminder(nil, nil, VEM_FORUMS_COPY_URL_DIALOG)
-						end
+						VEM:ShowUpdateReminder(nil, nil, VEM_FORUMS_COPY_URL_DIALOG)
 					</OnClick>
 				</Scripts>
 			</Button>			
