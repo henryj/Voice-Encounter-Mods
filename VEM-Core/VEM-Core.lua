@@ -6863,7 +6863,7 @@ do
 		frame:ClearAllPoints()
 		frame:SetPoint(VEM.Options.SpecialWarningPoint, UIParent, VEM.Options.SpecialWarningPoint, VEM.Options.SpecialWarningX, VEM.Options.SpecialWarningY)
 		font:SetFont(VEM.Options.SpecialWarningFont, VEM.Options.SpecialWarningFontSize, "THICKOUTLINE")
-		font:SetTextColor(unpack(VEM.Options.SpecialWarningFontCol))
+		font:SetTextColor(unpack(VEM.Options.SpecialWarningFontColor))
 	end
 
 	local shakeFrame = CreateFrame("Frame")
@@ -6895,7 +6895,7 @@ do
 			local text = msg:gsub(">.-<", stripServerName)
 			font:SetText(text)
 			if VEM.Options.ShowSWarningsInChat then
-				local colorCode = ("|cff%.2x%.2x%.2x"):format(VEM.Options.SpecialWarningFontCol[1] * 255, VEM.Options.SpecialWarningFontCol[2] * 255, VEM.Options.SpecialWarningFontCol[3] * 255)
+				local colorCode = ("|cff%.2x%.2x%.2x"):format(VEM.Options.SpecialWarningFontColor[1] * 255, VEM.Options.SpecialWarningFontColor[2] * 255, VEM.Options.SpecialWarningFontColor[3] * 255)
 				self.mod:AddMsg(colorCode.."["..VEM_CORE_MOVE_SPECIAL_WARNING_TEXT.."] "..text.."|r", nil)
 			end
 			if not UnitIsDeadOrGhost("player") and VEM.Options.ShowFlashFrame then
