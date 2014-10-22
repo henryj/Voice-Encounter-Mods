@@ -5238,6 +5238,50 @@ function VEM:FindEncounterIDs(instanceID, diff)
 	end
 end
 
+-----------------
+--  Map Sizes  --
+-----------------
+VEM.MapSizes = {}
+
+function VEM:RegisterMapSize(zone, ...)
+	if not VEM.MapSizes[zone] then
+		VEM.MapSizes[zone] = {}
+	end
+	local zone = VEM.MapSizes[zone]
+	for i = 1, select("#", ...), 3 do
+		local level, width, height = select(i, ...)
+		zone[level] = {width, height}
+	end
+end
+
+function VEM:UpdateMapSizes()
+	-- try custom map size first
+	SetMapToCurrentZone()
+	local mapName = GetMapInfo()
+	local floor, a1, b1, c1, d1 = GetCurrentMapDungeonLevel()
+	local dims = VEM.MapSizes[mapName] and VEM.MapSizes[mapName][floor]
+	if dims then
+		currentSizes = dims
+		return
+	end
+
+	-- failed, try Blizzard's map size
+	if not (a1 and b1 and c1 and d1) then
+		local zoneIndex, a2, b2, c2, d2 = GetCurrentMapZone()
+		a1, b1, c1, d1 = a2, b2, c2, d2
+	end
+
+	if not (a1 and b1 and c1 and d1) then return end
+	currentSizes = {abs(c1-a1), abs(d1-b1)}
+end
+
+function VEM:GetMapSizes()
+	if not currentSizes then
+		VEM:UpdateMapSizes()
+	end
+	return currentSizes
+end
+
 -------------------
 --  Movie Filter --
 -------------------
@@ -8197,6 +8241,10 @@ function bossModPrototype:ReceiveSync(event, sender, revision, ...)
 			self:OnSync(event, unpack(tmp))
 		end
 	end
+end
+
+function bossModPrototype:SetQuestID(id)
+	self.questId = id
 end
 
 function bossModPrototype:SetRevision(revision)
