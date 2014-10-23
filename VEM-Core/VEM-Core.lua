@@ -6636,11 +6636,11 @@ do
 			altVoice = true
 			timer = tonumber(string.sub(timer, 4))
 		end
-		local sound5 = self:NewSound(5, true, false)
-		local sound4 = self:NewSound(4, true, false)
-		local sound3 = self:NewSound(3, true, false)
-		local sound2 = self:NewSound(2, true, false)
-		local sound1 = self:NewSound(1, true, false)
+		local sound5 = self:NewSound(5, false, true)
+		local sound4 = self:NewSound(4, false, true)
+		local sound3 = self:NewSound(3, false, true)
+		local sound2 = self:NewSound(2, false, true)
+		local sound1 = self:NewSound(1, false, true)
 		timer = timer or 10
 		count = count or 5
 		spellId = spellId or 39505
@@ -6687,11 +6687,11 @@ do
 			altVoice = true
 			timer = tonumber(string.sub(timer, 4))
 		end
-		local sound5 = self:NewSound(5, true, false)
-		local sound4 = self:NewSound(4, true, false)
-		local sound3 = self:NewSound(3, true, false)
-		local sound2 = self:NewSound(2, true, false)
-		local sound1 = self:NewSound(1, true, false)
+		local sound5 = self:NewSound(5, false, true)
+		local sound4 = self:NewSound(4, false, true)
+		local sound3 = self:NewSound(3, false, true)
+		local sound2 = self:NewSound(2, false, true)
+		local sound1 = self:NewSound(1, false, true)
 		timer = timer or 10
 		count = count or 5
 		spellId = spellId or 39505
@@ -6791,11 +6791,11 @@ do
 			optionVersion = string.sub(timer, 14)
 			timer, spellId, optionDefault, optionName = spellId, optionDefault, optionName, temp
 		end
-		local sound5 = self:NewSound(5, true, false)
-		local sound4 = self:NewSound(4, true, false)
-		local sound3 = self:NewSound(3, true, false)
-		local sound2 = self:NewSound(2, true, false)
-		local sound1 = self:NewSound(1, true, false)
+		local sound5 = self:NewSound(5, false, true)
+		local sound4 = self:NewSound(4, false, true)
+		local sound3 = self:NewSound(3, false, true)
+		local sound2 = self:NewSound(2, false, true)
+		local sound1 = self:NewSound(1, false, true)
 		timer = timer or 10
 		spellId = spellId or 39505
 		local obj = setmetatable(
