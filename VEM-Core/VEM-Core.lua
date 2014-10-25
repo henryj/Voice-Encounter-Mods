@@ -92,6 +92,7 @@ VEM.DefaultOptions = {
 	Enabled = true,
 	ShowWarningsInChat = true,
 	ShowSWarningsInChat = true,
+	ShowChatTime = true,
 	ShowFakedRaidWarnings = false,
 	WarningIconLeft = true,
 	WarningIconRight = true,
@@ -115,7 +116,8 @@ VEM.DefaultOptions = {
 	BlockVersionUpdateNotice = false,
 	ShowSpecialWarnings = true,
 	ShowFlashFrame = true,
-	ShowAdvSWSound = true,
+	ShowAdvSWSounds = true,
+	ShowShakeFrame = true,
 	CustomSounds = 0,
 	AlwaysShowHealthFrame = false,
 	ShowBigBrotherOnCombatStart = false,
@@ -154,7 +156,7 @@ VEM.DefaultOptions = {
 	SpecialWarningY = 75,
 	SpecialWarningFont = STANDARD_TEXT_FONT,
 	SpecialWarningFontSize = 50,
-	SpecialWarningFontCol = {1.0, 0.7, 0.0},--Yellow, with a tint of orange
+	SpecialWarningFontColor = {1.0, 0.7, 0.0},--Yellow, with a tint of orange
 	SpecialWarningFlashCol1 = {1.0, 1.0, 0.0},--Yellow
 	SpecialWarningFlashCol2 = {1.0, 0.5, 0.0},--Orange
 	SpecialWarningFlashCol3 = {1.0, 0.0, 0.0},--Red
@@ -907,7 +909,7 @@ do
 				VEM:AddMsg(VEM_CORE_UPDATEREMINDER_MAJORPATCH)
 				return
 			end
-			if GetAddOnEnableState(playerName, "VEM-Core") >= 1 then
+			if GetAddOnEnableState(playerName, "VEM-Core") < 1 then
 				VEM:AddMsg(VEM_CORE_VEM)
 				return
 			end
@@ -1488,6 +1490,9 @@ SlashCmdList["VOICEENCOUNTERMODS"] = function(msg)
 				VEM:AddMsg(v)
 			end
 		end
+	elseif cmd == "hud" then
+		VEM:AddMsg("showing hud")
+		VEMHudMap:AddEdge(1, 0, 0, 1, 3, "player", "target")
 	elseif cmd:sub(1, 7) == "lockout" or cmd:sub(1, 3) == "ids" then
 		if VEM:GetRaidRank(playerName) == 0 then
 			return VEM:AddMsg(VEM_ERROR_NO_PERMISSION)
@@ -5082,7 +5087,11 @@ function VEM:AddMsg(text, prefix)
 	prefix = prefix or (self.localization and self.localization.general.name) or "Voice Encounter Mods"
 	local frame = _G[tostring(VEM.Options.ChatFrame)]
 	frame = frame and frame:IsShown() and frame or DEFAULT_CHAT_FRAME
-	frame:AddMessage(("|cffff7d0a<|r|cffffd200%s|r|cffff7d0a>|r %s"):format(tostring(prefix), tostring(text)), 0.41, 0.8, 0.94)
+	if VEM.Options.ShowChatTime then
+		frame:AddMessage(("|cffff7d0a%s|r|cffff7d0a[|r|cffffd200%s|r|cffff7d0a]|r %s"):format(date("%H:%M:%S"), tostring(prefix), tostring(text)), 0.41, 0.8, 0.94)
+	else
+		frame:AddMessage(("|cffff7d0a<|r|cffffd200%s|r|cffff7d0a>|r %s"):format(tostring(prefix), tostring(text)), 0.41, 0.8, 0.94)
+	end
 end
 
 function VEM:Debug(text)
@@ -5227,6 +5236,50 @@ function VEM:FindEncounterIDs(instanceID, diff)
 			self:AddMsg(encounterID..": "..name)
 		end
 	end
+end
+
+-----------------
+--  Map Sizes  --
+-----------------
+VEM.MapSizes = {}
+
+function VEM:RegisterMapSize(zone, ...)
+	if not VEM.MapSizes[zone] then
+		VEM.MapSizes[zone] = {}
+	end
+	local zone = VEM.MapSizes[zone]
+	for i = 1, select("#", ...), 3 do
+		local level, width, height = select(i, ...)
+		zone[level] = {width, height}
+	end
+end
+
+function VEM:UpdateMapSizes()
+	-- try custom map size first
+	SetMapToCurrentZone()
+	local mapName = GetMapInfo()
+	local floor, a1, b1, c1, d1 = GetCurrentMapDungeonLevel()
+	local dims = VEM.MapSizes[mapName] and VEM.MapSizes[mapName][floor]
+	if dims then
+		currentSizes = dims
+		return
+	end
+
+	-- failed, try Blizzard's map size
+	if not (a1 and b1 and c1 and d1) then
+		local zoneIndex, a2, b2, c2, d2 = GetCurrentMapZone()
+		a1, b1, c1, d1 = a2, b2, c2, d2
+	end
+
+	if not (a1 and b1 and c1 and d1) then return end
+	currentSizes = {abs(c1-a1), abs(d1-b1)}
+end
+
+function VEM:GetMapSizes()
+	if not currentSizes then
+		VEM:UpdateMapSizes()
+	end
+	return currentSizes
 end
 
 -------------------
@@ -6416,7 +6469,7 @@ end
 do
 	local soundPrototype = {}
 	local mt = { __index = soundPrototype }
-	function bossModPrototype:NewSound(spellId, optionDefault, optionName, optionVersion)
+	function bossModPrototype:NewSound(spellId, optionName, optionDefault, optionVersion)
 		if not spellId and not optionName then
 			error("NewSound: you must provide either spellId or optionName", 2)
 			return
@@ -6529,35 +6582,6 @@ do
 					VEM:Schedule(timer%1, showCountdown, floor(timer))
 				end
 			end
-			local voice = VEM.Options.CountdownVoice
-			local voice2 = VEM.Options.CountdownVoice2
-			local voice3 = VEM.Options.CountdownVoice3
-			if voice == "None" then return end
-			if self.alternateVoice == 2 then
-				voice = voice2
-			end
-			if self.alternateVoice == 3 then
-				voice = voice3
-			end
-			if voice == "Mosh" then--Voice only goes to 5
-				if self.type == "Countout" then
-					for i = 1, timer do
-						if i < 6 then
-							self.sound5:Schedule(i, "Interface\\AddOns\\VEM-Core\\Sounds\\Mosh\\"..i..".ogg")
-						end
-					end
-				else
-					for i = count, 1, -1 do
-						if i <= 5 then
-							self.sound5:Schedule(timer-i, "Interface\\AddOns\\VEM-Core\\Sounds\\Mosh\\"..i..".ogg")
-						end
-					end
-				end
-			else--Voice that goes to 10
-				for i = count, 1, -1 do
-					self.sound5:Schedule(timer-i, "Interface\\AddOns\\VEM-Core\\Sounds\\"..voice.."\\"..i..".ogg")
-				end
-			end]]
 			for i = count, 1, -1 do
 				local countvaluei
 				if i == 1 then countvaluei = "countone"
@@ -6612,11 +6636,11 @@ do
 			altVoice = true
 			timer = tonumber(string.sub(timer, 4))
 		end
-		local sound5 = self:NewSound(5, true, false)
-		local sound4 = self:NewSound(4, true, false)
-		local sound3 = self:NewSound(3, true, false)
-		local sound2 = self:NewSound(2, true, false)
-		local sound1 = self:NewSound(1, true, false)
+		local sound5 = self:NewSound(5, false, true)
+		local sound4 = self:NewSound(4, false, true)
+		local sound3 = self:NewSound(3, false, true)
+		local sound2 = self:NewSound(2, false, true)
+		local sound1 = self:NewSound(1, false, true)
 		timer = timer or 10
 		count = count or 5
 		spellId = spellId or 39505
@@ -6663,11 +6687,11 @@ do
 			altVoice = true
 			timer = tonumber(string.sub(timer, 4))
 		end
-		local sound5 = self:NewSound(5, true, false)
-		local sound4 = self:NewSound(4, true, false)
-		local sound3 = self:NewSound(3, true, false)
-		local sound2 = self:NewSound(2, true, false)
-		local sound1 = self:NewSound(1, true, false)
+		local sound5 = self:NewSound(5, false, true)
+		local sound4 = self:NewSound(4, false, true)
+		local sound3 = self:NewSound(3, false, true)
+		local sound2 = self:NewSound(2, false, true)
+		local sound1 = self:NewSound(1, false, true)
 		timer = timer or 10
 		count = count or 5
 		spellId = spellId or 39505
@@ -6767,11 +6791,11 @@ do
 			optionVersion = string.sub(timer, 14)
 			timer, spellId, optionDefault, optionName = spellId, optionDefault, optionName, temp
 		end
-		local sound5 = self:NewSound(5, true, false)
-		local sound4 = self:NewSound(4, true, false)
-		local sound3 = self:NewSound(3, true, false)
-		local sound2 = self:NewSound(2, true, false)
-		local sound1 = self:NewSound(1, true, false)
+		local sound5 = self:NewSound(5, false, true)
+		local sound4 = self:NewSound(4, false, true)
+		local sound3 = self:NewSound(3, false, true)
+		local sound2 = self:NewSound(2, false, true)
+		local sound1 = self:NewSound(1, false, true)
 		timer = timer or 10
 		spellId = spellId or 39505
 		local obj = setmetatable(
@@ -6883,7 +6907,7 @@ do
 		frame:ClearAllPoints()
 		frame:SetPoint(VEM.Options.SpecialWarningPoint, UIParent, VEM.Options.SpecialWarningPoint, VEM.Options.SpecialWarningX, VEM.Options.SpecialWarningY)
 		font:SetFont(VEM.Options.SpecialWarningFont, VEM.Options.SpecialWarningFontSize, "THICKOUTLINE")
-		font:SetTextColor(unpack(VEM.Options.SpecialWarningFontCol))
+		font:SetTextColor(unpack(VEM.Options.SpecialWarningFontColor))
 	end
 
 	local shakeFrame = CreateFrame("Frame")
@@ -6915,7 +6939,7 @@ do
 			local text = msg:gsub(">.-<", stripServerName)
 			font:SetText(text)
 			if VEM.Options.ShowSWarningsInChat then
-				local colorCode = ("|cff%.2x%.2x%.2x"):format(VEM.Options.SpecialWarningFontCol[1] * 255, VEM.Options.SpecialWarningFontCol[2] * 255, VEM.Options.SpecialWarningFontCol[3] * 255)
+				local colorCode = ("|cff%.2x%.2x%.2x"):format(VEM.Options.SpecialWarningFontColor[1] * 255, VEM.Options.SpecialWarningFontColor[2] * 255, VEM.Options.SpecialWarningFontColor[3] * 255)
 				self.mod:AddMsg(colorCode.."["..VEM_CORE_MOVE_SPECIAL_WARNING_TEXT.."] "..text.."|r", nil)
 			end
 			if not UnitIsDeadOrGhost("player") and VEM.Options.ShowFlashFrame then
@@ -8217,6 +8241,10 @@ function bossModPrototype:ReceiveSync(event, sender, revision, ...)
 			self:OnSync(event, unpack(tmp))
 		end
 	end
+end
+
+function bossModPrototype:SetQuestID(id)
+	self.questId = id
 end
 
 function bossModPrototype:SetRevision(revision)
