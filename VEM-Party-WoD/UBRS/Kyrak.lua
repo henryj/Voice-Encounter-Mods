@@ -1,6 +1,6 @@
 local mod	= VEM:NewMod(1227, "VEM-Party-WoD", 8, 559)
 local L		= mod:GetLocalizedStrings()
-local sndWOP	= mod:SoundMM("SoundWOP")
+local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
 mod:SetRevision(("$Revision: 11380 $"):sub(12, -3))
 mod:SetCreatureID(76021)
@@ -41,14 +41,14 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnRejuvSerum:Show(args.destName)
 		specWarnRejuvSerum:Show(args.destName)
 		if mod:IsMagicDispeller() then
-			sndWOP:Play(VEM.SoundMMPath.."\\dispelnow.ogg")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\dispelboss.ogg")
 		end
 --		timerRejuvSerumCD:Start()
 	elseif spellId == 162600 then
 		warnToxicFumes:Show(args.destName)
 		specWarnToxicFumes:Show(args.destName)
 		if mod:IsHealer() then
-			sndWOP:Play(VEM.SoundMMPath.."\\dispelnow.ogg")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\dispelnow.ogg")
 		end
 	end
 end
@@ -58,9 +58,9 @@ function mod:SPELL_CAST_START(args)
 		warnDeblitatingFixation:Show()
 		specWarnDeblitatingFixation:Show(args.sourceName)
 		if mod:IsTank() then
-			sndWOP:Play(VEM.SoundMMPath.."\\kickcast.ogg")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\kickcast.ogg")
 		elseif (not mod:IsHealer()) then
-			sndWOP:Play(VEM.SoundMMPath.."\\helpkick.ogg")
+			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\helpkick.ogg")
 		end
 	elseif args.spellId == 161203 then
 		warnRejuvSerumCast:Show()
@@ -70,7 +70,7 @@ end
 function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 161288 and destGUID == UnitGUID("player") and self:AntiSpam(3, 1) then--Goriona's Void zones
 		specWarnVilebloodSerum:Show()
-		sndWOP:Play(VEM.SoundMMPath.."\\runaway.ogg")
+		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg")
 	end
 end
 mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE

@@ -1,0 +1,68 @@
+﻿## Interface: 60000
+## X-Min-Interface: 60000
+## Title:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0Party-WoD|r
+## Title-koKR:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf05인 던전(드레노어의 전쟁군주)|r
+## Title-deDE:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0Gruppe-WoD|r
+## Title-frFR:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0Groupe-WoD|r
+## Title-ruRU:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0Групповые подземелья-WoD|r
+## Title-zhTW:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0隊伍首領-德拉諾之霸|r
+## Title-zhCN:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0队伍首领(德拉诺之王)|r
+## LoadOnDemand: 1
+## RequiredDeps: VEM-Core
+## SavedVariablesPerCharacter: VEMPartyWoD_SavedVars, VEMPartyWoD_SavedStats
+## X-VEM-Mod: 1
+## X-VEM-Mod-Type: PARTY
+## X-VEM-Mod-Category: WOD
+## X-VEM-Mod-Has-Challenge: 1
+## X-VEM-Mod-SubCategoriesID: 1182, 1175, 1208, 1195, 1279, 1176, 1209, 1358
+## X-VEM-Mod-Name: Party (WoD)
+## X-VEM-Mod-Name-koKR: 5인 던전(드레노어의 전쟁군주)
+## X-VEM-Mod-Name-deDE: Gruppe (WoD)
+## X-VEM-Mod-Name-ruRU: Групповые подземелья (WoD)
+## X-VEM-Mod-Name-esES: Mazmorras (WoD)
+## X-VEM-Mod-Name-esMX: Mazmorras (WoD)
+## X-VEM-Mod-Name-ptBR: Masmorras (WoD)
+## X-VEM-Mod-Name-frFR: Groupe (WoD)
+## X-VEM-Mod-Name-zhTW: 隊伍首領 (德拉諾之霸)
+## X-VEM-Mod-Name-zhCN: 队伍首领(德拉诺之王)
+## X-VEM-Mod-Sort: 125
+## X-VEM-Mod-MapID: 1182, 1175, 1208, 1195, 1279, 1176, 1209, 1358
+localization.en.lua
+localization.kr.lua
+localization.de.lua
+localization.ru.lua
+localization.tw.lua
+localization.cn.lua
+Auchindoun\ProtectorOfAuch.lua
+Auchindoun\Nyami.lua
+Auchindoun\Azzakel.lua
+Auchindoun\Terongor.lua
+BloodmaulSlagMines\Magmolatus.lua
+BloodmaulSlagMines\Crushto.lua
+BloodmaulSlagMines\Roltall.lua
+BloodmaulSlagMines\Gugrokk.lua
+GrimRailDepot\RocketAndBorka.lua
+GrimRailDepot\BlackrockAssaultCommander.lua
+GrimRailDepot\ThunderlordGeneral.lua
+IronDocks\Nokgar.lua
+IronDocks\GrimrailEnforcers.lua
+IronDocks\Oshir.lua
+IronDocks\Skulloc.lua
+EverBloom\Witherbark.lua
+EverBloom\AncientProtectors.lua
+EverBloom\ArchmageSol.lua
+EverBloom\Xeritac.lua
+EverBloom\Yalnu.lua
+SMBurialGrounds\SadanaBloodfury.lua
+SMBurialGrounds\Nhallish.lua
+SMBurialGrounds\Bonemaw.lua
+SMBurialGrounds\Nerzhul.lua
+Skyreach\Ranjit.lua
+Skyreach\Araknath.lua
+Skyreach\Rukhran.lua
+Skyreach\Viryx.lua
+UBRS\Gorashan.lua
+UBRS\Kyrak.lua
+UBRS\Tharbek.lua
+UBRS\Ragewing.lua
+UBRS\Zaela.lua
