@@ -210,17 +210,17 @@ do
 	-- gets the health and unit id of the given creature id, returns nil if the target could not be found
 	local function getHealth(cId)
 		local id = targetCache[cId] -- ask the cache if we already know where the mob is
-		if self:GetCIDFromGUID(UnitGUID(id or "")) ~= cId then -- the cache doesn't know it or has invalid data, update it
+		if VEM:GetCIDFromGUID(UnitGUID(id or "")) ~= cId then -- the cache doesn't know it or has invalid data, update it
 			targetCache[cId] = nil
 			-- check focus target
-			if self:GetCIDFromGUID(UnitGUID("focus")) == cId then
+			if VEM:GetCIDFromGUID(UnitGUID("focus")) == cId then
 				targetCache[cId] = "focus"
 			else
 				-- just some hack to add support for boss unit ids
 				local found = false
 				for i = 1, 5 do -- are there really just boss1 to boss4? everyone seems to be assuming this...
 					id = "boss"..i
-					if self:GetCIDFromGUID(UnitGUID(id)) == cId then
+					if VEM:GetCIDFromGUID(UnitGUID(id)) == cId then
 						found = true
 						targetCache[cId] = id
 						break
@@ -231,7 +231,7 @@ do
 					local uId = (IsInRaid() and "raid") or "party"
 					for i = 0, math.max(GetNumGroupMembers(), GetNumSubgroupMembers()) do
 						id = (i == 0 and "target") or uId..i.."target"
-						if self:GetCIDFromGUID(UnitGUID(id or "")) == cId then
+						if VEM:GetCIDFromGUID(UnitGUID(id or "")) == cId then
 							targetCache[cId] = id
 							break
 						end
@@ -240,7 +240,7 @@ do
 			end
 		end
 		-- UnitHealthMax is sometimes 0 for one frame when the unit just showed up; so we need to check this here due to stupid UI changes
-		if self:GetCIDFromGUID(UnitGUID(id or "")) == cId and UnitHealthMax(id) ~= 0 then -- did we find the mob? if yes: update the health bar
+		if VEM:GetCIDFromGUID(UnitGUID(id or "")) == cId and UnitHealthMax(id) ~= 0 then -- did we find the mob? if yes: update the health bar
 			return UnitHealth(id) / UnitHealthMax(id) * 100, id
 		end
 	end
