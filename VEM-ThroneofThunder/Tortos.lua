@@ -221,7 +221,7 @@ local function resetaddstate()
 end
 
 mod:RegisterOnUpdateHandler(function(self)
-	if VEM:GetLowestBossHealth() * 100 < 10 then return end
+	if (mod:GetLowestBossHealth() or 0) * 100 < 10 then return end
 	if hasHighestVersion and not (iconsSet == 3) then
 		for uId in VEM:GetGroupMembers() do
 			local unitid = uId.."target"
