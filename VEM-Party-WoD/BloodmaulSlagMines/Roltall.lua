@@ -1,6 +1,6 @@
 ﻿local mod	= VEM:NewMod(887, "VEM-Party-WoD", 2, 385)
 local L		= mod:GetLocalizedStrings()
-local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
+local sndWOP	= mod:SoundMM("SoundWOP")
 
 mod:SetRevision(("$Revision: 11520 $"):sub(12, -3))
 mod:SetCreatureID(75786)
@@ -47,7 +47,9 @@ function mod:SPELL_CAST_START(args)
 		self.vb.boulderCount = self.vb.boulderCount + 1
 		warnFieryBoulder:Show(self.vb.boulderCount)
 		specWarnFieryBoulder:Show()
-		--sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\meteorsoon.ogg")
+		if self.vb.boulderCount == 1 then
+			sndWOP:Play("153247")
+		end
 		if self.vb.boulderCount == 3 then
 			timerHeatWaveCD:Start()
 			self.vb.boulderCount = 0
@@ -56,9 +58,9 @@ function mod:SPELL_CAST_START(args)
 		end
 	elseif spellId == 152940 then--Heat Wave
 		if mod:IsHealer() then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\healall.ogg")
+			sndWOP:Play("healall")
 		else
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\wwsoon.ogg")
+			sndWOP:Play("wwsoon")
 		end
 		warnHeatWave:Show()
 		specWarnHeatWave:Show()
@@ -69,21 +71,21 @@ function mod:SPELL_CAST_START(args)
 		warnBurningSlag:Show()
 		specWarnBurningSlag:Show()
 		timerFieryBoulderCD:Start()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\firecircle.ogg")
+		sndWOP:Play("firecircle")
 	end
 end
 
 function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 153227 and args:IsPlayer() and self:AntiSpam(2, 1) then
 		specWarnBurningSlagFire:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg")
+		sndWOP:Play("runaway")
 	end
 end
 
 function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 153227 and destGUID == UnitGUID("player") and self:AntiSpam(2, 1) then
 		specWarnBurningSlagFire:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg")
+		sndWOP:Play("runaway")
 	end
 end
 mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE

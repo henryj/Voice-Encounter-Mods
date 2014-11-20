@@ -1,6 +1,6 @@
 local mod	= VEM:NewMod(1185, "VEM-Party-WoD", 1, 547)
 local L		= mod:GetLocalizedStrings()
-local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
+local sndWOP	= mod:SoundMM("SoundWOP")
 
 mod:SetRevision(("$Revision: 11517 $"):sub(12, -3))
 mod:SetCreatureID(75839)--Soul Construct
@@ -38,14 +38,11 @@ function mod:ShieldTarget(targetname, uId)
 	if targetname == UnitName("player") then
 		yellHolyShield:Yell()
 	elseif self.Options.ShieldArrow then
-		--local x, y = GetPlayerMapPosition(uId)
-		--if x == 0 and y == 0 then
-		--	SetMapToCurrentZone()
-		--	x, y = GetPlayerMapPosition(uId)
-		--end	
 		VEM.Arrow:ShowRunTo(targetname, 0, 8)
 	end
-	--sndWOP:Schedule(3, "Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\findshield.ogg")
+	if not mod:IsTank() then
+		sndWOP:Schedule(3, "findshield")
+	end
 end
 
 function mod:OnCombatStart(delay)
@@ -72,7 +69,7 @@ end
 
 function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 161457 and destGUID == UnitGUID("player") and self:AntiSpam() then
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg")
+		sndWOP:Play("runaway")
 		specWarnSanctifiedGround:Show()
 	end
 end

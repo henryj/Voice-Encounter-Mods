@@ -1,6 +1,6 @@
 local mod	= VEM:NewMod(966, "VEM-Party-WoD", 7, 476)
 local L		= mod:GetLocalizedStrings()
-local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
+local sndWOP	= mod:SoundMM("SoundWOP")
 
 mod:SetRevision(("$Revision: 11371 $"):sub(12, -3))
 mod:SetCreatureID(76141)
@@ -37,15 +37,15 @@ function mod:SPELL_CAST_START(args)
 		warnBurst:Show(self.vb.burstCount)
 		specWarnBurst:Show(self.vb.burstCount)
 		timerBurstCD:Start(nil, self.vb.burstCount+1)
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\aesoon.ogg")
+		sndWOP:Play("aesoon")
 		if self.vb.burstCount < 11 then
-			sndWOP:Schedule(1.2, "Interface\\AddOns\\VEM-Core\\sounds\\"..VEM.Options.CountdownVoice2.."\\"..self.vb.burstCount..".ogg")
+			sndWOP:Schedule(1.2, "Interface\\AddOns\\VEM-Core\\sounds\\"..VEM.Options.CountdownVoice2.."\\"..self.vb.burstCount.."")
 		end
 	end
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args.spellId == 154159 then
+	if args.spellId == 154159 and self:AntiSpam(2, 1) then
 		warnEnergize:Show()
 		timerEnergozeCD:Start()
 	end

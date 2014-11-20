@@ -1,0 +1,31 @@
+﻿## Interface: 60000
+## X-Min-Interface: 60000
+## Title:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0Draenor|r
+## Title-koKR:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0드레노어|r
+## Title-deDE:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0Draenor|r
+## Title-zhTW:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0德拉諾|r
+## Title-zhCN:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0德拉诺|r
+## Author: MysticalOS
+## LoadOnDemand: 1
+## RequiredDeps: VEM-Core
+## SavedVariablesPerCharacter: VEMDraenor_SavedVars, VEMDraenor_SavedStats
+## X-VEM-Mod: 1
+## X-VEM-Mod-Type: RAID
+## X-VEM-Mod-Category: WOD
+## X-VEM-Mod-Has-Single-Format: 1
+## X-VEM-Mod-World-Boss: 1
+## X-VEM-Mod-Sort: 106
+## X-VEM-Mod-MapID: 1116
+## X-VEM-Mod-LoadCID: 83746, 81535, 81252
+## X-Curse-Packaged-Version: 6.0.4
+## X-Curse-Project-Name: Voice Encounter Mods
+## X-Curse-Project-ID: deadly-boss-mods
+## X-Curse-Repository-ID: wow/deadly-boss-mods/mainline
+localization.en.lua
+localization.kr.lua
+localization.de.lua
+localization.ru.lua
+localization.tw.lua
+Drov.lua
+Tarlna.lua
+Rukhmar.lua

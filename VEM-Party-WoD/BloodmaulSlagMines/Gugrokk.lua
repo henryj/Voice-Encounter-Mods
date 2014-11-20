@@ -1,6 +1,6 @@
 local mod	= VEM:NewMod(889, "VEM-Party-WoD", 2, 385)
 local L		= mod:GetLocalizedStrings()
-local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
+local sndWOP	= mod:SoundMM("SoundWOP")
 
 mod:SetRevision(("$Revision: 11380 $"):sub(12, -3))
 mod:SetCreatureID(74790)
@@ -37,9 +37,9 @@ function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
 	if spellId == 150677 then
 		if mod:IsTank() then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\kickcast.ogg")
+			sndWOP:Play("kickcast")
 		elseif (not mod:IsHealer()) then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\helpkick.ogg")
+			sndWOP:Play("helpkick")
 		end
 		warnMoltenBlast:Show()
 		specWarnMoltenBlast:Show(args.sourceName)
@@ -49,8 +49,8 @@ function mod:SPELL_CAST_START(args)
 		timerMagmaEruptionCD:Start()
 	elseif spellId == 150755 then
 		if (not mod:IsHealer()) then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\mobkill.ogg")
-			sndWOP:Schedule(2, VEM.SoundMMPath.."\\mobkill.ogg")
+			sndWOP:Play("mobkill")
+			sndWOP:Schedule(2, "mobkill")
 		end
 		warnUnstableSlag:Show()
 		specWarnUnstableSlag:Show()
@@ -60,7 +60,7 @@ end
 
 function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 150784 and destGUID == UnitGUID("player") and self:AntiSpam(2, 1) then
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg")
+		sndWOP:Play("runaway")
 		specWarnMagmaEruption:Show()
 	end
 end

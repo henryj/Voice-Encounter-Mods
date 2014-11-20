@@ -1,6 +1,6 @@
 local mod	= VEM:NewMod(1226, "VEM-Party-WoD", 8, 559)
 local L		= mod:GetLocalizedStrings()
-local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
+local sndWOP	= mod:SoundMM("SoundWOP")
 
 mod:SetRevision(("$Revision: 11332 $"):sub(12, -3))
 mod:SetCreatureID(76413)

@@ -9,18 +9,18 @@
 ## SavedVariablesPerCharacter: VEMWorldEvents_SavedVars, VEMWorldEvents_SavedStats
 ## X-VEM-Mod: 1
 ## X-VEM-Mod-Type: OTHER
-## X-VEM-Mod-Category: MOP
+## X-VEM-Mod-Category: WOD
 ## X-VEM-Mod-Has-Single-Format: 1
-## X-VEM-Mod-SubCategories: Holidays,Darkmoon Faire,Quests
-## X-VEM-Mod-SubCategories-zhTW: 節慶,暗月馬戲團,任務
-## X-VEM-Mod-SubCategories-zhCN: 节日,暗月马戏团,任务
+## X-VEM-Mod-World-Boss: 1
+## X-VEM-Mod-SubCategories: Holidays,Quests
+## X-VEM-Mod-SubCategories-zhTW: 節慶,任務
+## X-VEM-Mod-SubCategories-zhCN: 节日,任务
 ## X-VEM-Mod-Name: World Events
 ## X-VEM-Mod-Name-zhTW: 世界事件
 ## X-VEM-Mod-Name-zhCN: 世界事件
-## X-VEM-Mod-MapID: 230,189,33,547,974,1,1004
-## X-VEM-Mod-ForceLoad-MapID: 974
-## X-VEM-Mod-Sort: 50
-## X-VEM-Mod-LoadCID: 55003,54499,15467,15466,49687
+## X-VEM-Mod-MapID: 230,189,33,547,1004, 1, 0
+## X-VEM-Mod-Sort: 150
+## X-VEM-Mod-LoadCID: 55003,54499,15467,15466,49687,15664
 localization.en.lua
 localization.tw.lua
 localization.cn.lua
@@ -30,10 +30,4 @@ Holidays\Ahune.lua
 Holidays\CorenDirebrew.lua
 Holidays\HeadlessHorseman.lua
 Holidays\Greench.lua
-DMF\Cannon.lua
-DMF\Gnoll.lua
-DMF\Shot.lua
-DMF\Tonks.lua
-DMF\Rabbit.lua
-DMF\Moonfang.lua
 Quests\Plants.lua

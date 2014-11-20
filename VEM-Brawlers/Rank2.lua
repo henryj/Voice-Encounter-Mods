@@ -2,13 +2,13 @@ local mod	= VEM:NewMod("BrawlRank2", "VEM-Brawlers")
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 9770 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10922 $"):sub(12, -3))
 mod:SetModelID(46712)
 mod:SetZone()
 
 mod:RegisterEvents(
-	"SPELL_CAST_START",
-	"SPELL_CAST_SUCCESS",
+	"SPELL_CAST_START 133308 135234",
+	"SPELL_CAST_SUCCESS 133227 132670",
 	"UNIT_DIED"
 )
 

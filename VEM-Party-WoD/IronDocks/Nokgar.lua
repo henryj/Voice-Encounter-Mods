@@ -1,6 +1,6 @@
 local mod	= VEM:NewMod(1235, "VEM-Party-WoD", 4, 558)
 local L		= mod:GetLocalizedStrings()
-local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
+local sndWOP	= mod:SoundMM("SoundWOP")
 
 mod:SetRevision(("$Revision: 11689 $"):sub(12, -3))
 mod:SetCreatureID(81297, 81305)
@@ -29,10 +29,10 @@ function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 164426 then
 		warnRecklessProvocation:Show(args.destName)
 		specWarnRecklessProvocation:Show(args.destName)
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\stopattack.ogg")
-		sndWOP:Schedule(2, VEM.SoundMMPath.."\\countthree.ogg")
-		sndWOP:Schedule(3, VEM.SoundMMPath.."\\counttwo.ogg")
-		sndWOP:Schedule(4, VEM.SoundMMPath.."\\countone.ogg")
+		sndWOP:Play("stopattack")
+		sndWOP:Schedule(2, "countthree")
+		sndWOP:Schedule(3, "counttwo")
+		sndWOP:Schedule(4, "countone")
 		--may be attack boss
 	elseif args.spellId == 164835 then
 		warnEnrage:CombinedShow(0.3, args.destName)

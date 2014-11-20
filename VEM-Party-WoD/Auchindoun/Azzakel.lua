@@ -1,6 +1,6 @@
 local mod	= VEM:NewMod(1216, "VEM-Party-WoD", 1, 547)
 local L		= mod:GetLocalizedStrings()
-local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
+local sndWOP	= mod:SoundMM("SoundWOP")
 
 mod:SetRevision(("$Revision: 11518 $"):sub(12, -3))
 mod:SetCreatureID(75927)
@@ -40,7 +40,7 @@ local specWarnFelSpark				= mod:NewSpecialWarningMove(153726)
 local timerCurtainOfFlameCD			= mod:NewNextTimer(20, 153396)--20sec cd but can be massively delayed by adds phases
 local timerFelLash					= mod:NewTargetTimer(7.5, 153234)
 local timerClawsOfArgus				= mod:NewBuffActiveTimer(18, 153764)
-local timerClawsOfArgusCD			= mod:NewNextTimer(60, 153764)
+local timerClawsOfArgusCD			= mod:NewNextTimer(70, 153764)
 
 mod:AddRangeFrameOption(5, 153396)
 
@@ -59,7 +59,7 @@ function mod:OnCombatStart(delay)
 	self.vb.debuffCount = 0
 	self.vb.firstFlameDone = false
 	timerCurtainOfFlameCD:Start(15.5-delay)
-	timerClawsOfArgusCD:Start(27-delay)
+	timerClawsOfArgusCD:Start(32-delay)
 end
 
 function mod:OnCombatEnd()
@@ -86,11 +86,11 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			specWarnCurtainOfFlame:Show()
 			yellWarnCurtainOfFlame:Yell()
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runout.ogg")
+			sndWOP:Play("runout")
 		else
 			if self:CheckNearby(5, targetname) then
 				specWarnCurtainOfFlameNear:Show(targetname)
-				sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg")
+				sndWOP:Play("runaway")
 			end
 		end
 		if self.Options.RangeFrame then
@@ -125,16 +125,16 @@ end
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
 	if spellId == 153764 then
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\mobsoon.ogg")
+		sndWOP:Play("mobsoon")
 		warnClawsOfArgus:Show()
 		specWarnClawsOfArgus:Show()
 		timerClawsOfArgus:Start()
 		timerClawsOfArgusCD:Start()
 	elseif spellId == 154221 then
 		if mod:IsTank() then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\kickcast.ogg")
+			sndWOP:Play("kickcast")
 		else
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\helpkick.ogg")
+			sndWOP:Play("helpkick")
 		end
 		warnFelblast:Show()
 		specWarnFelblast:Show(args.sourceName)
@@ -143,10 +143,10 @@ end
 
 function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 153616 and destGUID == UnitGUID("player") and self:AntiSpam(2, 1) then
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg")
+		sndWOP:Play("runaway")
 		specWarnFelPool:Show()
 	elseif spellId == 153726 and destGUID == UnitGUID("player") and self:AntiSpam(2, 2) then
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg")
+		sndWOP:Play("runaway")
 		specWarnFelSpark:Show()
 	end
 end
@@ -155,7 +155,7 @@ mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 function mod:SPELL_SUMMON(args)
 	if args.spellId == 164081 then
 		if mod:IsTank() then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\changetarget.ogg")
+			sndWOP:Play("changetarget")
 		end
 		warnSummonFelguard:Show()
 		specWarnSummonFelguard:Show()

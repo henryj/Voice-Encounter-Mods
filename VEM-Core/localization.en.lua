@@ -11,32 +11,46 @@ VEM_CORE_LOAD_MOD_SUCCESS			= "Loaded '%s' mods. For more options, type /vem or 
 VEM_CORE_LOAD_MOD_COMBAT			= "Loading of '%s' delayed until you leave combat"
 VEM_CORE_LOAD_GUI_ERROR				= "Could not load GUI: %s"
 VEM_CORE_LOAD_GUI_COMBAT			= "GUI cannot be initially loaded in combat. GUI will be loaded out of combat. After GUI loaded, you can load GUI in combat."
+VEM_CORE_LOAD_SKIN_COMBAT			= "VEM timers failed to skin during combat. Your timers will likely not work correctly and generate several lua errors. This is often caused by 3rd party mods trying to apply skin changes in combat. Recommended to reloadui after you leave combat"
 VEM_CORE_BAD_LOAD					= "VEM has detected your mod for this instance failed to fully load correctly because of combat. As soon as you are out of combat, please do /console reloadui as soon as possible."
+
+VEM_CORE_BLIZZ_BUGS					= "Blizzard Bug with Addons in 6.0:\n1. If you play with sound effects enabled, you may lose addon sounds in combat if number of simultaneous sounds exceeds your max sound channels. Patch 6.0 set mods to lower channel priority. To work around this problem, VEM now force sets your sound channels to 64 automatically. If you still experience mod sound loss, only work around is to disable 'Sound Effects' completely."
+
+VEM_CORE_DYNAMIC_DIFFICULTY_CLUMP	= "VEM has disabled dynamic range frame on this fight do to insufficient information about number of players needed to affect clump check for a group of your size."
+VEM_CORE_DYNAMIC_ADD_COUNT			= "VEM has disabled add count warnings on this fight do to insufficient information about number of adds that spawn for a group of your size."
+VEM_CORE_DYNAMIC_MULTIPLE			= "VEM has disabled multiple features on this fight do to insufficient information about certain mechanics for a group of your size."
 
 VEM_CORE_LOOT_SPEC_REMINDER			= "Your current spec is %s. Your current loot choice is %s."
 
 VEM_CORE_BIGWIGS_ICON_CONFLICT		= "VEM has detected that you have raid icons turned on in both BigWigs and VEM. Please disable icons in one of them to avoid conflict with your group leader"
 
+VEM_CORE_PROVINGGROUNDS_AD			= "VEM-ProvingGrounds is available for this content. You can find on deadlybossmods.com or on Curse. This message will only display once."
+
 VEM_CORE_COMBAT_STARTED				= "%s engaged. Good luck and have fun! :)"
 VEM_CORE_COMBAT_STARTED_IN_PROGRESS	= "Engaged an in progress fight against %s. Good luck and have fun! :)"
-VEM_CORE_GUILD_COMBAT_STARTED		= "Your guild engaged %s"
+VEM_CORE_GUILD_COMBAT_STARTED		= "%s has been engaged by guild"
 VEM_CORE_SCENARIO_STARTED			= "%s started. Good luck and have fun! :)"
+VEM_CORE_SCENARIO_STARTED_IN_PROGRESS	= "Joined %s as in progress. Good luck and have fun! :)"
 VEM_CORE_BOSS_DOWN					= "%s down after %s!"
 VEM_CORE_BOSS_DOWN_I				= "%s down! You have %d total victories."
 VEM_CORE_BOSS_DOWN_L				= "%s down after %s! Your last kill took %s and your fastest kill took %s. You have %d total victories."
 VEM_CORE_BOSS_DOWN_NR				= "%s down after %s! This is a new record! (Old record was %s). You have %d total victories."
-VEM_CORE_GUILD_BOSS_DOWN			= "Your guild bring %s down after %s!"
+VEM_CORE_GUILD_BOSS_DOWN			= "%s has been defeated by guild after %s!"
 VEM_CORE_SCENARIO_COMPLETE			= "%s completed after %s!"
+VEM_CORE_SCENARIO_COMPLETE_I		= "%s completed! You have %d total clears."
 VEM_CORE_SCENARIO_COMPLETE_L		= "%s completed after %s! Your last clear took %s and your fastest clear took %s. You have %d total clears."
 VEM_CORE_SCENARIO_COMPLETE_NR		= "%s completed after %s! This is a new record! (Old record was %s). You have %d total clears."
 VEM_CORE_COMBAT_ENDED_AT			= "Combat against %s (%s) ended after %s."
 VEM_CORE_COMBAT_ENDED_AT_LONG		= "Combat against %s (%s) ended after %s. You have %d total wipes on this difficulty."
-VEM_CORE_GUILD_COMBAT_ENDED_AT		= "Your guild ended their combat against %s (%s) after %s."
+VEM_CORE_GUILD_COMBAT_ENDED_AT		= "Guild has wiped on %s (%s) after %s."
 VEM_CORE_SCENARIO_ENDED_AT			= "%s ended after %s."
 VEM_CORE_SCENARIO_ENDED_AT_LONG		= "%s ended after %s. You have %d total incompletes on this difficulty."
 VEM_CORE_COMBAT_STATE_RECOVERED		= "%s was engaged %s ago, recovering timers..."
 VEM_CORE_TRANSCRIPTOR_LOG_START		= "Transcriptor logging started."
 VEM_CORE_TRANSCRIPTOR_LOG_END		= "Transcriptor logging ended."
+
+VEM_CORE_WORLDBOSS_ENGAGED			= "%s was possibly engaged on your realm at %s percent health. (Sent by %s)"
+VEM_CORE_WORLDBOSS_DEFEATED			= "%s was possibly defeated on your realm (Sent by %s)."
 
 VEM_CORE_TIMER_FORMAT_SECS			= "%d |4second:seconds;"
 VEM_CORE_TIMER_FORMAT_MINS			= "%d |4minute:minutes;"
@@ -89,15 +103,17 @@ VEM_CORE_UPDATEREMINDER_HEADER			= "Your version of Voice Encounter Mods is out-
 VEM_CORE_UPDATEREMINDER_HEADER_ALPHA	= "Your alpha version of Voice Encounter Mods is out-of-date.\n You are at least %d test versions behind. It is recommended that VEM users use the latest alpha or latest stable version. Out of date alphas can lead to poor or incomplete functionality."
 VEM_CORE_UPDATEREMINDER_FOOTER			= "Press " .. (IsMacClient() and "Cmd-C" or "Ctrl-C")  ..  " to copy the download link to your clipboard."
 VEM_CORE_UPDATEREMINDER_FOOTER_GENERIC	= "Press " .. (IsMacClient() and "Cmd-C" or "Ctrl-C")  ..  " to copy the link to your clipboard."
-VEM_CORE_UPDATEREMINDER_NOTAGAIN		= "Show popup when a new version is available"
-VEM_CORE_UPDATEREMINDER_DISABLE			= "WARNING: Do to your Voice Encounter Mods being drastically out of date (%d revisions), it has been disabled until updated. This is to ensure old and incompatable code doesn't cause poor play experience for yourself or fellow raid members."
-VEM_CORE_UPDATEREMINDER_HOTFIX			= "Your version of VEM will have incorrect timers or warnings during this boss encounter. This is corrected in an upcoming release or can be corrected immediately by updating to latest alpha release."
+VEM_CORE_UPDATEREMINDER_DISABLE			= "WARNING: Do to your Voice Encounter Mods being drastically out of date (at least %d revisions), it has been disabled until updated. This is to ensure old and incompatible code doesn't cause poor play experience for yourself or fellow raid members."
+VEM_CORE_UPDATEREMINDER_HOTFIX			= "Your version of VEM will have incorrect timers or warnings during this boss encounter. This is corrected in a newer release (or alpha release if newer release version not yet available)"
+VEM_CORE_UPDATEREMINDER_MAJORPATCH		= "WARNING: Do to your Voice Encounter Mods being out of date, VEM has been disabled until updated, since this is a major game patch. This is to ensure old and incompatible code doesn't cause poor play experience for yourself or fellow group members. Make sure you download a newer version from deadlybossmods.com or curse as soon as possible. If you are getting this message on 6.0 beta, download beta mod here: http://forums.elitistjerks.com/topic/132677-deadly-boss-mods-60-testing"
+VEM_CORE_UPDATEREMINDER_TESTVERSION		= "WARNING: You are using a version of Voice Encounter Mods not intended to be used with this game version. Please make sure you download the appropriate version for your game client from deadlybossmods.com or curse."
+VEM_CORE_DBM							= "WARNING: You are running both Voice Encounter Mods and Deadly Boss Mods. VEM will not run in this configuration and therefore will not be loaded."
 
 VEM_CORE_MOVABLE_BAR				= "Drag me!"
 
 VEM_PIZZA_SYNC_INFO					= "|Hplayer:%1$s|h[%1$s]|h sent you a VEM timer: '%2$s'\n|HVEM:cancel:%2$s:nil|h|cff3588ff[Cancel this timer]|r|h  |HVEM:ignore:%2$s:%1$s|h|cff3588ff[Ignore timers from %1$s]|r|h"
 VEM_PIZZA_CONFIRM_IGNORE			= "Do you really want to ignore VEM timers from %s for this session?"
-VEM_PIZZA_ERROR_USAGE				= "Usage: /vem [broadcast] timer <time> <text>"
+VEM_PIZZA_ERROR_USAGE				= "Usage: /vem [broadcast] timer <time> <text>. <time> must be greater than 1."
 
 VEM_CORE_MINIMAP_TOOLTIP_HEADER		= "Voice Encounter Mods"
 VEM_CORE_MINIMAP_TOOLTIP_FOOTER		= "Shift+click or right-click to move\nAlt+shift+click for free drag and drop"
@@ -127,8 +143,9 @@ VEM_CORE_SLASHCMD_HELP				= {
 	"/vem version: Performs a raid-wide version check (alias: ver).",
 --	"/vem version2: Performs a raid-wide version check and whispers members who are out of date (alias: ver2).",
 	"/vem unlock: Shows a movable status bar timer (alias: move).",
-	"/vem timer <x> <text>: Starts a <x> second VEM Timer with the name <text>.",
-	"/vem broadcast timer <x> <text>: Broadcasts a <x> second VEM Timer with the name <text> to the raid (requires leader/promoted status).",
+	"/vem timer/ctimer/ltimer/cltimer <x> <text>: Starts a <x> second VEM Timer with the name <text>. See http://tinyurl.com/kwsfl59 for each timer type usage",
+	"/vem broadcast timer/ctimer/ltimer/cltimer <x> <text>: Broadcasts a <x> second VEM Timer with the name <text> to the raid (requires leader/promoted status).",
+	"/vem timer endloop: Stops any looping ltimer or cltimer.",
 	"/vem break <min>: Starts a break timer for <min> minutes. Gives all raid members with VEM a break timer (requires leader/promoted status).",
 	"/vem pull <sec>: Starts a pull timer for <sec> seconds. Gives all raid members with VEM a pull timer (requires leader/promoted status).",
 	"/vem arrow: Shows the VEM arrow, see /vem arrow help for details.",
@@ -158,7 +175,7 @@ VEM_CORE_TIMER_BREAK				= "Break time!"
 VEM_CORE_ANNOUNCE_BREAK_OVER		= "Break time is over"
 
 VEM_CORE_TIMER_PULL					= "Pull in"
-VEM_CORE_ANNOUNCE_PULL				= "Pull in %d sec (Sent by %s)"
+VEM_CORE_ANNOUNCE_PULL				= "Pull in %d sec. (Sent by %s)"
 VEM_CORE_ANNOUNCE_PULL_NOW			= "Pull now!"
 VEM_CORE_ANNOUNCE_PULL_CANCEL		= "Cancel Pull Countdown!"
 
@@ -170,6 +187,7 @@ VEM_CORE_AUTO_ANNOUNCE_TEXTS = {
 	targetcount	= "%s (%%d) on >%%s<",
 	spell		= "%s",
 	ends 		= "%s ended",
+	endtarget	= "%s ended: >%%s<",
 	fades		= "%s faded",
 	adds		= "%s remaining: %%d",
 	cast		= "Casting %s: %.1f sec",
@@ -187,6 +205,7 @@ VEM_CORE_AUTO_ANNOUNCE_OPTIONS = {
 	targetcount	= "Announce $spell:%s targets",
 	spell		= "Show warning for $spell:%s",
 	ends		= "Show warning when $spell:%s has ended",
+	endtarget	= "Show warning when $spell:%s has ended",
 	fades		= "Show warning when $spell:%s has faded",
 	adds		= "Announce how many $spell:%s remain",
 	cast		= "Show warning when $spell:%s is being cast",
@@ -208,11 +227,14 @@ VEM_CORE_AUTO_SPEC_WARN_TEXTS = {
 	interrupt	= "%s - interrupt >%%s<!",
 	you			= "%s on you",
 	target		= "%s on >%%s<",
+	taunt		= "%s on >%%s< - taunt now",
 	close		= "%s on >%%s< near you",
 	move		= "%s - move away",
+	moveaway	= "%s - move away from others",
+	moveto		= "%s - move to >%%s<",
 	run			= "%s - run away",
 	cast		= "%s - stop casting",
-	reflect		= "%s - stop attacking",
+	reflect		= "%s on >%%s< - stop attacking",
 	count		= "%s! (%%d)",
 	stack		= "%%d stacks of %s on you",
 	switch		= ">%s< - switch targets"
@@ -229,13 +251,16 @@ VEM_CORE_AUTO_SPEC_WARN_OPTIONS = {
 	interrupt	= "Show special warning to interrupt $spell:%s",
 	you 		= "Show special warning when you are affected by $spell:%s",
 	target 		= "Show special warning when someone is affected by $spell:%s",
+	taunt 		= "Show special warning to taunt when other tank affected by $spell:%s",
 	close 		= "Show special warning when someone close to you is affected by $spell:%s",
 	move 		= "Show special warning to move out from $spell:%s",
+	moveaway	= "Show special warning to move away from others for $spell:%s",
+	moveto		= "Show special warning to move to someone affected by $spell:%s",
 	run 		= "Show special warning to run away from $spell:%s",
 	cast 		= "Show special warning to stop casting for $spell:%s",--Spell Interrupt
 	reflect 	= "Show special warning to stop attacking $spell:%s",--Spell Reflect
 	count 		= "Show special warning for $spell:%s",
-	stack 		= "Show special warning when you are affected by >=%d stacks of $spell:%s",--too long?
+	stack 		= "Show special warning when you are affected by >=%d stacks of $spell:%s",
 	switch		= "Show special warning to switch targets for $spell:%s"
 }
 
@@ -271,6 +296,8 @@ VEM_CORE_AUTO_TIMER_OPTIONS = {
 
 VEM_CORE_AUTO_ICONS_OPTION_TEXT			= "Set icons on $spell:%s targets"
 VEM_CORE_AUTO_ICONS_OPTION_TEXT2		= "Set icons on $spell:%s"
+VEM_CORE_AUTO_ARROW_OPTION_TEXT			= "Show VEM Arrow to move toward target affected by $spell:%s"
+VEM_CORE_AUTO_ARROW_OPTION_TEXT2		= "Show VEM Arrow to move away from target affected by $spell:%s"
 VEM_CORE_AUTO_SOUND_OPTION_TEXT			= "Play \"run away\" sound for $spell:%s"
 VEM_CORE_AUTO_COUNTDOWN_OPTION_TEXT		= "Play countdown sound for $spell:%s cooldown"
 VEM_CORE_AUTO_COUNTDOWN_OPTION_TEXT2	= "Play countdown sound for when $spell:%s fades"
@@ -293,8 +320,9 @@ VEM_ARROW_MOVABLE					= "Arrow movable"
 VEM_ARROW_NO_RAIDGROUP				= "This function only works in raid groups and within raid instances."
 VEM_ARROW_ERROR_USAGE	= {
 	"VEM-Arrow usage:",
-	"/vem arrow <x> <y>  creates an arrow that points to a specific locataion (0 < x/y < 100)",
-	"/vem arrow <player>  creates and arrow that points to a specific player in your party or raid",
+	"/vem arrow <x> <y>  creates an arrow that points to a specific location (using world coordinates)",
+	"/vem arrow map <x> <y>  creates an arrow that points to a specific location (using zone map coordinates)",
+	"/vem arrow <player>  creates and arrow that points to a specific player in your party or raid (case sensitive!)",
 	"/vem arrow hide  hides the arrow",
 	"/vem arrow move  makes the arrow movable"
 }
@@ -302,6 +330,7 @@ VEM_ARROW_ERROR_USAGE	= {
 VEM_SPEED_KILL_TIMER_TEXT	= "Record Victory"
 VEM_SPEED_KILL_TIMER_OPTION	= "Show a timer to beat your fastest victory"
 VEM_SPEED_CLEAR_TIMER_TEXT	= "Best Clear"
+VEM_COMBAT_RES_TIMER_TEXT	= "Next CR Charge"
 
 
 VEM_REQ_INSTANCE_ID_PERMISSION		= "%s requested to see your current instance IDs and progress.\nDo you want to send this information to %s? He or she will be able to request this information during your current session (i. e. until you relog)."

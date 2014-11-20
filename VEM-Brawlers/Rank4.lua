@@ -2,16 +2,16 @@ local mod	= VEM:NewMod("BrawlRank4", "VEM-Brawlers")
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 9770 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10922 $"):sub(12, -3))
 mod:SetModelID(28115)
 mod:SetZone()
 mod:SetUsedIcons(8)
 
 mod:RegisterEvents(
-	"SPELL_CAST_START",
-	"SPELL_AURA_APPLIED",
-	"UNIT_TARGET",
-	"UNIT_SPELLCAST_SUCCEEDED target focus"
+	"SPELL_CAST_START 134743",
+	"SPELL_AURA_APPLIED 129888 133129",
+	"UNIT_SPELLCAST_SUCCEEDED target focus",
+	"PLAYER_TARGET_CHANGED"
 )
 
 local warnCharging				= mod:NewSpellAnnounce(133253, 3)
@@ -64,5 +64,11 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		warnCharging:Show()
 		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg")
 		timerChargingCD:Start()
+	end
+end
+
+function mod:PLAYER_TARGET_CHANGED()
+	if self.Options.SetIconOnDominika and not VEM.Options.DontSetIcons and UnitGUID("target") == DominikaGUID then
+		SetRaidTarget("target", 8)
 	end
 end

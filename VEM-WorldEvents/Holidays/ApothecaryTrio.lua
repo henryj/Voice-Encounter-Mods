@@ -1,7 +1,7 @@
 local mod	= VEM:NewMod("d288", "VEM-WorldEvents", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 9834 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 11027 $"):sub(12, -3))
 mod:SetCreatureID(36272, 36296, 36565)
 mod:SetModelID(16176)
 mod:SetZone()
@@ -10,10 +10,13 @@ mod:SetReCombatTime(10)
 mod:RegisterCombat("combat")
 
 mod:RegisterEvents(
-	"SPELL_CAST_START",
-	"SPELL_DAMAGE",
-	"SPELL_MISSED",
 	"CHAT_MSG_MONSTER_SAY"
+)
+
+mod:RegisterEventsInCombat(
+	"SPELL_CAST_START 68821",
+	"SPELL_DAMAGE",
+	"SPELL_MISSED"
 )
 
 local warnChainReaction			= mod:NewCastAnnounce(68821, 3)
@@ -34,7 +37,7 @@ function mod:SPELL_CAST_START(args)
 	end
 end
 
-function mod:SPELL_DAMAGE(sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId)
+function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 68927 and destGUID == UnitGUID("player") and self:AntiSpam() then
 		specWarnPerfumeSpill:Show()
 	elseif spellId == 68934 and destGUID == UnitGUID("player") and self:AntiSpam() then

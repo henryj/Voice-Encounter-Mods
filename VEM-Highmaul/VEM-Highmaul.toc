@@ -1,0 +1,36 @@
+﻿## Interface: 60000
+## X-Min-Interface: 60000
+## Title:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0Highmaul|r
+## Title-koKR:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0높은망치|r
+## Title-ruRU:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0Верховный Молот|r
+## Title-deDE:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0Hochfels|r
+## Title-zhTW:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0天槌|r
+## Title-zhCN:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0悬槌堡|r
+## Author: MysticalOS
+## LoadOnDemand: 1
+## RequiredDeps: VEM-Core
+## SavedVariablesPerCharacter: VEMHighmaul_SavedVars, VEMHighmaul_SavedStats
+## X-VEM-Mod: 1
+## X-VEM-Mod-Type: RAID
+## X-VEM-Mod-Category: WOD
+## X-VEM-Mod-Has-Mythic : 1
+## X-VEM-Mod-Sort: 102
+## X-VEM-Mod-MapID: 1228
+## X-Curse-Packaged-Version: 6.0.4
+## X-Curse-Project-Name: Voice Encounter Mods
+## X-Curse-Project-ID: deadly-boss-mods
+## X-Curse-Repository-ID: wow/deadly-boss-mods/mainline
+localization.en.lua
+localization.kr.lua
+localization.ru.lua
+localization.de.lua
+localization.tw.lua
+localization.cn.lua
+KargathBladefist.lua
+TheButcher.lua
+Tectus.lua
+Brackenspore.lua
+TwinOgron.lua
+Koragh.lua
+Margok.lua
+HighmaulTrash.lua

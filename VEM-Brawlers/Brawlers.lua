@@ -1,7 +1,7 @@
 local mod	= VEM:NewMod("Brawlers", "VEM-Brawlers")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10689 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 11575 $"):sub(12, -3))
 --mod:SetCreatureID(60491)
 --mod:SetModelID(41448)
 mod:SetZone(VEM_DISABLE_ZONE_DETECTION)
@@ -30,7 +30,7 @@ mod:RemoveOption("SpeedKillTimer")
 local playerIsFighting = false
 local currentFighter = nil
 local currentRank = 0--Used to stop bars for the right sub mod based on dynamic rank detection from pulls
-local currentZoneID = select(8, GetInstanceInfo())--As core what current area is on load, since core should know
+local currentZoneID = select(8, GetInstanceInfo())
 local modsStopped = false
 local eventsRegistered = false
 local lastRank = 0
@@ -39,7 +39,7 @@ local QueuedBuff = GetSpellInfo(132639)
 if currentZoneID == 369 or currentZoneID == 1043 then
 	eventsRegistered = true
 	mod:RegisterShortTermEvents(
-		"SPELL_CAST_START",
+		"SPELL_CAST_START 135385 135386",
 		"PLAYER_REGEN_ENABLED",
 		"UNIT_DIED",
 		"UNIT_AURA player"

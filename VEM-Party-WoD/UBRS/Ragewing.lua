@@ -1,6 +1,6 @@
 local mod	= VEM:NewMod(1229, "VEM-Party-WoD", 8, 559)
 local L		= mod:GetLocalizedStrings()
-local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
+local sndWOP	= mod:SoundMM("SoundWOP")
 
 mod:SetRevision(("$Revision: 11380 $"):sub(12, -3))
 mod:SetCreatureID(76585)
@@ -28,22 +28,20 @@ local specWarnEngulfingFire	= mod:NewSpecialWarningSpell(154996, nil, nil, nil, 
 
 local timerEngulfingFireCD	= mod:NewCDTimer(22, 154996)
 local timerSwirlingWinds	= mod:NewBuffActiveTimer(20, 167203)
-local timerSwirlingWindsCD	= mod:NewNextTimer(45, 167203)
 
 mod.vb.firstBreath = false
 
 function mod:OnCombatStart(delay)
 	timerEngulfingFireCD:Start(13-delay)--Needs more data
-	timerSwirlingWindsCD:Start(40-delay)--Needs more data
 	self.vb.firstBreath = false
-	sndWOP:Schedule(12, VEM.SoundMMPath.."\\breathsoon.ogg")
+	sndWOP:Schedule(12, "breathsoon")
 end
 
 function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
 	if spellId == 155620 then
 		if mod:CanRemoveEnrage() then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\trannow.ogg") --sound should change to RemoveEnrage
+			sndWOP:Play("trannow") --sound should change to RemoveEnrage
 		end
 		warnBurningRage:Show(args.destName, args.amount or 1)
 		specWarnBurningRage:Show(args.destName)
@@ -56,7 +54,6 @@ mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 
 function mod:SPELL_AURA_REMOVED(args)
 	if args.spellId == 167203 then
-		timerSwirlingWindsCD:Start()
 		self.vb.firstBreath = false
 	end
 end
@@ -64,7 +61,7 @@ end
 function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 155051 and destGUID == UnitGUID("player") and self:AntiSpam(3, 1) then--Goriona's Void zones
 		specWarnMagmaSpit:Show()
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg")
+		sndWOP:Play("runaway")
 	end
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE
@@ -77,7 +74,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		if not self.vb.firstBreath then
 			self.vb.firstBreath = true
 			timerEngulfingFireCD:Start()
-			sndWOP:Schedule(21, VEM.SoundMMPath.."\\breathsoon.ogg")
+			sndWOP:Schedule(21, "breathsoon")
 		end
 	end
 end

@@ -1,0 +1,39 @@
+﻿## Interface: 60000
+## X-Min-Interface: 60000
+## Title:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0Blackrock Foundry|r
+## Title-koKR:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0검은바위 용광로|r
+## Title-ruRU:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0Литейная клана Черной горы|r
+## Title-deDE:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0Schwarzfelsgießerei|r
+## Title-zhTW:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0黑石鑄造場|r
+## Title-zhCN:|cffffe00a<|r|cffff7d0aVEM|r|cffffe00a>|r |cff69ccf0黑石铸造厂|r
+## Author: MysticalOS
+## LoadOnDemand: 1
+## RequiredDeps: VEM-Core
+## SavedVariablesPerCharacter: VEMBlackrockFoundry_SavedVars, VEMBlackrockFoundry_SavedStats
+## X-VEM-Mod: 1
+## X-VEM-Mod-Type: RAID
+## X-VEM-Mod-Category: WOD
+## X-VEM-Mod-Has-Mythic : 1
+## X-VEM-Mod-Sort: 101
+## X-VEM-Mod-MapID: 1205
+## X-Curse-Packaged-Version: 6.0.4
+## X-Curse-Project-Name: Voice Encounter Mods
+## X-Curse-Project-ID: deadly-boss-mods
+## X-Curse-Repository-ID: wow/deadly-boss-mods/mainline
+localization.en.lua
+localization.kr.lua
+localization.ru.lua
+localization.de.lua
+localization.tw.lua
+localization.cn.lua
+Gruul.lua
+Oregorger.lua
+BlastFurnace.lua
+HansgarAndFranzok.lua
+Kagraz.lua
+Kromog.lua
+Darmac.lua
+Thogar.lua
+IronMaidens.lua
+Blackhand.lua
+BlackrockFoundryTrash.lua

@@ -1,6 +1,6 @@
 local mod	= VEM:NewMod(1186, "VEM-Party-WoD", 1, 547)
 local L		= mod:GetLocalizedStrings()
-local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
+local sndWOP	= mod:SoundMM("SoundWOP")
 
 mod:SetRevision(("$Revision: 11517 $"):sub(12, -3))
 mod:SetCreatureID(76177)
@@ -14,7 +14,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 155327 153994"
 )
 
-
+--TODO, soul vessel is probably wrong now.
 local warnSWP					= mod:NewTargetAnnounce(154477, 2, nil, mod:IsHealer())
 local warnSoulVessel			= mod:NewSpellAnnounce(155327, 4)
 local warnTornSpirits			= mod:NewSpellAnnounce(153991, 3)
@@ -35,7 +35,7 @@ end
 function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 154477 then
 		if mod:IsHealer() then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\dispelnow.ogg")
+			sndWOP:Play("dispelnow")
 		end
 		warnSWP:Show(args.destName)
 		specWarnSWP:Show(args.destName)
@@ -51,9 +51,11 @@ function mod:SPELL_CAST_START(args)
 		timerSoulVessel:Start()
 		timerTornSpiritsCD:Start()
 		timerSoulVesselCD:Start()
-		--sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\findshadow.ogg")
+		if not mod:IsTank() then
+			sndWOP:Play("findshadow")
+		end
 	elseif spellId == 153994 then
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\mobsoon.ogg")
+		sndWOP:Play("mobsoon")
 		warnTornSpirits:Show()
 		specWarnTornSpirits:Show()
 	end

@@ -1,6 +1,6 @@
 local mod	= VEM:NewMod(1207, "VEM-Party-WoD", 5, 556)
 local L		= mod:GetLocalizedStrings()
-local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
+local sndWOP	= mod:SoundMM("SoundWOP")
 
 mod:SetRevision(("$Revision: 11512 $"):sub(12, -3))
 mod:SetCreatureID(83894, 83892, 83893)--Dulhu 83894, Gola 83892, Telu
@@ -44,15 +44,15 @@ function mod:SPELL_CAST_START(args)
 		warnRevitalizingWaters:Show()
 		specWarnRevitalizingWaters:Show(args.sourceName)
 		if mod:IsTank() then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\kickcast.ogg")
+			sndWOP:Play("kickcast")
 		else
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\helpkick.ogg")
+			sndWOP:Play("helpkick")
 		end
 	elseif spellId == 168041 then
 		specWarnBriarskin:Show(args.sourceName)
 	elseif spellId == 168105 then
 		if mod:IsMagicDispeller() then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\dispelboss.ogg")
+			sndWOP:Play("dispelboss")
 		end
 		specWarnRapidTides:Show(args.sourceName)
 	elseif spellId == 168105 then

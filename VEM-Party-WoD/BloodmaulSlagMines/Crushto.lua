@@ -1,6 +1,6 @@
 local mod	= VEM:NewMod(888, "VEM-Party-WoD", 2, 385)
 local L		= mod:GetLocalizedStrings()
-local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
+local sndWOP	= mod:SoundMM("SoundWOP")
 
 mod:SetRevision(("$Revision: 11520 $"):sub(12, -3))
 mod:SetCreatureID(74787)
@@ -44,14 +44,14 @@ function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
 	if spellId == 150759 then
 		if mod:IsTank() then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\kickcast.ogg")
+			sndWOP:Play("kickcast")
 		elseif (not mod:IsHealer()) then
-			sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\helpkick.ogg")
+			sndWOP:Play("helpkick")
 		end
 		warnFerociousYell:Show()
 		specWarnFerociousYell:Show(args.sourceName)
 	elseif spellId == 150801 then
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\mobsoon.ogg")
+		sndWOP:Play("mobsoon")
 		warnRaiseMiners:Show()
 		specWarnRaiseMiners:Show()
 	elseif spellId == 153679 then

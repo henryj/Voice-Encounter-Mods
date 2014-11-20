@@ -9,12 +9,12 @@
 ## SavedVariablesPerCharacter: VEMBrawlers_SavedVars
 ## X-VEM-Mod: 1
 ## X-VEM-Mod-Type: OTHER
-## X-VEM-Mod-Category: MOP
+## X-VEM-Mod-Category: WOD
 ## X-VEM-Mod-No-Statistics: 1
 ## X-VEM-Mod-Name: Brawlers
 ## X-VEM-Mod-Name-zhCN: 搏击俱乐部
 ## X-VEM-Mod-Name-zhTW: 鬥陣俱樂部
-## X-VEM-Mod-Sort: 35
+## X-VEM-Mod-Sort: 135
 ## X-VEM-Mod-MapID: 369,1043
 ## X-VEM-Mod-ForceLoad-MapID: 369,1043
 localization.en.lua

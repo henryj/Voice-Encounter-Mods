@@ -9,22 +9,24 @@
 --    * Adam Williams (Omegal @ US-Whisperwind) (Primary boss mod author & VEM maintainer) Contact: Twitter @MysticalOS)
 --
 -- The localizations are written by:
---    * enGB/enUS: Tandanu & Omegal		http://www.deadlybossmods.com
---    * deDE: Tandanu					http://www.deadlybossmods.com
---    * deDE: Ebmor						VEM forums (PM: "Ebmor")
+--    * enGB/enUS: Omegal				http://www.deadlybossmods.com
+--    * deDE: Ebmor						http://forums.elitistjerks.com/user/616736-ebmor/
 --    * ruRU: Swix						stalker.kgv@gmail.com
---    * ruRU: TOM_RUS
---    * zhTW: Whyv                      ultrashining@gmail.com
+--    * ruRU: TOM_RUS					http://www.curseforge.com/profiles/TOM_RUS/
+--    * zhTW: Whyv						ultrashining@gmail.com
 --    * koKR: nBlueWiz					everfinale@gmail.com
---    * esES/esMX: Sueñalobos			alcortesm@gmail.com
+--    * frFR: leiyla					http://forums.elitistjerks.com/user/616557-leiyla/
+--    * zhCN: oliver1452				http://forums.elitistjerks.com/user/623698-oliver1452/
 --
 -- The former/inactive-translators:
+--    * deDE: Tandanu					http://www.deadlybossmods.com
 --    * ruRU: BootWin					bootwin@gmail.com
 --    * ruRU: Vampik					admin@vampik.ru
 --    * zhTW: Hman						herman_c1@hotmail.com
 --    * zhTW: Azael/kc10577				paul.poon.kw@gmail.com
 --    * esES: Snamor/1nn7erpLaY      	romanscat@hotmail.com
 --    * zhCN: Diablohu					http://www.dreamgen.cn | diablohudream@gmail.com
+--    * esES/esMX: Sueñalobos			alcortesm@gmail.com
 --
 -- Special thanks to:
 --    * Arta
@@ -50,10 +52,10 @@
 --  Globals/Default Options  --
 -------------------------------
 VEM = {
-	Revision = tonumber(("$Revision: 11061 $"):sub(12, -3)),
-	DisplayVersion = "(VEM) 6.0.2", -- the string that is shown as version
-	DisplayReleaseVersion = "6.0.2", -- Needed to work around bigwigs sending improper version information
-	ReleaseRevision = 11780 -- the revision of the latest stable version that is available
+	Revision = tonumber(("$Revision: 11855 $"):sub(12, -3)),
+	DisplayVersion = "(VEM) 6.0.5", -- the string that is shown as version
+	DisplayReleaseVersion = "6.0.5", -- Needed to work around bigwigs sending improper version information
+	ReleaseRevision = 11829 -- the revision of the latest stable version that is available
 }
 
 -- Legacy crap; that stupid "Version" field was never a good idea.
@@ -77,12 +79,13 @@ VEM.DefaultOptions = {
 	},
 	RaidWarningSound = "Sound\\Doodad\\BellTollNightElf.ogg",
 	SpecialWarningSound = "Sound\\Spells\\PVPFlagTaken.ogg",
-	SpecialWarningSound2 = "Sound\\Spells\\PVPFlagTaken.ogg",
-	SpecialWarningSound3 = "Sound\\Spells\\PVPFlagTaken.ogg",
+	SpecialWarningSound2 = "Sound\\Creature\\AlgalonTheObserver\\UR_Algalon_BHole01.ogg",
+	SpecialWarningSound3 = "Sound\\Creature\\KilJaeden\\KILJAEDEN02.ogg",
 	ModelSoundValue = "Short",
 	ChallengeBest = "Realm",
-	CountdownVoice = "VEM-Sound-Chouu\\chouu",
-	CountdownVoice2 = "chouu",
+	CountdownVoice = "Corsica",
+	CountdownVoice2 = "Kolt",
+	CountdownVoice3 = "Pewsey",
 	ShowCountdownText = false,
 	RaidWarningPosition = {
 		Point = "TOP",
@@ -156,7 +159,7 @@ VEM.DefaultOptions = {
 	SpecialWarningY = 75,
 	SpecialWarningFont = STANDARD_TEXT_FONT,
 	SpecialWarningFontSize = 50,
-	SpecialWarningFontColor = {1.0, 0.7, 0.0},--Yellow, with a tint of orange
+	SpecialWarningFontCol = {1.0, 0.7, 0.0},--Yellow, with a tint of orange
 	SpecialWarningFlashCol1 = {1.0, 1.0, 0.0},--Yellow
 	SpecialWarningFlashCol2 = {1.0, 0.5, 0.0},--Orange
 	SpecialWarningFlashCol3 = {1.0, 0.0, 0.0},--Red
@@ -196,11 +199,13 @@ VEM.DefaultOptions = {
 	AlwaysShowSpeedKillTimer = true,
 	CRT_Enabled = false,
 	HelpMessageShown = false,
+	BugMessageShown = 0,
 	MoviesSeen = {},
-	MovieFilter = "Never",
+	MovieFilter = "AfterFirst",
 	LastRevision = 0,
 	FilterSayAndYell = false,
 	DebugMode = false,
+	DebugLevel = 1,
 	RoleSpecAlert = true,
 	WorldBossAlert = false,
 	AutoAcceptFriendInvite = false,
@@ -248,8 +253,9 @@ local chatPrefixVEM = "<Voice Encounter Mods> "
 local chatPrefixShort = "<VEM> "
 local chatPrefixShortVEM = "<VEM> "
 local ver = ("%s (r%d)"):format(VEM.DisplayVersion, VEM.Revision)
-local mainFrame = CreateFrame("Frame")
+local mainFrame = CreateFrame("Frame", "VEMMainFrame")
 local newerVersionPerson = {}
+local newerRevisionPerson = {}
 local combatInitialized = false
 local healthCombatInitialized = false
 local schedule
@@ -905,17 +911,21 @@ do
 			end
 			onLoadCallbacks = nil
 			loadOptions()
-			if not GetAddOnEnableState then--Not 6.0
-				VEM:AddMsg(VEM_CORE_UPDATEREMINDER_MAJORPATCH)
-				return
-			end
-			if GetAddOnEnableState(playerName, "VEM-Core") < 1 then
-				VEM:AddMsg(VEM_CORE_VEM)
+--			if not GetAddOnEnableState then--Not 6.0
+--				VEM:AddMsg(VEM_CORE_UPDATEREMINDER_MAJORPATCH)
+--				return
+--			end
+			if GetAddOnEnableState(playerName, "DBM-Core") >= 1 then
+				VEM:AddMsg(VEM_CORE_DBM)
 				return
 			end
 			VEM.Bars:LoadOptions("VEM")
 			VEM.Arrow:LoadPosition()
 			if not VEM.Options.ShowMinimapButton then self:HideMinimapButton() end
+			local soundChannels = tonumber(GetCVar("Sound_NumChannels")) or 24--if set to 24, may return nil, Defaults usually do
+			if soundChannels < 64 then
+				SetCVar("Sound_NumChannels", 64)
+			end
 			self.AddOns = {}
 			for i = 1, GetNumAddOns() do
 				local addonName = GetAddOnInfo(i)
@@ -1501,6 +1511,14 @@ SlashCmdList["VOICEENCOUNTERMODS"] = function(msg)
 			return VEM:AddMsg(VEM_ERROR_NO_RAID)
 		end
 		VEM:RequestInstanceInfo()
+	elseif cmd:sub(1, 10) == "debuglevel" then
+		local level = tonumber(cmd:sub(11)) or 1
+		if level < 1 or level > 3 then
+			VEM:AddMsg("Invalid Value. Debug Level must be between 1 and 3.")
+			return
+		end
+		VEM.Options.DebugLevel = level
+		VEM:AddMsg("Debug Level is " .. level)
 	elseif cmd:sub(1, 5) == "debug" then
 		VEM.Options.DebugMode = VEM.Options.DebugMode == false and true or false
 		VEM:AddMsg("Debug Message is " .. (VEM.Options.DebugMode and "ON" or "OFF"))
@@ -1698,7 +1716,7 @@ do
 	local ignore, cancel
 	local popuplevel = 0
 	local function showPopupConfirmIgnore(ignore, cancel)
-		local popup = CreateFrame("Frame", nil, UIParent)
+		local popup = CreateFrame("Frame", "VEMHyperLinks", UIParent)
 		popup:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
 			edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
 			tile = true, tileSize = 16, edgeSize = 16,
@@ -1792,6 +1810,14 @@ end
 do
 	local callOnLoad = {}
 	function VEM:LoadGUI()
+--		if not GetAddOnEnableState then--Not 6.0
+--			VEM:AddMsg(VEM_CORE_UPDATEREMINDER_MAJORPATCH)
+--			return
+--		end
+		if GetAddOnEnableState(playerName, "DBM-Core") >= 1 then
+			VEM:AddMsg(VEM_CORE_DBM)
+			return
+		end
 		if not IsAddOnLoaded("VEM-GUI") then
 			if InCombatLockdown() then
 				guiRequested = true
@@ -1941,7 +1967,7 @@ do
 				inRaid = true
 				sendSync("H")
 				SendAddonMessage("BigWigs", "VQ:0", IsPartyLFG() and "INSTANCE_CHAT" or "RAID")--Basically "H" to bigwigs. Tell Bigwigs users we joined raid. Send revision of 0 so bigwigs ignores revision but still replies with their version information
-				VEM:Schedule(2, VEM.RoleCheck, VEM)
+				VEM:Schedule(2, VEM.RoleCheck, false, VEM)
 				fireEvent("raidJoin", playerName)
 				if BigWigs and BigWigs.db.profile.raidicon and not VEM.Options.DontSetIcons then--Both VEM and bigwigs have raid icon marking turned on.
 					VEM:AddMsg(VEM_CORE_BIGWIGS_ICON_CONFLICT)--Warn that one of them should be turned off to prevent conflict (which they turn off is obviously up to raid leaders preference, vem accepts either ore turned off to stop this alert)
@@ -1998,7 +2024,7 @@ do
 				inRaid = true
 				sendSync("H")
 				SendAddonMessage("BigWigs", "VQ:0", IsPartyLFG() and "INSTANCE_CHAT" or "PARTY")
-				VEM:Schedule(2, VEM.RoleCheck, VEM)
+				VEM:Schedule(2, VEM.RoleCheck, false, VEM)
 				fireEvent("partyJoin", playerName)
 			end
 			for i = 0, GetNumSubgroupMembers() do
@@ -2425,12 +2451,14 @@ function VEM:LFG_PROPOSAL_SUCCEEDED()
 end
 
 function VEM:ACTIVE_TALENT_GROUP_CHANGED()
-	VEM:RoleCheck()
+	if IsInGroup() then
+		VEM:RoleCheck(false)
+	end
 end
 
 function VEM:UPDATE_SHAPESHIFT_FORM()
-	if class == "WARRIOR" and VEM:AntiSpam(0.5, "STANCE") then--check for stance changes for prot warriors that might be specced into Gladiator Stance
-		VEM:RoleCheck()
+	if IsInGroup() and class == "WARRIOR" and VEM:AntiSpam(0.5, "STANCE") then--check for stance changes for prot warriors that might be specced into Gladiator Stance
+		VEM:RoleCheck(true)
 	end
 end
 
@@ -2485,9 +2513,11 @@ end
 
 function VEM:PLAYER_REGEN_ENABLED()
 	if loadDelay then
+		VEM:Debug("loadDelay is activating LoadMod again")
 		VEM:LoadMod(loadDelay)
 	end
 	if loadDelay2 then
+		VEM:Debug("loadDelay2 is activating LoadMod again")
 		VEM:LoadMod(loadDelay2)
 	end
 	if guiRequested and not IsAddOnLoaded("VEM-GUI") then
@@ -2512,7 +2542,9 @@ function VEM:UPDATE_BATTLEFIELD_STATUS()
 end
 
 function VEM:CINEMATIC_START()
+	VEM:Debug("CINEMATIC_START fired")
 	if not IsInInstance() or C_Garrison:IsOnGarrisonMap() or VEM.Options.MovieFilter == "Never" then return end
+	VEM:Debug("CINEMATIC_START: in valid zone, checking settings")
 	for itemId, mapId in pairs(blockMovieSkipItems) do
 		if mapId == LastInstanceMapID then
 			if select(3, GetItemCooldown(itemId)) > 0 then return end
@@ -2522,8 +2554,10 @@ function VEM:CINEMATIC_START()
 	local currentFloor = GetCurrentMapDungeonLevel() or 0
 	if VEM.Options.MovieFilter == "Block" or VEM.Options.MovieFilter == "AfterFirst" and VEM.Options.MoviesSeen[LastInstanceMapID..currentFloor] then
 		CinematicFrame_CancelCinematic()
+		VEM:Debug("CINEMATIC_START should be canceling movie")
 	else
 		VEM.Options.MoviesSeen[LastInstanceMapID..currentFloor] = true
+		VEM:Debug("CINEMATIC_START should be allowing movie to play since it's first time")
 	end
 end
 
@@ -2625,7 +2659,11 @@ do
 	local function FixForShittyComputers()
 		timerRequestInProgress = false
 		local _, instanceType, difficulty, _, _, _, _, mapID, instanceGroupSize = GetInstanceInfo()
-		if LastInstanceMapID == mapID then return end--ID hasn't changed, don't waste cpu doing anything else (example situation, porting into garrosh phase 4 is a loading screen)
+		VEM:Debug("Instance Check fired with mapID "..mapID.." and difficulty "..difficulty)
+		if LastInstanceMapID == mapID then
+			VEM:Debug("No action taken because mapID hasn't changed since last check")
+			return
+		end--ID hasn't changed, don't waste cpu doing anything else (example situation, porting into garrosh phase 4 is a loading screen)
 		LastInstanceMapID = mapID
 		LastGroupSize = instanceGroupSize
 		difficultyIndex = difficulty
@@ -2656,6 +2694,7 @@ do
 	end
 	--Faster and more accurate loading for instances, but useless outside of them
 	function VEM:LOADING_SCREEN_DISABLED()
+		VEM:Debug("LOADING_SCREEN_DISABLED fired")
 		FixForShittyComputers()
 		VEM:Schedule(3, FixForShittyComputers, VEM)
 	end
@@ -2689,9 +2728,16 @@ end
 	--The main place we should force a mod load in combat is for IsEncounterInProgress because i'm pretty sure blizzard waves "script ran too long" function for a small amount of time after a DC
 	--Outdoor bosses will try to ignore check, if they fail, well, then we need to try and find ways to make the mods that can't load in combat smaller or load faster.
 function VEM:LoadMod(mod, force)
-	if type(mod) ~= "table" then return false end
-	if mod.isWorldBoss and not IsInInstance() and not force then return end--Don't load world boss mod this way.
+	if type(mod) ~= "table" then
+		VEM:Debug("LoadMod failed because mod table not valid")
+		return false
+	end
+	if mod.isWorldBoss and not IsInInstance() and not force then
+		VEM:Debug("LoadMod denied for "..mod.name.." because world boss mods don't load this way", 2)
+		return
+	end--Don't load world boss mod this way.
 	if InCombatLockdown() and not IsEncounterInProgress() and IsInInstance() then
+		VEM:Debug("LoadMod delayed do to combat")
 		if not loadDelay then--Prevent duplicate VEM_CORE_LOAD_MOD_COMBAT message.
 			self:AddMsg(VEM_CORE_LOAD_MOD_COMBAT:format(tostring(mod.name)))
 		end
@@ -2702,12 +2748,13 @@ function VEM:LoadMod(mod, force)
 		end
 		return
 	end
-
 	local loaded, reason = LoadAddOn(mod.modId)
+	VEM:Debug("LoadMod should have fired LoadAddOn for "..mod.name)
 	if not loaded then
 		if reason then
 			self:AddMsg(VEM_CORE_LOAD_MOD_ERROR:format(tostring(mod.name), tostring(_G["ADDON_"..reason or ""])))
 		else
+			VEM:Debug("LoadAddOn failed and did not give reason")
 --			self:AddMsg(VEM_CORE_LOAD_MOD_ERROR:format(tostring(mod.name), VEM_CORE_UNKNOWN)) -- wtf, this should never happen....(but it does happen sometimes if you reload your UI in an instance...)
 		end
 		return false
@@ -2906,7 +2953,7 @@ do
 			canSetIcons[optionName] = false
 		end
 		local name = VEM:GetFullPlayerNameByGUID(iconSetPerson[optionName])
-		VEM:Debug(name.." was elected icon setter for "..optionName)
+		VEM:Debug(name.." was elected icon setter for "..optionName, 2)
 	end
 
 	syncHandlers["K"] = function(sender, cId)
@@ -3108,18 +3155,13 @@ do
 			raid[sender].displayVersion = displayVersion
 			raid[sender].locale = locale
 			raid[sender].enabledIcons = iconEnabled or "false"
+			VEM:Debug("Received version info from "..sender.." : Rev - "..revision..", Ver - "..version..", Rev Diff - "..(revision - VEM.Revision), 2)
 			if version > tonumber(VEM.Version) and displayVersion:find("VEM") then -- Update reminder
 				if not checkEntry(newerVersionPerson, sender) then
 					newerVersionPerson[#newerVersionPerson + 1] = sender
+					VEM:Debug("Newer version detected from "..sender.." : Rev - "..revision..", Ver - "..version..", Rev Diff - "..(revision - VEM.Revision), 2)
 				end
 				if #newerVersionPerson < 4 then
-					for i, v in pairs(raid) do
-						if (v.version or 0) >= version and v ~= raid[sender] then
-							if not checkEntry(newerVersionPerson, sender) then
-								newerVersionPerson[#newerVersionPerson + 1] = sender
-							end
-						end
-					end
 					if #newerVersionPerson == 2 and updateNotificationDisplayed < 2 then--Only requires 2 for update notification.
 						--Find min revision.
 						updateNotificationDisplayed = 2
@@ -3146,18 +3188,13 @@ do
 				end
 			end
 			if VEM.DisplayVersion:find("alpha") and displayVersion:find("VEM") and #newerVersionPerson < 2 and (revision - VEM.Revision) > 30 then--Revision 20 can be increased in 1 day, so raised it to 30.
-				local found = false
-				for i, v in pairs(raid) do
-					if (v.revision or 0) >= revision and v ~= raid[sender] then
-						found = true
-						break
-					end
+				if not checkEntry(newerRevisionPerson, sender) then
+					newerRevisionPerson[#newerRevisionPerson + 1] = sender
+					VEM:Debug("Newer revision detected from "..sender.." : Rev - "..revision..", Ver - "..version..", Rev Diff - "..(revision - VEM.Revision))
 				end
-				if found then--Running alpha version that's out of date
-					if updateNotificationDisplayed < 2 then
-						updateNotificationDisplayed = 2
-						VEM:AddMsg(VEM_CORE_UPDATEREMINDER_HEADER_ALPHA:format(revision - VEM.Revision))
-					end
+				if #newerRevisionPerson == 2 then
+					updateNotificationDisplayed = 2
+					VEM:AddMsg(VEM_CORE_UPDATEREMINDER_HEADER_ALPHA:format(revision - VEM.Revision))
 				end
 			end
 		end
@@ -3309,42 +3346,42 @@ do
 			end
 		end
 
-		syncHandlers["GCB"] = function(sender, modId, ver)
-			if not VEM.Options.ShowGuildMessages then return end
-			if not ver or not (ver == "1") then return end--Ignore old versions
+		syncHandlers["GCB"] = function(sender, modId, ver, difficulty)
+			if not VEM.Options.ShowGuildMessages or not difficulty then return end
+			if not ver or not (ver == "2") then return end--Ignore old versions
 			if VEM:AntiSpam(5, "GCB") then
-				if IsInGroup() then
-					if IsInRaid() then
-						for i = 1, GetNumGroupMembers() do
-							if UnitName("raid"..i) == sender then return end--You are in group with sender, filter message
-						end
-					elseif IsInInstance() then--You are in a dungeon with a group, filter message
-						return
-					end
-				end
+				if IsInInstance() then return end--Simple filter, if you are inside an instance, just filter it, if not in instance, good to go.
 				local bossName = EJ_GetEncounterInfo(modId) or UNKNOWN
-				VEM:AddMsg(VEM_CORE_GUILD_COMBAT_STARTED:format(bossName))
+				local difficultyName = UNKNOWN
+				if difficulty == 16 then
+					difficultyName = PLAYER_DIFFICULTY6
+				elseif difficulty == 15 then
+					difficultyName = PLAYER_DIFFICULTY2
+				else 
+					difficultyName = PLAYER_DIFFICULTY1
+				end
+				VEM:AddMsg(VEM_CORE_GUILD_COMBAT_STARTED:format(difficultyName.."-"..bossName))
 			end
 		end
 		
-		syncHandlers["GCE"] = function(sender, modId, ver, wipe, time, wipeHP)
-			if not VEM.Options.ShowGuildMessages then return end
-			if not ver or not (ver == "1") then return end--Ignore old versions
+		syncHandlers["GCE"] = function(sender, modId, ver, wipe, time, wipeHP, difficulty)
+			if not VEM.Options.ShowGuildMessages or not difficulty then return end
+			if not ver or not (ver == "2") then return end--Ignore old versions
 			if VEM:AntiSpam(5, "GCE") then
-				if IsInGroup() then
-					if IsInRaid() then
-						for i = 1, GetNumGroupMembers() do
-							if UnitName("raid"..i) == sender then return end--You are in group with sender, filter message
-						end
-					elseif IsInInstance() then--You are in a dungeon with a group, filter message
-						return
-					end
-				end
+				if IsInInstance() then return end--Simple filter, if you are inside an instance, just filter it, if not in instance, good to go.
 				local bossName = EJ_GetEncounterInfo(modId) or UNKNOWN
+				local difficultyName = UNKNOWN
+				if difficulty == 16 then
+					difficultyName = PLAYER_DIFFICULTY6
+				elseif difficulty == 15 then
+					difficultyName = PLAYER_DIFFICULTY2
+				else 
+					difficultyName = PLAYER_DIFFICULTY1
+				end
 				if wipe == "1" then
-					VEM:AddMsg(VEM_CORE_GUILD_COMBAT_ENDED_AT:format(bossName, wipeHP, time))
+					VEM:AddMsg(VEM_CORE_GUILD_COMBAT_ENDED_AT:format(difficultyName.."-"..bossName, wipeHP, time))
 				else
-					VEM:AddMsg(VEM_CORE_GUILD_BOSS_DOWN:format(bossName, time))
+					VEM:AddMsg(VEM_CORE_GUILD_BOSS_DOWN:format(difficultyName.."-"..bossName, time))
 				end
 			end
 		end
@@ -3406,7 +3443,7 @@ do
 			if not result then
 				return
 			end
-			name = name or "Unknown"
+			name = name or VEM_CORE_UNKNOWN
 			id = id or ""
 			diff = tonumber(diff or 0) or 0
 			maxPlayers = tonumber(maxPlayers or 0) or 0
@@ -3646,7 +3683,7 @@ do
 	local frame, fontstring, fontstringFooter
 
 	local function createFrame()
-		frame = CreateFrame("Frame", nil, UIParent)
+		frame = CreateFrame("Frame", "VEMUpdateReminder", UIParent)
 		frame:SetFrameStrata("FULLSCREEN_DIALOG") -- yes, this isn't a fullscreen dialog, but I want it to be in front of other DIALOG frames (like VEM GUI which might open this frame...)
 		frame:SetWidth(430)
 		frame:SetHeight(140)
@@ -3829,7 +3866,9 @@ do
 	end
 	
 	function VEM:UNIT_TARGETABLE_CHANGED()
-		self:Debug("UNIT_TARGETABLE_CHANGED event fired")
+		if VEM.Options.DebugLevel > 2 or (Transcriptor and Transcriptor:IsLogging()) then
+			self:Debug("UNIT_TARGETABLE_CHANGED event fired")
+		end
 	end
 
 	--TODO, waste less cpu and register Unit event somehow. VEMs register events code is so conviluted though that it's difficult to add without tons of work.
@@ -3837,7 +3876,9 @@ do
 	--And I have transcriptor log, i still don't know which event is right one sometimes. It's important to SEE which event is firing during an exact moment of a fight.
 	function VEM:UNIT_SPELLCAST_SUCCEEDED(uId, spellName, _, _, spellId)
 		if not (uId == "boss1" or uId == "boss2" or uId == "boss3" or uId == "boss4" or uId == "boss5") then return end
-		self:Debug("UNIT_SPELLCAST_SUCCEEDED fired: "..UnitName(uId).."'s "..spellName.."("..spellId..")")
+		if VEM.Options.DebugLevel > 2 or (Transcriptor and Transcriptor:IsLogging()) then
+			self:Debug("UNIT_SPELLCAST_SUCCEEDED fired: "..UnitName(uId).."'s "..spellName.."("..spellId..")")
+		end
 	end
 
 	function VEM:ENCOUNTER_START(encounterID, name, difficulty, size)
@@ -4046,6 +4087,7 @@ end
 local statVarTable = {
 	--6.0
 	["event5"] = "normal",
+	["event20"] = "lfr25",
 	["event40"] = "lfr25",
 	["normal5"] = "normal",
 	["heroic5"] = "heroic",
@@ -4237,10 +4279,8 @@ function VEM:StartCombat(mod, delay, event, synced, syncedStartHp)
 					else
 						self:AddMsg(VEM_CORE_COMBAT_STARTED:format(difficultyText..name))
 						if difficultyIndex == 14 or difficultyIndex == 15 or difficultyIndex == 16 then--Only send relevant content, not guild beating down lich king or LFR.
-							--RequestGuildPartyState()
-							local _, numGuildPresent, numGuildRequired = InGuildParty()
-							if numGuildPresent >= numGuildRequired then--Guild Group
-								SendAddonMessage("D4", "GCB\t"..modId.."\t1", "GUILD")
+							if InGuildParty() then--Guild Group
+								SendAddonMessage("D4", "GCB\t"..modId.."\t2\t"..difficultyIndex, "GUILD")
 							end
 						end
 					end
@@ -4302,7 +4342,7 @@ function VEM:UNIT_HEALTH(uId)
 	end
 	if not health or health < 5 then return end -- no worthy of combat start if health is below 5%
 	if InCombatLockdown() then
-		if not cId == 0 and not bossHealth[cId] and bossIds[cId] and UnitAffectingCombat(uId) and healthCombatInitialized then -- StartCombat by UNIT_HEALTH.
+		if cId ~= 0 and not bossHealth[cId] and bossIds[cId] and UnitAffectingCombat(uId) and healthCombatInitialized then -- StartCombat by UNIT_HEALTH.
 			if combatInfo[LastInstanceMapID] then
 				for i, v in ipairs(combatInfo[LastInstanceMapID]) do
 					if v.mod.Options.Enabled and not v.mod.disableHealthCombat and (v.type == "combat" or v.type == "combat_yell" or v.type == "combat_emote" or v.type == "combat_say") and (v.multiMobPullDetection and checkEntry(v.multiMobPullDetection, cId) or v.mob == cId) then
@@ -4376,10 +4416,8 @@ function VEM:EndCombat(mod, wipe)
 					else
 						self:AddMsg(VEM_CORE_COMBAT_ENDED_AT_LONG:format(difficultyText..name, wipeHP, strFromTime(thisTime), totalPulls - totalKills))
 						if difficultyIndex == 14 or difficultyIndex == 15 or difficultyIndex == 16 then
-							--RequestGuildPartyState()
-							local _, numGuildPresent, numGuildRequired = InGuildParty()
-							if numGuildPresent >= numGuildRequired then--Guild Group
-								SendAddonMessage("D4", "GCE\t"..modId.."\t1\t1\t"..strFromTime(thisTime).."\t"..wipeHP, "GUILD")
+							if InGuildParty() then--Guild Group
+								SendAddonMessage("D4", "GCE\t"..modId.."\t2\t1\t"..strFromTime(thisTime).."\t"..wipeHP.."\t"..difficultyIndex, "GUILD")
 							end
 						end
 					end
@@ -4459,10 +4497,8 @@ function VEM:EndCombat(mod, wipe)
 					else
 						msg = VEM_CORE_BOSS_DOWN:format(difficultyText..name, strFromTime(thisTime))
 						if difficultyIndex == 14 or difficultyIndex == 15 or difficultyIndex == 16 then
-							--RequestGuildPartyState()
-							local _, numGuildPresent, numGuildRequired = InGuildParty()
-							if numGuildPresent >= numGuildRequired then--Guild Group
-								SendAddonMessage("D4", "GCE\t"..modId.."\t1\t0\t"..strFromTime(thisTime), "GUILD")
+							if InGuildParty() then--Guild Group
+								SendAddonMessage("D4", "GCE\t"..modId.."\t2\t0\t"..strFromTime(thisTime).."\t"..difficultyIndex, "GUILD")
 							end
 						end
 					end
@@ -4472,10 +4508,8 @@ function VEM:EndCombat(mod, wipe)
 					else
 						msg = VEM_CORE_BOSS_DOWN_NR:format(difficultyText..name, strFromTime(thisTime), strFromTime(bestTime), totalKills)
 						if difficultyIndex == 14 or difficultyIndex == 15 or difficultyIndex == 16 then
-							--RequestGuildPartyState()
-							local _, numGuildPresent, numGuildRequired = InGuildParty()
-							if numGuildPresent >= numGuildRequired then--Guild Group
-								SendAddonMessage("D4", "GCE\t"..modId.."\t1\t0\t"..strFromTime(thisTime), "GUILD")
+							if InGuildParty() then--Guild Group
+								SendAddonMessage("D4", "GCE\t"..modId.."\t2\t0\t"..strFromTime(thisTime).."\t"..difficultyIndex, "GUILD")
 							end
 						end
 					end
@@ -4485,10 +4519,8 @@ function VEM:EndCombat(mod, wipe)
 					else
 						msg = VEM_CORE_BOSS_DOWN_L:format(difficultyText..name, strFromTime(thisTime), strFromTime(lastTime), strFromTime(bestTime), totalKills)
 						if difficultyIndex == 14 or difficultyIndex == 15 or difficultyIndex == 16 then
-							--RequestGuildPartyState()
-							local _, numGuildPresent, numGuildRequired = InGuildParty()
-							if numGuildPresent >= numGuildRequired then--Guild Group
-								SendAddonMessage("D4", "GCE\t"..modId.."\t1\t0\t"..strFromTime(thisTime), "GUILD")
+							if InGuildParty() then--Guild Group
+								SendAddonMessage("D4", "GCE\t"..modId.."\t2\t0\t"..strFromTime(thisTime).."\t"..difficultyIndex, "GUILD")
 							end
 						end
 					end
@@ -4715,6 +4747,8 @@ function VEM:GetCurrentInstanceDifficulty()
 		return "event40", difficultyName.." - ", difficulty, instanceGroupSize
 	elseif difficulty == 19 then
 		return "event5", difficultyName.." - ", difficulty, instanceGroupSize
+	elseif difficulty == 20 then
+		return "event20", difficultyName.." - ", difficulty, instanceGroupSize
 	else--failsafe
 		return "normal5", "", difficulty, instanceGroupSize
 	end
@@ -4870,11 +4904,11 @@ function VEM:SendVariableInfo(mod, target)
 end
 
 do
-
 	function VEM:PLAYER_ENTERING_WORLD()
-		self:Schedule(10, function() if not VEM.Options.HelpMessageShown then VEM.Options.HelpMessageShown = true VEM:AddMsg(VEM_CORE_NEED_SUPPORT) end end)
+--		self:Schedule(10, function() if not VEM.Options.HelpMessageShown then VEM.Options.HelpMessageShown = true VEM:AddMsg(VEM_CORE_NEED_SUPPORT) end end)
 		self:Schedule(20, function() if not VEM.Options.ForumsMessageShown then VEM.Options.ForumsMessageShown = VEM.ReleaseRevision self:AddMsg(VEM_FORUMS_MESSAGE) end end)
 		self:Schedule(30, function() if not VEM.Options.SettingsMessageShown then VEM.Options.SettingsMessageShown = true self:AddMsg(VEM_HOW_TO_USE_MOD) end end)
+		self:Schedule(40, function() if VEM.Options.BugMessageShown < 1 then VEM.Options.BugMessageShown = 1 self:AddMsg(VEM_CORE_BLIZZ_BUGS) end end)
 		if type(RegisterAddonMessagePrefix) == "function" then
 			if not RegisterAddonMessagePrefix("D4") then -- main prefix for VEM4
 				self:AddMsg("Error: unable to register VEM addon message prefix (reached client side addon message filter limit), synchronization will be unavailable") -- TODO: confirm that this actually means that the syncs won't show up
@@ -4965,12 +4999,20 @@ do
 				mod = not v.isCustomMod and v
 			end
 			mod = mod or inCombat[1]
-			local hp = ("%d%%"):format(mod.highesthealth and mod:GetHighestBossHealth() or mod:GetLowestBossHealth())
+			local hp = ("%d%%"):format(mod.highesthealth and mod:GetHighestBossHealth() or mod:GetLowestBossHealth()) or VEM_CORE_UNKNOWN
+			local hpText = hp
+			if mod.vb.phase then
+				hpText = hpText.." ("..SCENARIO_STAGE:format(mod.vb.phase)..")"
+			end
+			if mod.numBoss then
+				local bossesKilled = mod.numBoss - mod.vb.bossLeft
+				hpText = hpText.." ("..BOSSES_KILLED:format(bossesKilled, mod.numBoss)..")"
+			end
 			if not autoRespondSpam[sender] then
 				if IsInScenarioGroup() then
 					sendWhisper(sender, chatPrefix..VEM_CORE_AUTO_RESPOND_WHISPER_SCENARIO:format(playerName, difficultyText..(mod.combatInfo.name or ""), getNumAlivePlayers(), VEM:GetNumGroupMembers()))
 				else
-					sendWhisper(sender, chatPrefix..VEM_CORE_AUTO_RESPOND_WHISPER:format(playerName, difficultyText..(mod.combatInfo.name or ""), hp or VEM_CORE_UNKNOWN, IsInInstance() and getNumRealAlivePlayers() or getNumAlivePlayers(), VEM:GetNumRealGroupMembers()))
+					sendWhisper(sender, chatPrefix..VEM_CORE_AUTO_RESPOND_WHISPER:format(playerName, difficultyText..(mod.combatInfo.name or ""), hpText, IsInInstance() and getNumRealAlivePlayers() or getNumAlivePlayers(), VEM:GetNumRealGroupMembers()))
 				end
 				VEM:AddMsg(VEM_CORE_AUTO_RESPONDED)
 			end
@@ -5094,11 +5136,13 @@ function VEM:AddMsg(text, prefix)
 	end
 end
 
-function VEM:Debug(text)
+function VEM:Debug(text, level)
 	if not self.Options.DebugMode then return end
-	local frame = _G[tostring(VEM.Options.ChatFrame)]
-	frame = frame and frame:IsShown() and frame or DEFAULT_CHAT_FRAME
-	frame:AddMessage("|cffff7d0aVEM Debug:|r "..text, 1, 1, 1)
+	if (level or 1) <= VEM.Options.DebugLevel then
+		local frame = _G[tostring(VEM.Options.ChatFrame)]
+		frame = frame and frame:IsShown() and frame or DEFAULT_CHAT_FRAME
+		frame:AddMessage("|cffff7d0aVEM Debug:|r "..text, 1, 1, 1)
+	end
 end
 
 do
@@ -5181,13 +5225,13 @@ function VEM:Capitalize(str)
 end
 
 --copied from big wigs with permission from funkydude. Modified by MysticalOS
-function VEM:RoleCheck()
+function VEM:RoleCheck(ignoreLoot)
 	local spec = GetSpecialization()
 	if not spec then return end
 	local role = GetSpecializationRole(spec)
 	local specID = GetLootSpecialization()
 	local _, _, _, _, _, lootrole = GetSpecializationInfoByID(specID)
-	if not InCombatLockdown() and IsInGroup() and ((IsPartyLFG() and difficultyIndex == 14) or not IsPartyLFG()) then
+	if not InCombatLockdown() and ((IsPartyLFG() and (difficultyIndex == 14 or difficultyIndex == 15)) or not IsPartyLFG()) then
 		local tempRole--Use temp role because we still want Role to be "tank" for loot check comparison at bottom (gladiators still use tank gear)
 		if role == "TANK" and UnitBuff("player", gladStance) then--Special handling for gladiator stance
 			tempRole = "DAMAGER"
@@ -5198,7 +5242,7 @@ function VEM:RoleCheck()
 		end
 	end
 	--Loot reminder even if spec isn't known or we are in LFR where we have a valid for role without us being ones that set us.
-	if lootrole and (role ~= lootrole) and VEM.Options.RoleSpecAlert then
+	if not ignoreLoot and lootrole and (role ~= lootrole) and VEM.Options.RoleSpecAlert then
 		self:AddMsg(VEM_CORE_LOOT_SPEC_REMINDER:format(_G[role] or VEM_CORE_UNKNOWN, _G[lootrole]))
 	end
 end
@@ -5287,9 +5331,12 @@ end
 -------------------
 MovieFrame:HookScript("OnEvent", function(self, event, id)
 	if event == "PLAY_MOVIE" and id then
+		VEM:Debug("PLAY_MOVIE fired")
 		if not IsInInstance() or C_Garrison:IsOnGarrisonMap() or VEM.Options.MovieFilter == "Never" then return end
+		VEM:Debug("PLAY_MOVIE: In valid zone, checking settings")
 		if VEM.Options.MovieFilter == "Block" or VEM.Options.MovieFilter == "AfterFirst" and VEM.Options.MoviesSeen[id] then
 			MovieFrame_OnMovieFinished(self)
+			VEM:Debug("PLAY_MOVIE: Canceling movie")
 		else
 			VEM.Options.MoviesSeen[id] = true
 		end
@@ -5778,7 +5825,7 @@ do
 end
 
 do
-	local frame = CreateFrame("Frame") -- frame for CLEU events, we don't want to run all *_MISSED events through the whole VEM event system...
+	local frame = CreateFrame("Frame", "VEMShields") -- frame for CLEU events, we don't want to run all *_MISSED events through the whole VEM event system...
 
 	local activeShields = {}
 	local shieldsByGuid = {}
@@ -6469,7 +6516,7 @@ end
 do
 	local soundPrototype = {}
 	local mt = { __index = soundPrototype }
-	function bossModPrototype:NewSound(spellId, optionName, optionDefault, optionVersion)
+	function bossModPrototype:NewSound(spellId, optionDefault, optionName, optionVersion)
 		if not spellId and not optionName then
 			error("NewSound: you must provide either spellId or optionName", 2)
 			return
@@ -6516,13 +6563,14 @@ do
 		return unschedule(self.Play, self.mod, self, ...)
 	end
 end
+
 ----------------------------
---  SoundMMprototype，new class. Add by Mini_Dragon (Brilla@金色平原)
+--  SoundMMprototype  --Add by Mini_Dragon (Brilla@金色平原)
 ----------------------------	
 do
 	local soundPrototype2 = {}
 	local mt2 = { __index = soundPrototype2 }
-	function bossModPrototype:SoundMM(SoundMMtag,SoundMMoption)
+	function bossModPrototype:SoundMM(SoundMMtag, SoundMMoption)
 		self.numSounds = self.numSounds and self.numSounds + 1 or 1
 		if (soundMMoption == nil) then
 			soundMMoption = true
@@ -6538,21 +6586,28 @@ do
 	end
 
 	function soundPrototype2:Play(file)
-		if VEM.Options.UseMasterVolume then
-			PlaySoundFile(file, "Master")
-		else
-			PlaySoundFile(file)
+		if soundMMoption then
+			if VEM.Options.UseMasterVolume then
+				PlaySoundFile("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\"..file..".ogg", "Master") --相对语音目录。语音文件以ogg格式存放在该目录下
+			else
+				PlaySoundFile("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\"..file..".ogg") --相对语音目录。语音文件以ogg格式存放在该目录下
+			end
 		end
 	end
 
 	function soundPrototype2:Schedule(t, ...)
-		return schedule(t, self.Play, self.mod, self, ...)
+		if soundMMoption then
+			return schedule(t, self.Play, self.mod, self, ...)
+		end
 	end
 
 	function soundPrototype2:Cancel(...)
-		return unschedule(self.Play, self.mod, self, ...)
+		if soundMMoption then
+			return unschedule(self.Play, self.mod, self, ...)
+		end
 	end
 end
+
 ----------------------------
 --  Countdown/out object  --
 ----------------------------
@@ -6887,7 +6942,7 @@ end
 --  Special Warning Object  --
 ------------------------------
 do
-	local frame = CreateFrame("Frame", nil, UIParent)
+	local frame = CreateFrame("Frame", "VEMSpecialWarning", UIParent)
 	local font = frame:CreateFontString(nil, "OVERLAY", "ZoneTextFont")
 	frame:SetMovable(1)
 	frame:SetWidth(1)
@@ -6907,7 +6962,7 @@ do
 		frame:ClearAllPoints()
 		frame:SetPoint(VEM.Options.SpecialWarningPoint, UIParent, VEM.Options.SpecialWarningPoint, VEM.Options.SpecialWarningX, VEM.Options.SpecialWarningY)
 		font:SetFont(VEM.Options.SpecialWarningFont, VEM.Options.SpecialWarningFontSize, "THICKOUTLINE")
-		font:SetTextColor(unpack(VEM.Options.SpecialWarningFontColor))
+		font:SetTextColor(unpack(VEM.Options.SpecialWarningFontCol))
 	end
 
 	local shakeFrame = CreateFrame("Frame")
@@ -6939,7 +6994,7 @@ do
 			local text = msg:gsub(">.-<", stripServerName)
 			font:SetText(text)
 			if VEM.Options.ShowSWarningsInChat then
-				local colorCode = ("|cff%.2x%.2x%.2x"):format(VEM.Options.SpecialWarningFontColor[1] * 255, VEM.Options.SpecialWarningFontColor[2] * 255, VEM.Options.SpecialWarningFontColor[3] * 255)
+				local colorCode = ("|cff%.2x%.2x%.2x"):format(VEM.Options.SpecialWarningFontCol[1] * 255, VEM.Options.SpecialWarningFontCol[2] * 255, VEM.Options.SpecialWarningFontCol[3] * 255)
 				self.mod:AddMsg(colorCode.."["..VEM_CORE_MOVE_SPECIAL_WARNING_TEXT.."] "..text.."|r", nil)
 			end
 			if not UnitIsDeadOrGhost("player") and VEM.Options.ShowFlashFrame then
@@ -7892,6 +7947,18 @@ end
 ---------------
 --  Options  --
 ---------------
+function bossModPrototype:AddEditBoxOption(name, options, default, cat, func) --Add by Mini_Dragon(Brilla@金色平原)
+	cat = cat or "misc"
+	self.Options[name] = default
+	self:SetOptionCategory(name, cat)
+	self.editboxes = self.editboxes or {}
+	self.editboxes[name] = options
+	if func then
+		self.optionFuncs = self.optionFuncs or {}
+		self.optionFuncs[name] = func
+	end
+end
+
 function bossModPrototype:AddBoolOption(name, default, cat, func)
 	cat = cat or "misc"
 	self.Options[name] = (default == nil) or default
@@ -8687,4 +8754,147 @@ do
 		return modLocalizations[name] or self:CreateModLocalization(name)
 	end
 end
---Voice driver by Mini_Dragon (Brilla@金色平原)
+
+---------------------------------
+--  LT Special Warning Object  -- --Function by BH. Add by Mini_Dragon (Brilla@金色平原)
+---------------------------------
+do
+	local frame, font, moving, showendnote, icon, cooldownframe
+	local function createFrame()
+		frame = CreateFrame("Frame", nil, UIParent)
+		frame:SetWidth(400)
+		frame:SetHeight(50)
+		frame:SetMovable(true)
+		frame:SetPoint(VEM.Options.LTSpecialWarningPoint, VEM.Options.LTSpecialWarningX, VEM.Options.LTSpecialWarningY)
+		font = frame:CreateFontString()	
+		font:SetDrawLayer("OVERLAY")
+		font:SetFont(VEM.Options.LTSpecialWarningFont, VEM.Options.LTSpecialWarningFontSize, "THICKOUTLINE")
+		font:SetTextColor(unpack(VEM.Options.LTSpecialWarningFontColor))
+		font:SetPoint("CENTER", 0, 0)
+		icon = frame:CreateTexture( nil, "ARTWORK" )
+		icon:SetPoint("CENTER", 0, VEM.Options.LTSpecialWarningFontSize <= 33 and VEM.Options.LTSpecialWarningFontSize + 15 or 48)
+		cooldownframe = CreateFrame("Cooldown", cooldownframe, frame)
+		cooldownframe:SetAllPoints(icon)
+		frame:Hide()
+	end
+	
+	function VEM:UpdateLTSpecialWarningOptions()
+		if not frame then
+			createFrame()
+		end
+		frame:ClearAllPoints()
+		frame:SetPoint(VEM.Options.LTSpecialWarningPoint, VEM.Options.LTSpecialWarningX, VEM.Options.LTSpecialWarningY)
+		font:SetFont(VEM.Options.LTSpecialWarningFont, VEM.Options.LTSpecialWarningFontSize, "THICKOUTLINE")
+		font:SetTextColor(unpack(VEM.Options.LTSpecialWarningFontColor))
+	end
+	
+	function VEM:ShowLTSpecialWarning(text, r, g, b, shake, iconspellid, hidetime, cdtime)
+		if (not VEM.Options.ShowLTSpecialWarnings) or (not text) then return end
+		if not frame then
+			createFrame()
+		end
+		frame:Show()
+		moving = false
+		frame:EnableMouse(false)
+		if type(text) == "number" then text = GetSpellInfo(text) end
+		font:SetText(text)
+		if r and g and b then
+			font:SetTextColor(r, g, b, 1)
+		else
+			font:SetTextColor(unpack(VEM.Options.LTSpecialWarningFontColor))
+		end
+		if iconspellid then
+			local _, _, texture = GetSpellInfo(tostring(iconspellid))
+			icon:SetTexture(texture)
+		else
+			icon:SetTexture(nil)
+		end
+		if shake then
+			local shaketime = 0.3
+			frame:SetScript("OnUpdate", function(self, e)
+				shaketime = shaketime + e
+				if shaketime <= shake then
+					local Amt = 30 / (1 + 10*(300^(-(shake))))
+					local moveX = random(-Amt, Amt)
+					local moveY = random(-Amt, Amt)
+					font:SetPoint("CENTER", moveX, moveY)
+					if iconspellid then
+						icon:SetPoint("CENTER", moveX, VEM.Options.LTSpecialWarningFontSize <= 33 and VEM.Options.LTSpecialWarningFontSize + 15 + moveY or 48 + moveY)
+					end
+				else
+					font:SetPoint("CENTER", 0, 0)
+					icon:SetPoint("CENTER", 0, VEM.Options.LTSpecialWarningFontSize <= 33 and VEM.Options.LTSpecialWarningFontSize + 15 or 48)
+				end
+			end)
+		end
+		if hidetime then
+			self:Schedule(hidetime, function() VEM:HideLTSpecialWarning() end)
+		end
+		if cdtime then
+			cooldownframe:SetCooldown(GetTime(), cdtime)
+		end
+	end
+--	/run VEM:ShowLTSpecialWarning(145987, 1, 0, 0, 1, 145987, nil, 15)
+	function VEM:HideLTSpecialWarning()
+		if frame and frame:IsShown() then
+			frame:Hide()
+		end
+	end
+	
+	function VEM:MoveLTSpecialWarning()
+		if not frame then
+			createFrame()
+		end		
+		frame:RegisterForDrag("LeftButton")
+		frame:SetScript("OnDragStart", function(self)
+			frame:StartMoving()
+		end)
+		frame:SetScript("OnDragStop", function(self)
+			frame:StopMovingOrSizing()
+			local point, _, _, x, y = self:GetPoint(1)
+			VEM.Options.LTSpecialWarningPoint = point
+			VEM.Options.LTSpecialWarningX = x
+			VEM.Options.LTSpecialWarningY = y
+		end)
+		if frame:IsShown() then
+			if moving then
+				frame:EnableMouse(false)
+				frame:Hide()
+			else
+				font:SetText(VEM_GUI_Translations.BarWhileMove)
+				moving = true
+				frame:EnableMouse(true)
+				frame:SetFrameStrata("TOOLTIP")
+			end
+		else
+			font:SetText(VEM_GUI_Translations.BarWhileMove)
+			frame:Show()
+			moving = true
+			frame:EnableMouse(true)
+			frame:SetFrameStrata("TOOLTIP")
+		end
+	end
+	
+	local function testWarningEnd()
+		VEM:HideLTSpecialWarning()
+		if not showendnote then
+			VEM:AddMsg(VEM_GUI_Translations.TestWarningEnd)
+			showendnote = true
+		end
+	end
+	
+	function VEM:ShowTestLTSpecialWarning()
+		if not frame then
+			createFrame()
+		end
+		moving = false
+		frame:EnableMouse(false)
+		font:SetText(VEM_GUI_Translations.Panel_LTSpecWarnFrame)
+		frame:Show()
+		frame:SetFrameStrata("TOOLTIP")
+		self:Unschedule(testWarningEnd)
+		self:Schedule(5, testWarningEnd)
+	end
+end
+
+--Sound Driver by Mini_Dragon (Brilla@金色平原)

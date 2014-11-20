@@ -1244,22 +1244,24 @@ function mod:UpdateZoneData()
 	end
 	paused = false
   
-  local m, l, x, y = Astrolabe:GetUnitPosition("player", true)
+  local _, l, x, y = Astrolabe:GetUnitPosition("player", true) --GetCurrentMapAreaID(), GetCurrentMapDungeonLevel(), x, y = GetUnitPosition( unit, noMapChange )
+	m = GetCurrentMapAreaID()
 	if (x == 0 and y == 0) then
 		paused = true
 		return
 	end
   
   -- Do we need to clear zoneScale if we don't have a map?
-  if not m or m < 0 then return end
+  if not m then return end
 	
-  local _, _, w, h = Astrolabe:GetMapInfo(m, l or 0)
-	if(w and h) then
-	zoneScale[1] = w
-	zoneScale[2] = h
+  local _, _, w, h = Astrolabe:GetMapInfo(m, l or 0) --return system, systemParent, mapData.width, mapData.height, mapData.xOffset, mapData.yOffset=GetMapInfo( mapID, mapFloor );
+    if(w and h) then
+    zoneScale[1] = w
+    zoneScale[2] = h
   end
-  
-	self.currentZone = l > 0 and (m .. l) or l
+  if (w and l) then
+    self.currentZone = l > 0 and (m .. l) or l
+  end
 end
 
 do

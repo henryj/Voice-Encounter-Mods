@@ -4,6 +4,8 @@
 ## Title-zhCN:|cffffd200Voice Encounter Mods|r |cff69ccf0核心|r
 ## Title-zhTW:|cffffd200Voice Encounter Mods|r |cff69ccf0核心|r
 ## Notes: Voice Encounter Mods
+## Dependencies: VEM-StatusBarTimers
+## OptionalDependencies: LibSharedMedia-3.0, LibChatAnims
 ## SavedVariablesPerCharacter: VEM_SavedOptions, DBT_SavedOptions
 ## LoadOnDemand: 0
 ## DefaultState: enabled
@@ -11,14 +13,13 @@
 ## X-Website: http://www.deadlybossmods.com
 
 embeds.xml
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
 Libs\LibChatAnims\LibChatAnims.xml
 Libs\LibSharedMedia-3.0\lib.xml
-
 localization.en.lua
 localization.cn.lua
 localization.tw.lua
-DBT-Template.xml
-DBT.lua
 VEM-Core.lua
 VEM-Arrow.lua
 VEM-Flash.lua

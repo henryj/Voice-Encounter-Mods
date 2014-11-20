@@ -1,6 +1,6 @@
 local mod	= VEM:NewMod(1139, "VEM-Party-WoD", 6, 537)
 local L		= mod:GetLocalizedStrings()
-local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
+local sndWOP	= mod:SoundMM("SoundWOP")
 
 mod:SetRevision(("$Revision: 11370 $"):sub(12, -3))
 mod:SetCreatureID(75509)
@@ -35,7 +35,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 	if spellId == 153240 then
 		warnDaggerFall:Show()
 	elseif spellId == 153153 then
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\mobsoon.ogg")
+		sndWOP:Play("mobsoon")
 		warnDarkCommunion:Show()
 		specWarnDarkCommunion:Show()
 		timerDarkCommunionCD:Start()

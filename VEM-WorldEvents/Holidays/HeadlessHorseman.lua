@@ -1,7 +1,7 @@
 local mod	= VEM:NewMod("d285", "VEM-WorldEvents", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10248 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 11820 $"):sub(12, -3))
 mod:SetCreatureID(23682, 23775)
 --mod:SetModelID(22351)--Model doesn't work/render for some reason.
 mod:SetZone()
@@ -9,14 +9,14 @@ mod:SetZone()
 mod:SetReCombatTime(10)
 mod:RegisterCombat("combat")
 
-mod:RegisterEvents(
-	"SPELL_AURA_APPLIED",
-	"UNIT_SPELLCAST_SUCCEEDED target focus",
-	"CHAT_MSG_MONSTER_SAY",
-	"CHAT_MSG_SAY"
-)
+--mod:RegisterEvents(
+--	"CHAT_MSG_SAY"
+--)
 
 mod:RegisterEventsInCombat(
+	"SPELL_AURA_APPLIED 42380 42514",
+	"UNIT_SPELLCAST_SUCCEEDED target focus",
+	"CHAT_MSG_MONSTER_SAY",
 	"UNIT_DIED"
 )
 
@@ -26,15 +26,16 @@ local warnPhase					= mod:NewAnnounce("WarnPhase", 2, "Interface\\Icons\\Spell_N
 local warnHorsemanSoldiers		= mod:NewAnnounce("warnHorsemanSoldiers", 2, 97133)
 local warnHorsemanHead			= mod:NewAnnounce("warnHorsemanHead", 3)
 
-local timerCombatStart			= mod:NewCombatTimer(17)--rollplay for first pull
+--local timerCombatStart			= mod:NewCombatTimer(17)--rollplay for first pull
 local timerConflag				= mod:NewTargetTimer(4, 42380)
 local timerSquashSoul			= mod:NewTargetTimer(15, 42514)
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args.spellId == 42380 then					-- Conflagration
+	local spellId = args.spellId
+	if spellId == 42380 then					-- Conflagration
 		warnConflag:Show(args.destName)
 		timerConflag:Start(args.destName)
-	elseif args.spellId == 42514 then				-- Squash Soul
+	elseif spellId == 42514 then				-- Squash Soul
 		warnSquashSoul:Show(args.destName)
 		timerSquashSoul:Start(args.destName)
 	end
@@ -76,11 +77,12 @@ function mod:CHAT_MSG_MONSTER_SAY(msg)
 	end
 end
 
+--[[
 function mod:CHAT_MSG_SAY(msg)
 	if msg == L.HorsemanSummon and self:AntiSpam(5) then		-- Summoned
 		timerCombatStart:Start()
 	end
-end
+end--]]
 
 function mod:UNIT_DIED(args)
 	if self:GetCIDFromGUID(args.destGUID) == 23775 then

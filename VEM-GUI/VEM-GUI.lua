@@ -44,7 +44,7 @@
 
 
 
-local revision =("$Revision: 10687 $"):sub(12, -3)
+local revision =("$Revision: 11814 $"):sub(12, -3)
 local FrameTitle = "VEM_GUI_Option_"	-- all GUI frames get automatically a name FrameTitle..ID
 local fixeditframe = false
 
@@ -232,7 +232,7 @@ local function MixinSharedMedia3(mediatype, mediatable)
 	if not soundsRegistered then
 		local LSM = LibStub("LibSharedMedia-3.0")
 		soundsRegistered = true
-		LSM:Register("sound", "Headless Horseman Laugh", [[Sound\Creature\HeadlessHorseman\Horseman_Laugh_01.ogg]])
+		LSM:Register("sound", "Headless Horseman: Laugh", [[Sound\Creature\HeadlessHorseman\Horseman_Laugh_01.ogg]])
 		LSM:Register("sound", "Yogg Saron: Laugh", [[Sound\Creature\YoggSaron\UR_YoggSaron_Slay01.ogg]])
 		LSM:Register("sound", "Loatheb: I see you", [[Sound\Creature\Loathstare\Loa_Naxx_Aggro02.ogg]])
 		LSM:Register("sound", "Lady Malande: Flee", [[Sound\Creature\LadyMalande\BLCKTMPLE_LadyMal_Aggro01.ogg]])
@@ -240,6 +240,35 @@ local function MixinSharedMedia3(mediatype, mediatable)
 		LSM:Register("sound", "Void Reaver: Marked", [[Sound\Creature\VoidReaver\TEMPEST_VoidRvr_Aggro01.ogg]])
 		LSM:Register("sound", "Kaz'rogal: Marked", [[Sound\Creature\KazRogal\CAV_Kaz_Mark02.ogg]])
 		LSM:Register("sound", "C'Thun: You Will Die!", [[Sound\Creature\CThun\CThunYouWillDIe.ogg]])
+		--Do to terrible coding in LSM formating, it's not possible to do this a nice looking way
+		if VEM.Options.CustomSounds >= 1 then
+			LSM:Register("sound", "VEM: Custom 1", [[Interface\AddOns\VEM-CustomSounds\Custom1.ogg]])
+		end
+		if VEM.Options.CustomSounds >= 2 then
+			LSM:Register("sound", "VEM: Custom 2", [[Interface\AddOns\VEM-CustomSounds\Custom2.ogg]])
+		end
+		if VEM.Options.CustomSounds >= 3 then
+			LSM:Register("sound", "VEM: Custom 3", [[Interface\AddOns\VEM-CustomSounds\Custom3.ogg]])
+		end
+		if VEM.Options.CustomSounds >= 4 then
+			LSM:Register("sound", "VEM: Custom 4", [[Interface\AddOns\VEM-CustomSounds\Custom4.ogg]])
+		end
+		if VEM.Options.CustomSounds >= 5 then
+			LSM:Register("sound", "VEM: Custom 5", [[Interface\AddOns\VEM-CustomSounds\Custom5.ogg]])
+		end
+		if VEM.Options.CustomSounds >= 6 then
+			LSM:Register("sound", "VEM: Custom 6", [[Interface\AddOns\VEM-CustomSounds\Custom6.ogg]])
+		end
+		if VEM.Options.CustomSounds >= 7 then
+			LSM:Register("sound", "VEM: Custom 7", [[Interface\AddOns\VEM-CustomSounds\Custom7.ogg]])
+		end
+		if VEM.Options.CustomSounds >= 8 then
+			LSM:Register("sound", "VEM: Custom 8", [[Interface\AddOns\VEM-CustomSounds\Custom8.ogg]])
+		end
+		if VEM.Options.CustomSounds >= 9 then
+			LSM:Register("sound", "VEM: Custom 9", [[Interface\AddOns\VEM-CustomSounds\Custom9.ogg]])
+			if VEM.Options.CustomSounds > 9 then VEM.Options.CustomSounds = 9 end
+		end
 	end
 	-- sort LibSharedMedia keys alphabetically (case-insensitive)
 	local keytable = {}
@@ -370,11 +399,19 @@ do
 
 	local function replaceSpellLinks(id)
 		local spellId = tonumber(id)
-		local spellName = GetSpellInfo(spellId) or VEM_CORE_UNKNOWN
+		local spellName = GetSpellInfo(spellId)
+		if not spellName then
+			spellName = VEM_CORE_UNKNOWN
+			VEM:Debug("Spell ID not exists: "..spellId)
+		end
 		return ("|cff71d5ff|Hspell:%d|h%s|h|r"):format(spellId, spellName)
 	end
 
 	local function replaceJournalLinks(id)
+		local check = EJ_GetSectionInfo(tonumber(id))
+		if not check then 
+			VEM:Debug("Journal ID not exists: "..id)
+		end
 		local link = select(9, EJ_GetSectionInfo(tonumber(id))) or VEM_CORE_UNKNOWN
 		return link:gsub("|h%[(.*)%]|h", "|h%1|h")
 	end
@@ -390,7 +427,7 @@ do
 			return
 		end
 		if type(name) == "number" then
-			return VEM:AddMsg("CreateCheckButton: error: expected string, received number:\""..name.."\".You probably called mod:NewTimer(optionId) with a spell id.")
+			return VEM:AddMsg("CreateCheckButton: error: expected string, received number. You probably called mod:NewTimer(optionId) with a spell id.")
 		end
 		local button = CreateFrame('CheckButton', FrameTitle..self:GetNewID(), self.frame, 'OptionsCheckButtonTemplate')
 		local buttonName = button:GetName()
@@ -407,7 +444,7 @@ do
 			name = name:gsub("%$journal:(%d+)", replaceJournalLinks)
 		end
 		local dropdown
-		if soundVal and VEM.Options.ShowAdvSWSounds then
+		if soundVal and VEM.Options.ShowAdvSWSound then
 			dropdown = self:CreateDropdown(nil,sounds,mod.Options[soundVal], function(value)
 				mod.Options[soundVal] = value
 				VEM:PlaySpecialWarningSound(value)
@@ -713,7 +750,7 @@ function PanelPrototype:AutoSetDimension()
 		if child.myheight and type(child.myheight) == "number" then
 			need_height = need_height + child.myheight
 		else
-			need_height = need_height + child:GetHeight() + 20
+			need_height = need_height + child:GetHeight() + 50
 		end
 	end
 
@@ -848,6 +885,202 @@ VEM_GUI_Options = CreateNewFauxScrollFrameList()
 
 
 local UpdateAnimationFrame, CreateAnimationFrame
+
+function UpdateAnimationFrame(mod)
+	VEM_BossPreview.currentMod = mod
+	local displayId = nil
+
+--[[ This way will break the Encounter Journal GUI .. needs a "fix" before activating
+	if mod.encounterId and mod.instanceId then
+		EJ_SetDifficulty(true, true)
+		EncounterJournal.instanceID = mod.instanceId
+		EncounterJournal_Refresh(EncounterJournal.encounter)
+		EncounterJournal.encounterID = mod.encounterId
+		EncounterJournal_Refresh(EncounterJournal.encounter)
+		displayId = EncounterJournal.encounter["creatureButton1"].displayInfo
+	end]]
+
+	VEM_BossPreview:Show()
+	VEM_BossPreview:ClearModel()
+	VEM_BossPreview:SetDisplayInfo(displayId or mod.modelId or 0)
+	VEM_BossPreview:SetSequence(4)
+	if VEM.Options.ModelSoundValue == "Short" then
+		if VEM.Options.UseMasterVolume then
+			PlaySoundFile(mod.modelSoundShort or 0, "Master")
+		else
+			PlaySoundFile(mod.modelSoundShort or 0)
+		end
+	elseif VEM.Options.ModelSoundValue == "Long" then
+		if VEM.Options.UseMasterVolume then
+			PlaySoundFile(mod.modelSoundLong or 0, "Master")
+		else
+			PlaySoundFile(mod.modelSoundLong or 0)
+		end
+	end
+end
+
+local function CreateAnimationFrame()
+	modelFrameCreated = true
+	local mobstyle = CreateFrame('PlayerModel', "VEM_BossPreview", VEM_GUI_OptionsFramePanelContainer)
+	mobstyle:SetPoint("BOTTOMRIGHT", VEM_GUI_OptionsFramePanelContainer, "BOTTOMRIGHT", -5, 5)
+	mobstyle:SetWidth( 300 )
+	mobstyle:SetHeight( 230 )
+	mobstyle:SetPortraitZoom(0.4)
+	mobstyle:SetRotation(0)
+	mobstyle:SetClampRectInsets(0, 0, 24, 0)
+
+--[[    ** FANCY STUFF WE DO NOT USE FOR NOW **
+
+	mobstyle.playlist = { 	-- start animation outside of our fov
+				{set_y = 0, set_x = 1.1, set_z = 0, setfacing = -90, setalpha = 1},
+				-- wait outside fov befor begining
+				{mintime = 1000, maxtime = 7000},	-- randomtime to wait
+				-- {time = 10000},  			-- just wait 10 seconds
+
+				-- move in the fov and to waypoint #1
+				{animation = 4, time = 1500, move_x = -0.7},
+				{animation = 0, time = 10, endfacing = -90 }, -- rotate in an animation
+
+				-- stay on waypoint #1
+				{setfacing = -90},
+				{animation = 0, time = 10000},
+				--{animation = 0, time = 2000, randomanimation = {45,46,47}},	-- play a random emote
+
+				-- move to next waypoint
+				{setfacing = -90},
+				{animation = 4, time = 5000, move_x = -2.5},
+
+				-- stay on waypoint #2
+				{setfacing = 0},
+				{animation = 0, time = 10000,},
+
+
+				-- move to the horizont
+				{setfacing = 180},
+				{animation = 4, time = 10000, toscale=0.005},
+
+				-- die and despawn
+				{animation = 1, time = 5000},
+				{animation = 6, time = 2000, toalpha = 0},
+
+				-- we want so sleep a little while on animation end
+				{mintime = 1000, maxtime = 3000},
+	}
+
+	mobstyle.animationTypes = {1, 4, 5, 14, 40} -- die, walk, run, kneel?, swim/fly
+	mobstyle.animation = 3
+	mobstyle:SetScript("OnUpdate", function(self, e)
+		if not self.enabled then return end
+
+		self.atime = self.atime + e*1000
+
+		if self.atime >= 10000 then
+			mobstyle.animation = floor(math.random(1, #mobstyle.animationTypes))
+			self.atime = 0
+		end
+		self:SetSequenceTime(mobstyle.animationTypes[mobstyle.animation], self.atime)
+	end)
+
+	mobstyle:SetScript("OnUpdate", function(self, e)
+		--if true then return end
+		if not self.enabled then return end
+		self.atime = self.atime + e * 1000
+		if self.apos == 0 or self.atime >= (self.playlist[self.apos].time or 0) then
+			self.apos = self.apos + 1
+			if self.apos <= #self.playlist and self.playlist[self.apos].setfacing then
+				self:SetFacing( (self.playlist[self.apos].setfacing + self.modelRotation) * math.pi/180)
+			end
+			if self.apos <= #self.playlist and self.playlist[self.apos].setalpha then
+				self:SetAlpha(self.playlist[self.apos].setalpha)
+			end
+			if self.apos <= #self.playlist and (self.playlist[self.apos].set_y or self.playlist[self.apos].set_x or self.playlist[self.apos].set_z) then
+				self.pos_y = self.playlist[self.apos].set_y or self.pos_y
+				self.pos_x = self.playlist[self.apos].set_x or self.pos_x
+				self.pos_z = self.playlist[self.apos].set_z or self.pos_z
+				self:SetPosition(
+					self.pos_z + self.modelOffsetZ,
+					self.pos_x + self.modelOffsetX,
+					self.pos_y + self.modelOffsetY
+				)
+			end
+			if self.apos > #self.playlist then
+
+				self:SetAlpha(1)
+				self:SetModelScale(1.0)
+				self:SetPosition(0, 0, 0)
+				self:SetCreature(self.currentMod.modelId or self.currentMod.creatureId or 0)
+
+				self.apos = 0
+				self.pos_x = 0
+				self.pos_y = 0
+				self.pos_z = 0
+				self.alpha = 1
+				self.scale = self.modelscale
+
+				self:SetAlpha(self.alpha)
+				self:SetFacing(self.modelRotation)
+				self:SetModelScale(self.modelscale)
+				self:SetPosition(
+					self.pos_z + self.modelOffsetZ,
+					self.pos_x + self.modelOffsetX,
+					self.pos_y + self.modelOffsetY
+				)
+				return
+			end
+			self.rotation = self:GetFacing()
+			if self.playlist[self.apos].randomanimation then
+				self.playlist[self.apos].animation = self.playlist[self.apos].randomanimation[math.random(1, #self.playlist[self.apos].randomanimation)]
+			end
+			if self.playlist[self.apos].mintime and self.playlist[self.apos].maxtime then
+				self.playlist[self.apos].time = math.random(self.playlist[self.apos].mintime, self.playlist[self.apos].maxtime)
+			end
+
+
+			self.atime = 0
+			self.playlist[self.apos].animation = self.playlist[self.apos].animation or 0
+			self:SetSequenceTime(self.playlist[self.apos].animation, self.atime)
+		end
+
+		if self.playlist[self.apos].animation > 0 then
+			self:SetSequenceTime(self.playlist[self.apos].animation,  self.atime)
+		end
+
+		if self.playlist[self.apos].endfacing then -- not self.playlist[self.apos].endfacing == self:GetFacing()
+			self.rotation = self.rotation + (e * 2 * math.pi * -- Rotations per second
+						((self.playlist[self.apos].endfacing/360)
+						/ (self.playlist[self.apos].time/1000))
+						)
+
+			self:SetFacing( self.rotation )
+		end
+		if self.playlist[self.apos].move_x then
+			--self.pos_x = self.pos_x + (self.playlist[self.apos].move_x / (self.playlist[self.apos].time/1000) ) * e
+			self.pos_x = self.pos_x + (((self.playlist[self.apos].move_x / (self.playlist[self.apos].time/1000) ) * e) * self.modelMoveSpeed)
+			self:SetPosition(self.pos_z+self.modelOffsetZ, self.pos_x+self.modelOffsetX, self.pos_y+self.modelOffsetY)
+		end
+		if self.playlist[self.apos].move_y then
+			self.pos_y = self.pos_y + (self.playlist[self.apos].move_y / (self.playlist[self.apos].time/1000) ) * e
+			--self:SetPosition(self.pos_y, self.pos_x, self.pos_z)
+			self:SetPosition(self.pos_z+self.modelOffsetZ, self.pos_x+self.modelOffsetX, self.pos_y+self.modelOffsetY)
+		end
+		if self.playlist[self.apos].move_z then
+			self.pos_z = self.pos_z + (self.playlist[self.apos].move_z / (self.playlist[self.apos].time/1000) ) * e
+			--self:SetPosition(self.pos_y, self.pos_x, self.pos_z)
+			self:SetPosition(self.pos_z+self.modelOffsetZ, self.pos_x+self.modelOffsetX, self.pos_y+self.modelOffsetY)
+		end
+		if self.playlist[self.apos].toalpha then
+			self.alpha = self.alpha - ((1 - self.playlist[self.apos].toalpha) / (self.playlist[self.apos].time/1000) ) * e
+			self:SetAlpha(self.alpha)
+		end
+		if self.playlist[self.apos].toscale then
+			self.scale = self.scale - ((self.modelscale - self.playlist[self.apos].toscale) / (self.playlist[self.apos].time/1000) ) * e
+			if self.scale < 0 then self.scale = 0.0001 end
+			self:SetModelScale(self.scale)
+		end
+	end)--]]
+	return mobstyle
+end
+
 do
 	local function HideScrollBar(frame)
 		local frameName = frame:GetName()
@@ -1047,7 +1280,7 @@ do
 
 	-- This function is for internal use.
 	-- places the selected tab on the container frame
-	function VEM_GUI_OptionsFrame:DisplayFrame(frame)
+	function VEM_GUI_OptionsFrame:DisplayFrame(frame, forcechange)
 		local container = _G[self:GetName().."PanelContainer"]
 
 		if not (type(frame) == "table" and type(frame[0]) == "userdata") or select("#", frame:GetChildren()) == 0 then
@@ -1055,7 +1288,7 @@ do
 			return
 		end
 
-		local changed = container.displayedFrame ~= frame
+		local changed = forcechange or (container.displayedFrame ~= frame)
 		if ( container.displayedFrame ) then
 			container.displayedFrame:Hide()
 		end
@@ -1118,229 +1351,6 @@ do
 			end
 		end
 	end
-
-end
-
-function UpdateAnimationFrame(mod)
-	VEM_BossPreview.currentMod = mod
-	local displayId = nil
-
---[[ This way will break the Encounter Journal GUI .. needs a "fix" before activating
-	if mod.encounterId and mod.instanceId then
-		EJ_SetDifficulty(true, true)
-		EncounterJournal.instanceID = mod.instanceId
-		EncounterJournal_Refresh(EncounterJournal.encounter)
-		EncounterJournal.encounterID = mod.encounterId
-		EncounterJournal_Refresh(EncounterJournal.encounter)
-		displayId = EncounterJournal.encounter["creatureButton1"].displayInfo
-	end]]
-
-	VEM_BossPreview:Show()
-	VEM_BossPreview:ClearModel()
-	VEM_BossPreview:SetDisplayInfo(displayId or mod.modelId or 0)
-	VEM_BossPreview:SetSequence(4)
-	if VEM.Options.ModelSoundValue == "Short" then
-		if VEM.Options.UseMasterVolume then
-			PlaySoundFile(mod.modelSoundShort or 0, "Master")
-		else
-			PlaySoundFile(mod.modelSoundShort or 0)
-		end
-	elseif VEM.Options.ModelSoundValue == "Long" then
-		if VEM.Options.UseMasterVolume then
-			PlaySoundFile(mod.modelSoundLong or 0, "Master")
-		else
-			PlaySoundFile(mod.modelSoundLong or 0)
-		end
-	end
-
---[[	** FANCY STUFF WE DO NOT USE FOR NOW **
-	VEM_BossPreview:SetModelScale(mod.modelScale or 0.5)
-
-	VEM_BossPreview.atime = 0
-	VEM_BossPreview.apos = 0
-	VEM_BossPreview.rotation = 0
-	VEM_BossPreview.modelRotation = mod.modelRotation or -60
-	VEM_BossPreview.modelOffsetX = mod.modelOffsetX or 0
-	VEM_BossPreview.modelOffsetY = mod.modelOffsetY or 0
-	VEM_BossPreview.modelOffsetZ = mod.modelOffsetZ or 0
-	VEM_BossPreview.modelscale = mod.modelScale or 0.5
-	VEM_BossPreview.modelMoveSpeed = mod.modelMoveSpeed or 1
-	VEM_BossPreview.pos_x = 0.5
-	VEM_BossPreview.pos_y = 0.1
-	VEM_BossPreview.pos_z = 0
-	VEM_BossPreview.alpha = 1
-	VEM_BossPreview.scale = 0
-	VEM_BossPreview.apos = 0
-	VEM_BossPreview:SetAlpha(VEM_BossPreview.alpha)
-	VEM_BossPreview:SetFacing( VEM_BossPreview.modelRotation  *math.pi/180)
-	VEM_BossPreview:SetPosition(
-		VEM_BossPreview.pos_z + VEM_BossPreview.modelOffsetZ,
-		VEM_BossPreview.pos_x + VEM_BossPreview.modelOffsetX,
-		VEM_BossPreview.pos_y + VEM_BossPreview.modelOffsetY)
-	VEM_BossPreview.enabled = true
---]]
-end
-
-local function CreateAnimationFrame()
-	modelFrameCreated = true
-	local mobstyle = CreateFrame('PlayerModel', "VEM_BossPreview", VEM_GUI_OptionsFramePanelContainer)
-	mobstyle:SetPoint("BOTTOMRIGHT", VEM_GUI_OptionsFramePanelContainer, "BOTTOMRIGHT", -5, 5)
-	mobstyle:SetWidth( 300 )
-	mobstyle:SetHeight( 230 )
-	mobstyle:SetPortraitZoom(0.4)
-	mobstyle:SetRotation(0)
-	mobstyle:SetClampRectInsets(0, 0, 24, 0)
-
---[[    ** FANCY STUFF WE DO NOT USE FOR NOW **
-
-	mobstyle.playlist = { 	-- start animation outside of our fov
-				{set_y = 0, set_x = 1.1, set_z = 0, setfacing = -90, setalpha = 1},
-				-- wait outside fov befor begining
-				{mintime = 1000, maxtime = 7000},	-- randomtime to wait
-				-- {time = 10000},  			-- just wait 10 seconds
-
-				-- move in the fov and to waypoint #1
-				{animation = 4, time = 1500, move_x = -0.7},
-				{animation = 0, time = 10, endfacing = -90 }, -- rotate in an animation
-
-				-- stay on waypoint #1
-				{setfacing = -90},
-				{animation = 0, time = 10000},
-				--{animation = 0, time = 2000, randomanimation = {45,46,47}},	-- play a random emote
-
-				-- move to next waypoint
-				{setfacing = -90},
-				{animation = 4, time = 5000, move_x = -2.5},
-
-				-- stay on waypoint #2
-				{setfacing = 0},
-				{animation = 0, time = 10000,},
-
-
-				-- move to the horizont
-				{setfacing = 180},
-				{animation = 4, time = 10000, toscale=0.005},
-
-				-- die and despawn
-				{animation = 1, time = 5000},
-				{animation = 6, time = 2000, toalpha = 0},
-
-				-- we want so sleep a little while on animation end
-				{mintime = 1000, maxtime = 3000},
-	}
-
-	mobstyle.animationTypes = {1, 4, 5, 14, 40} -- die, walk, run, kneel?, swim/fly
-	mobstyle.animation = 3
-	mobstyle:SetScript("OnUpdate", function(self, e)
-		if not self.enabled then return end
-
-		self.atime = self.atime + e*1000
-
-		if self.atime >= 10000 then
-			mobstyle.animation = floor(math.random(1, #mobstyle.animationTypes))
-			self.atime = 0
-		end
-		self:SetSequenceTime(mobstyle.animationTypes[mobstyle.animation], self.atime)
-	end)
-
-	mobstyle:SetScript("OnUpdate", function(self, e)
-		--if true then return end
-		if not self.enabled then return end
-		self.atime = self.atime + e * 1000
-		if self.apos == 0 or self.atime >= (self.playlist[self.apos].time or 0) then
-			self.apos = self.apos + 1
-			if self.apos <= #self.playlist and self.playlist[self.apos].setfacing then
-				self:SetFacing( (self.playlist[self.apos].setfacing + self.modelRotation) * math.pi/180)
-			end
-			if self.apos <= #self.playlist and self.playlist[self.apos].setalpha then
-				self:SetAlpha(self.playlist[self.apos].setalpha)
-			end
-			if self.apos <= #self.playlist and (self.playlist[self.apos].set_y or self.playlist[self.apos].set_x or self.playlist[self.apos].set_z) then
-				self.pos_y = self.playlist[self.apos].set_y or self.pos_y
-				self.pos_x = self.playlist[self.apos].set_x or self.pos_x
-				self.pos_z = self.playlist[self.apos].set_z or self.pos_z
-				self:SetPosition(
-					self.pos_z + self.modelOffsetZ,
-					self.pos_x + self.modelOffsetX,
-					self.pos_y + self.modelOffsetY
-				)
-			end
-			if self.apos > #self.playlist then
-
-				self:SetAlpha(1)
-				self:SetModelScale(1.0)
-				self:SetPosition(0, 0, 0)
-				self:SetCreature(self.currentMod.modelId or self.currentMod.creatureId or 0)
-
-				self.apos = 0
-				self.pos_x = 0
-				self.pos_y = 0
-				self.pos_z = 0
-				self.alpha = 1
-				self.scale = self.modelscale
-
-				self:SetAlpha(self.alpha)
-				self:SetFacing(self.modelRotation)
-				self:SetModelScale(self.modelscale)
-				self:SetPosition(
-					self.pos_z + self.modelOffsetZ,
-					self.pos_x + self.modelOffsetX,
-					self.pos_y + self.modelOffsetY
-				)
-				return
-			end
-			self.rotation = self:GetFacing()
-			if self.playlist[self.apos].randomanimation then
-				self.playlist[self.apos].animation = self.playlist[self.apos].randomanimation[math.random(1, #self.playlist[self.apos].randomanimation)]
-			end
-			if self.playlist[self.apos].mintime and self.playlist[self.apos].maxtime then
-				self.playlist[self.apos].time = math.random(self.playlist[self.apos].mintime, self.playlist[self.apos].maxtime)
-			end
-
-
-			self.atime = 0
-			self.playlist[self.apos].animation = self.playlist[self.apos].animation or 0
-			self:SetSequenceTime(self.playlist[self.apos].animation, self.atime)
-		end
-
-		if self.playlist[self.apos].animation > 0 then
-			self:SetSequenceTime(self.playlist[self.apos].animation,  self.atime)
-		end
-
-		if self.playlist[self.apos].endfacing then -- not self.playlist[self.apos].endfacing == self:GetFacing()
-			self.rotation = self.rotation + (e * 2 * math.pi * -- Rotations per second
-						((self.playlist[self.apos].endfacing/360)
-						/ (self.playlist[self.apos].time/1000))
-						)
-
-			self:SetFacing( self.rotation )
-		end
-		if self.playlist[self.apos].move_x then
-			--self.pos_x = self.pos_x + (self.playlist[self.apos].move_x / (self.playlist[self.apos].time/1000) ) * e
-			self.pos_x = self.pos_x + (((self.playlist[self.apos].move_x / (self.playlist[self.apos].time/1000) ) * e) * self.modelMoveSpeed)
-			self:SetPosition(self.pos_z+self.modelOffsetZ, self.pos_x+self.modelOffsetX, self.pos_y+self.modelOffsetY)
-		end
-		if self.playlist[self.apos].move_y then
-			self.pos_y = self.pos_y + (self.playlist[self.apos].move_y / (self.playlist[self.apos].time/1000) ) * e
-			--self:SetPosition(self.pos_y, self.pos_x, self.pos_z)
-			self:SetPosition(self.pos_z+self.modelOffsetZ, self.pos_x+self.modelOffsetX, self.pos_y+self.modelOffsetY)
-		end
-		if self.playlist[self.apos].move_z then
-			self.pos_z = self.pos_z + (self.playlist[self.apos].move_z / (self.playlist[self.apos].time/1000) ) * e
-			--self:SetPosition(self.pos_y, self.pos_x, self.pos_z)
-			self:SetPosition(self.pos_z+self.modelOffsetZ, self.pos_x+self.modelOffsetX, self.pos_y+self.modelOffsetY)
-		end
-		if self.playlist[self.apos].toalpha then
-			self.alpha = self.alpha - ((1 - self.playlist[self.apos].toalpha) / (self.playlist[self.apos].time/1000) ) * e
-			self:SetAlpha(self.alpha)
-		end
-		if self.playlist[self.apos].toscale then
-			self.scale = self.scale - ((self.modelscale - self.playlist[self.apos].toscale) / (self.playlist[self.apos].time/1000) ) * e
-			if self.scale < 0 then self.scale = 0.0001 end
-			self:SetModelScale(self.scale)
-		end
-	end)--]]
-	return mobstyle
 end
 
 local function CreateOptionsMenu()
@@ -1434,11 +1444,12 @@ local function CreateOptionsMenu()
 		latencySlider:SetPoint('BOTTOMLEFT', bminfo, "BOTTOMLEFT", 10, -35)
 		latencySlider:HookScript("OnShow", function(self) self:SetValue(VEM.Options.LatencyThreshold) end)
 		latencySlider:HookScript("OnValueChanged", function(self) VEM.Options.LatencyThreshold = self:GetValue() end)
-
-		local generaltimeroptions = VEM_GUI_Frame:CreateArea(L.TimerGeneral, nil, 85)
+		----
+		local generaltimeroptions = VEM_GUI_Frame:CreateArea(L.TimerGeneral, nil, 125)
 		generaltimeroptions.frame:SetPoint('TOPLEFT', generaloptions.frame, "BOTTOMLEFT", 0, -20)
 
 		local SKT_Enabled	= generaltimeroptions:CreateCheckButton(L.SKT_Enabled, true, nil, "AlwaysShowSpeedKillTimer")
+		local CRT_Enabled	= generaltimeroptions:CreateCheckButton(L.CRT_Enabled, true, nil, "CRT_Enabled")
 
 		local challengeTimers = {
 			{	text	= L.Disable,				value	= "None" },
@@ -1451,10 +1462,10 @@ local function CreateOptionsMenu()
 			VEM.Options.ChallengeBest = value
 		end
 		)
-		ChallengeTimerDropDown:SetPoint("TOPLEFT", generaltimeroptions.frame, "TOPLEFT", 0, -50)
+		ChallengeTimerDropDown:SetPoint("TOPLEFT", generaltimeroptions.frame, "TOPLEFT", 0, -85)
 
 		--Model viewer options
-		local modelarea = VEM_GUI_Frame:CreateArea(L.ModelOptions, nil, 85)
+		local modelarea = VEM_GUI_Frame:CreateArea(L.ModelOptions, nil, 90)
 		modelarea.frame:SetPoint('TOPLEFT', generaltimeroptions.frame, "BOTTOMLEFT", 0, -20)
 
 		local enablemodels	= modelarea:CreateCheckButton(L.EnableModels,  true, nil, "EnableModels")--Needs someone smarter then me to hide/disable this option if not 4.0.6+
@@ -1471,49 +1482,6 @@ local function CreateOptionsMenu()
 		)
 		ModelSoundDropDown:SetPoint("TOPLEFT", modelarea.frame, "TOPLEFT", 0, -50)
 
-		-- Pizza Timer (create your own timer menu)
-		local pizzaarea = VEM_GUI_Frame:CreateArea(L.PizzaTimer_Headline, nil, 85)
-		pizzaarea.frame:SetPoint('TOPLEFT', modelarea.frame, "BOTTOMLEFT", 0, -20)
-
-		local textbox = pizzaarea:CreateEditBox(L.PizzaTimer_Title, "Pizza!", 175)
-		local hourbox = pizzaarea:CreateEditBox(L.PizzaTimer_Hours, "0", 25)
-		local minbox  = pizzaarea:CreateEditBox(L.PizzaTimer_Mins, "15", 25)
-		local secbox  = pizzaarea:CreateEditBox(L.PizzaTimer_Secs, "0", 25)
-
-		textbox:SetMaxLetters(17)
-		textbox:SetPoint('TOPLEFT', 30, -25)
-		hourbox:SetNumeric()
-		hourbox:SetMaxLetters(2)
-		hourbox:SetPoint('TOPLEFT', textbox, "TOPRIGHT", 20, 0)
-		minbox:SetNumeric()
-		minbox:SetMaxLetters(2)
-		minbox:SetPoint('TOPLEFT', hourbox, "TOPRIGHT", 20, 0)
-		secbox:SetNumeric()
-		secbox:SetMaxLetters(2)
-		secbox:SetPoint('TOPLEFT', minbox, "TOPRIGHT", 20, 0)
-
-		local BcastTimer = pizzaarea:CreateCheckButton(L.PizzaTimer_BroadCast)
-		local okbttn  = pizzaarea:CreateButton(L.PizzaTimer_ButtonStart)
-		okbttn:SetPoint('TOPLEFT', textbox, "BOTTOMLEFT", -7, -8)
-		BcastTimer:SetPoint("TOPLEFT", okbttn, "TOPRIGHT", 10, 3)
-
-		pizzaarea.frame:SetScript("OnShow", function(self)
-			if VEM:GetRaidRank() == 0 then
-				BcastTimer:Hide()
-			else
-				BcastTimer:Show()
-			end
-		end)
-
-		okbttn:SetScript("OnClick", function()
-			local time = (hourbox:GetNumber() * 60*60) + (minbox:GetNumber() * 60) + secbox:GetNumber()
-			if textbox:GetText() and time > 0 then
-				VEM:CreatePizzaTimer(time,  textbox:GetText(), BcastTimer:GetChecked())
-			end
-		end)
-
-		-- END Pizza Timer
-		--
 		VEM_GUI_Frame:SetMyOwnHeight()
 	end
 
@@ -1525,13 +1493,15 @@ local function CreateOptionsMenu()
 		local generalCoreArea = generalWarningPanel:CreateArea(L.CoreMessages, nil, 120, true)
 --		generalCoreArea:CreateCheckButton(L.ShowLoadMessage, true, nil, "ShowLoadMessage")--Only here as a note, this is commented out so inexperienced users don't disable this, but an option for advanced users who want to manually change the value from true to false
 		generalCoreArea:CreateCheckButton(L.ShowPizzaMessage, true, nil, "ShowPizzaMessage")
+		generalCoreArea:CreateCheckButton(L.ShowCombatLogMessage, true, nil, "ShowCombatLogMessage")
+		generalCoreArea:CreateCheckButton(L.ShowTranscriptorMessage, true, nil, "ShowTranscriptorMessage")
 
 		local generalMessagesArea = generalWarningPanel:CreateArea(L.CombatMessages, nil, 135, true)
 		generalMessagesArea:CreateCheckButton(L.ShowEngageMessage, true, nil, "ShowEngageMessage")
 		generalMessagesArea:CreateCheckButton(L.ShowKillMessage, true, nil, "ShowKillMessage")
 		generalMessagesArea:CreateCheckButton(L.ShowWipeMessage, true, nil, "ShowWipeMessage")
-		generalMessagesArea:CreateCheckButton(L.ShowWipeMessage, true, nil, "ShowWipeMessage")
 		generalMessagesArea:CreateCheckButton(L.ShowGuildMessages, true, nil, "ShowGuildMessages")
+		generalMessagesArea:CreateCheckButton(L.ShowRecoveryMessage, true, nil, "ShowRecoveryMessage")
 		local generalWhispersArea = generalWarningPanel:CreateArea(L.WhisperMessages, nil, 135, true)
 		generalWhispersArea:CreateCheckButton(L.AutoRespond, true, nil, "AutoRespond")
 		generalWhispersArea:CreateCheckButton(L.EnableStatus, true, nil, "StatusEnabled")
@@ -1683,14 +1653,14 @@ local function CreateOptionsMenu()
 					anchorFrame.texture:SetWidth(32)
 					anchorFrame.texture:SetHeight(32)
 					anchorFrame:SetScript("OnMouseDown", function(self)
-						RaidWarningFrame:SetMovable(1)
+						RaidWarningFrame:SetMovable(true)
 						RaidWarningFrame:StartMoving()
 						VEM:Unschedule(hideme)
 						VEM.Bars:CancelBar(L.BarWhileMove)
 					end)
 					anchorFrame:SetScript("OnMouseUp", function(self)
 						RaidWarningFrame:StopMovingOrSizing()
-						RaidWarningFrame:SetMovable(0)
+						RaidWarningFrame:SetMovable(false)
 						local point, _, _, xOfs, yOfs = RaidWarningFrame:GetPoint(1)
 						VEM.Options.RaidWarningPosition.Point = point
 						VEM.Options.RaidWarningPosition.X = xOfs
@@ -1822,28 +1792,19 @@ local function CreateOptionsMenu()
 				VEM.Bars:SetOption("Texture", value)
 			end
 		)
-		TextureDropDown:SetPoint("TOPLEFT", BarSetup.frame, "TOPLEFT", 210, -80)
+		TextureDropDown:SetPoint("TOPLEFT", BarSetup.frame, "TOPLEFT", 210, -55)
 
-		local ExpandUpwards = BarSetup:CreateCheckButton(L.ExpandUpwards, false, nil, nil, "ExpandUpwards")
-		ExpandUpwards:SetPoint("TOPLEFT", TextureDropDown, "BOTTOMLEFT", 0, -10)
+		local Styles = {
+			{	text	= L.BarVEM,				value	= "VEM" },
+			{	text	= L.BarBigWigs,			value 	= "BigWigs" }
+		}
 
-		local FillUpBars = BarSetup:CreateCheckButton(L.FillUpBars, false, nil, nil, "FillUpBars")
-		FillUpBars:SetPoint("TOP", ExpandUpwards, "BOTTOM", 0, 5)
-
-		local ClickThrough = BarSetup:CreateCheckButton(L.ClickThrough, false, nil, nil, "ClickThrough")
-		ClickThrough:SetPoint("TOPLEFT", color1reset, "BOTTOMLEFT", -7, -5)
-
-		-- Functions for the next 2 Areas
-		local function createDBTOnShowHandler(option)
-			return function(self)
-				self:SetValue(VEM.Bars:GetOption(option))
+		local StyleDropDown = BarSetup:CreateDropdown(L.BarStyle, Styles,
+			VEM.Bars:GetOption("Style"), function(value)
+				VEM.Bars:SetOption("Style", value)
 			end
-		end
-		local function createDBTOnValueChangedHandler(option)
-			return function(self)
-				VEM.Bars:SetOption(option, self:GetValue())
-			end
-		end
+		)
+		StyleDropDown:SetPoint("TOPLEFT", TextureDropDown, "BOTTOMLEFT", 0, -10)
 
 		local Fonts = MixinSharedMedia3("font", {
 			{	text	= "Default",		value 	= STANDARD_TEXT_FONT,			font = STANDARD_TEXT_FONT		},
@@ -1856,12 +1817,74 @@ local function CreateOptionsMenu()
 			function(value)
 				VEM.Bars:SetOption("Font", value)
 			end)
-		FontDropDown:SetPoint("TOPLEFT", BarSetup.frame, "TOPLEFT", 210, -200)
+		FontDropDown:SetPoint("TOPLEFT", StyleDropDown, "BOTTOMLEFT", 0, -10)
+
+		local iconleft = BarSetup:CreateCheckButton(L.BarIconLeft, nil, nil, nil, "IconLeft")
+		iconleft:SetPoint("TOPLEFT", FontDropDown, "BOTTOMLEFT", 10, 0)
+
+		local iconright = BarSetup:CreateCheckButton(L.BarIconRight, nil, nil, nil, "IconRight")
+		iconright:SetPoint("LEFT", iconleft, "LEFT", 130, 0)
+
+		local ExpandUpwards = BarSetup:CreateCheckButton(L.ExpandUpwards, false, nil, nil, "ExpandUpwards")
+		ExpandUpwards:SetPoint("TOPLEFT", iconleft, "BOTTOMLEFT", 0, 0)
+
+		local FillUpBars = BarSetup:CreateCheckButton(L.FillUpBars, false, nil, nil, "FillUpBars")
+		FillUpBars:SetPoint("TOPLEFT", iconright, "BOTTOMLEFT", 0, 0)
+
+		local ClickThrough = BarSetup:CreateCheckButton(L.ClickThrough, false, nil, nil, "ClickThrough")
+		ClickThrough:SetPoint("TOPLEFT", ExpandUpwards, "BOTTOMLEFT", 0, 0)
+
+		-- Functions for bar setup
+		local function createDBTOnShowHandler(option)
+			return function(self)
+				if option == "EnlargeBarsPercent" then
+					self:SetValue(VEM.Bars:GetOption(option) * 100)
+				else
+					self:SetValue(VEM.Bars:GetOption(option))
+				end
+			end
+		end
+		local function createDBTOnValueChangedHandler(option)
+			return function(self)
+				if option == "EnlargeBarsPercent" then
+					VEM.Bars:SetOption(option, self:GetValue() / 100)
+					self:SetValue(VEM.Bars:GetOption(option) * 100)
+				else
+					VEM.Bars:SetOption(option, self:GetValue())
+					self:SetValue(VEM.Bars:GetOption(option))
+				end
+				
+			end
+		end
 
 		local FontSizeSlider = BarSetup:CreateSlider(L.Bar_FontSize, 7, 18, 1)
-		FontSizeSlider:SetPoint("TOPLEFT", BarSetup.frame, "TOPLEFT", 20, -202)
+		FontSizeSlider:SetPoint("TOPLEFT", BarSetup.frame, "TOPLEFT", 20, -175)
 		FontSizeSlider:SetScript("OnShow", createDBTOnShowHandler("FontSize"))
 		FontSizeSlider:HookScript("OnValueChanged", createDBTOnValueChangedHandler("FontSize"))
+
+		local BarHeightSlider = BarSetup:CreateSlider(L.Bar_Height, 10, 35, 1)
+		BarHeightSlider:SetPoint("TOPLEFT", BarSetup.frame, "TOPLEFT", 20, -215)
+		BarHeightSlider:SetScript("OnShow", createDBTOnShowHandler("Height"))
+		BarHeightSlider:HookScript("OnValueChanged", createDBTOnValueChangedHandler("Height"))
+
+		local descriptionText = BarSetup:CreateText(L.Bar_VEMOnly, 400, nil, nil, "LEFT")
+		descriptionText:SetPoint("TOPLEFT", BarSetup.frame, "TOPLEFT", 20, -252)
+
+		local EnlargeTimeSlider = BarSetup:CreateSlider(L.Bar_EnlargeTime, 6, 30, 1)
+		EnlargeTimeSlider:SetPoint("TOPLEFT", BarSetup.frame, "TOPLEFT", 20, -285)
+		EnlargeTimeSlider:SetScript("OnShow", createDBTOnShowHandler("EnlargeBarsTime"))
+		EnlargeTimeSlider:HookScript("OnValueChanged", createDBTOnValueChangedHandler("EnlargeBarsTime"))
+
+		local EnlargePerecntSlider = BarSetup:CreateSlider(L.Bar_EnlargePercent, 0, 50, 0.5)
+		EnlargePerecntSlider:SetPoint("TOPLEFT", BarSetup.frame, "TOPLEFT", 20, -325)
+		EnlargePerecntSlider:SetScript("OnShow", createDBTOnShowHandler("EnlargeBarsPercent"))
+		EnlargePerecntSlider:HookScript("OnValueChanged", createDBTOnValueChangedHandler("EnlargeBarsPercent"))
+
+		local SparkBars = BarSetup:CreateCheckButton(L.BarSpark, false, nil, nil, "Spark")
+		SparkBars:SetPoint("TOPLEFT", ClickThrough, "BOTTOMLEFT", 0, -40)
+
+		local FlashBars = BarSetup:CreateCheckButton(L.BarFlash, false, nil, nil, "Flash")
+		FlashBars:SetPoint("TOPLEFT", SparkBars, "BOTTOMLEFT", 0, 0)
 
 		-----------------------
 		-- Small Bar Options --
@@ -1873,7 +1896,7 @@ local function CreateOptionsMenu()
 		smalldummybar.frame:SetPoint('BOTTOM', BarSetupSmall.frame, "TOP", 0, -35)
 		smalldummybar.frame:SetScript("OnUpdate", function(self, elapsed) smalldummybar:Update(elapsed) end)
 
-		local BarWidthSlider = BarSetup:CreateSlider(L.Slider_BarWidth, 100, 325, 1)
+		local BarWidthSlider = BarSetup:CreateSlider(L.Slider_BarWidth, 100, 400, 1)
 		BarWidthSlider:SetPoint("TOPLEFT", BarSetupSmall.frame, "TOPLEFT", 20, -90)
 		BarWidthSlider:SetScript("OnShow", createDBTOnShowHandler("Width"))
 		BarWidthSlider:HookScript("OnValueChanged", createDBTOnValueChangedHandler("Width"))
@@ -1888,7 +1911,7 @@ local function CreateOptionsMenu()
 		BarOffsetXSlider:SetScript("OnShow", createDBTOnShowHandler("BarXOffset"))
 		BarOffsetXSlider:HookScript("OnValueChanged", createDBTOnValueChangedHandler("BarXOffset"))
 
-		local BarOffsetYSlider = BarSetup:CreateSlider(L.Slider_BarOffSetY, -5, 25, 1)
+		local BarOffsetYSlider = BarSetup:CreateSlider(L.Slider_BarOffSetY, -5, 35, 1)
 		BarOffsetYSlider:SetPoint("TOPLEFT", BarOffsetXSlider, "BOTTOMLEFT", 0, -10)
 		BarOffsetYSlider:SetScript("OnShow", createDBTOnShowHandler("BarYOffset"))
 		BarOffsetYSlider:HookScript("OnValueChanged", createDBTOnValueChangedHandler("BarYOffset"))
@@ -1907,7 +1930,7 @@ local function CreateOptionsMenu()
 		hugedummybar.enlarged = true
 		hugedummybar:ApplyStyle()
 
-		local HugeBarWidthSlider = BarSetupHuge:CreateSlider(L.Slider_BarWidth, 100, 325, 1)
+		local HugeBarWidthSlider = BarSetupHuge:CreateSlider(L.Slider_BarWidth, 100, 400, 1)
 		HugeBarWidthSlider:SetPoint("TOPLEFT", BarSetupHuge.frame, "TOPLEFT", 20, -105)
 		HugeBarWidthSlider:SetScript("OnShow", createDBTOnShowHandler("HugeWidth"))
 		HugeBarWidthSlider:HookScript("OnValueChanged", createDBTOnValueChangedHandler("HugeWidth"))
@@ -1959,10 +1982,10 @@ local function CreateOptionsMenu()
 		local color0reset = specArea:CreateButton(L.Reset, 64, 10, nil, GameFontNormalSmall)
 		color0reset:SetPoint('TOP', color0, "BOTTOM", 5, -10)
 		color0reset:SetScript("OnClick", function(self)
-				VEM.Options.SpecialWarningFontColor[1] = VEM.DefaultOptions.SpecialWarningFontColor[1]
-				VEM.Options.SpecialWarningFontColor[2] = VEM.DefaultOptions.SpecialWarningFontColor[2]
-				VEM.Options.SpecialWarningFontColor[3] = VEM.DefaultOptions.SpecialWarningFontColor[3]
-				color0:SetColorRGB(VEM.Options.SpecialWarningFontColor[1], VEM.Options.SpecialWarningFontColor[2], VEM.Options.SpecialWarningFontColor[3])
+				VEM.Options.SpecialWarningFontCol[1] = VEM.DefaultOptions.SpecialWarningFontCol[1]
+				VEM.Options.SpecialWarningFontCol[2] = VEM.DefaultOptions.SpecialWarningFontCol[2]
+				VEM.Options.SpecialWarningFontCol[3] = VEM.DefaultOptions.SpecialWarningFontCol[3]
+				color0:SetColorRGB(VEM.Options.SpecialWarningFontCol[1], VEM.Options.SpecialWarningFontCol[2], VEM.Options.SpecialWarningFontCol[3])
 				VEM:UpdateSpecialWarningOptions()
 				VEM:ShowTestSpecialWarning(nil, 1)
 		end)
@@ -1970,13 +1993,13 @@ local function CreateOptionsMenu()
 			local firstshow = true
 			color0:SetScript("OnShow", function(self)
 					firstshow = true
-					self:SetColorRGB(VEM.Options.SpecialWarningFontColor[1], VEM.Options.SpecialWarningFontColor[2], VEM.Options.SpecialWarningFontColor[3])
+					self:SetColorRGB(VEM.Options.SpecialWarningFontCol[1], VEM.Options.SpecialWarningFontCol[2], VEM.Options.SpecialWarningFontCol[3])
 			end)
 			color0:SetScript("OnColorSelect", function(self)
 					if firstshow then firstshow = false return end
-					VEM.Options.SpecialWarningFontColor[1] = select(1, self:GetColorRGB())
-					VEM.Options.SpecialWarningFontColor[2] = select(2, self:GetColorRGB())
-					VEM.Options.SpecialWarningFontColor[3] = select(3, self:GetColorRGB())
+					VEM.Options.SpecialWarningFontCol[1] = select(1, self:GetColorRGB())
+					VEM.Options.SpecialWarningFontCol[2] = select(2, self:GetColorRGB())
+					VEM.Options.SpecialWarningFontCol[3] = select(3, self:GetColorRGB())
 					color0text:SetTextColor(self:GetColorRGB())
 					VEM:UpdateSpecialWarningOptions()
 					VEM:ShowTestSpecialWarning(nil, 1)
@@ -2243,7 +2266,7 @@ local function CreateOptionsMenu()
 		resetbutton:SetScript("OnClick", function()
 				VEM.Options.ShowSpecialWarnings = VEM.DefaultOptions.ShowSpecialWarnings
 				VEM.Options.ShowFlashFrame = VEM.DefaultOptions.ShowFlashFrame
-				VEM.Options.ShowAdvSWSounds = VEM.DefaultOptions.ShowAdvSWSounds
+				VEM.Options.ShowAdvSWSound = VEM.DefaultOptions.ShowAdvSWSound
 				VEM.Options.SpecialWarningFont = VEM.DefaultOptions.SpecialWarningFont
 				VEM.Options.SpecialWarningSound = VEM.DefaultOptions.SpecialWarningSound
 				VEM.Options.SpecialWarningSound2 = VEM.DefaultOptions.SpecialWarningSound2
@@ -2269,13 +2292,13 @@ local function CreateOptionsMenu()
 				VEM.Options.SpecialWarningY = VEM.DefaultOptions.SpecialWarningY
 				check1:SetChecked(VEM.Options.ShowSpecialWarnings)
 				check2:SetChecked(VEM.Options.ShowFlashFrame)
-				check3:SetChecked(VEM.Options.ShowAdvSWSounds)
+				check3:SetChecked(VEM.Options.ShowAdvSWSound)
 				FontDropDown:SetSelectedValue(VEM.Options.SpecialWarningFont)
 				SpecialWarnSoundDropDown:SetSelectedValue(VEM.Options.SpecialWarningSound)
 				SpecialWarnSoundDropDown2:SetSelectedValue(VEM.Options.SpecialWarningSound2)
 				SpecialWarnSoundDropDown3:SetSelectedValue(VEM.Options.SpecialWarningSound3)
 				fontSizeSlider:SetValue(VEM.DefaultOptions.SpecialWarningFontSize)
-				color0:SetColorRGB(VEM.Options.SpecialWarningFontColor[1], VEM.Options.SpecialWarningFontColor[2], VEM.Options.SpecialWarningFontColor[3])
+				color0:SetColorRGB(VEM.Options.SpecialWarningFontCol[1], VEM.Options.SpecialWarningFontCol[2], VEM.Options.SpecialWarningFontCol[3])
 				color1:SetColorRGB(VEM.Options.SpecialWarningFlashCol1[1], VEM.Options.SpecialWarningFlashCol1[2], VEM.Options.SpecialWarningFlashCol1[3])
 				color2:SetColorRGB(VEM.Options.SpecialWarningFlashCol2[1], VEM.Options.SpecialWarningFlashCol2[2], VEM.Options.SpecialWarningFlashCol2[3])
 				color3:SetColorRGB(VEM.Options.SpecialWarningFlashCol3[1], VEM.Options.SpecialWarningFlashCol3[2], VEM.Options.SpecialWarningFlashCol3[3])
@@ -2440,21 +2463,27 @@ local function CreateOptionsMenu()
 
 	do
 		local spamPanel = VEM_GUI_Frame:CreateNewPanel(L.Panel_SpamFilter, "option")
-		local spamOutArea = spamPanel:CreateArea(L.Area_SpamFilter_Outgoing, nil, 150, true)
+		local spamOutArea = spamPanel:CreateArea(L.Area_SpamFilter_Outgoing, nil, 170, true)
 		spamOutArea:CreateCheckButton(L.SpamBlockNoShowAnnounce, true, nil, "DontShowBossAnnounces")
+		spamOutArea:CreateCheckButton(L.DontShowFarWarnings, true, nil, "DontShowFarWarnings")
 		spamOutArea:CreateCheckButton(L.SpamBlockNoSendWhisper, true, nil, "DontSendBossWhispers")
 		spamOutArea:CreateCheckButton(L.SpamBlockNoSetIcon, true, nil, "DontSetIcons")
 		spamOutArea:CreateCheckButton(L.SpamBlockNoRangeFrame, true, nil, "DontShowRangeFrame")
 		spamOutArea:CreateCheckButton(L.SpamBlockNoInfoFrame, true, nil, "DontShowInfoFrame")
+		spamOutArea:CreateCheckButton(L.SpamBlockNoHealthFrame, true, nil, "DontShowHealthFrame")
 
 		local spamArea = spamPanel:CreateArea(L.Area_SpamFilter, nil, 150, true)
 		spamArea:CreateCheckButton(L.StripServerName, true, nil, "StripServerName")
 		spamArea:CreateCheckButton(L.SpamBlockBossWhispers, true, nil, "SpamBlockBossWhispers")
 		spamArea:CreateCheckButton(L.BlockVersionUpdateNotice, true, nil, "BlockVersionUpdateNotice")
 		if BigBrother and type(BigBrother.ConsumableCheck) == "function" then
-			spamArea:CreateCheckButton(L.ShowBigBrotherOnCombatStart, true, nil, "ShowBigBrotherOnCombatStart")
+			spamArea:CreateCheckButton(L.ShowBBOnCombatStart, true, nil, "ShowBigBrotherOnCombatStart")
 			spamArea:CreateCheckButton(L.BigBrotherAnnounceToRaid, true, nil, "BigBrotherAnnounceToRaid")
 		end
+
+		local spamSpecArea = spamPanel:CreateArea(L.Area_SpecFilter, nil, 40, true)
+		spamSpecArea:CreateCheckButton(L.FilterTankSpec, true, nil, "FilterTankSpec")
+
 		local spamPTArea = spamPanel:CreateArea(L.Area_PullTimer, nil, 160, true)
 		spamPTArea:CreateCheckButton(L.DontShowPTNoID, true, nil, "DontShowPTNoID")
 		spamPTArea:CreateCheckButton(L.DontShowPT, true, nil, "DontShowPT")
@@ -2464,20 +2493,22 @@ local function CreateOptionsMenu()
 		
 		local PTSlider = spamPTArea:CreateSlider(L.PT_Threshold, 3, 30, 1, 300)   -- (text , min_value , max_value , step , width)
 		PTSlider:SetPoint('TOPLEFT', SPTCDT, "TOPLEFT", 62, -40)--Position seems based on text size so on diff locals it'll actually be in different places :\
-		PTSlider:HookScript("OnShow", function(self) self:SetValue(VEM.Options.PTCountThreshold) end)
-		PTSlider:HookScript("OnValueChanged", function(self) VEM.Options.PTCountThreshold = self:GetValue() end)
+		PTSlider:HookScript("OnShow", function(self) self:SetValue(math.floor(VEM.Options.PTCountThreshold)) end)
+		PTSlider:HookScript("OnValueChanged", function(self) VEM.Options.PTCountThreshold = math.floor(self:GetValue()) end)
 		
 		spamPTArea:AutoSetDimension()
 		spamArea:AutoSetDimension()
+		spamSpecArea:AutoSetDimension()
 		spamOutArea:AutoSetDimension()
 		spamPanel:SetMyOwnHeight()
 	end
-	
+
 	do
 		local hideBlizzPanel = VEM_GUI_Frame:CreateNewPanel(L.Panel_HideBlizzard, "option")
-		local hideBlizzArea = hideBlizzPanel:CreateArea(L.Area_HideBlizzard, nil, 140, true)
+		local hideBlizzArea = hideBlizzPanel:CreateArea(L.Area_HideBlizzard, nil, 160, true)
 		hideBlizzArea:CreateCheckButton(L.HideBossEmoteFrame, true, nil, "HideBossEmoteFrame")
-		hideBlizzArea:CreateCheckButton(L.HideWatchFrame, true, nil, "HideWatchFrame")
+		hideBlizzArea:CreateCheckButton(L.HideWatchFrame, true, nil, "HideObjectivesFrame")
+		hideBlizzArea:CreateCheckButton(L.HideTooltips, true, nil, "HideTooltips")
 		local filterYell	= hideBlizzArea:CreateCheckButton(L.SpamBlockSayYell, true, nil, "FilterSayAndYell")
 		
 		local movieOptions = {
@@ -2494,6 +2525,76 @@ local function CreateOptionsMenu()
 
 		hideBlizzPanel:SetMyOwnHeight()
 	end
+	
+	do
+		local extraFeaturesPanel 	= VEM_GUI_Frame:CreateNewPanel(L.Panel_ExtraFeatures, "option")
+		local chatAlertsArea		= extraFeaturesPanel:CreateArea(L.Area_ChatAlerts, nil, 100, true)
+		local RoleSpecAlert			= chatAlertsArea:CreateCheckButton(L.RoleSpecAlert, true, nil, "RoleSpecAlert")
+		local WorldBossAlert		= chatAlertsArea:CreateCheckButton(L.WorldBossAlert, true, nil, "WorldBossAlert")
+
+		local soundAlertsArea		= extraFeaturesPanel:CreateArea(L.Area_SoundAlerts, nil, 100, true)
+		local LFDEnhance			= soundAlertsArea:CreateCheckButton(L.LFDEnhance, true, nil, "LFDEnhance")
+		local WorldBossNearAlert	= soundAlertsArea:CreateCheckButton(L.WorldBossNearAlert, true, nil, "WorldBossNearAlert")
+		local AFKHealthWarning		= soundAlertsArea:CreateCheckButton(L.AFKHealthWarning, true, nil, "AFKHealthWarning")
+
+		local bossLoggingArea		= extraFeaturesPanel:CreateArea(L.Area_AutoLogging, nil, 100, true)
+		local AutologBosses			= bossLoggingArea:CreateCheckButton(L.AutologBosses, true, nil, "AutologBosses")
+		local AdvancedAutologBosses
+		if Transcriptor then
+			AdvancedAutologBosses	= bossLoggingArea:CreateCheckButton(L.AdvancedAutologBosses, true, nil, "AdvancedAutologBosses")
+		end
+		local LogOnlyRaidBosses		= bossLoggingArea:CreateCheckButton(L.LogOnlyRaidBosses, true, nil, "LogOnlyRaidBosses")
+
+		local inviteArea			= extraFeaturesPanel:CreateArea(L.Area_Invite, nil, 100, true)
+		local AutoAcceptFriendInvite= inviteArea:CreateCheckButton(L.AutoAcceptFriendInvite, true, nil, "AutoAcceptFriendInvite")
+		local AutoAcceptGuildInvite	= inviteArea:CreateCheckButton(L.AutoAcceptGuildInvite, true, nil, "AutoAcceptGuildInvite")
+
+		-- Pizza Timer (create your own timer menu)
+		local pizzaarea = extraFeaturesPanel:CreateArea(L.PizzaTimer_Headline, nil, 85, true)
+
+		local textbox = pizzaarea:CreateEditBox(L.PizzaTimer_Title, "Pizza!", 175)
+		local hourbox = pizzaarea:CreateEditBox(L.PizzaTimer_Hours, "0", 25)
+		local minbox  = pizzaarea:CreateEditBox(L.PizzaTimer_Mins, "15", 25)
+		local secbox  = pizzaarea:CreateEditBox(L.PizzaTimer_Secs, "0", 25)
+
+		textbox:SetMaxLetters(17)
+		textbox:SetPoint('TOPLEFT', 30, -25)
+		hourbox:SetNumeric()
+		hourbox:SetMaxLetters(2)
+		hourbox:SetPoint('TOPLEFT', textbox, "TOPRIGHT", 20, 0)
+		minbox:SetNumeric()
+		minbox:SetMaxLetters(2)
+		minbox:SetPoint('TOPLEFT', hourbox, "TOPRIGHT", 20, 0)
+		secbox:SetNumeric()
+		secbox:SetMaxLetters(2)
+		secbox:SetPoint('TOPLEFT', minbox, "TOPRIGHT", 20, 0)
+
+		local BcastTimer = pizzaarea:CreateCheckButton(L.PizzaTimer_BroadCast)
+		local okbttn  = pizzaarea:CreateButton(L.PizzaTimer_ButtonStart)
+		okbttn:SetPoint('TOPLEFT', textbox, "BOTTOMLEFT", -7, -8)
+		BcastTimer:SetPoint("TOPLEFT", okbttn, "TOPRIGHT", 10, 3)
+
+		pizzaarea.frame:SetScript("OnShow", function(self)
+			if VEM:GetRaidRank() == 0 then
+				BcastTimer:Hide()
+			else
+				BcastTimer:Show()
+			end
+		end)
+
+		okbttn:SetScript("OnClick", function()
+			local time = (hourbox:GetNumber() * 60*60) + (minbox:GetNumber() * 60) + secbox:GetNumber()
+			if textbox:GetText() and time > 0 then
+				VEM:CreatePizzaTimer(time,  textbox:GetText(), BcastTimer:GetChecked())
+			end
+		end)
+		-- END Pizza Timer
+		chatAlertsArea:AutoSetDimension()
+		soundAlertsArea:AutoSetDimension()
+		bossLoggingArea:AutoSetDimension()
+		inviteArea:AutoSetDimension()
+		extraFeaturesPanel:SetMyOwnHeight()
+	end
 
 	-- Set Revision // please don't translate this!
 	VEM_GUI_OptionsFrameRevision:SetText("Voice Encounter Mods "..VEM.DisplayVersion.." (r"..VEM.Revision..")")
@@ -2508,22 +2609,23 @@ end
 VEM:RegisterOnGuiLoadCallback(CreateOptionsMenu, 1)
 
 do
+	local mfloor = math.floor
 	local function OnShowGetStats(stats, statsType, top1value1, top1value2, top1value3, top2value1, top2value2, top2value3, top3value1, top3value2, top3value3, bottom1value1, bottom1value2, bottom1value3, bottom2value1, bottom2value2, bottom2value3, bottom3value1, bottom3value2, bottom3value3)
 		return function(self)
 			top1value1:SetText( stats.normalKills )
 			top1value2:SetText( stats.normalPulls - stats.normalKills )
-			top1value3:SetText( stats.normalBestTime and ("%d:%02d"):format(math.floor(stats.normalBestTime / 60), stats.normalBestTime % 60) or "-" )
+			top1value3:SetText( stats.normalBestTime and ("%d:%02d"):format(mfloor(stats.normalBestTime / 60), stats.normalBestTime % 60) or "-" )
 			if statsType == 1 then--Party instance
 				top2value1:SetText( stats.heroicKills )
 				top2value2:SetText( stats.heroicPulls-stats.heroicKills )
-				top2value3:SetText( stats.heroicBestTime and ("%d:%02d"):format(math.floor(stats.heroicBestTime / 60), stats.heroicBestTime % 60) or "-" )
+				top2value3:SetText( stats.heroicBestTime and ("%d:%02d"):format(mfloor(stats.heroicBestTime / 60), stats.heroicBestTime % 60) or "-" )
 				top3value1:SetText( stats.challengeKills )
 				top3value2:SetText( stats.challengePulls-stats.challengeKills )
-				top3value3:SetText( stats.challengeBestTime and ("%d:%02d"):format(math.floor(stats.challengeBestTime / 60), stats.challengeBestTime % 60) or "-" )
+				top3value3:SetText( stats.challengeBestTime and ("%d:%02d"):format(mfloor(stats.challengeBestTime / 60), stats.challengeBestTime % 60) or "-" )
 			elseif statsType == 2 and stats.normal25Pulls and stats.normal25Pulls > 0 and stats.normal25Pulls > stats.normalPulls then--Fix for BC instance
 				top1value1:SetText( stats.normal25Kills )
 				top1value2:SetText( stats.normal25Pulls - stats.normal25Kills )
-				top1value3:SetText( stats.normal25BestTime and ("%d:%02d"):format(math.floor(stats.normal25BestTime / 60), stats.normal25BestTime % 60) or "-" )
+				top1value3:SetText( stats.normal25BestTime and ("%d:%02d"):format(mfloor(stats.normal25BestTime / 60), stats.normal25BestTime % 60) or "-" )
 			elseif statsType == 3 then--WoD 4 difficulty stats, TOP: Normal, LFR. BOTTOM. Heroic, Mythic
 				top1value1:SetText( stats.lfr25Kills )
 				top1value2:SetText( stats.lfr25Pulls-stats.lfr25Kills )
@@ -2540,16 +2642,16 @@ do
 			else
 				top2value1:SetText( stats.normal25Kills )
 				top2value2:SetText( stats.normal25Pulls - stats.normal25Kills )
-				top2value3:SetText( stats.normal25BestTime and ("%d:%02d"):format(math.floor(stats.normal25BestTime / 60), stats.normal25BestTime % 60) or "-" )
+				top2value3:SetText( stats.normal25BestTime and ("%d:%02d"):format(mfloor(stats.normal25BestTime / 60), stats.normal25BestTime % 60) or "-" )
 				top3value1:SetText( stats.lfr25Kills )
 				top3value2:SetText( stats.lfr25Pulls-stats.lfr25Kills )
-				top3value3:SetText( stats.lfr25BestTime and ("%d:%02d"):format(math.floor(stats.lfr25BestTime / 60), stats.lfr25BestTime % 60) or "-" )
+				top3value3:SetText( stats.lfr25BestTime and ("%d:%02d"):format(mfloor(stats.lfr25BestTime / 60), stats.lfr25BestTime % 60) or "-" )
 				bottom1value1:SetText( stats.heroicKills )
 				bottom1value2:SetText( stats.heroicPulls-stats.heroicKills )
-				bottom1value3:SetText( stats.heroicBestTime and ("%d:%02d"):format(math.floor(stats.heroicBestTime / 60), stats.heroicBestTime % 60) or "-" )
+				bottom1value3:SetText( stats.heroicBestTime and ("%d:%02d"):format(mfloor(stats.heroicBestTime / 60), stats.heroicBestTime % 60) or "-" )
 				bottom2value1:SetText( stats.heroic25Kills )
 				bottom2value2:SetText( stats.heroic25Pulls-stats.heroic25Kills )
-				bottom2value3:SetText( stats.heroic25BestTime and ("%d:%02d"):format(math.floor(stats.heroic25BestTime / 60), stats.heroic25BestTime % 60) or "-" )
+				bottom2value3:SetText( stats.heroic25BestTime and ("%d:%02d"):format(mfloor(stats.heroic25BestTime / 60), stats.heroic25BestTime % 60) or "-" )
 			end
 		end
 	end
@@ -2633,7 +2735,7 @@ do
 				local bottom2value1		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
 				local bottom2value2		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
 				local bottom2value3		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
-				local bottom3header		= area:CreateText("", nil, nil, GameFontHighlightSmall, "LEFT")--Row 2, 3rd column
+				local bottom3header		= area:CreateText("", nil, nil, GameFontDisableSmall, "LEFT")--Row 2, 3rd column
 				local bottom3text1		= area:CreateText(L.Statistic_Kills, nil, nil, GameFontNormalSmall, "LEFT")
 				local bottom3text2		= area:CreateText(L.Statistic_Wipes, nil, nil, GameFontNormalSmall, "LEFT")
 				local bottom3text3		= area:CreateText(L.Statistic_BestKill, nil, nil, GameFontNormalSmall, "LEFT")
@@ -3018,11 +3120,11 @@ do
 			end
 		end)
 		panel:SetMyOwnHeight()
-		VEM_GUI_OptionsFrame:DisplayFrame(panel.frame)
+		VEM_GUI_OptionsFrame:DisplayFrame(panel.frame, true)
 	end
 
 	local function LoadAddOn_Button(self)
-		if VEM:LoadMod(self.modid) then
+		if VEM:LoadMod(self.modid, true) then
 			self:Hide()
 			self.headline:Hide()
 			CreateBossModTab(self.modid, self.modid.panel)
@@ -3038,7 +3140,9 @@ do
 			if not Categories[addon.category] then
 				-- Create a Panel for "Wrath of the Lich King" "Burning Crusade" ...
 				local expLevel = GetExpansionLevel()
-				if expLevel == 4 then--Choose default expanded category based on players current expansion is.
+				if expLevel == 5 then--Choose default expanded category based on players current expansion is.
+					Categories[addon.category] = VEM_GUI:CreateNewPanel(L["TabCategory_"..addon.category:upper()] or L.TabCategory_Other, nil, (addon.category:upper()=="WOD"))
+				elseif expLevel == 4 then--Choose default expanded category based on players current expansion is.
 					Categories[addon.category] = VEM_GUI:CreateNewPanel(L["TabCategory_"..addon.category:upper()] or L.TabCategory_Other, nil, (addon.category:upper()=="MOP"))
 				elseif expLevel == 3 then
 					Categories[addon.category] = VEM_GUI:CreateNewPanel(L["TabCategory_"..addon.category:upper()] or L.TabCategory_Other, nil, (addon.category:upper()=="CATA"))
@@ -3174,7 +3278,7 @@ do
 			for _,v in ipairs(category) do
 				if v == VEM_OPTION_SPACER then
 					addSpacer = true
-				elseif type(mod.Options[v]) == "boolean" then
+				elseif type(mod.Options[v]) == "boolean" and type(v) ~= "boolean" then
 					lastButton = button
 					fixeditframe = false
 					if mod.Options[v .. "SpecialWarningSound"] then
@@ -3204,7 +3308,7 @@ do
 						button:SetPoint("TOPLEFT", lastButton, "BOTTOMLEFT", 0, -6)
 						addSpacer = false
 					else
-						button:SetPoint("TOPLEFT", lastButton, "BOTTOMLEFT", 0, -20)
+						button:SetPoint("TOPLEFT", lastButton, "BOTTOMLEFT", 0, -10)
 					end
 					button:SetScript("OnShow", function(self)
 						self:SetSelectedValue(mod.Options[v])

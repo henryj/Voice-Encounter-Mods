@@ -1,6 +1,6 @@
 local mod	= VEM:NewMod(1163, "VEM-Party-WoD", 3, 536)
 local L		= mod:GetLocalizedStrings()
-local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
+local sndWOP	= mod:SoundMM("SoundWOP")
 
 mod:SetRevision(("$Revision: 11582 $"):sub(12, -3))
 mod:SetCreatureID(79545)
@@ -14,8 +14,8 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 163550 160680",
 	"SPELL_PERIODIC_DAMAGE 166570",
 	"SPELL_PERIODIC_MISSED 166570",
-	"UNIT_DIED",
-	"UNIT_TARGETABLE_CHANGED"
+	"UNIT_TARGETABLE_CHANGED",
+	"UNIT_DIED"
 )
 
 local warnMortar				= mod:NewSpellAnnounce(163550, 3)
@@ -30,6 +30,7 @@ local yellSupressiveFire		= mod:NewYell(160681)
 local specWarnSlagBlast			= mod:NewSpecialWarningMove(166570)
 
 local timerSupressiveFire		= mod:NewTargetTimer(10, 160681)
+local boomer			= mod:NewSpecialWarning("捡尸体，上炮台，快打炮!")
 
 local grenade = EJ_GetSectionInfo(9711)
 local mortar = EJ_GetSectionInfo(9712)
@@ -41,6 +42,7 @@ function mod:SupressiveFireTarget(targetname, uId)
 	if targetname == UnitName("player") then
 		specWarnSupressiveFire:Show()
 		yellSupressiveFire:Yell()
+		sndWOP:Play("findshelter")
 	end
 end
 
@@ -64,28 +66,27 @@ end
 
 function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 166570 and destGUID == UnitGUID("player") and self:AntiSpam() then
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\runaway.ogg")
+		sndWOP:Play("runaway")
 		specWarnSlagBlast:Show()
 	end
 end
 mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 
---[[function mod:UNIT_DIED(args)
-	local cid = self:GetCIDFromGUID(args.destGUID)
-	if cid == 79739 then--Blackrock Grenadier
-		warnGrenadeDown:Show(grenade)
-	elseif cid == 79720 then--Blackrock Artillery Engineer
-		warnMortarDown:Show(mortar)
-	end
-end]]
-
 function mod:UNIT_TARGETABLE_CHANGED()
 	self.vb.phase = self.vb.phase + 1
 	if self.vb.phase == 2 then
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\ptwo.ogg")
+		sndWOP:Play("ptwo")
 		warnPhase2:Show()
 	elseif self.vb.phase == 3 then
-		sndWOP:Play("Interface\\AddOns\\"..VEM.Options.CountdownVoice.."\\pthree.ogg")
+		sndWOP:Play("pthree")
 		warnPhase3:Show()
+	end
+end
+
+function mod:UNIT_DIED(args) --By Mini_Dragon
+	local cid = self:GetCIDFromGUID(args.destGUID)
+	if cid == 80935 and VEM:AntiSpam(10) then	--Grom'kar Boomer
+		sndWOP:Play("160702")
+		boomer:Show()
 	end
 end
