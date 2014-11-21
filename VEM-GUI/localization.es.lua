@@ -1,7 +1,4 @@
--- Español por www.roxathatecuenta.es, contacto roxathatecuenta@gmail.com
--- Last update: 02/14/2014
-
-if GetLocale() ~= "esES" then return end
+if GetLocale() ~= "esES" and GetLocale() ~= "esMX" then return end
 
 if not VEM_GUI_Translations then VEM_GUI_Translations = {} end
 local L = VEM_GUI_Translations
@@ -116,7 +113,7 @@ L.ShowCountdownText	= "Mostrar text de cuenta atr¨¢s"
 L.RaidWarnMessage 	= "Gracias por usar Voice Encounter Mods - Espa?ol"
 L.BarWhileMove 		= "Avisos de banda se pueden mover"
 L.RaidWarnSound		= "Reproducir sonido para aviso-banda"
-L.CountdownVoice			= "Seleccionar voz"
+L.CountdownVoice	= "Fijar voz para sonido de cuenta atr¨¢s"
 L.CountdownVoice2	= "Fijar voz secundaria para sonido de cuenta atr¨¢s"
 L.SpecialWarnSound	= "Fijar sonido para avisos especiales que te afecten a ti o a tu rol"
 L.SpecialWarnSound2	= "Fijar sonido para avisos especiales que afectan a todos"
@@ -173,7 +170,6 @@ L.Panel_SpecWarnFrame		= "Avisos Especiales"
 L.Area_SpecWarn				= "Opciones de Avisos Especiales"
 L.SpecWarn_Enabled			= "Mostrar Avisos Especiales para habilidades de jefes"
 L.SpecWarn_FlashFrame		= "Mostrar un flash de pantalla para avisos especiales"
-L.SpecWarn_ShakeFrame		= "Mostrar una vibración en la pantalla para la devastacion"
 L.SpecWarn_AdSound		= "Habilitar opciones avanzadas de sonido para avisos especiales (requiere recargar UI)"
 L.SpecWarn_Font				= "Fuente usada para avisos especiales"
 L.SpecWarn_FontSize			= "Tama?o de fuente: %d"

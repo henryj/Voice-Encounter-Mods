@@ -92,9 +92,6 @@ function mod:SPELL_CAST_START(args)
 	if spellId == 162066 then
 		self:BossTargetScanner(80005, "FreezingSnareTarget", 0.04, 15)
 		timerFreezingSnareCD:Start()
-		if mod:IsHealer() then
-			sndWOP:Play("dispelnow")
-		end
 	elseif spellId == 162058 then
 		warnSpinningSpear:Show()
 		timerSpinningSpearCD:Start()

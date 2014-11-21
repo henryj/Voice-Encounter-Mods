@@ -1,5 +1,5 @@
 ﻿-- *********************************************************
--- **               Deadly Boss Mods - GUI                **
+-- **               Voice Encounter Mods - GUI                **
 -- **            http://www.deadlybossmods.com            **
 -- *********************************************************
 --
@@ -1381,7 +1381,7 @@ local function CreateOptionsMenu()
 		----------------------------------------------
 		--             General Options              --
 		----------------------------------------------
-		local generaloptions = VEM_GUI_Frame:CreateArea(L.General, nil, 290, true)
+		local generaloptions = VEM_GUI_Frame:CreateArea(L.General, nil, 185, true)
 
 		local enablevem = generaloptions:CreateCheckButton(L.EnableVEM, true)
 		enablevem:SetScript("OnShow",  function() enablevem:SetChecked(VEM:IsEnabled()) end)
@@ -1395,18 +1395,10 @@ local function CreateOptionsMenu()
 		MiniMapIcon:SetScript("OnShow", function(self)
 			self:SetChecked( VEM.Options.ShowMinimapButton )
 		end)
-		local SetPlayerRole				= generaloptions:CreateCheckButton(L.SetPlayerRole, true, nil, "SetPlayerRole")
 		local UseMasterVolume			= generaloptions:CreateCheckButton(L.UseMasterVolume, true, nil, "UseMasterVolume")
-		local LFDEnhance				= generaloptions:CreateCheckButton(L.LFDEnhance, true, nil, "LFDEnhance")
-		local AutologBosses				= generaloptions:CreateCheckButton(L.AutologBosses, true, nil, "AutologBosses")
-		local AdvancedAutologBosses
-		if Transcriptor then
-			AdvancedAutologBosses = generaloptions:CreateCheckButton(L.AdvancedAutologBosses, true, nil, "AdvancedAutologBosses")
-		end
-		local LogOnlyRaidBosses = generaloptions:CreateCheckButton(L.LogOnlyRaidBosses, true, nil, "LogOnlyRaidBosses")
 
 		local bmrange  = generaloptions:CreateButton(L.Button_RangeFrame)
-		bmrange:SetPoint('TOPLEFT', LogOnlyRaidBosses, "BOTTOMLEFT", 0, -5)
+		bmrange:SetPoint('TOPLEFT', UseMasterVolume, "BOTTOMLEFT", 0, -5)
 		bmrange:SetScript("OnClick", function(self)
 			if VEM.RangeCheck:IsShown() then
 				VEM.RangeCheck:Hide()
@@ -1520,7 +1512,7 @@ local function CreateOptionsMenu()
 		local raidwarnoptions = RaidWarningPanel:CreateArea(L.RaidWarning_Header, nil, 250, true)
 
 		local ShowWarningsInChat 	= raidwarnoptions:CreateCheckButton(L.ShowWarningsInChat, true, nil, "ShowWarningsInChat")
-		local ShowChatTime			= raidwarnoptions:CreateCheckButton(L.ShowChatTime, true, nil, "ShowChatTime")
+		local ShowSWarningsInChat 	= raidwarnoptions:CreateCheckButton(L.ShowSWarningsInChat, true, nil, "ShowSWarningsInChat")
 		local ShowFakedRaidWarnings = raidwarnoptions:CreateCheckButton(L.ShowFakedRaidWarnings,  true, nil, "ShowFakedRaidWarnings")
 		local WarningIconLeft		= raidwarnoptions:CreateCheckButton(L.WarningIconLeft,  true, nil, "WarningIconLeft")
 		local WarningIconRight 		= raidwarnoptions:CreateCheckButton(L.WarningIconRight,  true, nil, "WarningIconRight")
@@ -1563,9 +1555,13 @@ local function CreateOptionsMenu()
 		CountSoundDropDown:SetPoint("LEFT", RaidWarnSoundDropDown, "RIGHT", 30, 0)
 --[[		
 		local countSounds2 = {
-			{	text	= "Mosh (Male)",	value 	= "Mosh"},
+			{	text	= "Moshne (Male)",	value 	= "Mosh"},
 			{	text	= "Corsica (Female)",value 	= "Corsica"},
-			{	text	= "Kolt (Male)",value 	= "Kolt"},
+			{	text	= "Koltrane (Male)",value 	= "Kolt"},
+			{	text	= "Pewsey (Male)",value 	= "Pewsey"},
+			{	text	= "Bear (Male Child)",value = "Bear"},
+			{	text	= "Anshlun (ptBR Male)",value = "Anshlun"},
+			{	text	= "Neryssa (ptBR Female)",value = "Neryssa"},
 		}
 		local CountSoundDropDown2 = raidwarnoptions:CreateDropdown(L.CountdownVoice2, countSounds,
 		VEM.Options.CountdownVoice2, function(value)
@@ -1698,7 +1694,7 @@ local function CreateOptionsMenu()
 		--------------------------------------
 		local BarSetupPanel = VEM_GUI_Frame:CreateNewPanel(L.BarSetup, "option")
 
-		local BarSetup = BarSetupPanel:CreateArea(L.AreaTitle_BarSetup, nil, 240, true)
+		local BarSetup = BarSetupPanel:CreateArea(L.AreaTitle_BarSetup, nil, 360, true)
 
 		local movemebutton = BarSetup:CreateButton(L.MoveMe, 100, 16)
 		movemebutton:SetPoint('BOTTOMRIGHT', BarSetup.frame, "TOPRIGHT", 0, -1)
@@ -1708,7 +1704,7 @@ local function CreateOptionsMenu()
 
 		local maindummybar = VEM.Bars:CreateDummyBar()
 		maindummybar.frame:SetParent(BarSetup.frame)
-		maindummybar.frame:SetPoint('BOTTOM', BarSetup.frame, "TOP", 0, -65)
+		maindummybar.frame:SetPoint("BOTTOM", BarSetup.frame, "TOP", 0, -35)
 		maindummybar.frame:SetScript("OnUpdate", function(self, elapsed) maindummybar:Update(elapsed) end)
 		do
 			-- little hook to prevent this bar from changing size/scale
@@ -1721,14 +1717,9 @@ local function CreateOptionsMenu()
 			end
 		end
 
-		local iconleft = BarSetup:CreateCheckButton(L.BarIconLeft, nil, nil, nil, "IconLeft")
-		local iconright = BarSetup:CreateCheckButton(L.BarIconRight, nil, nil, nil, "IconRight")
-		iconleft:SetPoint('BOTTOMRIGHT', maindummybar.frame, "TOPLEFT", -5, 5)
-		iconright:SetPoint('BOTTOMLEFT', maindummybar.frame, "TOPRIGHT", 5, 5)
-
 		local color1 = BarSetup:CreateColorSelect(64)
 		local color2 = BarSetup:CreateColorSelect(64)
-		color1:SetPoint('TOPLEFT', BarSetup.frame, "TOPLEFT", 20, -80)
+		color1:SetPoint('TOPLEFT', BarSetup.frame, "TOPLEFT", 20, -60)
 		color2:SetPoint('TOPLEFT', color1, "TOPRIGHT", 20, 0)
 
 		local color1reset = BarSetup:CreateButton(L.Reset, 64, 10, nil, GameFontNormalSmall)
@@ -1959,9 +1950,7 @@ local function CreateOptionsMenu()
 		local specArea = specPanel:CreateArea(L.Area_SpecWarn, nil, 515, true)
 		local check1 = specArea:CreateCheckButton(L.SpecWarn_Enabled, true, nil, "ShowSpecialWarnings")
 		local check2 = specArea:CreateCheckButton(L.SpecWarn_FlashFrame, true, nil, "ShowFlashFrame")
-		local check3 = specArea:CreateCheckButton(L.SpecWarn_AdSound, true, nil, "ShowAdvSWSounds")
-		local flashbutton = specArea:CreateCheckButton(L.SpecWarn_ShakeFrame, true, nil, "ShowShakeFrame")
-		flashbutton:SetPoint('TOPLEFT', specArea.frame, "TOPLEFT", 200, -36)
+		local check3 = specArea:CreateCheckButton(L.SpecWarn_AdSound, true, nil, "ShowAdvSWSound")
 
 		local showbutton = specArea:CreateButton(L.SpecWarn_DemoButton, 120, 16)
 		showbutton:SetPoint('TOPRIGHT', specArea.frame, "TOPRIGHT", -5, -5)
@@ -2040,7 +2029,7 @@ local function CreateOptionsMenu()
 
 		local color1 = specArea:CreateColorSelect(64)
 		color1:SetPoint('TOPLEFT', color0, "TOPLEFT", 0, -105)
-		local color1text = specArea:CreateText(L.SpecWarn_FlashColor:format(1), 80)
+		local color1text = specArea:CreateText(L.SpecWarn_FlashColor, 80)
 		color1text:SetPoint("BOTTOM", color1, "TOP", 5, 4)
 		local color1reset = specArea:CreateButton(L.Reset, 64, 10, nil, GameFontNormalSmall)
 		color1reset:SetPoint('TOP', color1, "BOTTOM", 5, -10)
@@ -2071,7 +2060,7 @@ local function CreateOptionsMenu()
 		
 		local color2 = specArea:CreateColorSelect(64)
 		color2:SetPoint('TOPLEFT', color1, "TOPLEFT", 0, -105)
-		local color2text = specArea:CreateText(L.SpecWarn_FlashColor:format(2), 80)
+		local color2text = specArea:CreateText(L.SpecWarn_FlashColor, 80)
 		color2text:SetPoint("BOTTOM", color2, "TOP", 5, 4)
 		local color2reset = specArea:CreateButton(L.Reset, 64, 10, nil, GameFontNormalSmall)
 		color2reset:SetPoint('TOP', color2, "BOTTOM", 5, -10)
@@ -2102,7 +2091,7 @@ local function CreateOptionsMenu()
 		
 		local color3 = specArea:CreateColorSelect(64)
 		color3:SetPoint('TOPLEFT', color2, "TOPLEFT", 0, -105)
-		local color3text = specArea:CreateText(L.SpecWarn_FlashColor:format(3), 80)
+		local color3text = specArea:CreateText(L.SpecWarn_FlashColor, 80)
 		color3text:SetPoint("BOTTOM", color3, "TOP", 5, 4)
 		local color3reset = specArea:CreateButton(L.Reset, 64, 10, nil, GameFontNormalSmall)
 		color3reset:SetPoint('TOP', color3, "BOTTOM", 5, -10)
@@ -2743,15 +2732,6 @@ do
 				local bottom3value2		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
 				local bottom3value3		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
 
-				--Set default position
-				top1header:SetPoint("TOPLEFT", Title, "BOTTOMLEFT", 20, -5)
-				top1text1:SetPoint("TOPLEFT", top1header, "BOTTOMLEFT", 20, -5)
-				top1text2:SetPoint("TOPLEFT", top1text1, "BOTTOMLEFT", 0, -5)
-				top1text3:SetPoint("TOPLEFT", top1text2, "BOTTOMLEFT", 0, -5)
-				top1value1:SetPoint("TOPLEFT", top1text1, "TOPLEFT", 80, 0)
-				top1value2:SetPoint("TOPLEFT", top1text2, "TOPLEFT", 80, 0)
-				top1value3:SetPoint("TOPLEFT", top1text3, "TOPLEFT", 80, 0)
-
 				--Set enable or disable per mods.
 				if mod.oneFormat then--Classic/BC Raids
 					statsType = 2--Fix for BC instance
@@ -3237,17 +3217,6 @@ do
 			elseif	i == 7 then		icon:SetTexCoord(0.5,	0.75,	0.25,	0.5)
 			elseif	i == 8 then		icon:SetTexCoord(0.75,	1,		0.25,	0.5)
 			end
-		end
-		if mod.questId then
-			local icon = panel.frame:CreateTexture()
-			if IsQuestFlaggedCompleted(mod.questId) then
-				icon:SetTexture(READY_CHECK_READY_TEXTURE)--Already complete for week. (ie, recieved LFR loot, legendary quest chance, and rep off boss for week)
-			else
-				icon:SetTexture(READY_CHECK_NOT_READY_TEXTURE)--Not yet completed for week  (ie, has not yet recieved LFR loot, legendary quest chance, and rep off boss for week)
-			end
-			icon:SetPoint("TOPLEFT", panel.frame, "TOPRIGHT", -14, -20)--Meh, it's not ugly, but probably not right place or even coordinates for it, i plugged in random numbers and it looked ok!
-			icon:SetWidth(16)
-			icon:SetHeight(16)
 		end
 
 		local reset  = panel:CreateButton(L.Mod_Reset, 150, nil, nil, GameFontNormalSmall)

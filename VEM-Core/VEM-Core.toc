@@ -5,18 +5,20 @@
 ## Title-zhTW:|cffffd200Voice Encounter Mods|r |cff69ccf0核心|r
 ## Notes: Voice Encounter Mods
 ## Dependencies: VEM-StatusBarTimers
-## OptionalDependencies: LibSharedMedia-3.0, LibChatAnims
+## OptionalDependencies: LibStub, CallbackHandler-1.0, LibSharedMedia-3.0, LibChatAnims
 ## SavedVariablesPerCharacter: VEM_SavedOptions, DBT_SavedOptions
 ## LoadOnDemand: 0
 ## DefaultState: enabled
 ## Author: Tandanu and Nitram
 ## X-Website: http://www.deadlybossmods.com
 
+#@no-lib-strip@
 embeds.xml
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
 Libs\LibChatAnims\LibChatAnims.xml
 Libs\LibSharedMedia-3.0\lib.xml
+#@end-no-lib-strip@
 localization.en.lua
 localization.cn.lua
 localization.tw.lua

@@ -125,7 +125,6 @@ VEM_PIZZA_SYNC_INFO					= "|Hplayer:%1$s|h[%1$s]|h向你发送了一个VEM计时
 VEM_PIZZA_CONFIRM_IGNORE			= "是否要在该次游戏连接中屏蔽来自%s的计时条？"
 VEM_PIZZA_ERROR_USAGE				= "命令：/vem [broadcast] timer <时间（秒）> <文本>"
 
---VEM_CORE_MINIMAP_TOOLTIP_HEADER (Same as English locales)
 VEM_CORE_MINIMAP_TOOLTIP_FOOTER		= "Shift+拖动 / 右键拖动：拖动\nAlt+Shift+拖动：自由拖动"
 
 VEM_CORE_RANGECHECK_HEADER			= "距离监视（%d码）"

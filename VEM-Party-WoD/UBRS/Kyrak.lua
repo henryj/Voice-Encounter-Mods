@@ -41,7 +41,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnRejuvSerum:Show(args.destName)
 		specWarnRejuvSerum:Show(args.destName)
 		if mod:IsMagicDispeller() then
-			--sndWOP:Play("dispelboss")
+			sndWOP:Play("dispelboss")
 		end
 --		timerRejuvSerumCD:Start()
 	elseif spellId == 162600 then
@@ -59,7 +59,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnDeblitatingFixation:Show(args.sourceName)
 		if mod:IsTank() then
 			sndWOP:Play("kickcast")
-		elseif (not mod:IsHealer()) then
+		else
 			sndWOP:Play("helpkick")
 		end
 	elseif args.spellId == 161203 then

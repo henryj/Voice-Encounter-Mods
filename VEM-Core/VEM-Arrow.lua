@@ -26,8 +26,8 @@ local UnitPosition = UnitPosition
 local frame = CreateFrame("Button", nil, UIParent)
 frame:Hide()
 frame:SetFrameStrata("HIGH")
-frame:SetWidth(72)
-frame:SetHeight(55)
+frame:SetWidth(56)
+frame:SetHeight(42)
 frame:SetMovable(true)
 frame:EnableMouse(false)
 frame:RegisterForDrag("LeftButton", "RightButton")
@@ -48,26 +48,11 @@ arrow:SetAllPoints(frame)
 ---------------------
 --  Map Utilities  --
 ---------------------
-local SetMapToCurrentZone -- throttled SetMapToCurrentZone function to prevent lag issues with unsupported WorldMap addons
-do
-	local lastMapUpdate = 0
-	function SetMapToCurrentZone(...)
-		if GetTime() - lastMapUpdate > 1 then
-			lastMapUpdate = GetTime()
-			return _G.SetMapToCurrentZone(...)
-		end
-	end
-end
-
 local calculateDistance
 do
 	function calculateDistance(x1, y1, x2, y2)
-		local dims = VEM:GetMapSizes()
-		if not dims then
-			return
-		end
-		local dX = (x1 - x2) * dims[1]
-		local dY = (y1 - y2) * dims[2]
+		local dX = x1 - x2
+		local dY = y1 - y2
 		return sqrt(dX * dX + dY * dY)
 	end
 end
@@ -148,14 +133,7 @@ do
 		end
 
 		local x, y, _, mapId = UnitPosition("player")
-		if x == 0 and y == 0 then
-			SetMapToCurrentZone()
-			x, y = GetPlayerMapPosition("player")
-			if x == 0 and y == 0 then
-				self:Hide() -- hide the arrow if you enter a zone without a map
-				return
-			end
-		end
+
 		if targetType == "player" then
 			targetX, targetY, _, targetMapId = UnitPosition(targetPlayer)
 			if not targetX or mapId ~= targetMapId then
@@ -225,8 +203,6 @@ end
 
 local function show(runAway, x, y, distance, time, legacy)
 	local player
-	SetMapToCurrentZone()--Set map to current zone before checking other stuff
-	VEM:UpdateMapSizes()--Force a mapsize update after SetMapToCurrentZone to ensure our information is current
 	if type(x) == "string" then
 		player, hideDistance, hideTime = x, y, hideDistance
 	end

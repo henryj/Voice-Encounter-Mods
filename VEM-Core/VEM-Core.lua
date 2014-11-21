@@ -1,5 +1,5 @@
 ﻿-- *********************************************************
--- **               Deadly Boss Mods - Core               **
+-- **               Voice Encounter Mods - Core               **
 -- **            http://www.deadlybossmods.com            **
 -- *********************************************************
 --
@@ -45,14 +45,12 @@
 --    * Attribution. You must attribute the work in the manner specified by the author or licensor (but not in any way that suggests that they endorse you or your use of the work). (A link to http://www.deadlybossmods.com is sufficient)
 --    * Noncommercial. You may not use this work for commercial purposes.
 --    * Share Alike. If you alter, transform, or build upon this work, you may distribute the resulting work only under the same or similar license to this one.
---
-
 
 -------------------------------
 --  Globals/Default Options  --
 -------------------------------
 VEM = {
-	Revision = tonumber(("$Revision: 11855 $"):sub(12, -3)),
+	Revision = tonumber(("$Revision: 11869 $"):sub(12, -3)),
 	DisplayVersion = "(VEM) 6.0.5", -- the string that is shown as version
 	DisplayReleaseVersion = "6.0.5", -- Needed to work around bigwigs sending improper version information
 	ReleaseRevision = 11829 -- the revision of the latest stable version that is available
@@ -95,7 +93,6 @@ VEM.DefaultOptions = {
 	Enabled = true,
 	ShowWarningsInChat = true,
 	ShowSWarningsInChat = true,
-	ShowChatTime = true,
 	ShowFakedRaidWarnings = false,
 	WarningIconLeft = true,
 	WarningIconRight = true,
@@ -119,8 +116,7 @@ VEM.DefaultOptions = {
 	BlockVersionUpdateNotice = false,
 	ShowSpecialWarnings = true,
 	ShowFlashFrame = true,
-	ShowAdvSWSounds = true,
-	ShowShakeFrame = true,
+	ShowAdvSWSound = true,
 	CustomSounds = 0,
 	AlwaysShowHealthFrame = false,
 	ShowBigBrotherOnCombatStart = false,
@@ -239,8 +235,6 @@ local blockEnable = false
 local cachedGetTime = GetTime()
 local lastCombatStarted = cachedGetTime
 local loadcIds = {}
-local forceloadmapIds = {}
-local blockMovieSkipItems = {}
 local inCombat = {}
 local combatInfo = {}
 local bossIds = {}
@@ -973,18 +967,6 @@ do
 							local idTable = {strsplit(",", GetAddOnMetadata(i, "X-VEM-Mod-LoadCID"))}
 							for i = 1, #idTable do
 								loadcIds[tonumber(idTable[i]) or ""] = addonName
-							end
-						end
-						if GetAddOnMetadata(i, "X-VEM-Mod-ForceLoad-MapID") then
-							local idTable = {strsplit(",", GetAddOnMetadata(i, "X-VEM-Mod-ForceLoad-MapID"))}
-							for i = 1, #idTable do
-								forceloadmapIds[tonumber(idTable[i]) or ""] = true
-							end
-						end
-						if GetAddOnMetadata(i, "X-VEM-Mod-Block-Movie-Skip-ItemID") then
-							local idTable = {strsplit(",", GetAddOnMetadata(i, "X-VEM-Mod-Block-Movie-Skip-ItemID"))}
-							for i = 1, #idTable do
-								blockMovieSkipItems[tonumber(idTable[i]) or ""] = tonumber(mapIdTable[1])
 							end
 						end
 					end
@@ -2545,11 +2527,6 @@ function VEM:CINEMATIC_START()
 	VEM:Debug("CINEMATIC_START fired")
 	if not IsInInstance() or C_Garrison:IsOnGarrisonMap() or VEM.Options.MovieFilter == "Never" then return end
 	VEM:Debug("CINEMATIC_START: in valid zone, checking settings")
-	for itemId, mapId in pairs(blockMovieSkipItems) do
-		if mapId == LastInstanceMapID then
-			if select(3, GetItemCooldown(itemId)) > 0 then return end
-		end
-	end
 	SetMapToCurrentZone()
 	local currentFloor = GetCurrentMapDungeonLevel() or 0
 	if VEM.Options.MovieFilter == "Block" or VEM.Options.MovieFilter == "AfterFirst" and VEM.Options.MoviesSeen[LastInstanceMapID..currentFloor] then
@@ -2672,8 +2649,6 @@ do
 				VEM:RegisterShortTermEvents("UPDATE_MOUSEOVER_UNIT", "UNIT_TARGET_UNFILTERED")
 				targetEventsRegistered = true
 			end
-			if not forceloadmapIds[mapID] then return end
-		-- You entered instance during worldboss combat. Force end worldboss mod.
 		else
 			if targetEventsRegistered then
 				VEM:UnregisterShortTermEvents()
@@ -2703,8 +2678,12 @@ do
 		for i, v in ipairs(VEM.AddOns) do
 			local modTable = v[checkTable]
 			local enabled = GetAddOnEnableState(playerName, v.modId)
-			if enabled ~= 0 and not IsAddOnLoaded(v.modId) and modTable and checkEntry(modTable, checkValue) then
-				self:LoadMod(v)
+			if not IsAddOnLoaded(v.modId) and modTable and checkEntry(modTable, checkValue) then
+				if enabled ~= 0 then
+					self:LoadMod(v)
+				else
+					VEM:Debug("Not loading "..v.name.." because it is not enabled")
+				end
 			end
 		end
 		VEM:ScenarioCheck()--Do not filter. Because ScenarioCheck function includes filter.
@@ -4941,6 +4920,7 @@ do
 
 	local function getNumRealAlivePlayers()
 		local alive = 0
+		SetMapToCurrentZone()
 		local currentMapId = GetCurrentMapAreaID()
 		local currentMapName = GetMapNameByID(currentMapId)
 		if IsInRaid() then
@@ -5129,11 +5109,7 @@ function VEM:AddMsg(text, prefix)
 	prefix = prefix or (self.localization and self.localization.general.name) or "Voice Encounter Mods"
 	local frame = _G[tostring(VEM.Options.ChatFrame)]
 	frame = frame and frame:IsShown() and frame or DEFAULT_CHAT_FRAME
-	if VEM.Options.ShowChatTime then
-		frame:AddMessage(("|cffff7d0a%s|r|cffff7d0a[|r|cffffd200%s|r|cffff7d0a]|r %s"):format(date("%H:%M:%S"), tostring(prefix), tostring(text)), 0.41, 0.8, 0.94)
-	else
-		frame:AddMessage(("|cffff7d0a<|r|cffffd200%s|r|cffff7d0a>|r %s"):format(tostring(prefix), tostring(text)), 0.41, 0.8, 0.94)
-	end
+	frame:AddMessage(("|cffff7d0a<|r|cffffd200%s|r|cffff7d0a>|r %s"):format(tostring(prefix), tostring(text)), 0.41, 0.8, 0.94)
 end
 
 function VEM:Debug(text, level)
@@ -5280,50 +5256,6 @@ function VEM:FindEncounterIDs(instanceID, diff)
 			self:AddMsg(encounterID..": "..name)
 		end
 	end
-end
-
------------------
---  Map Sizes  --
------------------
-VEM.MapSizes = {}
-
-function VEM:RegisterMapSize(zone, ...)
-	if not VEM.MapSizes[zone] then
-		VEM.MapSizes[zone] = {}
-	end
-	local zone = VEM.MapSizes[zone]
-	for i = 1, select("#", ...), 3 do
-		local level, width, height = select(i, ...)
-		zone[level] = {width, height}
-	end
-end
-
-function VEM:UpdateMapSizes()
-	-- try custom map size first
-	SetMapToCurrentZone()
-	local mapName = GetMapInfo()
-	local floor, a1, b1, c1, d1 = GetCurrentMapDungeonLevel()
-	local dims = VEM.MapSizes[mapName] and VEM.MapSizes[mapName][floor]
-	if dims then
-		currentSizes = dims
-		return
-	end
-
-	-- failed, try Blizzard's map size
-	if not (a1 and b1 and c1 and d1) then
-		local zoneIndex, a2, b2, c2, d2 = GetCurrentMapZone()
-		a1, b1, c1, d1 = a2, b2, c2, d2
-	end
-
-	if not (a1 and b1 and c1 and d1) then return end
-	currentSizes = {abs(c1-a1), abs(d1-b1)}
-end
-
-function VEM:GetMapSizes()
-	if not currentSizes then
-		VEM:UpdateMapSizes()
-	end
-	return currentSizes
 end
 
 -------------------
@@ -6965,12 +6897,6 @@ do
 		font:SetTextColor(unpack(VEM.Options.SpecialWarningFontCol))
 	end
 
-	local shakeFrame = CreateFrame("Frame")
-	shakeFrame:SetScript("OnUpdate", function(self, elapsed)
-		self.timer = self.timer - elapsed
-	end)
-	shakeFrame:Hide()
-
 	frame:SetScript("OnUpdate", function(self, elapsed)
 		self.timer = self.timer - elapsed
 		if self.timer >= 3 and self.timer <= 4 then
@@ -7872,78 +7798,6 @@ do
 	end
 end
 
-
---------------------------
---  Shield Health Bars  --
---------------------------
-
-do
-	local frame = CreateFrame("Frame") -- frame for CLEU events, we don't want to run all *_MISSED events through the whole VEM event system...
-	frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-
-	local activeShields = {}
-	local shieldsByGuid = {}
-
-	local function getShieldHPFunc(shieldInfo)
-		return function()
-			return mmax(1, floor(shieldInfo.absorbRemaining / shieldInfo.maxAbsorb * 100))
-		end
-	end
-
-	frame:SetScript("OnEvent", function(self, event, timestamp, subEvent, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, ...)
-			local shieldInfo = destGUID and shieldsByGuid[destGUID]
-			if shieldInfo then
-				local absorbed
-				if subEvent == "SWING_MISSED" then
-					absorbed = select(3, ...)
-				elseif subEvent == "RANGE_MISSED" or subEvent == "SPELL_MISSED" or subEvent == "SPELL_PERIODIC_MISSED" then
-					absorbed = select(6, ...)
-				end
-				if absorbed then
-					shieldInfo.absorbRemaining = shieldInfo.absorbRemaining - absorbed
-				end
-			end
-	end)
-
-	function bossModPrototype:ShowShieldHealthBar(guid, spellId, absorb)
-		self:RemoveShieldHealthBar(guid, spellId)
-		local obj = {
-			mod = self.id,
-			spellId = spellId,
-			guid = guid,
-			absorbRemaining = absorb,
-			maxAbsorb = absorb,
-		}
-		obj.func = getShieldHPFunc(obj)
-		activeShields[#activeShields + 1] = obj
-		shieldsByGuid[guid] = obj
-		VEM.BossHealth:AddBoss(obj.func, GetSpellInfo(spellId) or spellId)
-	end
-
-	-- removes shield health bars for a specific guid and spellId (optional)
-	function bossModPrototype:RemoveShieldHealthBar(guid, spellId)
-		shieldsByGuid[guid] = nil
-		for i = #activeShields, 1, -1 do
-			if activeShields[i].guid == guid and activeShields[i].mod == self.id and (not spellId or activeShields[i].spellId == spellId) then
-				VEM.BossHealth.RemoveBoss(activeShields[i].func)
-				tremove(activeShields, i)
-			end
-		end
-	end
-
-	-- removes all shield bars of a boss mod
-	function bossModPrototype:RemoveAllShieldHealthBars()
-		for i = #activeShields, 1, -1 do
-			if activeShields[i].mod == self.id then
-				VEM.BossHealth.RemoveBoss(activeShields[i].func)
-				shieldsByGuid[activeShields[i].guid] = nil
-				tremove(activeShields, i)
-			end
-		end
-	end
-end
-
-
 ---------------
 --  Options  --
 ---------------
@@ -8058,18 +7912,6 @@ function bossModPrototype:AddDropdownOption(name, options, default, cat, func)
 	self:SetOptionCategory(name, cat)
 	self.dropdowns = self.dropdowns or {}
 	self.dropdowns[name] = options
-	if func then
-		self.optionFuncs = self.optionFuncs or {}
-		self.optionFuncs[name] = func
-	end
-end
-
-function bossModPrototype:AddEditBoxOption(name, options, default, cat, func) --Add by Mini_Dragon (Brilla@金色平原)
-	cat = cat or "misc"
-	self.Options[name] = default
-	self:SetOptionCategory(name, cat)
-	self.editboxes = self.editboxes or {}
-	self.editboxes[name] = options
 	if func then
 		self.optionFuncs = self.optionFuncs or {}
 		self.optionFuncs[name] = func
@@ -8310,10 +8152,6 @@ function bossModPrototype:ReceiveSync(event, sender, revision, ...)
 	end
 end
 
-function bossModPrototype:SetQuestID(id)
-	self.questId = id
-end
-
 function bossModPrototype:SetRevision(revision)
 	revision = tonumber(revision or "")
 	if not revision then
@@ -8378,7 +8216,7 @@ function bossModPrototype:SetIcon(target, icon, timer)
 	self:UnscheduleMethod("SetIcon", target)
 	icon = icon and icon >= 0 and icon <= 8 and icon or 8
 	local uId = VEM:GetRaidUnitId(target)
-	if uId and UnitIsUnit(uId, "player") and not IsInGroup() then return end--Solo raid, no reason to put icon on yourself.
+	if uId and UnitIsUnit(uId, "player") and VEM:GetNumRealGroupMembers() < 2 then return end--Solo raid, no reason to put icon on yourself.
 	if uId or UnitExists(target) then--target accepts uid, unitname both.
 		uId = uId or target
 		--save previous icon into a table.
