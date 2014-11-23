@@ -1,4 +1,4 @@
-Discontinued
+Bye for now
 =================
 
 Sorry, DBM has been made as a non-open-source project. Thus VEM can no longer do what we do before. 
