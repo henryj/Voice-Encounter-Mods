@@ -1,4 +1,6 @@
-Voicepack for DBM Available now
+Note: VEM has officially retired. However:
+
+Voicepacks for original DBM are Available now
 =================
 
 <p>DBM supports voicepack as we used to do now. So we've migrated our previous voicepacks to the DBM format and you may find them on Curse:</p>
