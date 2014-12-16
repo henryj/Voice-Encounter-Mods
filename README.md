@@ -13,6 +13,6 @@ Voicepacks for original DBM are Available now
 <p>or on Github:</p>
 <ul>
 <li><a href="https://github.com/henryj/DBM-Voicepack-VEM">VEM English Female</a></li>
-<li><a href="https://github.com/henryj/VEM-Sound-Yike">Yike Chinese Female</a></li>
+<li><a href="https://github.com/Mini-Dragon/DBM-VoicePack-Yike">Yike Chinese Female</a></li>
 <li><a href="https://github.com/henryj/DBM-Voicepack-Demo">Demo English Female</a></li>
 </ul>
